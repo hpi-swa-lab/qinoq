@@ -99,7 +99,8 @@ export class TimelineSequence extends Morph {
     this.acceptDrops = false;
     this.grabbable = true;
     this.layer = timelineLayer;
-    this.previousPosition = pt(this.position.x, 5);
+    this.previousPosition = pt(this.position.x + 5, 5);
+    this.position = this.previousPosition;
     this.addMorph(new Label({ textString: 'test' }));
   }
 
