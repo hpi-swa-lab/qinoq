@@ -1,5 +1,5 @@
 import { Morph, Label, HorizontalLayout, VerticalLayout } from 'lively.morphic';
-import { pt, Color } from 'lively.graphics';
+import { pt, Rectangle, Color } from 'lively.graphics';
 import { VerticalResizer } from 'lively.components';
 
 export class Timeline extends Morph {
@@ -70,7 +70,7 @@ export class TimelineLayer extends Morph {
   constructor () {
     super();
     this.height = 50;
-    this.fill = Color.rgb(20, 240, 240);
+    this.fill = Color.rgb(200, 200, 200);
     this.focusable = false;
     this.addMorph(new TimelineSequence(this));
   }
@@ -88,10 +88,12 @@ export class TimelineSequence extends Morph {
   constructor (timelineLayer) {
     super();
     this.height = 40;
+    this.width = 100;
     this.acceptDrops = false;
     this.grabbable = true;
     this.layer = timelineLayer;
     this.previousPosition = pt(this.position.x, 5);
+    this.addMorph(new Label({ textString: 'test' }));
   }
 
   onBeingDroppedOn (hand, recipient) {
