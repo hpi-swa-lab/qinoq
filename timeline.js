@@ -3,12 +3,21 @@ import { pt, Rectangle, Color } from 'lively.graphics';
 import { VerticalResizer } from 'lively.components';
 
 export class Timeline extends Morph {
+  static get properties () {
+    return {
+      ui: {}
+    };
+  }
+
   constructor () {
     super();
     this.layout = new HorizontalLayout({
       spacing: 2,
       resizeSubmorphs: true
     });
+
+    this.ui = {};
+
     this.initializeControlContainer();
     this.initializeLayerContainer();
 
@@ -21,25 +30,27 @@ export class Timeline extends Morph {
   }
 
   initializeLayerContainer () {
-    this.layerContainer = new Morph();
-    this.layerContainer.name = 'layer container';
-    this.layerContainer.layout = new VerticalLayout({
-      spacing: 2,
-      direction: 'bottomToTop',
-      resizeSubmorphs: true
+    this.ui.layerContainer = new Morph({
+      name: 'layer container',
+      layout: new VerticalLayout({
+        spacing: 2,
+        direction: 'bottomToTop',
+        resizeSubmorphs: true
+      })
     });
-    this.addMorph(this.layerContainer);
+    this.addMorph(this.ui.layerContainer);
   }
 
   initializeControlContainer () {
-    this.controlContainer = new Morph();
-    this.controlContainer.name = 'control container';
-    this.controlContainer.layout = new VerticalLayout({
-      spacing: 2,
-      direction: 'bottomToTop',
-      resizeSubmorphs: true
+    this.ui.controlContainer = new Morph({
+      name: 'control container',
+      layout: new VerticalLayout({
+        spacing: 2,
+        direction: 'bottomToTop',
+        resizeSubmorphs: true
+      })
     });
-    this.addMorph(this.controlContainer);
+    this.addMorph(this.ui.controlContainer);
   }
 
   initializeLayers () {
@@ -47,10 +58,10 @@ export class Timeline extends Morph {
     for (let i = 0; i < this.defaultLayerCount; i++) {
       const timelineLayer = new TimelineLayer({
         name: 'Layer ' + i,
-        container: this.layerContainer
+        container: this.ui.layerContainer
       });
       this.layers.push(timelineLayer);
-      this.layerContainer.addMorph(timelineLayer);
+      this.ui.layerContainer.addMorph(timelineLayer);
     }
   }
 
@@ -65,7 +76,7 @@ export class Timeline extends Morph {
       layer.associatedControl = control;
       control.addMorph(control.layerLabel);
       this.controls.push(control);
-      this.controlContainer.addMorph(control);
+      this.ui.controlContainer.addMorph(control);
     });
   }
 
@@ -77,8 +88,8 @@ export class Timeline extends Morph {
   }
 
   relayout () {
-    this.controlContainer.width = 50;
-    this.layerContainer.width = this.owner.owner.width - this.controlContainer.width - 10;
+    this.ui.controlContainer.width = 50;
+    this.ui.layerContainer.width = this.owner.owner.width - this.ui.controlContainer.width - 10;
   }
 }
 
