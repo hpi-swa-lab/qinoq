@@ -16,6 +16,10 @@ export class Timeline extends Morph {
     this.initializeControls();
   }
 
+  get defaultLayerCount () {
+    return 3;
+  }
+
   initializeLayerContainer () {
     this.layerContainer = new Morph();
     this.layerContainer.name = 'layer container';
@@ -40,7 +44,7 @@ export class Timeline extends Morph {
 
   initializeLayers () {
     this.layers = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < this.defaultLayerCount; i++) {
       const timelineLayer = new TimelineLayer({
         name: 'Layer ' + i,
         container: this.layerContainer
