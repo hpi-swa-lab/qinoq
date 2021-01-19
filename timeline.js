@@ -99,6 +99,7 @@ export class TimelineLayer extends Morph {
     this.grabbable = true;
     this.focusable = false;
     this.container = container;
+    this.nativeCursor = 'move';
 
     // Mock sequence for testing purposes
     this.addMorph(new TimelineSequence(this));
@@ -144,6 +145,7 @@ export class TimelineSequence extends Morph {
     this.previousPosition = pt(this.position.x + 5, 5);
     this.position = this.previousPosition;
     this.addMorph(new Label({ textString: 'test' }));
+    this.nativeCursor = 'move';
   }
 
   onBeingDroppedOn (hand, recipient) {
