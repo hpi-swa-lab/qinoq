@@ -1,5 +1,6 @@
 import { Morph, Label, HorizontalLayout, VerticalLayout } from 'lively.morphic';
 import { pt, Color } from 'lively.graphics';
+import { VerticalResizer } from 'lively.components';
 
 export class Timeline extends Morph {
   constructor () {
@@ -77,6 +78,10 @@ export class TimelineLayer extends Morph {
   isTimelineLayer () {
     return true;
   }
+
+  relayout () {
+    this.height = 50;
+  }
 }
 
 export class TimelineSequence extends Morph {
@@ -86,14 +91,18 @@ export class TimelineSequence extends Morph {
     this.acceptDrops = false;
     this.grabbable = true;
     this.layer = timelineLayer;
+    this.previousPosition = pt(this.position.x, 5);
   }
 
   onBeingDroppedOn (hand, recipient) {
-    $world.setStatusMessage('test onMouseUp');
     if (recipient.isTimelineLayer) {
       this.layer = recipient;
+      this.layer.addMorph(this);
+      this.previousPosition = this.position;
+      this.position = pt(hand.globalPosition.x - this.layer.globalPosition.x, 5);
+    } else {
+      this.layer.addMorph(this);
+      this.position = this.previousPosition;
     }
-    this.layer.addMorph(this);
-    this.position.y = this.layer.position.y + 5;
   }
 }
