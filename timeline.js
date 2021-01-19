@@ -18,11 +18,11 @@ export class Timeline extends Morph {
 
     this.ui = {};
 
-    this.initializeControlContainer();
+    this.initializeLayerInfoContainer();
     this.initializeLayerContainer();
 
     this.initializeLayers();
-    this.initializeControls();
+    this.initializeLayerInfos();
   }
 
   get defaultLayerCount () {
@@ -41,16 +41,16 @@ export class Timeline extends Morph {
     this.addMorph(this.ui.layerContainer);
   }
 
-  initializeControlContainer () {
-    this.ui.controlContainer = new Morph({
-      name: 'control container',
+  initializeLayerInfoContainer () {
+    this.ui.layerInfoContainer = new Morph({
+      name: 'layer info container',
       layout: new VerticalLayout({
         spacing: 2,
         direction: 'bottomToTop',
         resizeSubmorphs: true
       })
     });
-    this.addMorph(this.ui.controlContainer);
+    this.addMorph(this.ui.layerInfoContainer);
   }
 
   initializeLayers () {
@@ -65,38 +65,41 @@ export class Timeline extends Morph {
     }
   }
 
-  initializeControls () {
-    this.controls = [];
+  initializeLayerInfos () {
+    this.layerInfos = [];
     this.layers.forEach((layer) => {
-      const control = new Morph();
-      control.height = 50;
-      control.layerLabel = (new Label({
+      const layerInfo = new Morph();
+      layerInfo.height = LAYER_HEIGHT;
+      layerInfo.layerLabel = (new Label({
         textString: layer.name
       }));
-      layer.associatedControl = control;
-      control.addMorph(control.layerLabel);
-      this.controls.push(control);
-      this.ui.controlContainer.addMorph(control);
+      layer.associatedLayerInfo = layerInfo;
+      layerInfo.addMorph(layerInfo.layerLabel);
+      this.layerInfos.push(layerInfo);
+      this.ui.layerInfoContainer.addMorph(layerInfo);
     });
   }
 
   updateLayerPositions () {
     for (let i = 0; i < this.layers.length; i++) {
-      const control = this.layers[i].associatedControl;
-      control.position = pt(control.position.x, this.layers[i].position.y);
+      const layerInfo = this.layers[i].associatedLayerInfo;
+      layerInfo.position = pt(layerInfo.position.x, this.layers[i].position.y);
     }
   }
 
   relayout () {
-    this.ui.controlContainer.width = 50;
-    this.ui.layerContainer.width = this.owner.owner.width - this.ui.controlContainer.width - 10;
+    this.ui.layerInfoContainer.width = LAYER_INFO_WIDTH;
+    this.ui.layerContainer.width = this.owner.owner.width - this.ui.layerInfoContainer.width - 10;
   }
 }
+
+const LAYER_INFO_WIDTH = 50;
+const LAYER_HEIGHT = 50;
 
 export class TimelineLayer extends Morph {
   static get properties () {
     return {
-      associatedControl: {},
+      associatedLayerInfos: {},
       container: {}
     };
   }
@@ -105,7 +108,7 @@ export class TimelineLayer extends Morph {
     super(props);
     const { name = 'Unnamed Layer', container } = props;
     this.name = name;
-    this.height = 50;
+    this.height = LAYER_HEIGHT;
     this.fill = Color.rgb(200, 200, 200);
     this.grabbable = true;
     this.focusable = false;
@@ -121,7 +124,7 @@ export class TimelineLayer extends Morph {
   }
 
   relayout () {
-    this.height = 50;
+    this.height = LAYER_HEIGHT;
   }
 
   get timeline () {
@@ -138,6 +141,11 @@ export class TimelineLayer extends Morph {
   }
 }
 
+const SEQUENCE_HEIGHT = 40;
+const DEFAULT_SEQUENCE_WIDTH = 100;
+const SEQUENCE_INITIAL_X_OFFSET = 5;
+const SEQUENCE_LAYER_Y_OFFSET = 5;
+
 export class TimelineSequence extends Morph {
   static get properties () {
     return {
@@ -148,12 +156,12 @@ export class TimelineSequence extends Morph {
 
   constructor (timelineLayer) {
     super();
-    this.height = 40;
-    this.width = 100;
+    this.height = SEQUENCE_HEIGHT;
+    this.width = DEFAULT_SEQUENCE_WIDTH;
     this.acceptDrops = false;
     this.grabbable = true;
     this.layer = timelineLayer;
-    this.previousPosition = pt(this.position.x + 5, 5);
+    this.previousPosition = pt(this.position.x + SEQUENCE_INITIAL_X_OFFSET, SEQUENCE_LAYER_Y_OFFSET);
     this.position = this.previousPosition;
     this.addMorph(new Label({ textString: 'test' }));
     this.nativeCursor = 'move';
@@ -163,7 +171,7 @@ export class TimelineSequence extends Morph {
     if (recipient.isTimelineLayer) {
       this.layer = recipient;
       this.layer.addMorph(this);
-      this.position = pt(this.globalPosition.x - this.layer.globalPosition.x, 5);
+      this.position = pt(this.globalPosition.x - this.layer.globalPosition.x, SEQUENCE_LAYER_Y_OFFSET);
       this.previousPosition = this.position.copy();
     } else {
       this.layer.addMorph(this);
