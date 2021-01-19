@@ -50,15 +50,40 @@ export class MainView extends Morph {
   }
 
   relayout () {
-    this.ui.timeline.relayout();
+    this.width = this.owner.width;
+    this.relayoutUpperContainer();
+    this.relayoutLowerContainer();
   }
+
+  relayoutUpperContainer () {
+    const upperContainerWidth = this.width - getTotalSpacing(this.ui.upperContainer) - this.layout.spacing * 2;
+
+    this.mainViewHeight = 250;
+    this.ui.upperContainer.height = this.mainViewHeight;
+    this.ui.upperContainer.width = upperContainerWidth;
+    this.ui.overview.height = this.mainViewHeight;
+    this.ui.overview.width = upperContainerWidth / 8;
+    this.ui.interactiveMorphInspector.width = upperContainerWidth / 8;
+    this.ui.interactiveMorphInspector.height = this.mainViewHeight;
+    this.ui.preview.width = upperContainerWidth / 8 * 6;
+    this.ui.preview.height = this.mainViewHeight;
+  }
+
+  relayoutLowerContainer () {
+    const lowerContainerWidth = this.width - getTotalSpacing(this.ui.lowerContainer) - this.layout.spacing * 2;
+    this.ui.timeline.relayout(lowerContainerWidth);
+  }
+}
+
+function getTotalSpacing (morph) {
+  return morph.layout.spacing * (morph.submorphs.length - 1);
 }
 
 export class Preview extends Morph {
   constructor () {
     super();
 
-    this.extent = pt(400, 250);
+    // this.extent = pt(400, 250);
     this.borderColor = new Color.rgb(220, 220, 220);
     this.borderWidth = 5;
   }
@@ -68,7 +93,7 @@ export class SequenceOverview extends Morph {
   constructor () {
     super();
 
-    this.extent = pt(80, 250);
+    // this.extent = pt(80, 250);
     this.borderColor = new Color.rgb(220, 220, 220);
     this.borderWidth = 5;
   }
@@ -78,7 +103,7 @@ export class InteractiveMorphInspector extends Morph {
   constructor () {
     super();
 
-    this.extent = pt(80, 250);
+    // this.extent = pt(80, 250);
     this.borderColor = new Color.rgb(220, 220, 220);
     this.borderWidth = 5;
   }

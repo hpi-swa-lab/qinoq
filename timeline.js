@@ -87,11 +87,11 @@ export class Timeline extends Morph {
     }
   }
 
-  relayout () {
+  relayout (availableWidth) {
     this.ui.layerInfoContainer.position = pt(0, 0); // Align the container to the left of the layers
     this.ui.layerInfoContainer.width = LAYER_INFO_WIDTH;
     // $world.setStatusMessage(this.owner);
-    this.ui.layerContainer.width = this.owner.owner.width - this.ui.layerInfoContainer.width - 10;
+    this.ui.layerContainer.width = availableWidth - this.ui.layerInfoContainer.width - this.layout.spacing;
   }
 }
 
