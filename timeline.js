@@ -85,6 +85,13 @@ export class TimelineLayer extends Morph {
 }
 
 export class TimelineSequence extends Morph {
+  static get properties () {
+    return {
+      layer: {},
+      previousPosition: {}
+    };
+  }
+
   constructor (timelineLayer) {
     super();
     this.height = 40;
