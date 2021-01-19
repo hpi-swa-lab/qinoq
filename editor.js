@@ -1,7 +1,8 @@
 import { Window } from 'lively.components';
 import { pt } from 'lively.graphics';
 import { Timeline } from './timeline.js';
-import { VerticalLayout, Morph } from 'lively.morphic';
+import { VerticalLayout, HorizontalLayout, Morph } from 'lively.morphic';
+import { SequenceOverview, MainView, Preview, InteractiveMorphInspector } from './main-view.js';
 
 export class InteractivesEditor extends Window {
   constructor () {
@@ -10,24 +11,15 @@ export class InteractivesEditor extends Window {
     this.name = 'interactives editor';
     this.extent = pt(900, 500);
     this.title = 'Interactives Editor';
+
     this.container = new Morph();
     this.container.name = 'container';
-    this.container.layout = new VerticalLayout({
-      padding: 5,
-      autoResize: false
-    });
+    this.container.addMorph(new MainView());
     this.addMorph(this.container);
-    this.initializeTimeline();
   }
 
-  initializeTimeline () {
-    this.timeline = new Timeline();
-    this.timeline.width = this.width;
-    this.container.addMorph(this.timeline);
-  }
-
-  relayoutWindowControls () {
-    super.relayoutWindowControls();
-    this.timeline.relayout();
-  }
+  // relayoutWindowControls () {
+  // super.relayoutWindowControls();
+  // this.lowerContainer.timeline.relayout();
+  // }
 }
