@@ -1,30 +1,56 @@
-import { Morph, HorizontalLayout, GridLayout } from 'lively.morphic';
+import { Morph, VerticalLayout, HorizontalLayout, GridLayout } from 'lively.morphic';
 import { pt, Color } from 'lively.graphics';
 import { Timeline } from './timeline.js';
 
 export class MainView extends Morph {
+  static get properties () {
+    return {
+      ui: {}
+    };
+  }
+
   constructor () {
     super();
-    this.layout = new GridLayout({
-
+    this.layout = new VerticalLayout({
+      spacing: 5
     });
+
     this.ui = {};
     this.initializeUpperComponents();
     this.initializeLowerComponents();
+
+    this.addMorph(this.ui.upperContainer);
+    this.addMorph(this.ui.lowerContainer);
   }
 
   initializeUpperComponents () {
+    this.ui.upperContainer = new Morph({
+      name: 'upper container',
+      layout: new HorizontalLayout({
+        spacing: 2
+      })
+    });
     this.ui.overview = new SequenceOverview();
-    this.addMorph(this.ui.overview);
+    this.ui.upperContainer.addMorph(this.ui.overview);
     this.ui.preview = new Preview();
-    this.addMorph(this.ui.preview);
+    this.ui.upperContainer.addMorph(this.ui.preview);
     this.ui.interactiveMorphInspector = new InteractiveMorphInspector();
-    this.addMorph(this.ui.interactiveMorphInspector);
+    this.ui.upperContainer.addMorph(this.ui.interactiveMorphInspector);
   }
 
   initializeLowerComponents () {
+    this.ui.lowerContainer = new Morph({
+      name: 'lower container',
+      layout: new HorizontalLayout({
+        spacing: 2
+      })
+    });
     this.ui.timeline = new Timeline();
-    this.addMorph(this.ui.timeline);
+    this.ui.lowerContainer.addMorph(this.ui.timeline);
+  }
+
+  relayout () {
+    this.ui.timeline.relayout();
   }
 }
 
