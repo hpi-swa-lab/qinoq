@@ -18,7 +18,7 @@ export class Timeline extends Morph {
 
   initializeLayerContainer () {
     this.layerContainer = new Morph();
-    this.layerContainer.name = 'layerContainer';
+    this.layerContainer.name = 'layer container';
     this.layerContainer.layout = new VerticalLayout({
       spacing: 2,
       direction: 'bottomToTop',
@@ -29,7 +29,7 @@ export class Timeline extends Morph {
 
   initializeControlContainer () {
     this.controlContainer = new Morph();
-    this.controlContainer.name = 'controlContainer';
+    this.controlContainer.name = 'control container';
     this.controlContainer.layout = new VerticalLayout({
       spacing: 2,
       direction: 'bottomToTop',
@@ -41,7 +41,10 @@ export class Timeline extends Morph {
   initializeLayers () {
     this.layers = [];
     for (let i = 0; i < 3; i++) {
-      const timelineLayer = new TimelineLayer();
+      const timelineLayer = new TimelineLayer({
+        name: 'Layer ' + i,
+        container: this.layerContainer
+      });
       this.layers.push(timelineLayer);
       this.layerContainer.addMorph(timelineLayer);
     }
@@ -49,14 +52,23 @@ export class Timeline extends Morph {
 
   initializeControls () {
     this.controls = [];
-    for (let i = 0; i < 3; i++) {
+    this.layers.forEach((layer) => {
       const control = new Morph();
       control.height = 50;
-      control.addMorph(new Label({
-        textString: i
+      control.layerLabel = (new Label({
+        textString: layer.name
       }));
+      layer.associatedControl = control;
+      control.addMorph(control.layerLabel);
       this.controls.push(control);
       this.controlContainer.addMorph(control);
+    });
+  }
+
+  updateLayerPositions () {
+    for (let i = 0; i < this.layers.length; i++) {
+      const control = this.layers[i].associatedControl;
+      control.position = pt(control.position.x, this.layers[i].position.y);
     }
   }
 
@@ -67,11 +79,24 @@ export class Timeline extends Morph {
 }
 
 export class TimelineLayer extends Morph {
-  constructor () {
-    super();
+  static get properties () {
+    return {
+      associatedControl: {},
+      container: {}
+    };
+  }
+
+  constructor (props = {}) {
+    super(props);
+    const { name = 'Unnamed Layer', container } = props;
+    this.name = name;
     this.height = 50;
     this.fill = Color.rgb(200, 200, 200);
+    this.grabbable = true;
     this.focusable = false;
+    this.container = container;
+
+    // Mock sequence for testing purposes
     this.addMorph(new TimelineSequence(this));
   }
 
@@ -81,6 +106,19 @@ export class TimelineLayer extends Morph {
 
   relayout () {
     this.height = 50;
+  }
+
+  get timeline () {
+    return this.owner.owner;
+  }
+
+  updateLayerPosition () {
+    this.timeline.updateLayerPositions();
+  }
+
+  onBeingDroppedOn (hand, recipient) {
+    this.container.addMorph(this);
+    this.updateLayerPosition();
   }
 }
 
