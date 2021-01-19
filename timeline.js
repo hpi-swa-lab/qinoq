@@ -153,7 +153,7 @@ export class TimelineSequence extends Morph {
       this.layer = recipient;
       this.layer.addMorph(this);
       this.previousPosition = this.position;
-      this.position = pt(hand.globalPosition.x - this.layer.globalPosition.x, 5);
+      this.position = pt(this.globalPosition.x - this.layer.globalPosition.x, 5);
     } else {
       this.layer.addMorph(this);
       this.position = this.previousPosition;
