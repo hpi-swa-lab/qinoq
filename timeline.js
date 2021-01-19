@@ -152,8 +152,8 @@ export class TimelineSequence extends Morph {
     if (recipient.isTimelineLayer) {
       this.layer = recipient;
       this.layer.addMorph(this);
-      this.previousPosition = this.position;
       this.position = pt(this.globalPosition.x - this.layer.globalPosition.x, 5);
+      this.previousPosition = this.position.copy();
     } else {
       this.layer.addMorph(this);
       this.position = this.previousPosition;
