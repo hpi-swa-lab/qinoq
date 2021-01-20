@@ -1,4 +1,4 @@
-import { Morph, Label, HorizontalLayout, VerticalLayout } from 'lively.morphic';
+import { Morph, Text, Label, HorizontalLayout, VerticalLayout } from 'lively.morphic';
 import { pt, Rectangle, Color } from 'lively.graphics';
 import { VerticalResizer } from 'lively.components';
 
@@ -95,7 +95,11 @@ export class Timeline extends Morph {
   }
 
   getPositionFromScroll (scroll) {
-    return scroll;
+    return scroll + SEQUENCE_INITIAL_X_OFFSET;
+  }
+
+  getScrollFromPosition (position) {
+    return position - SEQUENCE_INITIAL_X_OFFSET;
   }
 
   getOffsetFromDuration (duration) {
@@ -165,26 +169,24 @@ export class TimelineSequence extends Morph {
     };
   }
 
-  static fromSequence (sequence, timelineLayer) {
+  constructor (sequence, timelineLayer, props = {}) {
+    super(props);
     const startPosition = timelineLayer.timeline.getPositionFromScroll(sequence.start);
     const endPosition = startPosition + timelineLayer.timeline.getOffsetFromDuration(sequence.duration);
-    // y value gets overwritten in constructor
-    const timelineSequence = new TimelineSequence(timelineLayer, sequence, { position: pt(startPosition, 0), width: endPosition - startPosition });
-    timelineLayer.addMorph(timelineSequence);
 
-    return timelineSequence;
-  }
-
-  constructor (timelineLayer, sequence, props = {}) {
-    super(props);
     this.height = SEQUENCE_HEIGHT;
     this.acceptDrops = false;
     this.grabbable = true;
     this.layer = timelineLayer;
-    this.previousPosition = pt(this.position.x + SEQUENCE_INITIAL_X_OFFSET, SEQUENCE_LAYER_Y_OFFSET);
+    this.previousPosition = pt(startPosition + SEQUENCE_INITIAL_X_OFFSET, SEQUENCE_LAYER_Y_OFFSET);
     this.position = this.previousPosition;
+    this.width = endPosition - startPosition;
     this.addMorph(new Label({ textString: sequence.name }));
     this.nativeCursor = 'grab';
+    this.borderWidth = 1;
+    this.borderColor = Color.rgb(0, 0, 0);
+    this.sequence = sequence;
+    this.layer.addMorph(this);
   }
 
   onBeingDroppedOn (hand, recipient) {
@@ -193,9 +195,14 @@ export class TimelineSequence extends Morph {
       this.layer.addMorph(this);
       this.position = pt(this.globalPosition.x - this.layer.globalPosition.x, SEQUENCE_LAYER_Y_OFFSET);
       this.previousPosition = this.position.copy();
+      this.updateSequenceStartPosition();
     } else {
       this.layer.addMorph(this);
       this.position = this.previousPosition;
     }
+  }
+
+  updateSequenceStartPosition () {
+    this.sequence.start = this.layer.timeline.getScrollFromPosition(this.position.x);
   }
 }

@@ -17,7 +17,7 @@ export class Sequence extends Morph {
   }
 
   static backgroundDayExample () {
-    const backgroundSequence = new Sequence(50, 100, { name: 'day background' });
+    const backgroundSequence = new Sequence(50, 50, { name: 'day background' });
     const backgroundMorph = new Morph({ fill: Color.rgbHex('60b2e5'), extent: pt(500, 500) });
     backgroundSequence.addMorph(backgroundMorph);
     return backgroundSequence;
