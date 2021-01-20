@@ -93,6 +93,14 @@ export class Timeline extends Morph {
     // $world.setStatusMessage(this.owner);
     this.ui.layerContainer.width = availableWidth - this.ui.layerInfoContainer.width - this.layout.spacing;
   }
+
+  getPositionFromScroll (scroll) {
+    return scroll;
+  }
+
+  getOffsetFromDuration (duration) {
+    return duration;
+  }
 }
 
 const LAYER_INFO_WIDTH = 50;
@@ -118,7 +126,7 @@ export class TimelineLayer extends Morph {
     this.nativeCursor = 'grab';
 
     // Mock sequence for testing purposes
-    this.addMorph(new TimelineSequence(this));
+    // this.addMorph(new TimelineSequence(this));
   }
 
   isTimelineLayer () {
@@ -152,20 +160,30 @@ export class TimelineSequence extends Morph {
   static get properties () {
     return {
       layer: {},
-      previousPosition: {}
+      previousPosition: {},
+      sequence: {}
     };
   }
 
-  constructor (timelineLayer) {
-    super();
+  static fromSequence (sequence, timelineLayer) {
+    const startPosition = timelineLayer.timeline.getPositionFromScroll(sequence.start);
+    const endPosition = startPosition + timelineLayer.timeline.getOffsetFromDuration(sequence.duration);
+    // y value gets overwritten in constructor
+    const timelineSequence = new TimelineSequence(timelineLayer, sequence, { position: pt(startPosition, 0), width: endPosition - startPosition });
+    timelineLayer.addMorph(timelineSequence);
+
+    return timelineSequence;
+  }
+
+  constructor (timelineLayer, sequence, props = {}) {
+    super(props);
     this.height = SEQUENCE_HEIGHT;
-    this.width = DEFAULT_SEQUENCE_WIDTH;
     this.acceptDrops = false;
     this.grabbable = true;
     this.layer = timelineLayer;
     this.previousPosition = pt(this.position.x + SEQUENCE_INITIAL_X_OFFSET, SEQUENCE_LAYER_Y_OFFSET);
     this.position = this.previousPosition;
-    this.addMorph(new Label({ textString: 'test' }));
+    this.addMorph(new Label({ textString: sequence.name }));
     this.nativeCursor = 'grab';
   }
 
