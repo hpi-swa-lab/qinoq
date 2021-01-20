@@ -13,6 +13,7 @@ export class MainView extends Morph {
     super();
     this.layout = new VerticalLayout({
       autoResize: false,
+      align: 'center',
       direction: 'centered',
       spacing: 5
     });
@@ -58,7 +59,7 @@ export class MainView extends Morph {
   }
 
   relayoutUpperContainer () {
-    const upperContainerWidth = this.width - getTotalSpacing(this.ui.upperContainer) - this.layout.spacing * 2;
+    const upperContainerWidth = this.owner.width - getTotalSpacing(this.ui.upperContainer) - this.layout.spacing * 2;
     const upperContainerHeight = this.height / 2;
 
     this.ui.upperContainer.height = upperContainerHeight;
