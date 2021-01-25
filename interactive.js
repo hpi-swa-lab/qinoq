@@ -34,7 +34,20 @@ export class Interactive extends Morph {
 }
 
 export class Layer {
-
+  static get properties () {
+    return {
+      caption: {
+        defaultValue: 'Unnamed Layer'
+      },
+      hidden: {
+        defaultValue: false
+      },
+      zIndex: {
+        type: Number,
+        isFloat: false
+      }
+    };
+  }
 }
 
 export class Sequence extends Morph {
@@ -42,12 +55,12 @@ export class Sequence extends Morph {
     return {
       start: {},
       duration: {},
-      progress: {
+      _progress: {
         min: 0,
         max: 1,
-        internal: true,
         isFloat: true
-      }
+      },
+      layer: { }
     };
   }
 
@@ -89,6 +102,6 @@ export class Sequence extends Morph {
   }
 
   updateProgress (scrollPosition) {
-
+    this._progress = (scrollPosition - this.start) / this.duration;
   }
 }
