@@ -2,6 +2,23 @@ import { Morph, Polygon } from 'lively.morphic';
 import { Color, pt } from 'lively.graphics';
 
 export class Interactive extends Morph {
+  static example () {
+    const interactive = new Interactive();
+    interactive.length = 100;
+    const foregroundLayer = Layer.exampleForegroundLayer();
+    const backgroundLayer = Layer.exampleBackgroundLayer();
+    const day = Sequence.backgroundDayExample();
+    day.layer = backgroundLayer;
+    const night = Sequence.backgroundNightExample();
+    night.layer = backgroundLayer;
+    const tree = Sequence.treeExample();
+    tree.layer = foregroundLayer;
+    interactive.sequences = [day, night, tree];
+    interactive.layers = [backgroundLayer, foregroundLayer];
+    interactive.scrollPosition = 0;
+    return interactive;
+  }
+
   static get properties () {
     return {
       length: {
@@ -16,6 +33,11 @@ export class Interactive extends Morph {
           this.setProperty('scrollPosition', scrollPosition);
           this.sequences.forEach(sequence => {
             sequence.updateProgress(scrollPosition);
+            if (sequence.isDisplayed()) {
+              this.addMorph(sequence);
+            } else {
+              sequence.remove();
+            }
           });
         }
       },
@@ -31,22 +53,30 @@ export class Interactive extends Morph {
   constructor (props = {}) {
     super(props);
   }
+
+  sortSequences () {
+    this.sequences.sort((a, b) => a.layer.zIndex - b.layer.zIndex);
+  }
 }
 
 export class Layer {
-  static get properties () {
-    return {
-      caption: {
-        defaultValue: 'Unnamed Layer'
-      },
-      hidden: {
-        defaultValue: false
-      },
-      zIndex: {
-        type: Number,
-        isFloat: false
-      }
-    };
+  static exampleBackgroundLayer () {
+    const layer = new Layer();
+    layer.caption = 'Background';
+    return layer;
+  }
+
+  static exampleForegroundLayer () {
+    const layer = new Layer();
+    layer.caption = 'Foreground';
+    layer.zIndex = 10;
+    return layer;
+  }
+
+  constructor () {
+    this.caption = 'Unnamed Layer';
+    this.hidden = false;
+    this.zIndex = false;
   }
 }
 
@@ -99,6 +129,10 @@ export class Sequence extends Morph {
     this.fill = Color.rgba(0, 0, 0, 0);
     this.start = start;
     this.duration = duration;
+  }
+
+  isDisplayed () {
+    return this._progress >= 0 && this._progress < 1 && !this.layer.hidden;
   }
 
   updateProgress (scrollPosition) {
