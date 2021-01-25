@@ -12,6 +12,17 @@ const BORDER_WIDTH = 3;
 const BORDER_COLOR = new Color.rgb(240, 240, 240);
 
 export class InteractivesEditor extends Window {
+  static get properties () {
+    return {
+      interactive: {
+        set (interactive) {
+          this.initializeTimeline(interactive);
+          this.setPreview(interactive);
+        }
+      }
+    };
+  }
+
   constructor () {
     super();
 
@@ -35,6 +46,14 @@ export class InteractivesEditor extends Window {
       lastExtent: this.extent
     });
     this.addMorph(this.container);
+  }
+
+  loadInteractive (interactive) {
+    this.interactive = interactive;
+  }
+
+  initializePreview (interactive) {
+    this.container.ui.preview.addContent(interactive);
   }
 }
 
