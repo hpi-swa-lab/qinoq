@@ -3,7 +3,8 @@ import { Color, pt } from 'lively.graphics';
 
 export class Interactive extends Morph {
   static example () {
-    const interactive = new Interactive();
+    const interactive = new Interactive({ extent: pt(500, 500), borderWidth: 3 });
+    interactive.borderColor = new Color(0.8, 0.1, 0.1, 1);
     interactive.length = 100;
     const foregroundLayer = Layer.exampleForegroundLayer();
     const backgroundLayer = Layer.exampleBackgroundLayer();
@@ -125,8 +126,10 @@ export class Sequence extends Morph {
     const { extent = pt(0, 0), name = 'unnamed Sequence' } = props;
     this.name = name;
     this.extent = extent;
+
     this.reactsToPointer = false;
-    this.fill = Color.rgba(0, 0, 0, 0);
+    this.fill = Color.rgba(0, 0, 0, 0); // Transparency
+
     this.start = start;
     this.duration = duration;
   }
