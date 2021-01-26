@@ -3,9 +3,13 @@ import { Color, pt } from 'lively.graphics';
 
 export class Interactive extends Morph {
   static example () {
-    const interactive = new Interactive({ extent: pt(500, 500), borderWidth: 3 });
-    interactive.borderColor = new Color(0.8, 0.1, 0.1, 1);
-    interactive.length = 100;
+    const interactive = new Interactive({
+      extent: pt(503, 503),
+      borderWidth: 3,
+      borderColor: new Color(0.8, 0.1, 0.1, 1),
+      length: 100
+    });
+
     const foregroundLayer = Layer.exampleForegroundLayer();
     const backgroundLayer = Layer.exampleBackgroundLayer();
     const day = Sequence.backgroundDayExample();
@@ -14,9 +18,13 @@ export class Interactive extends Morph {
     night.layer = backgroundLayer;
     const tree = Sequence.treeExample();
     tree.layer = foregroundLayer;
-    interactive.sequences = [day, night, tree];
-    interactive.layers = [backgroundLayer, foregroundLayer];
-    interactive.scrollPosition = 0;
+
+    interactive.addLayer(backgroundLayer);
+    interactive.addLayer(foregroundLayer);
+    interactive.addSequence(day);
+    interactive.addSequence(night);
+    interactive.addSequence(tree);
+    interactive.redraw();
     return interactive;
   }
 
@@ -30,16 +38,10 @@ export class Interactive extends Morph {
       scrollPosition: {
         type: 'Number',
         isFloat: false,
+        defaultValue: 0,
         set (scrollPosition) {
           this.setProperty('scrollPosition', scrollPosition);
-          this.sequences.forEach(sequence => {
-            sequence.updateProgress(scrollPosition);
-            if (sequence.isDisplayed()) {
-              this.addMorph(sequence);
-            } else {
-              sequence.remove();
-            }
-          });
+          this.redraw();
         }
       },
       sequences: {
@@ -53,10 +55,36 @@ export class Interactive extends Morph {
 
   constructor (props = {}) {
     super(props);
+    const { length = 100 } = props;
   }
 
+  redraw () {
+    this.sequences.forEach(sequence => {
+      sequence.updateProgress(this.scrollPosition);
+      if (sequence.isDisplayed()) {
+        this.addMorph(sequence);
+      } else {
+        sequence.remove();
+      }
+    });
+  }
+
+  // Is called every time any layer changes zIndex
   sortSequences () {
     this.sequences.sort((a, b) => a.layer.zIndex - b.layer.zIndex);
+    this.redraw();
+  }
+
+  addLayer (layer) {
+    this.layers.push(layer);
+    layer.interactive = this;
+  }
+
+  addSequence (sequence) {
+    this.sequences.push(sequence);
+    if (!sequence.layer || !this.layers.includes(sequence.layer)) {
+      sequence.layer = this.layers[0];
+    }
   }
 }
 
@@ -74,10 +102,21 @@ export class Layer {
     return layer;
   }
 
+  set zIndex (zIndex) {
+    this._zIndex = zIndex;
+    if (this.interactive) {
+      this.interactive.sortSequences();
+    }
+  }
+
+  get zIndex () {
+    return this._zIndex;
+  }
+
   constructor () {
     this.caption = 'Unnamed Layer';
     this.hidden = false;
-    this.zIndex = false;
+    this._zIndex = 0;
   }
 }
 
