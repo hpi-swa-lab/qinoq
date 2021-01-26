@@ -1,6 +1,5 @@
-import { Morph, Text, Label, HorizontalLayout, VerticalLayout } from 'lively.morphic';
-import { pt, Rectangle, Color } from 'lively.graphics';
-import { VerticalResizer } from 'lively.components';
+import { Morph, Label, HorizontalLayout, VerticalLayout } from 'lively.morphic';
+import { pt, Color } from 'lively.graphics';
 
 export class Timeline extends Morph {
   static get properties () {
@@ -90,7 +89,6 @@ export class Timeline extends Morph {
   relayout (availableWidth) {
     this.ui.layerInfoContainer.position = pt(0, 0); // Align the container to the left of the layers
     this.ui.layerInfoContainer.width = LAYER_INFO_WIDTH;
-    // $world.setStatusMessage(this.owner);
     this.ui.layerContainer.width = availableWidth - this.ui.layerInfoContainer.width - this.layout.spacing;
   }
 
@@ -128,9 +126,6 @@ export class TimelineLayer extends Morph {
     this.focusable = false;
     this.container = container;
     this.nativeCursor = 'grab';
-
-    // Mock sequence for testing purposes
-    // this.addMorph(new TimelineSequence(this));
   }
 
   isTimelineLayer () {
