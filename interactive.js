@@ -91,13 +91,13 @@ export class Interactive extends Morph {
 export class Layer {
   static exampleBackgroundLayer () {
     const layer = new Layer();
-    layer.caption = 'Background';
+    layer.name = 'Background';
     return layer;
   }
 
   static exampleForegroundLayer () {
     const layer = new Layer();
-    layer.caption = 'Foreground';
+    layer.name = 'Foreground';
     layer.zIndex = 10;
     return layer;
   }
@@ -114,7 +114,7 @@ export class Layer {
   }
 
   constructor () {
-    this.caption = 'Unnamed Layer';
+    this.name = 'Unnamed Layer';
     this.hidden = false;
     this._zIndex = 0;
   }

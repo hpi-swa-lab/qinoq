@@ -17,7 +17,7 @@ export class InteractivesEditor extends Window {
       interactive: {
         set (interactive) {
           this.initializeTimeline(interactive);
-          this.setPreview(interactive);
+          this.initializePreview(interactive);
         }
       }
     };
@@ -37,7 +37,8 @@ export class InteractivesEditor extends Window {
     this.container.addMorph(new SequenceOverview({ position: pt(0, 0) }));
     this.container.addMorph(new Preview({ position: pt(SIDEBAR_WIDTH, 0) }));
     this.container.addMorph(new InteractiveMorphInspector({ position: pt(PREVIEW_WIDTH + SIDEBAR_WIDTH, 0) }));
-    this.container.addMorph(new Timeline({ position: pt(0, SUBWINDOW_HEIGHT), extent: pt(EDITOR_WIDTH, SUBWINDOW_HEIGHT) }));
+    this.timeline = new Timeline({ position: pt(0, SUBWINDOW_HEIGHT), extent: pt(EDITOR_WIDTH, SUBWINDOW_HEIGHT) });
+    this.container.addMorph(this.timeline);
   }
 
   initializeContainer () {
@@ -53,7 +54,11 @@ export class InteractivesEditor extends Window {
   }
 
   initializePreview (interactive) {
-    this.container.ui.preview.addContent(interactive);
+    // this.container.ui.preview.addContent(interactive);
+  }
+
+  initializeTimeline (interactive) {
+    this.timeline.loadContent(interactive);
   }
 }
 
