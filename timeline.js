@@ -21,8 +21,8 @@ export class Timeline extends Morph {
     this.initializeLayerInfoContainer();
     this.initializeLayerContainer();
 
-    this.initializeLayerInfos();
     this.initializeLayers();
+    this.initializeLayerInfos();
   }
 
   get defaultLayerCount () {
