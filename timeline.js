@@ -1,6 +1,5 @@
-import { Morph, Label, HorizontalLayout, VerticalLayout } from 'lively.morphic';
-import { pt, Rectangle, Color } from 'lively.graphics';
-import { VerticalResizer } from 'lively.components';
+import { Morph, ProportionalLayout, Label, VerticalLayout } from 'lively.morphic';
+import { pt, Color } from 'lively.graphics';
 
 export class Timeline extends Morph {
   static get properties () {
@@ -9,12 +8,9 @@ export class Timeline extends Morph {
     };
   }
 
-  constructor () {
-    super();
-    this.layout = new HorizontalLayout({
-      spacing: 2,
-      resizeSubmorphs: true
-    });
+  constructor (props = {}) {
+    super(props);
+    this.layout = new ProportionalLayout({ lastExtent: this.extent });
 
     this.ui = {};
 
@@ -32,10 +28,12 @@ export class Timeline extends Morph {
   initializeLayerContainer () {
     this.ui.layerContainer = new Morph({
       name: 'layer container',
+      position: pt(LAYER_INFO_WIDTH, 0),
+      extent: pt(this.width - LAYER_INFO_WIDTH, this.height),
       layout: new VerticalLayout({
         spacing: 2,
-        direction: 'bottomToTop',
-        resizeSubmorphs: true
+        resizeSubmorphs: true,
+        autoResize: true
       })
     });
     this.addMorph(this.ui.layerContainer);
@@ -44,10 +42,12 @@ export class Timeline extends Morph {
   initializeLayerInfoContainer () {
     this.ui.layerInfoContainer = new Morph({
       name: 'layer info container',
+      position: pt(0, 0),
+      extent: pt(this.height, LAYER_INFO_WIDTH),
       layout: new VerticalLayout({
         spacing: 2,
-        direction: 'bottomToTop',
-        resizeSubmorphs: true
+        resizeSubmorphs: true,
+        autoResize: false
       })
     });
     this.addMorph(this.ui.layerInfoContainer);
@@ -87,9 +87,22 @@ export class Timeline extends Morph {
     }
   }
 
-  relayout () {
+  relayout (availableWidth) {
+    this.ui.layerInfoContainer.position = pt(0, 0); // Align the container to the left of the layers
     this.ui.layerInfoContainer.width = LAYER_INFO_WIDTH;
-    this.ui.layerContainer.width = this.owner.owner.width - this.ui.layerInfoContainer.width - 10;
+    this.ui.layerContainer.width = availableWidth - this.ui.layerInfoContainer.width - this.layout.spacing;
+  }
+
+  getPositionFromScroll (scroll) {
+    return scroll + SEQUENCE_INITIAL_X_OFFSET;
+  }
+
+  getScrollFromPosition (position) {
+    return position - SEQUENCE_INITIAL_X_OFFSET;
+  }
+
+  getOffsetFromDuration (duration) {
+    return duration;
   }
 }
 
@@ -114,9 +127,6 @@ export class TimelineLayer extends Morph {
     this.focusable = false;
     this.container = container;
     this.nativeCursor = 'grab';
-
-    // Mock sequence for testing purposes
-    this.addMorph(new TimelineSequence(this));
   }
 
   isTimelineLayer () {
@@ -150,21 +160,29 @@ export class TimelineSequence extends Morph {
   static get properties () {
     return {
       layer: {},
-      previousPosition: {}
+      previousPosition: {},
+      sequence: {}
     };
   }
 
-  constructor (timelineLayer) {
-    super();
+  constructor (sequence, timelineLayer, props = {}) {
+    super(props);
+    const startPosition = timelineLayer.timeline.getPositionFromScroll(sequence.start);
+    const endPosition = startPosition + timelineLayer.timeline.getOffsetFromDuration(sequence.duration);
+
     this.height = SEQUENCE_HEIGHT;
-    this.width = DEFAULT_SEQUENCE_WIDTH;
     this.acceptDrops = false;
     this.grabbable = true;
     this.layer = timelineLayer;
-    this.previousPosition = pt(this.position.x + SEQUENCE_INITIAL_X_OFFSET, SEQUENCE_LAYER_Y_OFFSET);
+    this.previousPosition = pt(startPosition + SEQUENCE_INITIAL_X_OFFSET, SEQUENCE_LAYER_Y_OFFSET);
     this.position = this.previousPosition;
-    this.addMorph(new Label({ textString: 'test' }));
+    this.width = endPosition - startPosition;
+    this.addMorph(new Label({ textString: sequence.name }));
     this.nativeCursor = 'grab';
+    this.borderWidth = 1;
+    this.borderColor = Color.rgb(0, 0, 0);
+    this.sequence = sequence;
+    this.layer.addMorph(this);
   }
 
   onBeingDroppedOn (hand, recipient) {
@@ -173,9 +191,14 @@ export class TimelineSequence extends Morph {
       this.layer.addMorph(this);
       this.position = pt(this.globalPosition.x - this.layer.globalPosition.x, SEQUENCE_LAYER_Y_OFFSET);
       this.previousPosition = this.position.copy();
+      this.updateSequenceStartPosition();
     } else {
       this.layer.addMorph(this);
       this.position = this.previousPosition;
     }
+  }
+
+  updateSequenceStartPosition () {
+    this.sequence.start = this.layer.timeline.getScrollFromPosition(this.position.x);
   }
 }
