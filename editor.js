@@ -30,8 +30,7 @@ export class InteractivesEditor extends Window {
   }
 
   initializeContainer () {
-    this.container = new Morph();
-    this.container.name = 'container';
+    this.container = new Morph({ name: 'container' });
     this.container.layout = new ProportionalLayout({
       lastExtent: this.extent
     });

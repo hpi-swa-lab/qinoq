@@ -32,7 +32,6 @@ export class Timeline extends Morph {
       extent: pt(this.width - LAYER_INFO_WIDTH, this.height),
       layout: new VerticalLayout({
         spacing: 2,
-        direction: 'topToBottom',
         resizeSubmorphs: true,
         autoResize: true
       })
@@ -47,7 +46,6 @@ export class Timeline extends Morph {
       extent: pt(this.height, LAYER_INFO_WIDTH),
       layout: new VerticalLayout({
         spacing: 2,
-        direction: 'topToBottom',
         resizeSubmorphs: true,
         autoResize: false
       })
