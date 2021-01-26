@@ -1,4 +1,4 @@
-import { Morph, Label, HorizontalLayout, VerticalLayout } from 'lively.morphic';
+import { Morph, ProportionalLayout, Label, VerticalLayout } from 'lively.morphic';
 import { pt, Color } from 'lively.graphics';
 
 export class Timeline extends Morph {
@@ -10,11 +10,7 @@ export class Timeline extends Morph {
 
   constructor (props = {}) {
     super(props);
-    this.layout = new HorizontalLayout({
-      spacing: 2,
-      resizeSubmorphs: true,
-      autoResize: false
-    });
+    this.layout = new ProportionalLayout({ lastExtent: this.extent });
 
     this.ui = {};
 
@@ -32,11 +28,13 @@ export class Timeline extends Morph {
   initializeLayerContainer () {
     this.ui.layerContainer = new Morph({
       name: 'layer container',
+      position: pt(LAYER_INFO_WIDTH, 0),
+      extent: pt(this.width - LAYER_INFO_WIDTH, this.height),
       layout: new VerticalLayout({
         spacing: 2,
         direction: 'topToBottom',
         resizeSubmorphs: true,
-        autoResize: false
+        autoResize: true
       })
     });
     this.addMorph(this.ui.layerContainer);
@@ -45,6 +43,8 @@ export class Timeline extends Morph {
   initializeLayerInfoContainer () {
     this.ui.layerInfoContainer = new Morph({
       name: 'layer info container',
+      position: pt(0, 0),
+      extent: pt(this.height, LAYER_INFO_WIDTH),
       layout: new VerticalLayout({
         spacing: 2,
         direction: 'topToBottom',
