@@ -18,7 +18,6 @@ export class Timeline extends Morph {
     this.initializeLayerContainer();
 
     this.layerInfos = [];
-    this.timelineLayers = [];
   }
 
   initializeLayerContainer () {
@@ -49,11 +48,19 @@ export class Timeline extends Morph {
     this.addMorph(this.ui.layerInfoContainer);
   }
 
+  arrangeLayerInfos () {
+    this.timelineLayers.forEach(timelineLayer => {
+      const layerInfo = timelineLayer.associatedLayerInfo;
+      layerInfo.position = pt(layerInfo.position.x, timelineLayer.position.y);
+    });
+  }
+
   updateLayerPositions () {
-    for (let i = 0; i < this.layers.length; i++) {
-      const layerInfo = this.layers[i].associatedLayerInfo;
-      layerInfo.position = pt(layerInfo.position.x, this.layers[i].position.y);
-    }
+    this.interactive.layers.forEach(layer => {
+      const timelineLayer = this.timelineLayerDict[layer.name];
+      timelineLayer.position = pt(timelineLayer.position.x, -layer.zIndex);
+    });
+    this.arrangeLayerInfos();
   }
 
   relayout (availableWidth) {
@@ -62,19 +69,22 @@ export class Timeline extends Morph {
     this.ui.layerContainer.width = availableWidth - this.ui.layerInfoContainer.width - this.layout.spacing;
   }
 
+  get timelineLayers () {
+    return Object.values(this.timelineLayerDict);
+  }
+
   createTimelineLayer (layer) {
     const timelineLayer = new TimelineLayer({
       container: this.ui.layerContainer,
       layer: layer
     });
-    this.timelineLayers.push(timelineLayer);
     this.ui.layerContainer.addMorph(timelineLayer);
     const layerInfo = new Morph();
     layerInfo.height = LAYER_HEIGHT;
     layerInfo.layerLabel = (new Label({
       textString: layer.name
     }));
-    layer.associatedLayerInfo = layerInfo;
+    timelineLayer.associatedLayerInfo = layerInfo;
     layerInfo.addMorph(layerInfo.layerLabel);
     this.layerInfos.push(layerInfo);
     this.ui.layerInfoContainer.addMorph(layerInfo);
@@ -93,6 +103,7 @@ export class Timeline extends Morph {
       this.timelineLayerDict[layer.name] = timelineLayer;
     });
     this.interactive.sequences.forEach(sequence => this.createTimelineSequence(sequence));
+    this.updateLayerPositions();
   }
 
   getPositionFromScroll (scroll) {
@@ -155,7 +166,7 @@ export class TimelineLayer extends Morph {
 
   onBeingDroppedOn (hand, recipient) {
     this.container.addMorph(this);
-    this.updateLayerPosition();
+    this.arrangeLayerInfos();
   }
 }
 
