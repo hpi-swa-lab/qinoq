@@ -8,11 +8,12 @@ export class Timeline extends Morph {
     };
   }
 
-  constructor () {
-    super();
+  constructor (props = {}) {
+    super(props);
     this.layout = new HorizontalLayout({
       spacing: 2,
-      resizeSubmorphs: true
+      resizeSubmorphs: true,
+      autoResize: false
     });
 
     this.ui = {};
@@ -20,8 +21,8 @@ export class Timeline extends Morph {
     this.initializeLayerInfoContainer();
     this.initializeLayerContainer();
 
-    this.initializeLayers();
     this.initializeLayerInfos();
+    this.initializeLayers();
   }
 
   get defaultLayerCount () {
@@ -33,8 +34,9 @@ export class Timeline extends Morph {
       name: 'layer container',
       layout: new VerticalLayout({
         spacing: 2,
-        direction: 'bottomToTop',
-        resizeSubmorphs: true
+        direction: 'topToBottom',
+        resizeSubmorphs: true,
+        autoResize: false
       })
     });
     this.addMorph(this.ui.layerContainer);
@@ -45,8 +47,9 @@ export class Timeline extends Morph {
       name: 'layer info container',
       layout: new VerticalLayout({
         spacing: 2,
-        direction: 'bottomToTop',
-        resizeSubmorphs: true
+        direction: 'topToBottom',
+        resizeSubmorphs: true,
+        autoResize: false
       })
     });
     this.addMorph(this.ui.layerInfoContainer);
