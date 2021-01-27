@@ -78,7 +78,7 @@ export class Preview extends Morph {
 
   onDrop (evt) {
     const grabbedMorph = evt.hand.grabbedMorphs[0];
-    if (grabbedMorph instanceof Interactive) {
+    if (grabbedMorph.isInteractive) {
       this.editor.loadInteractive(grabbedMorph);
     } else {
       $world.setStatusMessage('You have to drop an Interactive here');
