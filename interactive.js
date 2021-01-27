@@ -56,6 +56,10 @@ export class Interactive extends Morph {
     const { length = 100 } = props;
   }
 
+  get isInteractive () {
+    return true;
+  }
+
   redraw () {
     this.sequences.forEach(sequence => {
       sequence.updateProgress(this.scrollPosition);
