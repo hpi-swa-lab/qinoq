@@ -36,9 +36,10 @@ export class InteractivesEditor extends Window {
 
   initializeWindows () {
     this.container.addMorph(new SequenceOverview({ position: pt(0, 0) }));
-    this.container.addMorph(new Preview({ position: pt(SIDEBAR_WIDTH, 0) }, this));
+    this.preview = new Preview({ position: pt(SIDEBAR_WIDTH, 0) }, this);
+    this.container.addMorph(this.preview);
     this.container.addMorph(new InteractiveMorphInspector({ position: pt(PREVIEW_WIDTH + SIDEBAR_WIDTH, 0) }));
-    this.timeline = new Timeline({ position: pt(0, SUBWINDOW_HEIGHT), extent: pt(EDITOR_WIDTH, SUBWINDOW_HEIGHT) });
+    this.timeline = new Timeline({ position: pt(0, SUBWINDOW_HEIGHT), extent: pt(EDITOR_WIDTH, EDITOR_HEIGHT - SUBWINDOW_HEIGHT) });
     this.container.addMorph(this.timeline);
   }
 
@@ -55,7 +56,7 @@ export class InteractivesEditor extends Window {
   }
 
   initializePreview (interactive) {
-    // this.container.ui.preview.addContent(interactive);
+    this.preview.addContent(interactive);
   }
 
   initializeTimeline (interactive) {
@@ -76,11 +77,16 @@ export class Preview extends Morph {
   onDrop (evt) {
     const grabbedMorph = evt.hand.grabbedMorphs[0];
     if (grabbedMorph instanceof Interactive) {
-      super.onDrop(evt);
       this.editor.loadInteractive(grabbedMorph);
     } else {
       $world.setStatusMessage('You have to drop an Interactive here');
     }
+  }
+
+  addContent (interactive) {
+    this.addMorph(interactive);
+    interactive.position = pt(0, 0);
+    this.extent = interactive.extent;
   }
 }
 

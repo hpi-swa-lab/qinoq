@@ -4,9 +4,7 @@ import { Color, pt } from 'lively.graphics';
 export class Interactive extends Morph {
   static example () {
     const interactive = new Interactive({
-      extent: pt(503, 503),
-      borderWidth: 3,
-      borderColor: new Color(0.8, 0.1, 0.1, 1),
+      extent: pt(400, 300),
       length: 100
     });
 
@@ -136,14 +134,14 @@ export class Sequence extends Morph {
 
   static backgroundNightExample () {
     const backgroundSequence = new Sequence(0, 50, { name: 'night background' });
-    const backgroundMorph = new Morph({ fill: Color.rgbHex('272a7c'), extent: pt(500, 500) });
+    const backgroundMorph = new Morph({ fill: Color.rgbHex('272a7c'), extent: pt(400, 300) });
     backgroundSequence.addMorph(backgroundMorph);
     return backgroundSequence;
   }
 
   static backgroundDayExample () {
     const backgroundSequence = new Sequence(50, 50, { name: 'day background' });
-    const backgroundMorph = new Morph({ fill: Color.rgbHex('60b2e5'), extent: pt(500, 500) });
+    const backgroundMorph = new Morph({ fill: Color.rgbHex('60b2e5'), extent: pt(400, 300) });
     backgroundSequence.addMorph(backgroundMorph);
     return backgroundSequence;
   }
