@@ -2,6 +2,7 @@ import { Window } from 'lively.components';
 import { pt, Color } from 'lively.graphics';
 import { VerticalLayout, ProportionalLayout, Morph } from 'lively.morphic';
 import { Timeline } from './timeline.js';
+import { Interactive } from './interactive.js';
 
 const EDITOR_WIDTH = 900;
 const EDITOR_HEIGHT = 500;
@@ -35,7 +36,7 @@ export class InteractivesEditor extends Window {
 
   initializeWindows () {
     this.container.addMorph(new SequenceOverview({ position: pt(0, 0) }));
-    this.container.addMorph(new Preview({ position: pt(SIDEBAR_WIDTH, 0) }));
+    this.container.addMorph(new Preview({ position: pt(SIDEBAR_WIDTH, 0) }, this));
     this.container.addMorph(new InteractiveMorphInspector({ position: pt(PREVIEW_WIDTH + SIDEBAR_WIDTH, 0) }));
     this.timeline = new Timeline({ position: pt(0, SUBWINDOW_HEIGHT), extent: pt(EDITOR_WIDTH, SUBWINDOW_HEIGHT) });
     this.container.addMorph(this.timeline);
@@ -63,12 +64,23 @@ export class InteractivesEditor extends Window {
 }
 
 export class Preview extends Morph {
-  constructor (props = {}) {
+  constructor (props = {}, editor) {
     super(props);
     this.name = 'preview';
+    this.editor = editor;
     this.extent = pt(PREVIEW_WIDTH, SUBWINDOW_HEIGHT);
     this.borderColor = BORDER_COLOR;
     this.borderWidth = BORDER_WIDTH;
+  }
+
+  onDrop (evt) {
+    const grabbedMorph = evt.hand.grabbedMorphs[0];
+    if (grabbedMorph instanceof Interactive) {
+      super.onDrop(evt);
+      this.editor.loadInteractive(grabbedMorph);
+    } else {
+      $world.setStatusMessage('You have to drop an Interactive here');
+    }
   }
 }
 
