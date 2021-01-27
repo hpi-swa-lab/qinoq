@@ -117,6 +117,19 @@ export class Timeline extends Morph {
   getOffsetFromDuration (duration) {
     return duration;
   }
+
+  updateZIndicesFromTimelineLayerPositions () {
+    const layerPositions = this.timelineLayers.map(timelineLayer =>
+      ({
+        layer: timelineLayer.layer,
+        y: timelineLayer.position.y
+      }));
+    layerPositions.sort((a, b) => b.y - a.y);
+    layerPositions.forEach((layerPositionObject, index) => {
+      layerPositionObject.layer.zIndex = index * 10;
+    });
+    this.interactive.redraw();
+  }
 }
 
 const LAYER_INFO_WIDTH = 50;
@@ -167,6 +180,7 @@ export class TimelineLayer extends Morph {
   onBeingDroppedOn (hand, recipient) {
     this.container.addMorph(this);
     this.timeline.arrangeLayerInfos();
+    this.timeline.updateZIndicesFromTimelineLayerPositions();
   }
 }
 
