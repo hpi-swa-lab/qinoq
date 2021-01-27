@@ -166,7 +166,7 @@ export class TimelineLayer extends Morph {
 
   onBeingDroppedOn (hand, recipient) {
     this.container.addMorph(this);
-    this.arrangeLayerInfos();
+    this.timeline.arrangeLayerInfos();
   }
 }
 
@@ -211,6 +211,7 @@ export class TimelineSequence extends Morph {
       this.position = pt(this.globalPosition.x - this.timelineLayer.globalPosition.x, SEQUENCE_LAYER_Y_OFFSET);
       this.previousPosition = this.position.copy();
       this.updateSequenceStartPosition();
+      this.sequence.layer = this.timelineLayer.layer;
     } else {
       this.timelineLayer.addMorph(this);
       this.position = this.previousPosition;
