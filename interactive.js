@@ -54,6 +54,14 @@ export class Interactive extends Morph {
   constructor (props = {}) {
     super(props);
     const { length = 100 } = props;
+    this.initScrollableContent();
+    this.clipMode = 'auto';
+  }
+
+  initScrollableContent () {
+    const container = new Morph({ name: 'scrollable content', extent: pt(400, 400) });
+    this.addMorph(container);
+    this.scroller = container;
   }
 
   get isInteractive () {
@@ -64,7 +72,8 @@ export class Interactive extends Morph {
     this.sequences.forEach(sequence => {
       sequence.updateProgress(this.scrollPosition);
       if (sequence.isDisplayed()) {
-        this.addMorph(sequence);
+        sequence.globalPosition = this.globalPosition;
+        this.scroller.addMorph(sequence);
       } else {
         sequence.remove();
       }
@@ -87,6 +96,10 @@ export class Interactive extends Morph {
     if (!sequence.layer || !this.layers.includes(sequence.layer)) {
       sequence.layer = this.layers[0];
     }
+  }
+
+  onScroll (evt) {
+    this.scrollPosition = this.scroll.y;
   }
 }
 
