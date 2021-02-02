@@ -16,8 +16,6 @@ export class Timeline extends Morph {
 
     this.initializeLayerInfoContainer();
     this.initializeLayerContainer();
-
-    this.layerInfos = [];
   }
 
   initializeLayerContainer () {
@@ -86,7 +84,6 @@ export class Timeline extends Morph {
     }));
     timelineLayer.layerInfo = layerInfo;
     layerInfo.addMorph(layerInfo.layerLabel);
-    this.layerInfos.push(layerInfo);
     this.ui.layerInfoContainer.addMorph(layerInfo);
     return timelineLayer;
   }

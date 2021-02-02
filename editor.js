@@ -58,7 +58,7 @@ export class InteractivesEditor extends Morph {
   }
 
   initializePreview (interactive) {
-    this.preview.addContent(interactive);
+    this.preview.setContent(interactive);
   }
 
   initializeTimeline (interactive) {
@@ -88,7 +88,7 @@ export class Preview extends Morph {
     }
   }
 
-  addContent (interactive) {
+  setContent (interactive) {
     this.addMorph(interactive);
     interactive.position = pt(0, 0);
     this.extent = interactive.extent;
