@@ -235,23 +235,27 @@ export class TimelineSequence extends Morph {
     }
   }
 
+  get timeline () {
+    return this.timelineLayer.timeline;
+  }
+
   updateSequenceStartPosition () {
-    this.sequence.start = this.timelineLayer.timeline.getScrollFromPosition(this.position.x);
+    this.sequence.start = this.timeline.getScrollFromPosition(this.position.x);
   }
 
   initResizer () {
-    const rightResizer = new Morph({
+    this.rightResizer = new Morph({
       name: 'right resizer',
       fill: Color.transparent,
       width: 10,
       draggable: true,
       nativeCursor: 'ew-resize'
     });
-    connect(rightResizer, 'onDrag', this, 'drag');
-    connect(rightResizer, 'onDragEnd', this, 'finishDrag');
-    this.addMorph(rightResizer);
-    rightResizer.position = pt(this.width - rightResizer.width, 0);
-    rightResizer.height = this.height;
+    connect(this.rightResizer, 'onDrag', this, 'drag');
+    connect(this.rightResizer, 'onDragEnd', this, 'finishDrag');
+    this.addMorph(this.rightResizer);
+    this.rightResizer.position = pt(this.width - this.rightResizer.width, 0);
+    this.rightResizer.height = this.height;
   }
 
   drag (event) {
@@ -261,11 +265,13 @@ export class TimelineSequence extends Morph {
     }
     const dragDelta = event.position.x - event.startPosition.x;
     this.extent = pt(this.widthBeforeDrag + dragDelta, this.height);
+    this.rightResizer.position = pt(this.rightResizer.position.x, 0);
   }
 
   finishDrag () {
     this.dragStarted = true;
     this.widthBeforeDrag = this.width;
-    this.sequence.duration = this.timelineLayer.timeline.getOffsetFromDuration(this.width);
+    this.sequence.duration = this.timeline.getOffsetFromDuration(this.width);
+    this.timeline.interactive.redraw();
   }
 }
