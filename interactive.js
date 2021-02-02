@@ -59,8 +59,12 @@ export class Interactive extends Morph {
   }
 
   initScrollOverlay () {
-    const scrollOverlay = new InteractiveScrollHolder(this, { name: 'scrollable container', extent: pt(400, 300), clipMode: 'auto', opacity: 0.001 });
-    const scrollLengthContainer = new Morph({ name: 'scrollable content', extent: pt(400, 800), halosEnabled: false });
+    const scrollOverlay = new InteractiveScrollHolder(this);
+    const scrollLengthContainer = new Morph({
+      name: 'scrollable content',
+      extent: pt(400, 800),
+      halosEnabled: false
+    });
     scrollOverlay.addMorph(scrollLengthContainer);
     connect(this, 'position', scrollOverlay, 'position');
     this.scrollOverlay = scrollOverlay;
@@ -118,7 +122,14 @@ export class InteractiveScrollHolder extends Morph {
     };
   }
 
-  constructor (interactive, props) {
+  constructor (interactive, props = {}) {
+    const {
+      name = 'scrollable container',
+      extent = pt(400, 300),
+      clipMode = 'auto',
+      // opacity of zero leads to removal of object from DOM in firefox
+      opacity = 0.001
+    } = props;
     super(props);
     this.interactive = interactive;
     this.halosEnabled = false;
