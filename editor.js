@@ -31,15 +31,15 @@ export class InteractivesEditor extends Morph {
 
     this.name = 'interactives editor';
     this.extent = pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT);
-    this.initializeUIElements();
     this.initializeLayout();
+    this.initializePanels();
     this.openInWindow({
       title: 'Interactives Editor',
       name: 'window for interactives editor'
     });
   }
-
-  initializeUIElements () {
+  
+  initializePanels () {
     this.sequenceOverview = this.addMorph(new SequenceOverview({ position: pt(0, 0) }));
     this.preview = this.addMorph(new Preview(this, { position: pt(CONSTANTS.SIDEBAR_WIDTH, 0) }));
     this.morphInspector = this.addMorph(new InteractiveMorphInspector({ position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0) }));
