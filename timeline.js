@@ -50,7 +50,7 @@ export class Timeline extends Morph {
 
   arrangeLayerInfos () {
     this.timelineLayers.forEach(timelineLayer => {
-      const layerInfo = timelineLayer.associatedLayerInfo;
+      const layerInfo = timelineLayer.layerInfo;
       layerInfo.position = pt(layerInfo.position.x, timelineLayer.position.y);
     });
   }
@@ -84,7 +84,7 @@ export class Timeline extends Morph {
     layerInfo.layerLabel = (new Label({
       textString: layer.name
     }));
-    timelineLayer.associatedLayerInfo = layerInfo;
+    timelineLayer.layerInfo = layerInfo;
     layerInfo.addMorph(layerInfo.layerLabel);
     this.layerInfos.push(layerInfo);
     this.ui.layerInfoContainer.addMorph(layerInfo);
@@ -138,7 +138,7 @@ const LAYER_HEIGHT = 50;
 export class TimelineLayer extends Morph {
   static get properties () {
     return {
-      associatedLayerInfos: {},
+      layerInfo: {},
       container: {},
       layer: {}
     };

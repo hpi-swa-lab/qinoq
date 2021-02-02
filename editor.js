@@ -29,24 +29,24 @@ export class InteractivesEditor extends Morph {
 
     this.name = 'interactives editor';
     this.extent = pt(EDITOR_WIDTH, EDITOR_HEIGHT);
-    this.initialize();
-    this.initializeWindows();
+    this.initializeLayout();
+    this.initializeUIElements();
     this.openInWindow({
       title: 'Interactives Editor',
       name: 'window for interactives editor'
     });
   }
 
-  initializeWindows () {
+  initializeUIElements () {
     this.addMorph(new SequenceOverview({ position: pt(0, 0) }));
-    this.preview = new Preview({ position: pt(SIDEBAR_WIDTH, 0) }, this);
+    this.preview = new Preview(this, { position: pt(SIDEBAR_WIDTH, 0) });
     this.addMorph(this.preview);
     this.addMorph(new InteractiveMorphInspector({ position: pt(PREVIEW_WIDTH + SIDEBAR_WIDTH, 0) }));
     this.timeline = new Timeline({ position: pt(0, SUBWINDOW_HEIGHT), extent: pt(EDITOR_WIDTH, EDITOR_HEIGHT - SUBWINDOW_HEIGHT) });
     this.addMorph(this.timeline);
   }
 
-  initialize () {
+  initializeLayout () {
     this.layout = new ProportionalLayout({
       lastExtent: this.extent
     });
@@ -67,7 +67,7 @@ export class InteractivesEditor extends Morph {
 }
 
 export class Preview extends Morph {
-  constructor (props = {}, editor) {
+  constructor (editor, props = {}) {
     super(props);
     this.name = 'preview';
     this.editor = editor;
