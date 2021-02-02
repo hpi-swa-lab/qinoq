@@ -16,13 +16,6 @@ export class Timeline extends Morph {
 
     this.initializeLayerInfoContainer();
     this.initializeLayerContainer();
-
-    this.initializeLayers();
-    this.initializeLayerInfos();
-  }
-
-  get defaultLayerCount () {
-    return 3;
   }
 
   initializeLayerContainer () {
@@ -53,44 +46,61 @@ export class Timeline extends Morph {
     this.addMorph(this.ui.layerInfoContainer);
   }
 
-  initializeLayers () {
-    this.layers = [];
-    for (let i = 0; i < this.defaultLayerCount; i++) {
-      const timelineLayer = new TimelineLayer({
-        name: 'Layer ' + i,
-        container: this.ui.layerContainer
-      });
-      this.layers.push(timelineLayer);
-      this.ui.layerContainer.addMorph(timelineLayer);
-    }
-  }
-
-  initializeLayerInfos () {
-    this.layerInfos = [];
-    this.layers.forEach((layer) => {
-      const layerInfo = new Morph();
-      layerInfo.height = LAYER_HEIGHT;
-      layerInfo.layerLabel = (new Label({
-        textString: layer.name
-      }));
-      layer.associatedLayerInfo = layerInfo;
-      layerInfo.addMorph(layerInfo.layerLabel);
-      this.layerInfos.push(layerInfo);
-      this.ui.layerInfoContainer.addMorph(layerInfo);
+  arrangeLayerInfos () {
+    this.timelineLayers.forEach(timelineLayer => {
+      const layerInfo = timelineLayer.layerInfo;
+      layerInfo.position = pt(layerInfo.position.x, timelineLayer.position.y);
     });
   }
 
   updateLayerPositions () {
-    for (let i = 0; i < this.layers.length; i++) {
-      const layerInfo = this.layers[i].associatedLayerInfo;
-      layerInfo.position = pt(layerInfo.position.x, this.layers[i].position.y);
-    }
+    this.interactive.layers.forEach(layer => {
+      const timelineLayer = this.timelineLayerDict[layer.name];
+      timelineLayer.position = pt(timelineLayer.position.x, -layer.zIndex);
+    });
+    this.arrangeLayerInfos();
   }
 
   relayout (availableWidth) {
     this.ui.layerInfoContainer.position = pt(0, 0); // Align the container to the left of the layers
     this.ui.layerInfoContainer.width = LAYER_INFO_WIDTH;
     this.ui.layerContainer.width = availableWidth - this.ui.layerInfoContainer.width - this.layout.spacing;
+  }
+
+  get timelineLayers () {
+    return Object.values(this.timelineLayerDict);
+  }
+
+  createTimelineLayer (layer) {
+    const timelineLayer = new TimelineLayer({
+      container: this.ui.layerContainer,
+      layer: layer
+    });
+    this.ui.layerContainer.addMorph(timelineLayer);
+    const layerInfo = new Morph();
+    layerInfo.height = LAYER_HEIGHT;
+    layerInfo.layerLabel = (new Label({
+      textString: layer.name
+    }));
+    timelineLayer.layerInfo = layerInfo;
+    layerInfo.addMorph(layerInfo.layerLabel);
+    this.ui.layerInfoContainer.addMorph(layerInfo);
+    return timelineLayer;
+  }
+
+  createTimelineSequence (sequence) {
+    return new TimelineSequence(sequence, this.timelineLayerDict[sequence.layer.name]);
+  }
+
+  loadContent (interactive) {
+    this.interactive = interactive;
+    this.timelineLayerDict = {};
+    this.interactive.layers.forEach(layer => {
+      const timelineLayer = this.createTimelineLayer(layer);
+      this.timelineLayerDict[layer.name] = timelineLayer;
+    });
+    this.interactive.sequences.forEach(sequence => this.createTimelineSequence(sequence));
+    this.updateLayerPositions();
   }
 
   getPositionFromScroll (scroll) {
@@ -104,6 +114,19 @@ export class Timeline extends Morph {
   getOffsetFromDuration (duration) {
     return duration;
   }
+
+  updateZIndicesFromTimelineLayerPositions () {
+    const layerPositions = this.timelineLayers.map(timelineLayer =>
+      ({
+        layer: timelineLayer.layer,
+        y: timelineLayer.position.y
+      }));
+    layerPositions.sort((a, b) => b.y - a.y);
+    layerPositions.forEach((layerPositionObject, index) => {
+      layerPositionObject.layer.zIndex = index * 10;
+    });
+    this.interactive.redraw();
+  }
 }
 
 const LAYER_INFO_WIDTH = 50;
@@ -112,15 +135,17 @@ const LAYER_HEIGHT = 50;
 export class TimelineLayer extends Morph {
   static get properties () {
     return {
-      associatedLayerInfos: {},
-      container: {}
+      layerInfo: {},
+      container: {},
+      layer: {}
     };
   }
 
   constructor (props = {}) {
     super(props);
-    const { name = 'Unnamed Layer', container } = props;
-    this.name = name;
+    const { container, layer } = props;
+    this.layer = layer;
+
     this.height = LAYER_HEIGHT;
     this.fill = Color.rgb(200, 200, 200);
     this.grabbable = true;
@@ -141,13 +166,18 @@ export class TimelineLayer extends Morph {
     return this.owner.owner;
   }
 
+  get name () {
+    return this.layer.name;
+  }
+
   updateLayerPosition () {
     this.timeline.updateLayerPositions();
   }
 
   onBeingDroppedOn (hand, recipient) {
     this.container.addMorph(this);
-    this.updateLayerPosition();
+    this.timeline.arrangeLayerInfos();
+    this.timeline.updateZIndicesFromTimelineLayerPositions();
   }
 }
 
@@ -159,7 +189,7 @@ const SEQUENCE_LAYER_Y_OFFSET = 5;
 export class TimelineSequence extends Morph {
   static get properties () {
     return {
-      layer: {},
+      timelineLayer: {},
       previousPosition: {},
       sequence: {}
     };
@@ -173,7 +203,7 @@ export class TimelineSequence extends Morph {
     this.height = SEQUENCE_HEIGHT;
     this.acceptDrops = false;
     this.grabbable = true;
-    this.layer = timelineLayer;
+    this.timelineLayer = timelineLayer;
     this.previousPosition = pt(startPosition + SEQUENCE_INITIAL_X_OFFSET, SEQUENCE_LAYER_Y_OFFSET);
     this.position = this.previousPosition;
     this.width = endPosition - startPosition;
@@ -182,23 +212,24 @@ export class TimelineSequence extends Morph {
     this.borderWidth = 1;
     this.borderColor = Color.rgb(0, 0, 0);
     this.sequence = sequence;
-    this.layer.addMorph(this);
+    this.timelineLayer.addMorph(this);
   }
 
   onBeingDroppedOn (hand, recipient) {
     if (recipient.isTimelineLayer) {
-      this.layer = recipient;
-      this.layer.addMorph(this);
-      this.position = pt(this.globalPosition.x - this.layer.globalPosition.x, SEQUENCE_LAYER_Y_OFFSET);
+      this.timelineLayer = recipient;
+      this.timelineLayer.addMorph(this);
+      this.position = pt(this.globalPosition.x - this.timelineLayer.globalPosition.x, SEQUENCE_LAYER_Y_OFFSET);
       this.previousPosition = this.position.copy();
       this.updateSequenceStartPosition();
+      this.sequence.layer = this.timelineLayer.layer;
     } else {
-      this.layer.addMorph(this);
+      this.timelineLayer.addMorph(this);
       this.position = this.previousPosition;
     }
   }
 
   updateSequenceStartPosition () {
-    this.sequence.start = this.layer.timeline.getScrollFromPosition(this.position.x);
+    this.sequence.start = this.timelineLayer.timeline.getScrollFromPosition(this.position.x);
   }
 }
