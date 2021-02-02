@@ -1,4 +1,4 @@
-import { Morph, ProportionalLayout, Label, VerticalLayout } from 'lively.morphic';
+import { Morph, HorizontalLayout, ProportionalLayout, Label, VerticalLayout } from 'lively.morphic';
 import { pt, Color } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 
@@ -274,5 +274,106 @@ export class TimelineSequence extends Morph {
     this.widthBeforeDrag = this.width;
     this.sequence.duration = this.timeline.getDurationFromWidth(this.width);
     this.timeline.interactive.redraw();
+  }
+}
+
+const CURSOR_WIDTH = 2;
+const CURSOR_COLOR = Color.rgb(240, 100, 0);
+const CURSOR_FONT_COLOR = Color.rgb(255, 255, 255);
+
+export class TimelineCursor extends Morph {
+  static get properties () {
+    return {
+      value: {
+        defaultValue: 0,
+        type: 'Number',
+        set (value) {
+          this.setProperty('value', value);
+          this.redraw();
+        }
+      },
+      cursorColor: {
+        defaultValue: CURSOR_COLOR,
+        set (color) {
+          this.setProperty('cursorColor', color);
+          this.updateColor();
+        }
+      },
+      ui: {}
+    };
+  }
+
+  constructor (value = 0, props = {}) {
+    super(props);
+
+    this.initialize();
+    this.name = 'cursor';
+    this.value = value;
+  }
+
+  initialize () {
+    this.initializeSubmorphs();
+    this.initializeAppearance();
+    this.redraw();
+  }
+
+  initializeSubmorphs () {
+    this.ui = {};
+    this.ui.bar = new Morph({
+      name: 'cursor/bar',
+      extent: pt(CURSOR_WIDTH, 50),
+      reactsToPointer: false,
+      halosEnabled: false
+    });
+    this.ui.label = new Label({
+      name: 'cursor/head/text',
+      halosEnabled: false,
+      reactsToPointer: false
+    });
+    this.ui.head = new Morph({
+      name: 'cursor/head',
+      layout: new HorizontalLayout({
+        spacing: 4,
+        autoResize: true
+      }),
+      halosEnabled: false,
+      borderRadius: 4,
+      submorphs: [this.ui.label]
+    });
+    this.addMorph(this.ui.head);
+    this.addMorph(this.ui.bar);
+  }
+
+  initializeAppearance () {
+    this.layout = new VerticalLayout({
+      autoResize: true,
+      align: 'center'
+    });
+    this.fontColor = CURSOR_FONT_COLOR;
+    this.fill = Color.rgba(0, 0, 0, 0);
+    this.borderStyle = 'none';
+    this.updateColor();
+  }
+
+  onOwnerChanged (newOwner) {
+    if (!newOwner) return;
+    this.ui.bar.height = newOwner.height - this.ui.head.height;
+  }
+
+  onChange (change) {
+    if (change.prop === 'fontColor') {
+      this.updateColor();
+    }
+    super.onChange(change);
+  }
+
+  redraw () {
+    this.ui.label.textString = this.value.toString();
+  }
+
+  updateColor () {
+    this.ui.head.fill = this.cursorColor;
+    this.ui.bar.fill = this.cursorColor;
+    this.ui.label.fontColor = this.fontColor;
   }
 }
