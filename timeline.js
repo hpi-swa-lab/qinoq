@@ -112,12 +112,12 @@ export class Timeline extends Morph {
     return position - SEQUENCE_INITIAL_X_OFFSET;
   }
 
-  getOffsetFromDuration (duration) {
+  getWidthFromDuration (duration) {
     return duration;
   }
 
-  getDurationFromOffset (offset) {
-    return offset;
+  getDurationFromWidth (width) {
+    return width;
   }
 
   updateZIndicesFromTimelineLayerPositions () {
@@ -203,7 +203,7 @@ export class TimelineSequence extends Morph {
   constructor (sequence, timelineLayer, props = {}) {
     super(props);
     const startPosition = timelineLayer.timeline.getPositionFromScroll(sequence.start);
-    const endPosition = startPosition + timelineLayer.timeline.getOffsetFromDuration(sequence.duration);
+    const endPosition = startPosition + timelineLayer.timeline.getWidthFromDuration(sequence.duration);
 
     this.height = SEQUENCE_HEIGHT;
     this.acceptDrops = false;
@@ -218,7 +218,7 @@ export class TimelineSequence extends Morph {
     this.borderColor = Color.rgb(0, 0, 0);
     this.sequence = sequence;
     this.timelineLayer.addMorph(this);
-    this.initResizer();
+    this.initializeResizer();
   }
 
   onBeingDroppedOn (hand, recipient) {
@@ -243,7 +243,7 @@ export class TimelineSequence extends Morph {
     this.sequence.start = this.timeline.getScrollFromPosition(this.position.x);
   }
 
-  initResizer () {
+  initializeResizer () {
     this.rightResizer = new Morph({
       name: 'right resizer',
       fill: Color.transparent,
@@ -271,7 +271,7 @@ export class TimelineSequence extends Morph {
   finishDrag () {
     this.dragStarted = true;
     this.widthBeforeDrag = this.width;
-    this.sequence.duration = this.timeline.getOffsetFromDuration(this.width);
+    this.sequence.duration = this.timeline.getDurationFromWidth(this.width);
     this.timeline.interactive.redraw();
   }
 }
