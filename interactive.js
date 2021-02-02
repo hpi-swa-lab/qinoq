@@ -59,15 +59,14 @@ export class Interactive extends Morph {
   }
 
   initScrollOverlay () {
-    const scrollOverlay = new InteractiveScrollHolder(this);
+    this.scrollOverlay = new InteractiveScrollHolder(this);
     const scrollLengthContainer = new Morph({
       name: 'scrollable content',
       extent: pt(400, 800),
       halosEnabled: false
     });
-    scrollOverlay.addMorph(scrollLengthContainer);
-    connect(this, 'position', scrollOverlay, 'position');
-    this.scrollOverlay = scrollOverlay;
+    this.scrollOverlay.addMorph(scrollLengthContainer);
+    connect(this, 'position', this.scrollOverlay, 'position');
   }
 
   openInWorld () {
