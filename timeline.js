@@ -1,5 +1,6 @@
 import { Morph, ProportionalLayout, Label, VerticalLayout } from 'lively.morphic';
 import { pt, Color } from 'lively.graphics';
+import { connect } from 'lively.bindings';
 
 export class Timeline extends Morph {
   static get properties () {
@@ -213,6 +214,7 @@ export class TimelineSequence extends Morph {
     this.borderColor = Color.rgb(0, 0, 0);
     this.sequence = sequence;
     this.timelineLayer.addMorph(this);
+    this.initResizer();
   }
 
   onBeingDroppedOn (hand, recipient) {
@@ -231,5 +233,34 @@ export class TimelineSequence extends Morph {
 
   updateSequenceStartPosition () {
     this.sequence.start = this.timelineLayer.timeline.getScrollFromPosition(this.position.x);
+  }
+
+  initResizer () {
+    const rightResizer = new Morph({
+      name: 'right resizer',
+      fill: Color.transparent,
+      width: 10,
+      draggable: true,
+      nativeCursor: 'ew-resize'
+    });
+    connect(rightResizer, 'onDrag', this, 'drag');
+    connect(rightResizer, 'onDragEnd', this, 'finishDrag');
+    this.addMorph(rightResizer);
+    rightResizer.position = pt(this.width - rightResizer.width, 0);
+    rightResizer.height = this.height;
+  }
+
+  drag (event) {
+    if (!this.dragStarted) {
+      this.dragStarted = true;
+      this.widthBeforeDrag = this.width;
+    }
+    const dragDelta = event.position.x - event.startPosition.x;
+    this.extent = pt(this.widthBeforeDrag + dragDelta, this.height);
+  }
+
+  finishDrag () {
+    this.dragStarted = true;
+    this.widthBeforeDrag = this.width;
   }
 }
