@@ -1,3 +1,3 @@
-# typeshift.interactives-editor
+# interactives-editor
 
-No description for package typeshift.interactives-editor yet.
+The interactives editor allows editing of interactives. Currently it is designed to edit scrolltellings.
