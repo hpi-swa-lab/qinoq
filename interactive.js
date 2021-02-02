@@ -5,7 +5,7 @@ export class Interactive extends Morph {
   static example () {
     const interactive = new Interactive({
       extent: pt(400, 300),
-      length: 100
+      length: 500
     });
 
     const foregroundLayer = Layer.exampleForegroundLayer();
@@ -55,13 +55,24 @@ export class Interactive extends Morph {
     super(props);
     const { length = 100 } = props;
     this.initScrollableContent();
-    this.clipMode = 'auto';
   }
 
   initScrollableContent () {
-    const container = new Morph({ name: 'scrollable content', extent: pt(400, 400) });
-    this.addMorph(container);
-    this.scroller = container;
+    const scrollHolder = new InteractiveScrollHolder(this, { name: 'scrollable container', extent: pt(400, 300), clipMode: 'auto', opacity: 0.001 });
+    const scrollLengthContainer = new Morph({ name: 'scrollable content', extent: pt(400, 800), halosEnabled: false });
+    scrollHolder.addMorph(scrollLengthContainer);
+    this.scroller = scrollHolder;
+  }
+
+  openInWorld () {
+    super.openInWorld();
+    this.scroller.openInWorld();
+    this.scroller.position = this.position;
+  }
+
+  remove () {
+    this.scroller.remove();
+    super.remove();
   }
 
   get isInteractive () {
@@ -73,7 +84,7 @@ export class Interactive extends Morph {
       sequence.updateProgress(this.scrollPosition);
       if (sequence.isDisplayed()) {
         sequence.globalPosition = this.globalPosition;
-        this.scroller.addMorph(sequence);
+        this.addMorph(sequence);
       } else {
         sequence.remove();
       }
@@ -97,9 +108,23 @@ export class Interactive extends Morph {
       sequence.layer = this.layers[0];
     }
   }
+}
+
+export class InteractiveScrollHolder extends Morph {
+  static get properties () {
+    return {
+      interactive: {}
+    };
+  }
+
+  constructor (interactive, props) {
+    super(props);
+    this.interactive = interactive;
+    this.halosEnabled = false;
+  }
 
   onScroll (evt) {
-    this.scrollPosition = this.scroll.y;
+    this.interactive.scrollPosition = this.scroll.y;
   }
 }
 
@@ -150,21 +175,21 @@ export class Sequence extends Morph {
   }
 
   static backgroundNightExample () {
-    const backgroundSequence = new Sequence(0, 50, { name: 'night background' });
+    const backgroundSequence = new Sequence(0, 250, { name: 'night background' });
     const backgroundMorph = new Morph({ fill: Color.rgbHex('272a7c'), extent: pt(400, 300) });
     backgroundSequence.addMorph(backgroundMorph);
     return backgroundSequence;
   }
 
   static backgroundDayExample () {
-    const backgroundSequence = new Sequence(50, 50, { name: 'day background' });
+    const backgroundSequence = new Sequence(250, 250, { name: 'day background' });
     const backgroundMorph = new Morph({ fill: Color.rgbHex('60b2e5'), extent: pt(400, 300) });
     backgroundSequence.addMorph(backgroundMorph);
     return backgroundSequence;
   }
 
   static treeExample () {
-    const treeSequence = new Sequence(0, 100, { name: 'Tree Sequence' });
+    const treeSequence = new Sequence(0, 500, { name: 'Tree Sequence' });
     const stemMorph = new Morph({ fill: Color.rgbHex('734c30'), extent: pt(30, 60) });
     const vertices = [pt(60, 0), pt(90, 50), pt(70, 50), pt(100, 100), pt(70, 100), pt(110, 150), pt(10, 150), pt(50, 100), pt(20, 100), pt(50, 50), pt(30, 50)];
     const crownMorph = new Polygon({ fill: Color.rgbHex('74a57f'), vertices: vertices });
