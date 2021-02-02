@@ -90,7 +90,7 @@ export class Preview extends Morph {
 
   setContent (interactive) {
     this.addMorph(interactive);
-    this.addMorph(interactive.scroller);
+    this.addMorph(interactive.scrollOverlay);
     interactive.position = pt(0, 0);
     this.extent = interactive.extent;
   }

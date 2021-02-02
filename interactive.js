@@ -55,25 +55,25 @@ export class Interactive extends Morph {
   constructor (props = {}) {
     super(props);
     const { length = 100 } = props;
-    this.initScrollableContent();
+    this.initScrollOverlay();
   }
 
-  initScrollableContent () {
-    const scrollHolder = new InteractiveScrollHolder(this, { name: 'scrollable container', extent: pt(400, 300), clipMode: 'auto', opacity: 0.001 });
+  initScrollOverlay () {
+    const scrollOverlay = new InteractiveScrollHolder(this, { name: 'scrollable container', extent: pt(400, 300), clipMode: 'auto', opacity: 0.001 });
     const scrollLengthContainer = new Morph({ name: 'scrollable content', extent: pt(400, 800), halosEnabled: false });
-    scrollHolder.addMorph(scrollLengthContainer);
-    this.scroller = scrollHolder;
-    connect(this, 'position', scrollHolder, 'position');
+    scrollOverlay.addMorph(scrollLengthContainer);
+    connect(this, 'position', scrollOverlay, 'position');
+    this.scrollOverlay = scrollOverlay;
   }
 
   openInWorld () {
     super.openInWorld();
-    this.scroller.openInWorld();
-    this.scroller.position = this.position;
+    this.scrollOverlay.openInWorld();
+    this.scrollOverlay.position = this.position;
   }
 
   remove () {
-    this.scroller.remove();
+    this.scrollOverlay.remove();
     super.remove();
   }
 
