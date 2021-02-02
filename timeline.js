@@ -26,6 +26,12 @@ export class Timeline extends Morph {
 
     this.initializeLayerInfoContainer();
     this.initializeLayerContainer();
+    this.initializeCursor();
+  }
+
+  initializeCursor () {
+    this.ui.cursor = new TimelineCursor();
+    this.addMorph(this.ui.cursor);
   }
 
   initializeLayerContainer () {
@@ -105,12 +111,20 @@ export class Timeline extends Morph {
   loadContent (interactive) {
     this.interactive = interactive;
     this.timelineLayerDict = {};
+
     this.interactive.layers.forEach(layer => {
       const timelineLayer = this.createTimelineLayer(layer);
       this.timelineLayerDict[layer.name] = timelineLayer;
     });
     this.interactive.sequences.forEach(sequence => this.createTimelineSequence(sequence));
     this.updateLayerPositions();
+
+    connect(this.interactive, 'scrollPosition', this, 'onScrollPositionChange');
+  }
+
+  onScrollPositionChange (scrollPosition) {
+    this.ui.cursor.value = scrollPosition;
+    this.ui.cursor.position = pt(scrollPosition - this.ui.cursor.width / 2 + this.ui.layerContainer.position.x, 0);
   }
 
   getPositionFromScroll (scroll) {
