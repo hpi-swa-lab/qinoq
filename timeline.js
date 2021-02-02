@@ -116,6 +116,10 @@ export class Timeline extends Morph {
     return duration;
   }
 
+  getDurationFromOffset (offset) {
+    return offset;
+  }
+
   updateZIndicesFromTimelineLayerPositions () {
     const layerPositions = this.timelineLayers.map(timelineLayer =>
       ({
@@ -262,5 +266,6 @@ export class TimelineSequence extends Morph {
   finishDrag () {
     this.dragStarted = true;
     this.widthBeforeDrag = this.width;
+    this.sequence.duration = this.timelineLayer.timeline.getOffsetFromDuration(this.width);
   }
 }
