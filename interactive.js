@@ -1,5 +1,6 @@
 import { Morph, Polygon } from 'lively.morphic';
 import { Color, pt } from 'lively.graphics';
+import { connect } from 'lively.bindings';
 
 export class Interactive extends Morph {
   static example () {
@@ -62,6 +63,7 @@ export class Interactive extends Morph {
     const scrollLengthContainer = new Morph({ name: 'scrollable content', extent: pt(400, 800), halosEnabled: false });
     scrollHolder.addMorph(scrollLengthContainer);
     this.scroller = scrollHolder;
+    connect(this, 'position', scrollHolder, 'position');
   }
 
   openInWorld () {
@@ -83,7 +85,6 @@ export class Interactive extends Morph {
     this.sequences.forEach(sequence => {
       sequence.updateProgress(this.scrollPosition);
       if (sequence.isDisplayed()) {
-        sequence.globalPosition = this.globalPosition;
         this.addMorph(sequence);
       } else {
         sequence.remove();
