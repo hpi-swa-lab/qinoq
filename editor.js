@@ -81,7 +81,7 @@ export class Preview extends Morph {
     if (grabbedMorph.isInteractive) {
       this.editor.loadInteractive(grabbedMorph);
     } else {
-      $world.setStatusMessage('You have to drop an Interactive here');
+      $world.setStatusMessage('You have to drop an interactive here');
     }
   }
 
