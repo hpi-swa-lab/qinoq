@@ -77,6 +77,9 @@ export class Preview extends Morph {
   }
 
   onDrop (evt) {
+    if (evt.type != 'morphicdrop') {
+      return;
+    }
     const grabbedMorph = evt.hand.grabbedMorphs[0];
     if (grabbedMorph.isInteractive) {
       this.editor.loadInteractive(grabbedMorph);
