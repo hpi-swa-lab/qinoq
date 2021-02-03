@@ -125,7 +125,7 @@ export class Timeline extends Morph {
 
   onScrollPositionChange (scrollPosition) {
     this.ui.cursor.value = scrollPosition;
-    this.ui.cursor.position = pt(this.getPositionFromScroll(scrollPosition), 0);
+    this.ui.cursor.location = this.getPositionFromScroll(scrollPosition);
   }
 
   getPositionFromScroll (scroll) {
@@ -302,9 +302,19 @@ export class TimelineCursor extends Morph {
       value: {
         defaultValue: 0,
         type: 'Number',
+        isFloat: false,
         set (value) {
           this.setProperty('value', value);
           this.redraw();
+        }
+      },
+      location: {
+        defaultValue: 0,
+        type: 'Number',
+        isFloat: false,
+        set (location) {
+          this.setProperty('location', location);
+          this.updatePosition();
         }
       },
       cursorColor: {
@@ -385,11 +395,33 @@ export class TimelineCursor extends Morph {
 
   redraw () {
     this.ui.label.textString = this.value.toString();
+    this.updatePosition();
+  }
+
+  _requestPositionUpdate () {
+    this._updatePosition = true;
+    this.makeDirty();
+  }
+
+  onAfterRender (node) {
+    super.onAfterRender(node);
+    if (!this._updatePosition) return;
+    this._updatePosition = false;
+    this.updatePosition();
   }
 
   updateColor () {
     this.ui.head.fill = this.cursorColor;
     this.ui.bar.fill = this.cursorColor;
     this.ui.label.fontColor = this.fontColor;
+  }
+
+  updatePosition () {
+    // Try to update the position directly (which is very fast)
+    this.position = pt(this.location - this.width / 2, this.position.y);
+    // Sometimes, this doesn't work, as the width has not changed yet.
+    // We need to request a rerender, after which the position will be updated again.
+    // This is quite slow and acts as a fallback only
+    this._requestPositionUpdate();
   }
 }
