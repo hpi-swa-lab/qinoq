@@ -31,7 +31,8 @@ export class Timeline extends Morph {
 
   initializeCursor () {
     this.ui.cursor = new TimelineCursor();
-    this.addMorph(this.ui.cursor);
+    this.ui.layerContainer.addMorph(this.ui.cursor);
+    this.onScrollPositionChange(0);
   }
 
   initializeLayerContainer () {
@@ -92,7 +93,7 @@ export class Timeline extends Morph {
       container: this.ui.layerContainer,
       layer: layer
     });
-    this.ui.layerContainer.addMorph(timelineLayer);
+    this.ui.layerContainer.addMorphBack(timelineLayer);
     const layerInfo = new Morph();
     layerInfo.height = CONSTANTS.LAYER_HEIGHT;
     layerInfo.layerLabel = (new Label({
@@ -124,7 +125,7 @@ export class Timeline extends Morph {
 
   onScrollPositionChange (scrollPosition) {
     this.ui.cursor.value = scrollPosition;
-    this.ui.cursor.position = pt(scrollPosition - this.ui.cursor.width / 2 + this.ui.layerContainer.position.x, 0);
+    this.ui.cursor.position = pt(this.getPositionFromScroll(scrollPosition), 0);
   }
 
   getPositionFromScroll (scroll) {
@@ -200,7 +201,7 @@ export class TimelineLayer extends Morph {
   }
 
   onBeingDroppedOn (hand, recipient) {
-    this.container.addMorph(this);
+    this.container.addMorphBack(this);
     this.timeline.arrangeLayerInfos();
     this.timeline.updateZIndicesFromTimelineLayerPositions();
   }
@@ -322,6 +323,7 @@ export class TimelineCursor extends Morph {
 
     this.initialize();
     this.name = 'cursor';
+    this.isLayoutable = false;
     this.value = value;
   }
 
