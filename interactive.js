@@ -123,12 +123,12 @@ export class InteractiveScrollHolder extends Morph {
 
   constructor (interactive) {
     super();
+    this.interactive = interactive;
     this.name = 'scrollable container';
-    this.extent = pt(400, 300);
+    this.extent = pt(this.interactive.width, this.interactive.height);
     this.clipMode = 'auto';
     // opacity of zero leads to removal of object from DOM in firefox
     this.opacity = 0.001;
-    this.interactive = interactive;
     this.halosEnabled = false;
   }
 
