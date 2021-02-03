@@ -225,7 +225,7 @@ export class TimelineSequence extends Morph {
     this.acceptDrops = false;
     this.grabbable = true;
     this.timelineLayer = timelineLayer;
-    this.previousPosition = pt(startPosition + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+    this.previousPosition = pt(startPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     this.position = this.previousPosition;
     this.width = endPosition - startPosition;
     this.addMorph(new Label({ textString: sequence.name }));
@@ -295,6 +295,7 @@ export class TimelineSequence extends Morph {
 const CURSOR_WIDTH = 2;
 const CURSOR_COLOR = Color.rgb(240, 100, 0);
 const CURSOR_FONT_COLOR = Color.rgb(255, 255, 255);
+const CURSOR_FONT_SIZE = 9;
 
 export class TimelineCursor extends Morph {
   static get properties () {
@@ -353,6 +354,7 @@ export class TimelineCursor extends Morph {
     });
     this.ui.label = new Label({
       name: 'cursor/head/text',
+      fontSize: CURSOR_FONT_SIZE,
       halosEnabled: false,
       reactsToPointer: false
     });
@@ -418,7 +420,8 @@ export class TimelineCursor extends Morph {
 
   updatePosition () {
     // Try to update the position directly (which is very fast)
-    this.position = pt(this.location - this.width / 2, this.position.y);
+    // + 2 because the cursor has a slight offset otherwise
+    this.position = pt(this.location - this.width / 2 + 2, this.position.y);
     // Sometimes, this doesn't work, as the width has not changed yet.
     // We need to request a rerender, after which the position will be updated again.
     // This is quite slow and acts as a fallback only
