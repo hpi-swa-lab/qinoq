@@ -295,7 +295,7 @@ export class TimelineSequence extends Morph {
 const CURSOR_WIDTH = 2;
 const CURSOR_COLOR = Color.rgb(240, 100, 0);
 const CURSOR_FONT_COLOR = Color.rgb(255, 255, 255);
-const CURSOR_FONT_SIZE = 9;
+const CURSOR_FONT_SIZE = 10;
 
 export class TimelineCursor extends Morph {
   static get properties () {
@@ -361,7 +361,7 @@ export class TimelineCursor extends Morph {
     this.ui.head = new Morph({
       name: 'cursor/head',
       layout: new HorizontalLayout({
-        spacing: 4,
+        spacing: 3,
         autoResize: true
       }),
       halosEnabled: false,
