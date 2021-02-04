@@ -211,6 +211,11 @@ export class TimelineLayer extends Morph {
     this.timeline.updateLayerPositions();
   }
 
+  onMouseDown (event) {
+    super.onMouseDown(event);
+    this.timeline.unselectAllSequences();
+  }
+
   onHoverIn (event) {
     super.onHoverIn(event);
     if (event.hand.dragTimelineSequenceState) {
