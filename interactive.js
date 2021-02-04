@@ -107,6 +107,7 @@ export class Interactive extends Morph {
   }
 
   addSequence (sequence) {
+    connect(sequence, 'layer', this, 'sortSequences');
     this.sequences.push(sequence);
     if (!sequence.layer || !this.layers.includes(sequence.layer)) {
       sequence.layer = this.layers[0];
@@ -179,7 +180,7 @@ class Sequence extends Morph {
         max: 1,
         isFloat: true
       },
-      layer: { }
+      layer: {}
     };
   }
 
