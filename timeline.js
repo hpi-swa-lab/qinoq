@@ -143,9 +143,9 @@ export class Timeline extends Morph {
     this.interactive.redraw();
   }
 
-  unselectAllSequences () {
+  deselectAllSequences () {
     this.timelineLayers.forEach(timelineLayer => {
-      timelineLayer.unselectAllSequences();
+      timelineLayer.deselectAllSequences();
     });
   }
 }
@@ -194,7 +194,7 @@ export class TimelineLayer extends Morph {
 
   onMouseDown (event) {
     super.onMouseDown(event);
-    this.timeline.unselectAllSequences();
+    this.timeline.deselectAllSequences();
   }
 
   onHoverIn (event) {
@@ -212,7 +212,7 @@ export class TimelineLayer extends Morph {
     this.timeline.updateZIndicesFromTimelineLayerPositions();
   }
 
-  unselectAllSequences () {
+  deselectAllSequences () {
     this.withAllSubmorphsDo(submorph => {
       if (submorph.isTimelineSequence) submorph.selected = false;
     });
@@ -291,7 +291,7 @@ export class TimelineSequence extends Morph {
   }
 
   onMouseDown (event) {
-    this.timeline.unselectAllSequences();
+    this.timeline.deselectAllSequences();
     this.selected = true;
   }
 
