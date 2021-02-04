@@ -192,6 +192,15 @@ export class TimelineLayer extends Morph {
     this.timeline.updateLayerPositions();
   }
 
+  onHoverIn (event) {
+    super.onHoverIn(event);
+    if (event.hand.dragTimelineSequenceState) {
+      event.hand.dragTimelineSequenceState.timelineSequences.forEach(timelineSequence => {
+        timelineSequence.onBeingMovedTo(this);
+      });
+    }
+  }
+
   onBeingDroppedOn (hand, recipient) {
     this.container.addMorph(this);
     this.timeline.arrangeLayerInfos();
@@ -253,24 +262,28 @@ export class TimelineSequence extends Morph {
     this.fill = selected ? Color.gray : Color.white;
   }
 
+  onDragStart (event) {
+    event.hand.dragTimelineSequenceState = {
+      timelineSequences: [this],
+      originalTimelineLayer: this.timelineLayer
+    };
+  }
+
+  onDragEnd (event) {
+    delete event.hand.dragTimelineSequenceState;
+  }
+
   onDrag (event) {
     super.onDrag(event);
     this.position = pt(this.position.x, SEQUENCE_LAYER_Y_OFFSET);
     this.updateSequenceAfterArrangement();
   }
 
-  onBeingDroppedOn (hand, recipient) {
-    if (recipient.isTimelineLayer) {
-      this.timelineLayer = recipient;
-      this.timelineLayer.addMorph(this);
-      this.position = pt(this.globalPosition.x - this.timelineLayer.globalPosition.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-      this.previousPosition = this.position.copy();
-      this.updateSequenceStartPosition();
-      this.sequence.layer = this.timelineLayer.layer;
-    } else {
-      this.timelineLayer.addMorph(this);
-      this.position = this.previousPosition;
-    }
+  onBeingMovedTo (timelineLayer) {
+    this.timelineLayer = timelineLayer;
+    this.timelineLayer.addMorph(this);
+    this.sequence.layer = this.timelineLayer.layer;
+    this.updateSequenceAfterArrangement();
   }
 
   isTimelineSequence () {
@@ -279,10 +292,6 @@ export class TimelineSequence extends Morph {
 
   get timeline () {
     return this.timelineLayer.timeline;
-  }
-
-  updateSequenceStartPosition () {
-    this.sequence.start = this.timeline.getScrollFromPosition(this.position.x);
   }
 
   initializeResizers () {
