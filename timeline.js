@@ -161,6 +161,12 @@ export class Timeline extends Morph {
     });
     this.interactive.redraw();
   }
+
+  unselectAllSequences () {
+    this.timelineLayers.forEach(timelineLayer => {
+      timelineLayer.unselectAllSequences();
+    });
+  }
 }
 
 export class TimelineLayer extends Morph {
@@ -210,6 +216,12 @@ export class TimelineLayer extends Morph {
     this.timeline.arrangeLayerInfos();
     this.timeline.updateZIndicesFromTimelineLayerPositions();
   }
+
+  unselectAllSequences () {
+    this.withAllSubmorphsDo(submorph => {
+      if (submorph.isTimelineSequence) submorph.selected = false;
+    });
+  }
 }
 
 export class TimelineSequence extends Morph {
@@ -217,7 +229,15 @@ export class TimelineSequence extends Morph {
     return {
       timelineLayer: {},
       previousPosition: {},
-      sequence: {}
+      sequence: {},
+      selected: {
+        defaultValue: false,
+        type: 'Boolean',
+        set (selected) {
+          this.setProperty('selected', selected);
+          this.onSelectionChange(selected);
+        }
+      }
     };
   }
 
@@ -229,18 +249,33 @@ export class TimelineSequence extends Morph {
     this.height = CONSTANTS.SEQUENCE_HEIGHT;
     this.minimalSequenceWidth = CONSTANTS.MINIMAL_SEQUENCE_WIDTH;
     this.acceptDrops = false;
-    this.grabbable = true;
+    this.draggable = true;
     this.timelineLayer = timelineLayer;
     this.previousPosition = pt(startPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     this.position = this.previousPosition;
     this.width = endPosition - startPosition;
     this.addMorph(new Label({ textString: sequence.name }));
-    this.nativeCursor = 'grab';
+    this.nativeCursor = 'default';
     this.borderWidth = 1;
     this.borderColor = Color.rgb(0, 0, 0);
     this.sequence = sequence;
     this.timelineLayer.addMorph(this);
     this.initializeResizers();
+  }
+
+  onMouseDown (event) {
+    this.timeline.unselectAllSequences();
+    this.selected = true;
+  }
+
+  onSelectionChange (selected) {
+    this.fill = selected ? Color.gray : Color.white;
+  }
+
+  onDrag (event) {
+    super.onDrag(event);
+    this.position = pt(this.position.x, SEQUENCE_LAYER_Y_OFFSET);
+    this.updateSequenceAfterArrangement();
   }
 
   onBeingDroppedOn (hand, recipient) {
@@ -255,6 +290,10 @@ export class TimelineSequence extends Morph {
       this.timelineLayer.addMorph(this);
       this.position = this.previousPosition;
     }
+  }
+
+  isTimelineSequence () {
+    return true;
   }
 
   get timeline () {
@@ -299,13 +338,14 @@ export class TimelineSequence extends Morph {
     if (newSequenceWidth < this.minimalSequenceWidth) {
       this.extent = pt(this.minimalSequenceWidth, this.height);
       this.rightResizer.position = pt(this.minimalSequenceWidth - this.rightResizer.width, 0);
+      this.updateSequenceAfterArrangement();
       return;
     }
 
     this.extent = pt(newSequenceWidth, this.height);
     this.rightResizer.position = pt(this.rightResizer.position.x, 0);
 
-    this.updateSequenceDuration();
+    this.updateSequenceAfterArrangement();
   }
 
   onResizeLeftStart (event) {
@@ -322,21 +362,20 @@ export class TimelineSequence extends Morph {
     if (newSequenceWidth <= this.minimalSequenceWidth) {
       this.extent = pt(this.minimalSequenceWidth, this.height);
       this.globalPosition = pt(rightResizerGlobalPosition.x + this.rightResizer.width - this.minimalSequenceWidth, this.globalPosition.y);
-      this.leftResizer.position = pt(0, 0);
-      this.rightResizer.globalPosition = rightResizerGlobalPosition;
-      return;
+    } else {
+      this.globalPosition = pt(this.startPosition.x - dragDelta, this.globalPosition.y);
+      this.extent = pt(newSequenceWidth, this.height);
     }
 
-    this.globalPosition = pt(this.startPosition.x - dragDelta, this.globalPosition.y);
-    this.extent = pt(newSequenceWidth, this.height);
     this.leftResizer.position = pt(0, 0);
     this.rightResizer.globalPosition = rightResizerGlobalPosition;
 
-    this.updateSequenceDuration();
+    this.updateSequenceAfterArrangement();
   }
 
-  updateSequenceDuration () {
+  updateSequenceAfterArrangement () {
     this.sequence.duration = this.timeline.getDurationFromWidth(this.width);
+    this.sequence.start = this.timeline.getScrollFromPosition(this.position.x);
     this.timeline.interactive.redraw();
   }
 }
