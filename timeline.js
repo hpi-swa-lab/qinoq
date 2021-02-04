@@ -245,12 +245,44 @@ export class TimelineSequence extends Morph {
     this.position = this.previousPosition;
     this.width = endPosition - startPosition;
     this.addMorph(new Label({ textString: sequence.name }));
+
     this.nativeCursor = 'default';
+
     this.borderWidth = 1;
     this.borderColor = Color.rgb(0, 0, 0);
+    this.borderRadius = 3;
+
     this.sequence = sequence;
     this.timelineLayer.addMorph(this);
     this.initializeResizers();
+  }
+
+  initializeResizers () {
+    const resizerProps = {
+      fill: Color.transparent,
+      width: 7,
+      draggable: true,
+      nativeCursor: 'ew-resize',
+      height: this.height
+    };
+
+    this.rightResizer = new Morph({
+      name: 'right resizer',
+      position: pt(this.width - resizerProps.width, 0),
+      ...resizerProps
+    });
+    this.leftResizer = new Morph({
+      name: 'left resizer',
+      position: pt(0, 0),
+      ...resizerProps
+    });
+
+    connect(this.rightResizer, 'onDrag', this, 'onResizeRight');
+    connect(this.leftResizer, 'onDrag', this, 'onResizeLeft');
+    connect(this.leftResizer, 'onDragStart', this, 'onResizeLeftStart');
+
+    this.addMorphBack(this.rightResizer);
+    this.addMorphBack(this.leftResizer);
   }
 
   onMouseDown (event) {
@@ -259,7 +291,7 @@ export class TimelineSequence extends Morph {
   }
 
   onSelectionChange (selected) {
-    this.fill = selected ? Color.gray : Color.white;
+    this.fill = selected ? Color.lightGray : Color.white;
   }
 
   onDragStart (event) {
@@ -292,34 +324,6 @@ export class TimelineSequence extends Morph {
 
   get timeline () {
     return this.timelineLayer.timeline;
-  }
-
-  initializeResizers () {
-    const resizerProps = {
-      fill: Color.red,
-      width: 10,
-      draggable: true,
-      nativeCursor: 'ew-resize',
-      height: this.height
-    };
-
-    this.rightResizer = new Morph({
-      name: 'right resizer',
-      position: pt(this.width - resizerProps.width, 0),
-      ...resizerProps
-    });
-    this.leftResizer = new Morph({
-      name: 'left resizer',
-      position: pt(0, 0),
-      ...resizerProps
-    });
-
-    connect(this.rightResizer, 'onDrag', this, 'onResizeRight');
-    connect(this.leftResizer, 'onDrag', this, 'onResizeLeft');
-    connect(this.leftResizer, 'onDragStart', this, 'onResizeLeftStart');
-
-    this.addMorphBack(this.rightResizer);
-    this.addMorphBack(this.leftResizer);
   }
 
   onResizeRight (event) {
