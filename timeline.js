@@ -8,7 +8,8 @@ const CONSTANTS = {
   SEQUENCE_HEIGHT: 40,
   DEFAULT_SEQUENCE_WIDTH: 100,
   SEQUENCE_INITIAL_X_OFFSET: 5,
-  SEQUENCE_LAYER_Y_OFFSET: 5
+  SEQUENCE_LAYER_Y_OFFSET: 5,
+  MINIMAL_SEQUENCE_WIDTH: 20
 };
 
 export class Timeline extends Morph {
@@ -226,6 +227,7 @@ export class TimelineSequence extends Morph {
     const endPosition = startPosition + timelineLayer.timeline.getWidthFromDuration(sequence.duration);
 
     this.height = CONSTANTS.SEQUENCE_HEIGHT;
+    this.minimalSequenceWidth = CONSTANTS.MINIMAL_SEQUENCE_WIDTH;
     this.acceptDrops = false;
     this.grabbable = true;
     this.timelineLayer = timelineLayer;
@@ -238,7 +240,7 @@ export class TimelineSequence extends Morph {
     this.borderColor = Color.rgb(0, 0, 0);
     this.sequence = sequence;
     this.timelineLayer.addMorph(this);
-    this.initializeResizer();
+    this.initializeResizers();
   }
 
   onBeingDroppedOn (hand, recipient) {
@@ -263,34 +265,77 @@ export class TimelineSequence extends Morph {
     this.sequence.start = this.timeline.getScrollFromPosition(this.position.x);
   }
 
-  initializeResizer () {
-    this.rightResizer = new Morph({
-      name: 'right resizer',
-      fill: Color.transparent,
+  initializeResizers () {
+    const resizerProps = {
+      fill: Color.red,
       width: 10,
       draggable: true,
-      nativeCursor: 'ew-resize'
+      nativeCursor: 'ew-resize',
+      height: this.height
+    };
+
+    this.rightResizer = new Morph({
+      name: 'right resizer',
+      position: pt(this.width - resizerProps.width, 0),
+      ...resizerProps
     });
-    connect(this.rightResizer, 'onDrag', this, 'drag');
-    connect(this.rightResizer, 'onDragEnd', this, 'finishDrag');
-    this.addMorph(this.rightResizer);
-    this.rightResizer.position = pt(this.width - this.rightResizer.width, 0);
-    this.rightResizer.height = this.height;
+    this.leftResizer = new Morph({
+      name: 'left resizer',
+      position: pt(0, 0),
+      ...resizerProps
+    });
+
+    connect(this.rightResizer, 'onDrag', this, 'onResizeRight');
+    connect(this.leftResizer, 'onDrag', this, 'onResizeLeft');
+    connect(this.leftResizer, 'onDragStart', this, 'onResizeLeftStart');
+
+    this.addMorphBack(this.rightResizer);
+    this.addMorphBack(this.leftResizer);
   }
 
-  drag (event) {
-    if (!this.dragStarted) {
-      this.dragStarted = true;
-      this.widthBeforeDrag = this.width;
+  onResizeRight (event) {
+    const newSequenceWidth = this.rightResizer.position.x + this.rightResizer.width;
+
+    if (newSequenceWidth < this.minimalSequenceWidth) {
+      this.extent = pt(this.minimalSequenceWidth, this.height);
+      this.rightResizer.position = pt(this.minimalSequenceWidth - this.rightResizer.width, 0);
+      return;
     }
-    const dragDelta = event.position.x - event.startPosition.x;
-    this.extent = pt(this.widthBeforeDrag + dragDelta, this.height);
+
+    this.extent = pt(newSequenceWidth, this.height);
     this.rightResizer.position = pt(this.rightResizer.position.x, 0);
+
+    this.updateSequenceDuration();
   }
 
-  finishDrag () {
-    this.dragStarted = true;
-    this.widthBeforeDrag = this.width;
+  onResizeLeftStart (event) {
+    this.leftResizer.startPosition = this.leftResizer.globalPosition;
+    this.startWidth = this.width;
+    this.startPosition = this.globalPosition;
+  }
+
+  onResizeLeft (event) {
+    const dragDelta = event.startPosition.x - event.position.x;
+    const newSequenceWidth = this.startWidth + dragDelta;
+    const rightResizerGlobalPosition = this.rightResizer.globalPosition;
+
+    if (newSequenceWidth <= this.minimalSequenceWidth) {
+      this.extent = pt(this.minimalSequenceWidth, this.height);
+      this.globalPosition = pt(rightResizerGlobalPosition.x + this.rightResizer.width - this.minimalSequenceWidth, this.globalPosition.y);
+      this.leftResizer.position = pt(0, 0);
+      this.rightResizer.globalPosition = rightResizerGlobalPosition;
+      return;
+    }
+
+    this.globalPosition = pt(this.startPosition.x - dragDelta, this.globalPosition.y);
+    this.extent = pt(newSequenceWidth, this.height);
+    this.leftResizer.position = pt(0, 0);
+    this.rightResizer.globalPosition = rightResizerGlobalPosition;
+
+    this.updateSequenceDuration();
+  }
+
+  updateSequenceDuration () {
     this.sequence.duration = this.timeline.getDurationFromWidth(this.width);
     this.timeline.interactive.redraw();
   }
