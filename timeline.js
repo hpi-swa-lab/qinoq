@@ -325,6 +325,13 @@ export class TimelineCursor extends Morph {
           this.updateColor();
         }
       },
+      fontColor: {
+        defaultValue: CURSOR_FONT_COLOR,
+        set (color) {
+          this.setProperty('fontColor', color);
+          this.updateColor();
+        }
+      },
       ui: {}
     };
   }
@@ -377,7 +384,6 @@ export class TimelineCursor extends Morph {
       autoResize: true,
       align: 'center'
     });
-    this.fontColor = CURSOR_FONT_COLOR;
     this.fill = Color.rgba(0, 0, 0, 0);
     this.borderStyle = 'none';
     this.updateColor();
@@ -386,13 +392,6 @@ export class TimelineCursor extends Morph {
   onOwnerChanged (newOwner) {
     if (!newOwner) return;
     this.ui.bar.height = newOwner.height - this.ui.head.height;
-  }
-
-  onChange (change) {
-    if (change.prop === 'fontColor') {
-      this.updateColor();
-    }
-    super.onChange(change);
   }
 
   redraw () {
