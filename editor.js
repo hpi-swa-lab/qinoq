@@ -38,10 +38,9 @@ export class InteractivesEditor extends Morph {
   }
 
   initializeUIElements () {
-    this.addMorph(new SequenceOverview({ position: pt(0, 0) }));
-    this.preview = new Preview(this, { position: pt(SIDEBAR_WIDTH, 0) });
-    this.addMorph(this.preview);
-    this.addMorph(new InteractiveMorphInspector({ position: pt(PREVIEW_WIDTH + SIDEBAR_WIDTH, 0) }));
+    this.sequenceOverview = this.addMorph(new SequenceOverview({ position: pt(0, 0) }));
+    this.preview = this.addMorph(new Preview(this, { position: pt(SIDEBAR_WIDTH, 0) }));
+    this.morphInspector = this.addMorph(new InteractiveMorphInspector({ position: pt(PREVIEW_WIDTH + SIDEBAR_WIDTH, 0) }));
     this.timeline = new Timeline({ position: pt(0, SUBWINDOW_HEIGHT), extent: pt(EDITOR_WIDTH, EDITOR_HEIGHT - SUBWINDOW_HEIGHT) });
     this.addMorph(this.timeline);
   }
