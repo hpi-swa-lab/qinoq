@@ -6,8 +6,8 @@ import { Interactive } from './interactive.js';
 
 const EDITOR_WIDTH = 900;
 const EDITOR_HEIGHT = 500;
-const SIDEBAR_WIDTH = (EDITOR_WIDTH - PREVIEW_WIDTH) / 2;
 const PREVIEW_WIDTH = 400;
+const SIDEBAR_WIDTH = (EDITOR_WIDTH - PREVIEW_WIDTH) / 2;
 const SUBWINDOW_HEIGHT = 300;
 const BORDER_WIDTH = 3;
 const BORDER_COLOR = new Color.rgb(240, 240, 240);
@@ -29,8 +29,8 @@ export class InteractivesEditor extends Morph {
 
     this.name = 'interactives editor';
     this.extent = pt(EDITOR_WIDTH, EDITOR_HEIGHT);
-    this.initializeLayout();
     this.initializeUIElements();
+    this.initializeLayout();
     this.openInWindow({
       title: 'Interactives Editor',
       name: 'window for interactives editor'
