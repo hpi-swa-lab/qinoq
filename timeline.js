@@ -178,6 +178,11 @@ export class TimelineLayer extends Morph {
     };
   }
 
+  static timelineSequencesDragged (event) {
+    if (!event.hand.dragTimelineSequenceState) return [];
+    return event.hand.dragTimelineSequenceState.timelineSequences;
+  }
+
   constructor (props = {}) {
     super(props);
     const { container, layer } = props;
@@ -219,7 +224,7 @@ export class TimelineLayer extends Morph {
   onHoverIn (event) {
     super.onHoverIn(event);
     if (event.hand.dragTimelineSequenceState) {
-      event.hand.dragTimelineSequenceState.timelineSequences.forEach(timelineSequence => {
+      TimelineLayer.timelineSequencesDragged(event).forEach(timelineSequence => {
         timelineSequence.onBeingMovedTo(this);
       });
     }
@@ -273,7 +278,7 @@ export class TimelineSequence extends Morph {
     this.nativeCursor = 'default';
 
     this.borderWidth = 1;
-    this.borderColor = Color.rgb(0, 0, 0);
+    this.borderColor = Color.black;
     this.borderRadius = 3;
 
     this.sequence = sequence;
@@ -315,7 +320,7 @@ export class TimelineSequence extends Morph {
   }
 
   onSelectionChange (selected) {
-    this.fill = selected ? Color.lightGray : Color.white;
+    this.borderColor = selected ? Color.rgb(0, 176, 255) : Color.black;
   }
 
   onDragStart (event) {
