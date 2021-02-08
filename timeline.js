@@ -32,7 +32,9 @@ export class Timeline extends Morph {
   initializeCursor () {
     this.ui.cursor = new TimelineCursor();
     this.ui.layerContainer.addMorph(this.ui.cursor);
-    this.onScrollPositionChange(0);
+    this.ui.cursor.displayValue = 0;
+    this.ui.cursor.location = this.getPositionFromScroll(0);
+    this.ui.cursor.height = this.height;
   }
 
   initializeLayerContainer () {
@@ -120,11 +122,13 @@ export class Timeline extends Morph {
     this.interactive.sequences.forEach(sequence => this.createTimelineSequence(sequence));
     this.updateLayerPositions();
 
+    this.onScrollPositionChange(this.interactive.scrollPosition);
+
     connect(this.interactive, 'scrollPosition', this, 'onScrollPositionChange');
   }
 
   onScrollPositionChange (scrollPosition) {
-    this.ui.cursor.value = scrollPosition;
+    this.ui.cursor.displayValue = Math.round(scrollPosition);
     this.ui.cursor.location = this.getPositionFromScroll(scrollPosition);
   }
 
@@ -300,16 +304,18 @@ const CURSOR_FONT_SIZE = 10;
 export class TimelineCursor extends Morph {
   static get properties () {
     return {
-      value: {
+      displayValue: {
         defaultValue: 0,
         type: 'Number',
         isFloat: false,
-        set (value) {
-          this.setProperty('value', value);
+        set (displayValue) {
+          this.setProperty('displayValue', displayValue);
           this.redraw();
         }
       },
       location: {
+        // location: where the cursor should point at
+        // position: actual position of the morph, which is dependent on the location and the width of the cursor
         defaultValue: 0,
         type: 'Number',
         isFloat: false,
@@ -339,13 +345,13 @@ export class TimelineCursor extends Morph {
     };
   }
 
-  constructor (value = 0, props = {}) {
+  constructor (displayValue = 0, props = {}) {
     super(props);
 
     this.initialize();
 
     this.isLayoutable = false;
-    this.value = value;
+    this.displayValue = displayValue;
   }
 
   initialize () {
@@ -394,13 +400,8 @@ export class TimelineCursor extends Morph {
     this.updateColor();
   }
 
-  onOwnerChanged (newOwner) {
-    if (!newOwner) return;
-    this.height = newOwner.height - this.ui.head.height;
-  }
-
   redraw () {
-    this.ui.label.textString = this.value.toString();
+    this.ui.label.textString = this.displayValue.toString();
     this.updatePosition();
   }
 
