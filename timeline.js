@@ -74,7 +74,7 @@ export class Timeline extends Morph {
 
   updateLayerPositions () {
     this.interactive.layers.forEach(layer => {
-      const timelineLayer = this.timelineLayerDict[layer.name];
+      const timelineLayer = this.timelineLayerDict[layer.id];
       timelineLayer.position = pt(timelineLayer.position.x, -layer.zIndex);
     });
     this.arrangeLayerInfos();
@@ -108,7 +108,7 @@ export class Timeline extends Morph {
   }
 
   createTimelineSequence (sequence) {
-    return new TimelineSequence(sequence, this.timelineLayerDict[sequence.layer.name]);
+    return new TimelineSequence(sequence, this.timelineLayerDict[sequence.layer.id]);
   }
 
   loadContent (interactive) {
@@ -117,7 +117,7 @@ export class Timeline extends Morph {
 
     this.interactive.layers.forEach(layer => {
       const timelineLayer = this.createTimelineLayer(layer);
-      this.timelineLayerDict[layer.name] = timelineLayer;
+      this.timelineLayerDict[layer.id] = timelineLayer;
     });
     this.interactive.sequences.forEach(sequence => this.createTimelineSequence(sequence));
     this.updateLayerPositions();
