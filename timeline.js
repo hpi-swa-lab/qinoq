@@ -137,7 +137,7 @@ export class Timeline extends Morph {
 const LAYER_INFO_WIDTH = 50;
 const LAYER_HEIGHT = 50;
 
-class TimelineLayer extends Morph {
+export class TimelineLayer extends Morph {
   static get properties () {
     return {
       layerInfo: {},
@@ -191,7 +191,7 @@ const DEFAULT_SEQUENCE_WIDTH = 100;
 const SEQUENCE_INITIAL_X_OFFSET = 5;
 const SEQUENCE_LAYER_Y_OFFSET = 5;
 
-class TimelineSequence extends Morph {
+export class TimelineSequence extends Morph {
   static get properties () {
     return {
       timelineLayer: {},
