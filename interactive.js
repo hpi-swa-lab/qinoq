@@ -1,6 +1,7 @@
 import { Morph, Polygon } from 'lively.morphic';
 import { Color, pt } from 'lively.graphics';
 import { connect } from 'lively.bindings';
+import { newUUID } from 'lively.lang/string.js';
 
 export class Interactive extends Morph {
   static example () {
@@ -167,6 +168,7 @@ class Layer {
     this.name = 'Unnamed Layer';
     this.hidden = false;
     this._zIndex = 0;
+    this.id = newUUID();
   }
 }
 
