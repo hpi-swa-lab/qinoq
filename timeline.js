@@ -74,10 +74,14 @@ export class Timeline extends Morph {
 
   updateLayerPositions () {
     this.interactive.layers.forEach(layer => {
-      const timelineLayer = this.timelineLayerDict[layer.id];
+      const timelineLayer = this.getTimelineLayerFor(layer);
       timelineLayer.position = pt(timelineLayer.position.x, -layer.zIndex);
     });
     this.arrangeLayerInfos();
+  }
+
+  getTimelineLayerFor (layer) {
+    return this._timelineLayerDict[layer.id];
   }
 
   relayout (availableWidth) {
@@ -87,7 +91,7 @@ export class Timeline extends Morph {
   }
 
   get timelineLayers () {
-    return Object.values(this.timelineLayerDict);
+    return Object.values(this._timelineLayerDict);
   }
 
   createTimelineLayer (layer) {
@@ -104,20 +108,20 @@ export class Timeline extends Morph {
     timelineLayer.layerInfo = layerInfo;
     layerInfo.addMorph(layerInfo.layerLabel);
     this.ui.layerInfoContainer.addMorph(layerInfo);
+    this._timelineLayerDict[layer.id] = timelineLayer;
     return timelineLayer;
   }
 
   createTimelineSequence (sequence) {
-    return new TimelineSequence(sequence, this.timelineLayerDict[sequence.layer.id]);
+    return new TimelineSequence(sequence, this.getTimelineLayerFor(sequence.layer));
   }
 
   loadContent (interactive) {
     this.interactive = interactive;
-    this.timelineLayerDict = {};
+    this._timelineLayerDict = {};
 
     this.interactive.layers.forEach(layer => {
       const timelineLayer = this.createTimelineLayer(layer);
-      this.timelineLayerDict[layer.id] = timelineLayer;
     });
     this.interactive.sequences.forEach(sequence => this.createTimelineSequence(sequence));
     this.updateLayerPositions();
