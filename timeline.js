@@ -336,7 +336,7 @@ export class TimelineSequence extends Morph {
 
   onDrag (event) {
     super.onDrag(event);
-    this.position = pt(this.position.x, SEQUENCE_LAYER_Y_OFFSET);
+    this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     this.updateSequenceAfterArrangement();
   }
 
