@@ -114,7 +114,7 @@ export class Interactive extends Morph {
   }
 }
 
-export class InteractiveScrollHolder extends Morph {
+class InteractiveScrollHolder extends Morph {
   static get properties () {
     return {
       interactive: {}
@@ -137,7 +137,7 @@ export class InteractiveScrollHolder extends Morph {
   }
 }
 
-export class Layer {
+class Layer {
   static exampleBackgroundLayer () {
     const layer = new Layer();
     layer.name = 'Background';
@@ -169,7 +169,7 @@ export class Layer {
   }
 }
 
-export class Sequence extends Morph {
+class Sequence extends Morph {
   static get properties () {
     return {
       start: {},

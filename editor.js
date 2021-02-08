@@ -2,7 +2,7 @@ import { Window } from 'lively.components';
 import { pt, Color } from 'lively.graphics';
 import { VerticalLayout, ProportionalLayout, Morph } from 'lively.morphic';
 import { Timeline } from './timeline.js';
-import { Interactive } from './interactive.js';
+import { Interactive } from 'interactives-editor';
 
 const EDITOR_WIDTH = 900;
 const EDITOR_HEIGHT = 500;
@@ -65,7 +65,7 @@ export class InteractivesEditor extends Morph {
   }
 }
 
-export class Preview extends Morph {
+class Preview extends Morph {
   constructor (editor, props = {}) {
     super(props);
     this.name = 'preview';
@@ -95,7 +95,7 @@ export class Preview extends Morph {
   }
 }
 
-export class SequenceOverview extends Morph {
+class SequenceOverview extends Morph {
   constructor (props = {}) {
     super(props);
     this.name = 'sequence overview';
@@ -105,7 +105,7 @@ export class SequenceOverview extends Morph {
   }
 }
 
-export class InteractiveMorphInspector extends Morph {
+class InteractiveMorphInspector extends Morph {
   constructor (props = {}) {
     super(props);
     this.name = 'interactive morph inspector';
