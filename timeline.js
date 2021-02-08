@@ -318,10 +318,10 @@ export class TimelineCursor extends Morph {
           this.updatePosition();
         }
       },
-      cursorColor: {
+      fill: {
         defaultValue: CURSOR_COLOR,
         set (color) {
-          this.setProperty('cursorColor', color);
+          this.setProperty('fill', color);
           this.updateColor();
         }
       },
@@ -332,6 +332,9 @@ export class TimelineCursor extends Morph {
           this.updateColor();
         }
       },
+      name: {
+        defaultValue: 'cursor'
+      },
       ui: {}
     };
   }
@@ -340,7 +343,7 @@ export class TimelineCursor extends Morph {
     super(props);
 
     this.initialize();
-    this.name = 'cursor';
+
     this.isLayoutable = false;
     this.value = value;
   }
@@ -353,12 +356,6 @@ export class TimelineCursor extends Morph {
 
   initializeSubmorphs () {
     this.ui = {};
-    this.ui.bar = new Morph({
-      name: 'cursor/bar',
-      extent: pt(CURSOR_WIDTH, 50),
-      reactsToPointer: false,
-      halosEnabled: false
-    });
     this.ui.label = new Label({
       name: 'cursor/head/text',
       fontSize: CURSOR_FONT_SIZE,
@@ -375,23 +372,31 @@ export class TimelineCursor extends Morph {
       borderRadius: 4,
       submorphs: [this.ui.label]
     });
-    this.addMorph(this.ui.head);
-    this.addMorph(this.ui.bar);
+    this.ui.headCenter = new Morph({
+      extent: pt(500, 1),
+      halosEnabled: false,
+      reactsToPointer: false,
+      fill: Color.transparent,
+      layout: new HorizontalLayout({
+        direction: 'centered',
+        autoResize: false
+      }),
+      submorphs: [this.ui.head]
+    });
+    this.addMorph(this.ui.headCenter);
   }
 
   initializeAppearance () {
-    this.layout = new VerticalLayout({
-      autoResize: true,
-      align: 'center'
-    });
-    this.fill = Color.rgba(0, 0, 0, 0);
+    this.extent = pt(CURSOR_WIDTH, 50);
+    this.clipMode = 'overflow';
+    this.ui.headCenter.position = pt(-this.ui.headCenter.width / 2 + 1, this.ui.headCenter.position.y);
     this.borderStyle = 'none';
     this.updateColor();
   }
 
   onOwnerChanged (newOwner) {
     if (!newOwner) return;
-    this.ui.bar.height = newOwner.height - this.ui.head.height;
+    this.height = newOwner.height - this.ui.head.height;
   }
 
   redraw () {
@@ -399,31 +404,12 @@ export class TimelineCursor extends Morph {
     this.updatePosition();
   }
 
-  _requestPositionUpdate () {
-    this._updatePosition = true;
-    this.makeDirty();
-  }
-
-  onAfterRender (node) {
-    super.onAfterRender(node);
-    if (!this._updatePosition) return;
-    this._updatePosition = false;
-    this.updatePosition();
-  }
-
   updateColor () {
-    this.ui.head.fill = this.cursorColor;
-    this.ui.bar.fill = this.cursorColor;
+    this.ui.head.fill = this.fill;
     this.ui.label.fontColor = this.fontColor;
   }
 
   updatePosition () {
-    // Try to update the position directly (which is very fast)
-    // + 2 because the cursor has a slight offset otherwise
     this.position = pt(this.location - this.width / 2 + 2, this.position.y);
-    // Sometimes, this doesn't work, as the width has not changed yet.
-    // We need to request a rerender, after which the position will be updated again.
-    // This is quite slow and acts as a fallback only
-    this._requestPositionUpdate();
   }
 }
