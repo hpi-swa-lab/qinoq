@@ -2,6 +2,15 @@ import { Morph, ProportionalLayout, Label, VerticalLayout } from 'lively.morphic
 import { pt, Color } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 
+const CONSTANTS = {
+  LAYER_INFO_WIDTH: 50,
+  LAYER_HEIGHT: 50,
+  SEQUENCE_HEIGHT: 40,
+  DEFAULT_SEQUENCE_WIDTH: 100,
+  SEQUENCE_INITIAL_X_OFFSET: 5,
+  SEQUENCE_LAYER_Y_OFFSET: 5
+};
+
 export class Timeline extends Morph {
   static get properties () {
     return {
@@ -22,8 +31,8 @@ export class Timeline extends Morph {
   initializeLayerContainer () {
     this.ui.layerContainer = new Morph({
       name: 'layer container',
-      position: pt(LAYER_INFO_WIDTH, 0),
-      extent: pt(this.width - LAYER_INFO_WIDTH, this.height),
+      position: pt(CONSTANTS.LAYER_INFO_WIDTH, 0),
+      extent: pt(this.width - CONSTANTS.LAYER_INFO_WIDTH, this.height),
       layout: new VerticalLayout({
         spacing: 2,
         resizeSubmorphs: true,
@@ -37,7 +46,7 @@ export class Timeline extends Morph {
     this.ui.layerInfoContainer = new Morph({
       name: 'layer info container',
       position: pt(0, 0),
-      extent: pt(this.height, LAYER_INFO_WIDTH),
+      extent: pt(this.height, CONSTANTS.LAYER_INFO_WIDTH),
       layout: new VerticalLayout({
         spacing: 2,
         resizeSubmorphs: true,
@@ -64,7 +73,7 @@ export class Timeline extends Morph {
 
   relayout (availableWidth) {
     this.ui.layerInfoContainer.position = pt(0, 0); // Align the container to the left of the layers
-    this.ui.layerInfoContainer.width = LAYER_INFO_WIDTH;
+    this.ui.layerInfoContainer.width = CONSTANTS.LAYER_INFO_WIDTH;
     this.ui.layerContainer.width = availableWidth - this.ui.layerInfoContainer.width - this.layout.spacing;
   }
 
@@ -79,7 +88,7 @@ export class Timeline extends Morph {
     });
     this.ui.layerContainer.addMorph(timelineLayer);
     const layerInfo = new Morph();
-    layerInfo.height = LAYER_HEIGHT;
+    layerInfo.height = CONSTANTS.LAYER_HEIGHT;
     layerInfo.layerLabel = (new Label({
       textString: layer.name
     }));
@@ -105,11 +114,11 @@ export class Timeline extends Morph {
   }
 
   getPositionFromScroll (scroll) {
-    return scroll + SEQUENCE_INITIAL_X_OFFSET;
+    return scroll + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
   }
 
   getScrollFromPosition (position) {
-    return position - SEQUENCE_INITIAL_X_OFFSET;
+    return position - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
   }
 
   getWidthFromDuration (duration) {
@@ -134,9 +143,6 @@ export class Timeline extends Morph {
   }
 }
 
-const LAYER_INFO_WIDTH = 50;
-const LAYER_HEIGHT = 50;
-
 export class TimelineLayer extends Morph {
   static get properties () {
     return {
@@ -151,7 +157,7 @@ export class TimelineLayer extends Morph {
     const { container, layer } = props;
     this.layer = layer;
 
-    this.height = LAYER_HEIGHT;
+    this.height = CONSTANTS.LAYER_HEIGHT;
     this.fill = Color.rgb(200, 200, 200);
     this.grabbable = true;
     this.focusable = false;
@@ -164,7 +170,7 @@ export class TimelineLayer extends Morph {
   }
 
   relayout () {
-    this.height = LAYER_HEIGHT;
+    this.height = CONSTANTS.LAYER_HEIGHT;
   }
 
   get timeline () {
@@ -186,11 +192,6 @@ export class TimelineLayer extends Morph {
   }
 }
 
-const SEQUENCE_HEIGHT = 40;
-const DEFAULT_SEQUENCE_WIDTH = 100;
-const SEQUENCE_INITIAL_X_OFFSET = 5;
-const SEQUENCE_LAYER_Y_OFFSET = 5;
-
 export class TimelineSequence extends Morph {
   static get properties () {
     return {
@@ -205,11 +206,11 @@ export class TimelineSequence extends Morph {
     const startPosition = timelineLayer.timeline.getPositionFromScroll(sequence.start);
     const endPosition = startPosition + timelineLayer.timeline.getWidthFromDuration(sequence.duration);
 
-    this.height = SEQUENCE_HEIGHT;
+    this.height = CONSTANTS.SEQUENCE_HEIGHT;
     this.acceptDrops = false;
     this.grabbable = true;
     this.timelineLayer = timelineLayer;
-    this.previousPosition = pt(startPosition + SEQUENCE_INITIAL_X_OFFSET, SEQUENCE_LAYER_Y_OFFSET);
+    this.previousPosition = pt(startPosition + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     this.position = this.previousPosition;
     this.width = endPosition - startPosition;
     this.addMorph(new Label({ textString: sequence.name }));
@@ -225,7 +226,7 @@ export class TimelineSequence extends Morph {
     if (recipient.isTimelineLayer) {
       this.timelineLayer = recipient;
       this.timelineLayer.addMorph(this);
-      this.position = pt(this.globalPosition.x - this.timelineLayer.globalPosition.x, SEQUENCE_LAYER_Y_OFFSET);
+      this.position = pt(this.globalPosition.x - this.timelineLayer.globalPosition.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       this.previousPosition = this.position.copy();
       this.updateSequenceStartPosition();
       this.sequence.layer = this.timelineLayer.layer;
