@@ -4,13 +4,15 @@ import { VerticalLayout, ProportionalLayout, Morph } from 'lively.morphic';
 import { Timeline } from './timeline.js';
 import { Interactive } from 'interactives-editor';
 
-const EDITOR_WIDTH = 900;
-const EDITOR_HEIGHT = 500;
-const PREVIEW_WIDTH = 400;
-const SIDEBAR_WIDTH = (EDITOR_WIDTH - PREVIEW_WIDTH) / 2;
-const SUBWINDOW_HEIGHT = 300;
-const BORDER_WIDTH = 3;
-const BORDER_COLOR = new Color.rgb(240, 240, 240);
+const CONSTANTS = {
+  EDITOR_WIDTH: 900,
+  EDITOR_HEIGHT: 500,
+  PREVIEW_WIDTH: 400,
+  SUBWINDOW_HEIGHT: 300,
+  BORDER_WIDTH: 3,
+  BORDER_COLOR: new Color.rgb(240, 240, 240)
+};
+CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
 
 export class InteractivesEditor extends Morph {
   static get properties () {
@@ -28,7 +30,7 @@ export class InteractivesEditor extends Morph {
     super();
 
     this.name = 'interactives editor';
-    this.extent = pt(EDITOR_WIDTH, EDITOR_HEIGHT);
+    this.extent = pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT);
     this.initializeUIElements();
     this.initializeLayout();
     this.openInWindow({
@@ -39,9 +41,9 @@ export class InteractivesEditor extends Morph {
 
   initializeUIElements () {
     this.sequenceOverview = this.addMorph(new SequenceOverview({ position: pt(0, 0) }));
-    this.preview = this.addMorph(new Preview(this, { position: pt(SIDEBAR_WIDTH, 0) }));
-    this.morphInspector = this.addMorph(new InteractiveMorphInspector({ position: pt(PREVIEW_WIDTH + SIDEBAR_WIDTH, 0) }));
-    this.timeline = new Timeline({ position: pt(0, SUBWINDOW_HEIGHT), extent: pt(EDITOR_WIDTH, EDITOR_HEIGHT - SUBWINDOW_HEIGHT) });
+    this.preview = this.addMorph(new Preview(this, { position: pt(CONSTANTS.SIDEBAR_WIDTH, 0) }));
+    this.morphInspector = this.addMorph(new InteractiveMorphInspector({ position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0) }));
+    this.timeline = new Timeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT) });
     this.addMorph(this.timeline);
   }
 
@@ -49,7 +51,7 @@ export class InteractivesEditor extends Morph {
     this.layout = new ProportionalLayout({
       lastExtent: this.extent
     });
-    this.extent = pt(EDITOR_WIDTH, EDITOR_HEIGHT);
+    this.extent = pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT);
   }
 
   loadInteractive (interactive) {
@@ -70,9 +72,9 @@ class Preview extends Morph {
     super(props);
     this.name = 'preview';
     this.editor = editor;
-    this.extent = pt(PREVIEW_WIDTH, SUBWINDOW_HEIGHT);
-    this.borderColor = BORDER_COLOR;
-    this.borderWidth = BORDER_WIDTH;
+    this.extent = pt(CONSTANTS.PREVIEW_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT);
+    this.borderColor = CONSTANTS.BORDER_COLOR;
+    this.borderWidth = CONSTANTS.BORDER_WIDTH;
   }
 
   onDrop (evt) {
@@ -99,9 +101,9 @@ class SequenceOverview extends Morph {
   constructor (props = {}) {
     super(props);
     this.name = 'sequence overview';
-    this.extent = pt(SIDEBAR_WIDTH, SUBWINDOW_HEIGHT);
-    this.borderColor = BORDER_COLOR;
-    this.borderWidth = BORDER_WIDTH;
+    this.extent = pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT);
+    this.borderColor = CONSTANTS.BORDER_COLOR;
+    this.borderWidth = CONSTANTS.BORDER_WIDTH;
   }
 }
 
@@ -109,8 +111,8 @@ class InteractiveMorphInspector extends Morph {
   constructor (props = {}) {
     super(props);
     this.name = 'interactive morph inspector';
-    this.extent = pt(SIDEBAR_WIDTH, SUBWINDOW_HEIGHT);
-    this.borderColor = BORDER_COLOR;
-    this.borderWidth = BORDER_WIDTH;
+    this.extent = pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT);
+    this.borderColor = CONSTANTS.BORDER_COLOR;
+    this.borderWidth = CONSTANTS.BORDER_WIDTH;
   }
 }
