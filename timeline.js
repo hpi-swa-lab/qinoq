@@ -200,7 +200,7 @@ export class TimelineLayer extends Morph {
 
   static timelineSequencesDragged (event) {
     if (!event.hand.dragTimelineSequenceState) return [];
-    return event.hand.dragTimelineSequenceState.timelineSequences;
+    return event.hand.dragTimelineSequenceState.timelineSequencesWithPosition;
   }
 
   initialize (container, layer) {
@@ -333,7 +333,6 @@ export class TimelineSequence extends Morph {
     this.position = pt(startPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     this.width = endPosition - startPosition;
     this.addMorph(new Label({
-      reactsToPointer: false,
       textString: sequence.name,
       padding: rect(5, 4, 0, 0)
     }));
@@ -391,9 +390,9 @@ export class TimelineSequence extends Morph {
     this.undoStop('timeline-sequence-move');
     if (this.isOverlappingOtherSequence()) {
       const dragState = event.hand.dragTimelineSequenceState;
-      dragState.timelineSequences.forEach(timelineSequence => {
-        const sequence = timelineSequence[0];
-        sequence.position = timelineSequence[1];
+      dragState.timelineSequencesWithPosition.forEach(timelineSequence => {
+        const sequence = timelineSequence.timelineSequence;
+        sequence.position = timelineSequence.position;
         sequence.remove();
         sequence.onBeingMovedTo(dragState.originalTimelineLayer);
         sequence.setOverlappingAppearance();
@@ -544,11 +543,19 @@ class TimelineCursor extends Morph {
     };
   }
 
-  initialize (displayValue = 0) {
+  constructor (displayValue = 0, props = {}) {
+    super(props);
+
+    this.initialize();
+
+    this.isLayoutable = false;
+    this.displayValue = displayValue;
+  }
+
+  initialize () {
     this.initializeSubmorphs();
     this.initializeAppearance();
-    this.displayValue = displayValue;
-    return this;
+    this.redraw();
   }
 
   initializeSubmorphs () {
