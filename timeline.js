@@ -258,6 +258,12 @@ export class TimelineSequence extends Morph {
         defaultValue: 'hidden'
       },
       timelineLayer: {},
+      position: {
+        set (position) {
+          this.setProperty('position', position);
+          this.updateSequenceAfterArrangement();
+        }
+      },
       previousPosition: {},
       sequence: {},
       selected: {
@@ -339,6 +345,7 @@ export class TimelineSequence extends Morph {
   }
 
   onDragStart (event) {
+    this.undoStart('timeline-sequence-move');
     event.hand.dragTimelineSequenceState = {
       timelineSequences: [this],
       originalTimelineLayer: this.timelineLayer
@@ -346,6 +353,7 @@ export class TimelineSequence extends Morph {
   }
 
   onDragEnd (event) {
+    this.undoStop('timeline-sequence-move');
     delete event.hand.dragTimelineSequenceState;
   }
 
