@@ -254,6 +254,9 @@ export class TimelineLayer extends Morph {
 export class TimelineSequence extends Morph {
   static get properties () {
     return {
+      clipMode: {
+        defaultValue: 'hidden'
+      },
       timelineLayer: {},
       previousPosition: {},
       sequence: {},
@@ -282,7 +285,7 @@ export class TimelineSequence extends Morph {
     this.position = this.previousPosition;
     this.width = endPosition - startPosition;
     this.addMorph(new Label({ textString: sequence.name }));
-
+    this.tooltip = sequence.name;
     this.nativeCursor = 'default';
 
     this.borderWidth = 1;
