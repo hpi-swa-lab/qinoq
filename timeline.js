@@ -1,5 +1,5 @@
 import { Morph, HorizontalLayout, ProportionalLayout, Label, VerticalLayout } from 'lively.morphic';
-import { pt, Color } from 'lively.graphics';
+import { pt, rect, Color } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 
 const CONSTANTS = {
@@ -280,7 +280,10 @@ export class TimelineSequence extends Morph {
     this.previousPosition = pt(startPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     this.position = this.previousPosition;
     this.width = endPosition - startPosition;
-    this.addMorph(new Label({ textString: sequence.name }));
+    this.addMorph(new Label({
+      textString: sequence.name,
+      padding: rect(5, 4, 0, 0)
+    }));
     this.tooltip = sequence.name;
     this.nativeCursor = 'default';
 
