@@ -170,6 +170,10 @@ class Layer {
     this._zIndex = 0;
     this.id = newUUID();
   }
+  
+  equals (layer) {
+    return this.id === layer.id;
+  }
 }
 
 class Sequence extends Morph {
