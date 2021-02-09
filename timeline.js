@@ -288,7 +288,6 @@ export class TimelineSequence extends Morph {
     this.draggable = true;
     this.timelineLayer = timelineLayer;
     this.previousPosition = pt(startPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-    this.position = this.previousPosition;
     this.width = endPosition - startPosition;
     this.addMorph(new Label({
       reactsToPointer: false,
@@ -305,6 +304,10 @@ export class TimelineSequence extends Morph {
     this.sequence = sequence;
     this.timelineLayer.addMorph(this);
     this.initializeResizers();
+    // important that this comes last
+    // otherwise we need to check if sequence is set in the setter of position
+    // because the relayouting method assumes that sequence is set
+    this.position = this.previousPosition;
   }
 
   initializeResizers () {
