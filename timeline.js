@@ -233,7 +233,7 @@ export class TimelineLayer extends Morph {
     super.onHoverIn(event);
     if (event.hand.dragTimelineSequenceState) {
       TimelineLayer.timelineSequencesDragged(event).forEach(timelineSequence => {
-        timelineSequence.onBeingMovedTo(this);
+        timelineSequence.timelineLayer = this;
       });
     }
   }
@@ -257,11 +257,20 @@ export class TimelineSequence extends Morph {
       clipMode: {
         defaultValue: 'hidden'
       },
-      timelineLayer: {},
+      timelineLayer: {
+        set (timelineLayer) {
+          this.setProperty('timelineLayer', timelineLayer);
+          if (!this._underConstruction) {
+            this.onTimelineLayerChange(timelineLayer);
+          }
+        }
+      },
       position: {
         set (position) {
           this.setProperty('position', position);
-          this.updateSequenceAfterArrangement();
+          if (!this._underConstruction) {
+            this.updateSequenceAfterArrangement();
+          }
         }
       },
       previousPosition: {},
@@ -279,6 +288,12 @@ export class TimelineSequence extends Morph {
 
   constructor (sequence, timelineLayer, props = {}) {
     super(props);
+    // to enable the expected behaviour upon undo/redo
+    // some setters handle the syncing between the timeline representations
+    // and the data model sequences
+    // this is not needed at construction time and will break things since some references are not set then
+    // while this is true, these methods will not be calles in the setters
+    this._underConstruction = true;
     const startPosition = timelineLayer.timeline.getPositionFromScroll(sequence.start);
     const endPosition = startPosition + timelineLayer.timeline.getWidthFromDuration(sequence.duration);
 
@@ -286,7 +301,6 @@ export class TimelineSequence extends Morph {
     this.minimalSequenceWidth = CONSTANTS.MINIMAL_SEQUENCE_WIDTH;
     this.acceptDrops = false;
     this.draggable = true;
-    this.timelineLayer = timelineLayer;
     this.previousPosition = pt(startPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     this.width = endPosition - startPosition;
     this.addMorph(new Label({
@@ -302,12 +316,12 @@ export class TimelineSequence extends Morph {
     this.borderRadius = 3;
 
     this.sequence = sequence;
-    this.timelineLayer.addMorph(this);
     this.initializeResizers();
-    // important that this comes last
-    // otherwise we need to check if sequence is set in the setter of position
-    // because the relayouting method assumes that sequence is set
     this.position = this.previousPosition;
+    this.timelineLayer = timelineLayer;
+    this.timelineLayer.addMorph(this);
+    // enable full setter functionality
+    this._underConstruction = false;
   }
 
   initializeResizers () {
@@ -383,8 +397,7 @@ export class TimelineSequence extends Morph {
     this.updateSequenceAfterArrangement();
   }
 
-  onBeingMovedTo (timelineLayer) {
-    this.timelineLayer = timelineLayer;
+  onTimelineLayerChange (timelineLayer) {
     this.timelineLayer.addMorph(this);
     this.sequence.layer = this.timelineLayer.layer;
     this.updateSequenceAfterArrangement();
