@@ -237,7 +237,7 @@ export class TimelineLayer extends Morph {
     super.onHoverIn(event);
     if (event.hand.dragTimelineSequenceState) {
       TimelineLayer.timelineSequencesDragged(event).forEach(timelineSequence => {
-        timelineSequence.timelineLayer = this;
+        timelineSequence.onBeingMovedTo(this);
       });
     }
   }
@@ -248,9 +248,13 @@ export class TimelineLayer extends Morph {
     this.timeline.updateZIndicesFromTimelineLayerPositions();
   }
 
+  getAllSequencesWithin (rectangle) {
+    return this.timelineSequences.filter(timelineSequence => timelineSequence.bounds().intersects(rectangle));
+  }
+
   deselectAllSequences () {
-    this.withAllSubmorphsDo(submorph => {
-      if (submorph.isTimelineSequence) submorph.selected = false;
+    this.timelineSequences.forEach(timelineSequence => {
+      timelineSequence.selected = false;
     });
   }
 }
@@ -375,12 +379,17 @@ export class TimelineSequence extends Morph {
     this.undoStart('timeline-sequence-move');
     event.hand.dragTimelineSequenceState = {
       timelineSequences: [this],
-      originalTimelineLayer: this.timelineLayer
+      originalTimelineLayer: this.timelineLayer,
+      previousPositions: [this.position]
     };
   }
 
   onDragEnd (event) {
     this.undoStop('timeline-sequence-move');
+    if (this.isOverlappingOtherSequence()) {
+      this.position = this.previousPosition;
+      this.setOverlappingAppearance();
+    }
     delete event.hand.dragTimelineSequenceState;
   }
 
@@ -404,6 +413,7 @@ export class TimelineSequence extends Morph {
     } else {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     }
+    this.setOverlappingAppearance();
     this.updateSequenceAfterArrangement();
   }
 
@@ -466,6 +476,15 @@ export class TimelineSequence extends Morph {
     this.sequence.duration = this.timeline.getDurationFromWidth(this.width);
     this.sequence.start = this.timeline.getScrollFromPosition(this.position.x);
     this.timeline.interactive.redraw();
+  }
+
+  setOverlappingAppearance () {
+    this.fill = this.isOverlappingOtherSequence() ? Color.red : Color.white;
+  }
+
+  isOverlappingOtherSequence () {
+    const blockingSequences = this.timelineLayer.getAllSequencesWithin(this.bounds());
+    return blockingSequences.length > 1;
   }
 }
 
