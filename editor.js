@@ -9,10 +9,19 @@ const CONSTANTS = {
   EDITOR_HEIGHT: 500,
   PREVIEW_WIDTH: 400,
   SUBWINDOW_HEIGHT: 300,
-  BORDER_WIDTH: 3,
-  BORDER_COLOR: new Color.rgb(240, 240, 240)
+  BORDER_WIDTH: 3
 };
 CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
+
+export const COLOR_SCHEME = {
+  BLUE: Color.rgb(0, 176, 255),
+  ORANGE: Color.rgb(240, 100, 0),
+  WHITE: Color.rgb(255, 255, 255),
+  GREY: Color.rgb(200, 200, 200),
+  BLACK: Color.black,
+  TRANSPARENT: Color.transparent,
+  LIGHT_GREY: Color.rgb(240, 240, 240)
+};
 
 export class InteractivesEditor extends Morph {
   static get properties () {
@@ -38,7 +47,7 @@ export class InteractivesEditor extends Morph {
       name: 'window for interactives editor'
     });
   }
-  
+
   initializePanels () {
     this.sequenceOverview = this.addMorph(new SequenceOverview({ position: pt(0, 0) }));
     this.preview = this.addMorph(new Preview(this, { position: pt(CONSTANTS.SIDEBAR_WIDTH, 0) }));
@@ -73,7 +82,7 @@ class Preview extends Morph {
     this.name = 'preview';
     this.editor = editor;
     this.extent = pt(CONSTANTS.PREVIEW_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT);
-    this.borderColor = CONSTANTS.BORDER_COLOR;
+    this.borderColor = COLOR_SCHEME.LIGHT_GREY;
     this.borderWidth = CONSTANTS.BORDER_WIDTH;
   }
 
@@ -102,7 +111,7 @@ class SequenceOverview extends Morph {
     super(props);
     this.name = 'sequence overview';
     this.extent = pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT);
-    this.borderColor = CONSTANTS.BORDER_COLOR;
+    this.borderColor = COLOR_SCHEME.LIGHT_GREY;
     this.borderWidth = CONSTANTS.BORDER_WIDTH;
   }
 }
@@ -112,7 +121,7 @@ class InteractiveMorphInspector extends Morph {
     super(props);
     this.name = 'interactive morph inspector';
     this.extent = pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT);
-    this.borderColor = CONSTANTS.BORDER_COLOR;
+    this.borderColor = COLOR_SCHEME.LIGHT_GREY;
     this.borderWidth = CONSTANTS.BORDER_WIDTH;
   }
 }
