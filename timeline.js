@@ -285,6 +285,7 @@ export class TimelineSequence extends Morph {
     this.position = this.previousPosition;
     this.width = endPosition - startPosition;
     this.addMorph(new Label({
+      reactsToPointer: false,
       textString: sequence.name,
       padding: rect(5, 4, 0, 0)
     }));
