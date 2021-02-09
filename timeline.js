@@ -352,9 +352,19 @@ export class TimelineSequence extends Morph {
     super.onDrag(event);
     if (this.position.x <= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
       this.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-      const border = new Morph({ position: pt(0, 0), extent: pt(CONSTANTS.WARNING_WIDTH, CONSTANTS.SEQUENCE_HEIGHT), fill: COLOR_SCHEME.ORANGE });
-      this.addMorph(border);
-      border.fadeOut();
+      const warning = new Morph({
+        position: pt(0, 0),
+        extent: pt(CONSTANTS.WARNING_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
+        fill: new LinearGradient({
+          vector: 'eastwest',
+          stops: [
+            { offset: 0, color: COLOR_SCHEME.ORANGE.withA(0.2) },
+            { offset: 1, color: COLOR_SCHEME.ORANGE.withA(0) }
+          ]
+        })
+      });
+      this.addMorph(warning);
+      warning.fadeOut(1000);
     } else {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     }
