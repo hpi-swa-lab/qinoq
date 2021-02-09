@@ -1,7 +1,7 @@
 import { Morph, HorizontalLayout, ProportionalLayout, Label, VerticalLayout } from 'lively.morphic';
-import { pt, rect, Color } from 'lively.graphics';
+import { pt, LinearGradient, rect, Color } from 'lively.graphics';
 import { connect } from 'lively.bindings';
-import { COLOR_SCHEME } from './editor.js';
+import { COLOR_SCHEME } from './colors.js';
 
 const CONSTANTS = {
   LAYER_INFO_WIDTH: 50,
