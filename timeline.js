@@ -1,6 +1,7 @@
 import { Morph, HorizontalLayout, ProportionalLayout, Label, VerticalLayout } from 'lively.morphic';
 import { pt, rect, Color } from 'lively.graphics';
 import { connect } from 'lively.bindings';
+import { COLOR_SCHEME } from './editor.js';
 
 const CONSTANTS = {
   LAYER_INFO_WIDTH: 50,
@@ -11,8 +12,6 @@ const CONSTANTS = {
   SEQUENCE_LAYER_Y_OFFSET: 5,
   MINIMAL_SEQUENCE_WIDTH: 20,
   CURSOR_WIDTH: 2,
-  CURSOR_COLOR: Color.rgb(240, 100, 0),
-  CURSOR_FONT_COLOR: Color.rgb(255, 255, 255),
   CURSOR_FONT_SIZE: 10,
   WARNING_WIDTH: 5
 };
@@ -198,7 +197,7 @@ export class TimelineLayer extends Morph {
     this.layer = layer;
 
     this.height = CONSTANTS.LAYER_HEIGHT;
-    this.fill = Color.rgb(200, 200, 200);
+    this.fill = COLOR_SCHEME.GREY;
     this.grabbable = true;
     this.focusable = false;
     this.container = container;
@@ -293,7 +292,7 @@ export class TimelineSequence extends Morph {
     this.nativeCursor = 'default';
 
     this.borderWidth = 1;
-    this.borderColor = Color.black;
+    this.borderColor = COLOR_SCHEME.BLACK;
     this.borderRadius = 3;
 
     this.sequence = sequence;
@@ -303,7 +302,7 @@ export class TimelineSequence extends Morph {
 
   initializeResizers () {
     const resizerProps = {
-      fill: Color.transparent,
+      fill: COLOR_SCHEME.TRANSPARENT,
       width: 7,
       draggable: true,
       nativeCursor: 'ew-resize',
@@ -335,7 +334,7 @@ export class TimelineSequence extends Morph {
   }
 
   onSelectionChange (selected) {
-    this.borderColor = selected ? Color.rgb(0, 176, 255) : Color.black;
+    this.borderColor = selected ? COLOR_SCHEME.BLUE : COLOR_SCHEME.BLACK;
   }
 
   onDragStart (event) {
@@ -353,7 +352,7 @@ export class TimelineSequence extends Morph {
     super.onDrag(event);
     if (this.position.x <= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
       this.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-      const border = new Morph({ position: pt(0, 0), extent: pt(CONSTANTS.WARNING_WIDTH, CONSTANTS.SEQUENCE_HEIGHT), fill: CONSTANTS.CURSOR_COLOR });
+      const border = new Morph({ position: pt(0, 0), extent: pt(CONSTANTS.WARNING_WIDTH, CONSTANTS.SEQUENCE_HEIGHT), fill: COLOR_SCHEME.ORANGE });
       this.addMorph(border);
       border.fadeOut();
     } else {
@@ -449,14 +448,14 @@ class TimelineCursor extends Morph {
         }
       },
       fill: {
-        defaultValue: CONSTANTS.CURSOR_COLOR,
+        defaultValue: COLOR_SCHEME.ORANGE,
         set (color) {
           this.setProperty('fill', color);
           this.updateColor();
         }
       },
       fontColor: {
-        defaultValue: CONSTANTS.CURSOR_FONT_COLOR,
+        defaultValue: COLOR_SCHEME.WHITE,
         set (color) {
           this.setProperty('fontColor', color);
           this.updateColor();
@@ -506,7 +505,7 @@ class TimelineCursor extends Morph {
       extent: pt(500, 1),
       halosEnabled: false,
       reactsToPointer: false,
-      fill: Color.transparent,
+      fill: COLOR_SCHEME.TRANSPARENT,
       layout: new HorizontalLayout({
         direction: 'centered',
         autoResize: false
