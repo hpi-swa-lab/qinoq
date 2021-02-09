@@ -3,6 +3,7 @@ import { pt, Color } from 'lively.graphics';
 import { VerticalLayout, ProportionalLayout, Morph } from 'lively.morphic';
 import { Timeline } from './timeline.js';
 import { Interactive } from 'interactives-editor';
+import { COLOR_SCHEME } from './colors';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 900,
@@ -12,16 +13,6 @@ const CONSTANTS = {
   BORDER_WIDTH: 3
 };
 CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
-
-export const COLOR_SCHEME = {
-  BLUE: Color.rgb(0, 176, 255),
-  ORANGE: Color.rgb(240, 100, 0),
-  WHITE: Color.rgb(255, 255, 255),
-  GREY: Color.rgb(200, 200, 200),
-  BLACK: Color.black,
-  TRANSPARENT: Color.transparent,
-  LIGHT_GREY: Color.rgb(240, 240, 240)
-};
 
 export class InteractivesEditor extends Morph {
   static get properties () {
