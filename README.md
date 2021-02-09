@@ -26,8 +26,9 @@ preview of the editor (via the "grab"-halo).
 
 An Interactive has three building blocks: the Interactive itself, Layers and Sequences.
 
-The Interactive holds Layers and Sequences. A Layer holds Sequences that should have the same z-index in the displayed Interactive.
+The Interactive holds Layers and Sequences.
 A Sequence is a collection of morphs that should be displayed together for a defined timeframe during an Interactive. The contents of a Sequence may be animated in the future.
+Sequences reference a Layer. All Sequences that should be displayed with the same z-index should reference the same layer.
 
 The `Interactive`, `Layer` and `Sequence` classes hold static example methods that together build an Interactive.
 
