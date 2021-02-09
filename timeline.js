@@ -13,7 +13,8 @@ const CONSTANTS = {
   CURSOR_WIDTH: 2,
   CURSOR_COLOR: Color.rgb(240, 100, 0),
   CURSOR_FONT_COLOR: Color.rgb(255, 255, 255),
-  CURSOR_FONT_SIZE: 10
+  CURSOR_FONT_SIZE: 10,
+  WARNING_WIDTH: 5
 };
 
 export class Timeline extends Morph {
@@ -350,7 +351,14 @@ export class TimelineSequence extends Morph {
 
   onDrag (event) {
     super.onDrag(event);
-    this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+    if (this.position.x <= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
+      this.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+      const border = new Morph({ position: pt(0, 0), extent: pt(CONSTANTS.WARNING_WIDTH, CONSTANTS.SEQUENCE_HEIGHT), fill: CONSTANTS.CURSOR_COLOR });
+      this.addMorph(border);
+      border.fadeOut();
+    } else {
+      this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+    }
     this.updateSequenceAfterArrangement();
   }
 
