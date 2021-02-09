@@ -224,6 +224,10 @@ export class TimelineLayer extends Morph {
     return this.layer.name;
   }
 
+  get timelineSequences () {
+    return this.submorphs.filter(submorph => !!submorph.isTimelineSequence);
+  }
+
   updateLayerPosition () {
     this.timeline.updateLayerPositions();
   }
@@ -237,7 +241,7 @@ export class TimelineLayer extends Morph {
     super.onHoverIn(event);
     if (event.hand.dragTimelineSequenceState) {
       TimelineLayer.timelineSequencesDragged(event).forEach(timelineSequence => {
-        timelineSequence.onBeingMovedTo(this);
+        timelineSequence[0].onBeingMovedTo(this);
       });
     }
   }
@@ -378,17 +382,22 @@ export class TimelineSequence extends Morph {
   onDragStart (event) {
     this.undoStart('timeline-sequence-move');
     event.hand.dragTimelineSequenceState = {
-      timelineSequences: [this],
-      originalTimelineLayer: this.timelineLayer,
-      previousPositions: [this.position]
+      timelineSequences: [[this, this.position]],
+      originalTimelineLayer: this.timelineLayer
     };
   }
 
   onDragEnd (event) {
     this.undoStop('timeline-sequence-move');
     if (this.isOverlappingOtherSequence()) {
-      this.position = this.previousPosition;
-      this.setOverlappingAppearance();
+      const dragState = event.hand.dragTimelineSequenceState;
+      dragState.timelineSequences.forEach(timelineSequence => {
+        const sequence = timelineSequence[0];
+        sequence.position = timelineSequence[1];
+        sequence.remove();
+        sequence.onBeingMovedTo(dragState.originalTimelineLayer);
+        sequence.setOverlappingAppearance();
+      });
     }
     delete event.hand.dragTimelineSequenceState;
   }
