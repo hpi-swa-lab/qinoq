@@ -9,7 +9,11 @@ const CONSTANTS = {
   DEFAULT_SEQUENCE_WIDTH: 100,
   SEQUENCE_INITIAL_X_OFFSET: 5,
   SEQUENCE_LAYER_Y_OFFSET: 5,
-  MINIMAL_SEQUENCE_WIDTH: 20
+  MINIMAL_SEQUENCE_WIDTH: 20,
+  CURSOR_WIDTH: 2,
+  CURSOR_COLOR: Color.rgb(240, 100, 0),
+  CURSOR_FONT_COLOR: Color.rgb(255, 255, 255),
+  CURSOR_FONT_SIZE: 10
 };
 
 export class Timeline extends Morph {
@@ -403,12 +407,7 @@ export class TimelineSequence extends Morph {
   }
 }
 
-const CURSOR_WIDTH = 2;
-const CURSOR_COLOR = Color.rgb(240, 100, 0);
-const CURSOR_FONT_COLOR = Color.rgb(255, 255, 255);
-const CURSOR_FONT_SIZE = 10;
-
-export class TimelineCursor extends Morph {
+class TimelineCursor extends Morph {
   static get properties () {
     return {
       displayValue: {
@@ -432,14 +431,14 @@ export class TimelineCursor extends Morph {
         }
       },
       fill: {
-        defaultValue: CURSOR_COLOR,
+        defaultValue: CONSTANTS.CURSOR_COLOR,
         set (color) {
           this.setProperty('fill', color);
           this.updateColor();
         }
       },
       fontColor: {
-        defaultValue: CURSOR_FONT_COLOR,
+        defaultValue: CONSTANTS.CURSOR_FONT_COLOR,
         set (color) {
           this.setProperty('fontColor', color);
           this.updateColor();
@@ -471,7 +470,7 @@ export class TimelineCursor extends Morph {
     this.ui = {};
     this.ui.label = new Label({
       name: 'cursor/head/text',
-      fontSize: CURSOR_FONT_SIZE,
+      fontSize: CONSTANTS.CURSOR_FONT_SIZE,
       halosEnabled: false,
       reactsToPointer: false
     });
@@ -500,7 +499,7 @@ export class TimelineCursor extends Morph {
   }
 
   initializeAppearance () {
-    this.extent = pt(CURSOR_WIDTH, 50);
+    this.extent = pt(CONSTANTS.CURSOR_WIDTH, 50);
     this.clipMode = 'overflow';
     this.ui.headCenter.position = pt(-this.ui.headCenter.width / 2 + 1, this.ui.headCenter.position.y);
     this.borderStyle = 'none';
