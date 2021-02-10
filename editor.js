@@ -41,7 +41,9 @@ export class InteractivesEditor extends Morph {
 
   initializePanels () {
     this.sequenceOverview = this.addMorph(new SequenceOverview({ position: pt(0, 0) }));
-    this.preview = this.addMorph(new Preview(this, { position: pt(CONSTANTS.SIDEBAR_WIDTH, 0) }));
+    this.preview = new Preview();
+    this.preview.initialize(this);
+    this.addMorph(this.preview);
     this.morphInspector = this.addMorph(new InteractiveMorphInspector({ position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0) }));
     this.timeline = new Timeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT) });
     this.timeline.initialize;
@@ -69,13 +71,28 @@ export class InteractivesEditor extends Morph {
 }
 
 class Preview extends Morph {
-  constructor (editor, props = {}) {
-    super(props);
-    this.name = 'preview';
+  static get properties () {
+    return {
+      name: {
+        defaultValue: 'preview'
+      },
+      extent: {
+        defaultValue: pt(CONSTANTS.PREVIEW_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT)
+      },
+      borderColor: {
+        defaultValue: COLOR_SCHEME.LIGHT_GREY
+      },
+      borderWidth: {
+        defaultValue: CONSTANTS.BORDER_WIDTH
+      },
+      position: {
+        defaultValue: pt(CONSTANTS.SIDEBAR_WIDTH, 0)
+      }
+    };
+  }
+
+  initialize (editor) {
     this.editor = editor;
-    this.extent = pt(CONSTANTS.PREVIEW_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT);
-    this.borderColor = COLOR_SCHEME.LIGHT_GREY;
-    this.borderWidth = CONSTANTS.BORDER_WIDTH;
   }
 
   onDrop (evt) {
@@ -99,21 +116,39 @@ class Preview extends Morph {
 }
 
 class SequenceOverview extends Morph {
-  constructor (props = {}) {
-    super(props);
-    this.name = 'sequence overview';
-    this.extent = pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT);
-    this.borderColor = COLOR_SCHEME.LIGHT_GREY;
-    this.borderWidth = CONSTANTS.BORDER_WIDTH;
+  static get properties () {
+    return {
+      name: {
+        defaultValue: 'sequence overview'
+      },
+      extent: {
+        defaultValue: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT)
+      },
+      borderColor: {
+        defaultValue: COLOR_SCHEME.LIGHT_GREY
+      },
+      borderWidth: {
+        defaultValue: CONSTANTS.BORDER_WIDTH
+      }
+    };
   }
 }
 
 class InteractiveMorphInspector extends Morph {
-  constructor (props = {}) {
-    super(props);
-    this.name = 'interactive morph inspector';
-    this.extent = pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT);
-    this.borderColor = COLOR_SCHEME.LIGHT_GREY;
-    this.borderWidth = CONSTANTS.BORDER_WIDTH;
+  static get properties () {
+    return {
+      name: {
+        defaultValue: 'interactive morph inspector'
+      },
+      extent: {
+        defaultValue: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT)
+      },
+      borderColor: {
+        defaultValue: COLOR_SCHEME.LIGHT_GREY
+      },
+      borderWidth: {
+        defaultValue: CONSTANTS.BORDER_WIDTH
+      }
+    };
   }
 }
