@@ -4,9 +4,12 @@ The Interactives Editor allows editing of Interactives. Currently it is designed
 
 ## Editor Usage
 
+Before first usage of the editor within a world, you need to add the Interactives Editor package to the world.
+For the following examples to work, you need to import the respective classes from the Interactives Editor package.
+
 ### Opening an editor
 
-`const editor = new InteractivesEditor()  // opens an Interactives Editor in a window within the world`
+`const editor = new InteractivesEditor().initialize()  // opens an Interactives Editor in a window within the world`
 
 ### Opening an Interactive in the world
 
@@ -35,10 +38,10 @@ The `Interactive`, `Layer` and `Sequence` classes hold static example methods th
 ### Creating an Interactive
 
 ```js
-const interactive = Interactive({
-      extent: pt(400, 300),
-      length: 500
-    });
+const interactive = new Interactive({
+    extent: pt(400, 300),
+    length: 500
+});
 ```
 
 ### Adding Layers to an Interactive

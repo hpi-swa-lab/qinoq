@@ -139,7 +139,7 @@ class InteractiveScrollHolder extends Morph {
   }
 }
 
-class Layer {
+export class Layer {
   static exampleBackgroundLayer () {
     const layer = new Layer();
     layer.name = 'Background';
@@ -170,13 +170,13 @@ class Layer {
     this._zIndex = 0;
     this.id = newUUID();
   }
-  
+
   equals (layer) {
     return this.id === layer.id;
   }
 }
 
-class Sequence extends Morph {
+export class Sequence extends Morph {
   static get properties () {
     return {
       start: {},
