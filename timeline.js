@@ -19,16 +19,14 @@ const CONSTANTS = {
 export class Timeline extends Morph {
   static get properties () {
     return {
-      ui: {}
+      ui: {
+        defaultValue: {}
+      }
     };
   }
 
-  constructor (props = {}) {
-    super(props);
+  initialize () {
     this.layout = new ProportionalLayout({ lastExtent: this.extent });
-
-    this.ui = {};
-
     this.initializeLayerInfoContainer();
     this.initializeLayerContainer();
     this.initializeCursor();
