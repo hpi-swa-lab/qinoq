@@ -35,7 +35,8 @@ export class Timeline extends Morph {
   }
 
   initializeCursor () {
-    this.ui.cursor = new TimelineCursor().initialize();
+    this.ui.cursor = new TimelineCursor();
+    this.ui.cursor.initialize();
     this.ui.layerContainer.addMorph(this.ui.cursor);
     this.ui.cursor.location = this.getPositionFromScroll(0);
     this.ui.cursor.height = this.height;
@@ -472,7 +473,7 @@ class TimelineCursor extends Morph {
   static get properties () {
     return {
       isLayoutable: {
-        devaultValue: false
+        defaultValue: false
       },
       displayValue: {
         defaultValue: 0,
