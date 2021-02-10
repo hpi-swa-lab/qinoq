@@ -291,7 +291,7 @@ export class TimelineSequence extends Morph {
       timelineLayer: {
         set (timelineLayer) {
           this.setProperty('timelineLayer', timelineLayer);
-          if (!this._underConstruction) {
+          if (!this._isInitializing) {
             this.onTimelineLayerChange(timelineLayer);
           }
         }
@@ -299,7 +299,7 @@ export class TimelineSequence extends Morph {
       position: {
         set (position) {
           this.setProperty('position', position);
-          if (!this._underConstruction) {
+          if (!this._isInitializing) {
             this.updateSequenceAfterArrangement();
           }
         }
@@ -316,12 +316,13 @@ export class TimelineSequence extends Morph {
   }
 
   initialize (sequence, timelineLayer) {
+    this._isInitializing = true;
     this.sequence = sequence;
     this.timelineLayer = timelineLayer;
 
     const startPosition = timelineLayer.timeline.getPositionFromScroll(this.sequence.start);
     const endPosition = startPosition + timelineLayer.timeline.getWidthFromDuration(this.sequence.duration);
-    this.previousPosition = pt(startPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+    this.position = pt(startPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     this.width = endPosition - startPosition;
     this.addMorph(new Label({
       reactsToPointer: false,
@@ -330,6 +331,7 @@ export class TimelineSequence extends Morph {
     }));
     timelineLayer.addMorph(this);
     this.bringToFront();
+    this._isInitializing = false;
   }
 
   initializeResizers () {
