@@ -44,6 +44,7 @@ export class InteractivesEditor extends Morph {
     this.preview = this.addMorph(new Preview(this, { position: pt(CONSTANTS.SIDEBAR_WIDTH, 0) }));
     this.morphInspector = this.addMorph(new InteractiveMorphInspector({ position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0) }));
     this.timeline = new Timeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT) });
+    this.timeline.initialize;
     this.addMorph(this.timeline);
   }
 
