@@ -393,7 +393,7 @@ export class TimelineSequence extends Morph {
         sequence.remove();
         sequence.timelineLayer = dragState.previousTimelineLayer;
         sequence.setOverlappingAppearance();
-        this.env.undoManager.removeLatestUndo();
+        // this.env.undoManager.removeLatestUndo(); uncomment as soon as it is merged in the lively.next:master
       });
     }
     delete event.hand.dragTimelineSequenceStates;
