@@ -22,21 +22,24 @@ export class InteractivesEditor extends Morph {
           this.initializeTimeline(interactive);
           this.initializePreview(interactive);
         }
+      },
+      name: {
+        defaultValue: 'interactives editor'
+      },
+      extent: {
+        defaultValue: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT)
       }
     };
   }
 
-  constructor () {
-    super();
-
-    this.name = 'interactives editor';
-    this.extent = pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT);
+  initialize () {
     this.initializeLayout();
     this.initializePanels();
     this.openInWindow({
       title: 'Interactives Editor',
       name: 'window for interactives editor'
     });
+    return this;
   }
 
   initializePanels () {
