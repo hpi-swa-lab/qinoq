@@ -35,9 +35,8 @@ export class Timeline extends Morph {
   }
 
   initializeCursor () {
-    this.ui.cursor = new TimelineCursor();
+    this.ui.cursor = new TimelineCursor().initialize();
     this.ui.layerContainer.addMorph(this.ui.cursor);
-    this.ui.cursor.displayValue = 0;
     this.ui.cursor.location = this.getPositionFromScroll(0);
     this.ui.cursor.height = this.height;
   }
@@ -462,6 +461,9 @@ export class TimelineSequence extends Morph {
 class TimelineCursor extends Morph {
   static get properties () {
     return {
+      isLayoutable: {
+        devaultValue: false
+      },
       displayValue: {
         defaultValue: 0,
         type: 'Number',
@@ -503,19 +505,11 @@ class TimelineCursor extends Morph {
     };
   }
 
-  constructor (displayValue = 0, props = {}) {
-    super(props);
-
-    this.initialize();
-
-    this.isLayoutable = false;
-    this.displayValue = displayValue;
-  }
-
-  initialize () {
+  initialize (displayValue = 0) {
     this.initializeSubmorphs();
     this.initializeAppearance();
-    this.redraw();
+    this.displayValue = displayValue;
+    return this;
   }
 
   initializeSubmorphs () {
