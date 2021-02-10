@@ -100,10 +100,8 @@ export class Timeline extends Morph {
   }
 
   createTimelineLayer (layer) {
-    const timelineLayer = new TimelineLayer({
-      container: this.ui.layerContainer,
-      layer: layer
-    });
+    const timelineLayer = new TimelineLayer();
+    timelineLayer.initialize(this.ui.layerContainer, layer);
     this.ui.layerContainer.addMorphBack(timelineLayer);
     const layerInfo = new Morph();
     layerInfo.height = CONSTANTS.LAYER_HEIGHT;
@@ -184,7 +182,22 @@ export class TimelineLayer extends Morph {
     return {
       layerInfo: {},
       container: {},
-      layer: {}
+      layer: {},
+      nativeCursor: {
+        defaultValue: 'grab'
+      },
+      focusable: {
+        defaultValue: false
+      },
+      grabbable: {
+        defaultValue: true
+      },
+      fill: {
+        defaultValue: COLOR_SCHEME.GREY
+      },
+      height: {
+        defaultValue: CONSTANTS.LAYER_HEIGHT
+      }
     };
   }
 
@@ -193,17 +206,9 @@ export class TimelineLayer extends Morph {
     return event.hand.dragTimelineSequenceState.timelineSequences;
   }
 
-  constructor (props = {}) {
-    super(props);
-    const { container, layer } = props;
+  initialize (container, layer) {
     this.layer = layer;
-
-    this.height = CONSTANTS.LAYER_HEIGHT;
-    this.fill = COLOR_SCHEME.GREY;
-    this.grabbable = true;
-    this.focusable = false;
     this.container = container;
-    this.nativeCursor = 'grab';
   }
 
   isTimelineLayer () {
