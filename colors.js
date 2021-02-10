@@ -5,6 +5,7 @@ export const COLOR_SCHEME = {
   WHITE: Color.white,
   GREY: Color.rgb(200, 200, 200),
   BLACK: Color.black,
+  RED: Color.red,
   TRANSPARENT: Color.transparent,
   LIGHT_GREY: Color.rgb(240, 240, 240)
 };

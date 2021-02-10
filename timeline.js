@@ -198,11 +198,6 @@ export class TimelineLayer extends Morph {
     };
   }
 
-  static statesOfDraggedTimelineSequences (event) {
-    if (!event.hand.dragTimelineSequenceStates) return [];
-    return event.hand.dragTimelineSequenceStates;
-  }
-
   initialize (container, layer) {
     this.layer = layer;
     this.container = container;
@@ -334,10 +329,10 @@ export class TimelineSequence extends Morph {
     this.width = endPosition - startPosition;
     this.addMorph(new Label({
       textString: sequence.name,
-      padding: rect(5, 4, 0, 0)
+      padding: rect(5, 4, 0, 0),
+      reactsToPointer: false
     }));
     timelineLayer.addMorph(this);
-    this.bringToFront();
     this._isInitializing = false;
   }
 
@@ -372,6 +367,7 @@ export class TimelineSequence extends Morph {
   onMouseDown (event) {
     this.timeline.deselectAllSequences();
     this.selected = true;
+    this.bringToFront();
   }
 
   onSelectionChange (selected) {
@@ -392,12 +388,12 @@ export class TimelineSequence extends Morph {
     if (this.isOverlappingOtherSequence()) {
       const dragStates = event.hand.dragTimelineSequenceStates;
       dragStates.forEach(dragState => {
-        console.log(dragState);
         const sequence = dragState.timelineSequence;
         sequence.position = dragState.previousPosition;
         sequence.remove();
         sequence.timelineLayer = dragState.previousTimelineLayer;
         sequence.setOverlappingAppearance();
+        this.env.undoManager.removeLatestUndo();
       });
     }
     delete event.hand.dragTimelineSequenceStates;
@@ -489,7 +485,7 @@ export class TimelineSequence extends Morph {
   }
 
   setOverlappingAppearance () {
-    this.fill = this.isOverlappingOtherSequence() ? Color.red : Color.white;
+    this.fill = this.isOverlappingOtherSequence() ? COLOR_SCHEME.RED : COLOR_SCHEME.WHITE;
   }
 
   isOverlappingOtherSequence () {
