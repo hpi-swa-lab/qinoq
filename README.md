@@ -1,17 +1,17 @@
 # interactives-editor
 
-The interactives editor allows editing of interactives. Currently it is designed to edit scrolltellings.
+The Interactives Editor allows editing of Interactives. Currently it is designed to edit Scrollytellings.
 
 ## Editor Usage
 
 ### Opening an editor
 
-`const editor = new InteractiveEditor()`
+`const editor = new InteractivesEditor()  // opens an Interactives Editor in a window within the world`
 
 ### Opening an Interactive in the world
 
 ```js
-const interactive = Interactive.example()
+const interactive = Interactive.example()  // creates an example interactive. Use new Interactive() to create an empty Interactive
 interactive.openInWorld()
 ```
 
@@ -26,11 +26,11 @@ preview of the editor (via the "grab"-halo).
 
 An Interactive has three building blocks: the Interactive itself, Layers and Sequences.
 
-The Interactive holds Layers and Sequences.
+The Interactive holds Layers and Sequences, manages their visibility and controls their progress. It has a length defining the possible scrolling amount for the Scrollytelling.
 A Sequence is a collection of morphs that should be displayed together for a defined timeframe during an Interactive. The contents of a Sequence may be animated in the future.
 Sequences reference a Layer. All Sequences that should be displayed with the same z-index should reference the same layer.
 
-The `Interactive`, `Layer` and `Sequence` classes hold static example methods that together build an Interactive.
+The `Interactive`, `Layer` and `Sequence` classes hold static example methods that together build an example for an Interactive.
 
 ### Creating an Interactive
 
@@ -45,7 +45,7 @@ const interactive = Interactive({
 
 ```js
 const layer = new Layer();
-layer.name = 'ExampleLayer';
+layer.name = 'example layer';
 interactive.addLayer(layer);    
 ```
 
