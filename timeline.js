@@ -198,9 +198,9 @@ export class TimelineLayer extends Morph {
     };
   }
 
-  static timelineSequencesDragged (event) {
-    if (!event.hand.dragTimelineSequenceState) return [];
-    return event.hand.dragTimelineSequenceState.timelineSequencesWithPosition;
+  static statesOfDraggedTimelineSequences (event) {
+    if (!event.hand.dragTimelineSequenceStates) return [];
+    return event.hand.dragTimelineSequenceStates;
   }
 
   initialize (container, layer) {
@@ -239,9 +239,9 @@ export class TimelineLayer extends Morph {
 
   onHoverIn (event) {
     super.onHoverIn(event);
-    if (event.hand.dragTimelineSequenceState) {
-      TimelineLayer.timelineSequencesDragged(event).forEach(timelineSequence => {
-        timelineSequence[0].onBeingMovedTo(this);
+    if (event.hand.dragTimelineSequenceStates) {
+      event.hand.dragTimelineSequenceStates.forEach(dragState => {
+        dragState.timelineSequence.onBeingMovedTo(this);
       });
     }
   }
@@ -252,7 +252,7 @@ export class TimelineLayer extends Morph {
     this.timeline.updateZIndicesFromTimelineLayerPositions();
   }
 
-  getAllSequencesWithin (rectangle) {
+  getAllSequencesIntersectingWith (rectangle) {
     return this.timelineSequences.filter(timelineSequence => timelineSequence.bounds().intersects(rectangle));
   }
 
@@ -380,25 +380,27 @@ export class TimelineSequence extends Morph {
 
   onDragStart (event) {
     this.undoStart('timeline-sequence-move');
-    event.hand.dragTimelineSequenceState = {
-      timelineSequences: [[this, this.position]],
-      originalTimelineLayer: this.timelineLayer
-    };
+    event.hand.dragTimelineSequenceStates = [{
+      timelineSequence: this,
+      previousPosition: this.position,
+      previousTimelineLayer: this.timelineLayer
+    }];
   }
 
   onDragEnd (event) {
     this.undoStop('timeline-sequence-move');
     if (this.isOverlappingOtherSequence()) {
-      const dragState = event.hand.dragTimelineSequenceState;
-      dragState.timelineSequencesWithPosition.forEach(timelineSequence => {
-        const sequence = timelineSequence.timelineSequence;
-        sequence.position = timelineSequence.position;
+      const dragStates = event.hand.dragTimelineSequenceStates;
+      dragStates.forEach(dragState => {
+        console.log(dragState);
+        const sequence = dragState.timelineSequence;
+        sequence.position = dragState.previousPosition;
         sequence.remove();
-        sequence.onBeingMovedTo(dragState.originalTimelineLayer);
+        sequence.onBeingMovedTo(dragState.previousTimelineLayer);
         sequence.setOverlappingAppearance();
       });
     }
-    delete event.hand.dragTimelineSequenceState;
+    delete event.hand.dragTimelineSequenceStates;
   }
 
   onDrag (event) {
@@ -491,8 +493,8 @@ export class TimelineSequence extends Morph {
   }
 
   isOverlappingOtherSequence () {
-    const blockingSequences = this.timelineLayer.getAllSequencesWithin(this.bounds());
-    return blockingSequences.length > 1;
+    const blockingSequences = this.timelineLayer.getAllSequencesIntersectingWith(this.bounds());
+    return blockingSequences.length > 1; // must be > 1 since blockingSequences always contain the dragged sequence itself
   }
 }
 
