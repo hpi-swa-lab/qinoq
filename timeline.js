@@ -292,7 +292,7 @@ export class TimelineSequence extends Morph {
     // some setters handle the syncing between the timeline representations
     // and the data model sequences
     // this is not needed at construction time and will break things since some references are not set then
-    // while this is true, these methods will not be calles in the setters
+    // while this is true, these methods will not be called in the setters
     this._underConstruction = true;
     const startPosition = timelineLayer.timeline.getPositionFromScroll(sequence.start);
     const endPosition = startPosition + timelineLayer.timeline.getWidthFromDuration(sequence.duration);
