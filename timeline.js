@@ -297,7 +297,6 @@ export class TimelineSequence extends Morph {
     const endPosition = startPosition + timelineLayer.timeline.getWidthFromDuration(sequence.duration);
 
     this.height = CONSTANTS.SEQUENCE_HEIGHT;
-    this.minimalSequenceWidth = CONSTANTS.MINIMAL_SEQUENCE_WIDTH;
     this.acceptDrops = false;
     this.draggable = true;
     this.previousPosition = pt(startPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
@@ -413,9 +412,9 @@ export class TimelineSequence extends Morph {
   onResizeRight (event) {
     const newSequenceWidth = this.rightResizer.position.x + this.rightResizer.width;
 
-    if (newSequenceWidth < this.minimalSequenceWidth) {
-      this.extent = pt(this.minimalSequenceWidth, this.height);
-      this.rightResizer.position = pt(this.minimalSequenceWidth - this.rightResizer.width, 0);
+    if (newSequenceWidth < CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
+      this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
+      this.rightResizer.position = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH - this.rightResizer.width, 0);
       this.updateSequenceAfterArrangement();
       return;
     }
@@ -437,9 +436,9 @@ export class TimelineSequence extends Morph {
     const newSequenceWidth = this.startWidth + dragDelta;
     const rightResizerGlobalPosition = this.rightResizer.globalPosition;
 
-    if (newSequenceWidth <= this.minimalSequenceWidth) {
-      this.extent = pt(this.minimalSequenceWidth, this.height);
-      this.globalPosition = pt(rightResizerGlobalPosition.x + this.rightResizer.width - this.minimalSequenceWidth, this.globalPosition.y);
+    if (newSequenceWidth <= CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
+      this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
+      this.globalPosition = pt(rightResizerGlobalPosition.x + this.rightResizer.width - CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.globalPosition.y);
     } else {
       this.globalPosition = pt(this.startPosition.x - dragDelta, this.globalPosition.y);
       this.extent = pt(newSequenceWidth, this.height);
