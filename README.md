@@ -17,7 +17,7 @@ interactive.openInWorld()
 
 ### Loading the Interactive in the editor
 
-Either run `editor.loadInteractive(interactive)` or drag-and-drop the opened interactive into the
+Either run `editor.loadInteractive(interactive)` or grab-and-drop the opened interactive into the
 preview of the editor (via the "grab"-halo).
 
 ## Interactive API
@@ -27,7 +27,7 @@ preview of the editor (via the "grab"-halo).
 An Interactive has three building blocks: the Interactive itself, Layers and Sequences.
 
 The Interactive holds Layers and Sequences, manages their visibility and controls their progress. It has a length defining the possible scrolling amount for the Scrollytelling.
-A Sequence is a collection of morphs that should be displayed together for a defined timeframe during an Interactive. The contents of a Sequence may be animated in the future.
+A Sequence is a semantic collection of morphs that live as submorphs within the sequence. It has a start position and a duration, which mark the time during which a sequence is visible within the Interactive. The sequence also offers a progress, ranging from 0 to 1 for the time of display, which could be used to animate the content of a Sequence in the future.
 Sequences reference a Layer. All Sequences that should be displayed with the same z-index should reference the same layer.
 
 The `Interactive`, `Layer` and `Sequence` classes hold static example methods that together build an example for an Interactive.
