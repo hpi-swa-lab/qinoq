@@ -117,7 +117,9 @@ export class Timeline extends Morph {
   }
 
   createTimelineSequence (sequence) {
-    return new TimelineSequence(sequence, this.getTimelineLayerFor(sequence.layer));
+    debugger;
+    const seq = new TimelineSequence();
+    seq.initialize(sequence, this.getTimelineLayerFor(sequence.layer));
   }
 
   loadContent (interactive) {
@@ -253,8 +255,35 @@ export class TimelineLayer extends Morph {
 export class TimelineSequence extends Morph {
   static get properties () {
     return {
+      acceptsDrops: {
+        defaultValue: false
+      },
+      draggable: {
+        defaultValue: true
+      },
       clipMode: {
         defaultValue: 'hidden'
+      },
+      nativeCursor: {
+        defaultValue: 'default'
+      },
+      borderWidth: {
+        defaultValue: 1
+      },
+      borderColor: {
+        defaultValue: COLOR_SCHEME.BLACK
+      },
+      borderRadius: {
+        defaultValue: 3
+      },
+      sequence: {
+        set (sequence) {
+          this.setProperty('sequence', sequence);
+          this.tooltip = sequence.name;
+        }
+      },
+      height: {
+        defaultValue: CONSTANTS.SEQUENCE_HEIGHT
       },
       timelineLayer: {
         set (timelineLayer) {
@@ -272,8 +301,6 @@ export class TimelineSequence extends Morph {
           }
         }
       },
-      previousPosition: {},
-      sequence: {},
       selected: {
         defaultValue: false,
         type: 'Boolean',
@@ -285,41 +312,25 @@ export class TimelineSequence extends Morph {
     };
   }
 
-  constructor (sequence, timelineLayer, props = {}) {
-    super(props);
-    // to enable the expected behaviour upon undo/redo
-    // some setters handle the syncing between the timeline representations
-    // and the data model sequences
-    // this is not needed at construction time and will break things since some references are not set then
-    // while this is true, these methods will not be called in the setters
-    this._underConstruction = true;
-    const startPosition = timelineLayer.timeline.getPositionFromScroll(sequence.start);
-    const endPosition = startPosition + timelineLayer.timeline.getWidthFromDuration(sequence.duration);
+  initialize (sequence, timelineLayer) {
+    debugger;
+    this.sequence = sequence;
+    this.timelineLayer = timelineLayer;
 
-    this.height = CONSTANTS.SEQUENCE_HEIGHT;
-    this.acceptDrops = false;
-    this.draggable = true;
+    const startPosition = timelineLayer.timeline.getPositionFromScroll(this.sequence.start);
+    const endPosition = startPosition + timelineLayer.timeline.getWidthFromDuration(this.sequence.duration);
     this.previousPosition = pt(startPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     this.width = endPosition - startPosition;
+
+    // this.initializeResizers();
+
     this.addMorph(new Label({
       reactsToPointer: false,
       textString: sequence.name,
       padding: rect(5, 4, 0, 0)
     }));
-    this.tooltip = sequence.name;
-    this.nativeCursor = 'default';
-
-    this.borderWidth = 1;
-    this.borderColor = COLOR_SCHEME.BLACK;
-    this.borderRadius = 3;
-
-    this.sequence = sequence;
-    this.initializeResizers();
-    this.position = this.previousPosition;
-    this.timelineLayer = timelineLayer;
-    this.timelineLayer.addMorph(this);
-    // enable full setter functionality
-    this._underConstruction = false;
+    timelineLayer.addMorph(this);
+    this.bringToFront();
   }
 
   initializeResizers () {
