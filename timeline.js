@@ -114,7 +114,6 @@ export class Timeline extends Morph {
   }
 
   createTimelineSequence (sequence) {
-    debugger;
     const seq = new TimelineSequence();
     seq.initialize(sequence, this.getTimelineLayerFor(sequence.layer));
   }
@@ -317,7 +316,6 @@ export class TimelineSequence extends Morph {
   }
 
   initialize (sequence, timelineLayer) {
-    debugger;
     this.sequence = sequence;
     this.timelineLayer = timelineLayer;
 
@@ -325,9 +323,6 @@ export class TimelineSequence extends Morph {
     const endPosition = startPosition + timelineLayer.timeline.getWidthFromDuration(this.sequence.duration);
     this.previousPosition = pt(startPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     this.width = endPosition - startPosition;
-
-    // this.initializeResizers();
-
     this.addMorph(new Label({
       reactsToPointer: false,
       textString: sequence.name,
