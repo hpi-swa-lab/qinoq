@@ -241,7 +241,7 @@ export class TimelineLayer extends Morph {
     super.onHoverIn(event);
     if (event.hand.dragTimelineSequenceStates) {
       event.hand.dragTimelineSequenceStates.forEach(dragState => {
-        dragState.timelineSequence.onBeingMovedTo(this);
+        dragState.timelineSequence.timelineLayer = this;
       });
     }
   }
@@ -396,7 +396,7 @@ export class TimelineSequence extends Morph {
         const sequence = dragState.timelineSequence;
         sequence.position = dragState.previousPosition;
         sequence.remove();
-        sequence.onBeingMovedTo(dragState.previousTimelineLayer);
+        sequence.timelineLayer = dragState.previousTimelineLayer;
         sequence.setOverlappingAppearance();
       });
     }
