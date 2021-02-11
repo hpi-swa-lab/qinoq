@@ -541,19 +541,10 @@ class TimelineCursor extends Morph {
     };
   }
 
-  constructor (displayValue = 0, props = {}) {
-    super(props);
-
-    this.initialize();
-
-    this.isLayoutable = false;
-    this.displayValue = displayValue;
-  }
-
-  initialize () {
+  initialize (displayValue = 0) {
     this.initializeSubmorphs();
     this.initializeAppearance();
-    this.redraw();
+    this.displayValue = displayValue;
   }
 
   initializeSubmorphs () {

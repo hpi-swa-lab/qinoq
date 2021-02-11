@@ -2,13 +2,12 @@ import { Morph, Polygon } from 'lively.morphic';
 import { Color, pt } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
+import { COLOR_SCHEME } from './colors.js';
 
 export class Interactive extends Morph {
   static example () {
-    const interactive = new Interactive({
-      extent: pt(400, 300),
-      length: 500
-    });
+    const interactive = new Interactive({ extent: pt(400, 300) });
+    interactive.initialize(500);
 
     const foregroundLayer = Layer.exampleForegroundLayer();
     const backgroundLayer = Layer.exampleBackgroundLayer();
@@ -53,14 +52,14 @@ export class Interactive extends Morph {
     };
   }
 
-  constructor (props = {}) {
-    super(props);
-    const { length = 500 } = props;
+  initialize (length = 500) {
+    this.length = length;
     this.initScrollOverlay();
   }
 
   initScrollOverlay () {
-    this.scrollOverlay = new InteractiveScrollHolder(this);
+    this.scrollOverlay = new InteractiveScrollHolder();
+    this.scrollOverlay.initialize(this);
     const scrollLengthContainer = new Morph({
       name: 'scrollable content',
       extent: pt(this.width, this.length >= this.heigth ? 2 * this.length : this.height + this.length),
@@ -119,19 +118,32 @@ export class Interactive extends Morph {
 class InteractiveScrollHolder extends Morph {
   static get properties () {
     return {
-      interactive: {}
+      interactive: {
+        set (interactive) {
+          this.setProperty('interactive', interactive);
+          if (this.interactive) {
+            this.extent = pt(this.interactive.width, this.interactive.height);
+          }
+        }
+      },
+      name: {
+        defaultValue: 'scrollable container'
+      },
+      clipMode: {
+        defaultValue: 'auto'
+      },
+      // opacity of zero leads to removal of object from DOM in firefox
+      opacity: {
+        defaultValue: 0.001
+      },
+      halosEnabled: {
+        defaultValue: false
+      }
     };
   }
 
-  constructor (interactive) {
-    super();
+  initialize (interactive) {
     this.interactive = interactive;
-    this.name = 'scrollable container';
-    this.extent = pt(this.interactive.width, this.interactive.height);
-    this.clipMode = 'auto';
-    // opacity of zero leads to removal of object from DOM in firefox
-    this.opacity = 0.001;
-    this.halosEnabled = false;
   }
 
   onScroll (evt) {
@@ -186,26 +198,41 @@ export class Sequence extends Morph {
         max: 1,
         isFloat: true
       },
-      layer: {}
+      layer: {},
+      name: {
+        defaultValue: 'unnamed sequence'
+      },
+      fill: {
+        defaultValue: COLOR_SCHEME.TRANSPARENT
+      },
+      reactsToPointer: {
+        defaultValue: false
+      },
+      extent: {
+        defaultValue: pt(0, 0)
+      }
     };
   }
 
   static backgroundNightExample () {
-    const backgroundSequence = new Sequence(0, 250, { name: 'night background' });
+    const backgroundSequence = new Sequence();
+    backgroundSequence.initialize(0, 250, 'night background');
     const backgroundMorph = new Morph({ fill: Color.rgbHex('272a7c'), extent: pt(400, 300) });
     backgroundSequence.addMorph(backgroundMorph);
     return backgroundSequence;
   }
 
   static backgroundDayExample () {
-    const backgroundSequence = new Sequence(250, 250, { name: 'day background' });
+    const backgroundSequence = new Sequence();
+    backgroundSequence.initialize(250, 250, 'day background');
     const backgroundMorph = new Morph({ fill: Color.rgbHex('60b2e5'), extent: pt(400, 300) });
     backgroundSequence.addMorph(backgroundMorph);
     return backgroundSequence;
   }
 
   static treeExample () {
-    const treeSequence = new Sequence(0, 500, { name: 'Tree Sequence' });
+    const treeSequence = new Sequence();
+    treeSequence.initialize(0, 500, 'tree sequence');
     const stemMorph = new Morph({ fill: Color.rgbHex('734c30'), extent: pt(30, 60) });
     const vertices = [pt(60, 0), pt(90, 50), pt(70, 50), pt(100, 100), pt(70, 100), pt(110, 150), pt(10, 150), pt(50, 100), pt(20, 100), pt(50, 50), pt(30, 50)];
     const crownMorph = new Polygon({ fill: Color.rgbHex('74a57f'), vertices: vertices });
@@ -216,17 +243,10 @@ export class Sequence extends Morph {
     return treeSequence;
   }
 
-  constructor (start, duration, props = {}) {
-    super(props);
-    const { extent = pt(0, 0), name = 'unnamed Sequence' } = props;
-    this.name = name;
-    this.extent = extent;
-
-    this.reactsToPointer = false;
-    this.fill = Color.rgba(0, 0, 0, 0); // Transparency
-
+  initialize (start, duration, name) {
     this.start = start;
     this.duration = duration;
+    this.name = name;
   }
 
   isDisplayed () {
