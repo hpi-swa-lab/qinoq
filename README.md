@@ -55,8 +55,8 @@ interactive.addLayer(layer);
 This code adds a Sequence to the Interactive that displays a rectangular Morph, beginning at position 0 for a duration of 250.
 
 ```js
-const exampleSequence = new Sequence();
-exampleSequence.initialize(0, 500, 'example sequence') //sequence starts at 0, runs until 500 and is named example sequence
+const exampleSequence = new Sequence({name: 'example sequence'});
+exampleSequence.initialize(0, 500) //sequence starts at 0, runs until 500
 const exampleMorph = new Morph({ fill: Color.rgbHex('272a7c'), extent: pt(400, 300) });
 exampleSequence.addMorph(exampleMorph);
 exampleSequence.layer = layer // we have to put the sequence on a layer in the interactive

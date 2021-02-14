@@ -215,24 +215,24 @@ export class Sequence extends Morph {
   }
 
   static backgroundNightExample () {
-    const backgroundSequence = new Sequence();
-    backgroundSequence.initialize(0, 250, 'night background');
+    const backgroundSequence = new Sequence({ name: 'night background' });
+    backgroundSequence.initialize(0, 250);
     const backgroundMorph = new Morph({ fill: Color.rgbHex('272a7c'), extent: pt(400, 300) });
     backgroundSequence.addMorph(backgroundMorph);
     return backgroundSequence;
   }
 
   static backgroundDayExample () {
-    const backgroundSequence = new Sequence();
-    backgroundSequence.initialize(250, 250, 'day background');
+    const backgroundSequence = new Sequence({ name: 'day background' });
+    backgroundSequence.initialize(250, 250);
     const backgroundMorph = new Morph({ fill: Color.rgbHex('60b2e5'), extent: pt(400, 300) });
     backgroundSequence.addMorph(backgroundMorph);
     return backgroundSequence;
   }
 
   static treeExample () {
-    const treeSequence = new Sequence();
-    treeSequence.initialize(0, 500, 'tree sequence');
+    const treeSequence = new Sequence({ name: 'tree sequence' });
+    treeSequence.initialize(0, 500);
     const stemMorph = new Morph({ fill: Color.rgbHex('734c30'), extent: pt(30, 60) });
     const vertices = [pt(60, 0), pt(90, 50), pt(70, 50), pt(100, 100), pt(70, 100), pt(110, 150), pt(10, 150), pt(50, 100), pt(20, 100), pt(50, 50), pt(30, 50)];
     const crownMorph = new Polygon({ fill: Color.rgbHex('74a57f'), vertices: vertices });
@@ -243,10 +243,9 @@ export class Sequence extends Morph {
     return treeSequence;
   }
 
-  initialize (start, duration, name) {
+  initialize (start, duration) {
     this.start = start;
     this.duration = duration;
-    this.name = name;
   }
 
   isDisplayed () {
