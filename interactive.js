@@ -118,7 +118,7 @@ export class Interactive extends Morph {
   showOnly (sequence) {
     this.sequences.forEach(seq => {
       if (sequence != seq) {
-        seq.isHiddenByForce = true;
+        seq.focused = false;
       }
     });
     this.redraw();
@@ -126,7 +126,7 @@ export class Interactive extends Morph {
 
   showAllSequences () {
     this.sequences.forEach(seq => {
-      seq.isHiddenByForce = false;
+      seq.focused = true;
     });
     this.redraw();
   }
@@ -228,8 +228,15 @@ export class Sequence extends Morph {
       extent: {
         defaultValue: pt(0, 0)
       },
-      isHiddenByForce: {
-        defaultValue: false
+      focused: {
+        defaultValue: true,
+        set (focused) {
+          this.setProperty('focused', focused);
+          this.applyUnfocusedEffect();
+        }
+      },
+      originalOpacity: {
+        defaultValue: -1 // -1 means not set by convention
       }
     };
   }
@@ -269,10 +276,21 @@ export class Sequence extends Morph {
   }
 
   isDisplayed () {
-    if (this.isHiddenByForce) {
-      return false;
-    }
     return this._progress >= 0 && this._progress < 1 && !this.layer.hidden;
+  }
+
+  applyUnfocusedEffect () {
+    if (this.focused) {
+      if (this.originalOpacity !== -1) {
+        this.opacity = this.originalOpacity;
+        this.originalOpacity = -1;
+      }
+    } else {
+      if (this.originalOpacity === -1) {
+        this.originalOpacity = this.opacity;
+      }
+      this.opacity = 0.2; // TODO: define a better effect
+    }
   }
 
   updateProgress (scrollPosition) {
