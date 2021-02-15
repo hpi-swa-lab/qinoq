@@ -40,6 +40,7 @@ export class Interactive extends Morph {
         defaultValue: 0,
         set (scrollPosition) {
           this.setProperty('scrollPosition', scrollPosition);
+          this.scrollOverlay.scroll.y = scrollPosition;
           this.redraw();
         }
       },
