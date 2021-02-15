@@ -4,7 +4,8 @@
   "lively": {
     "isObjectPackage": false
   },
-  "dependencies": {},
-  "devDependencies": {},
-  "main": "index.js"
+  "main": "index.js",
+  "devDependencies": {
+    "eslint": "^7.20.0"
+  }
 }
