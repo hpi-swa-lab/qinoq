@@ -115,11 +115,18 @@ export class Interactive extends Morph {
     }
   }
 
-  hideAllSequencesExcept (sequence) {
+  showOnly (sequence) {
     this.sequences.forEach(seq => {
       if (sequence != seq) {
         seq.isHiddenByForce = true;
       }
+    });
+    this.redraw();
+  }
+
+  showAllSequences () {
+    this.sequences.forEach(seq => {
+      seq.isHiddenByForce = false;
     });
     this.redraw();
   }

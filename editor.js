@@ -79,7 +79,7 @@ export class InteractivesEditor extends Morph {
   }
 
   initializeSequenceView (sequence) {
-    this.interactive.hideAllSequencesExcept(sequence);
+    this.interactive.showOnly(sequence);
     this.sequenceTimelines.push(this.initializeSequenceTimeline(sequence));
     this.globalTimeline.remove();
   }
@@ -88,6 +88,12 @@ export class InteractivesEditor extends Morph {
     const sequenceTimeline = new Timeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT), name: `${sequence.name} timeline` });
     this.addMorph(sequenceTimeline);
     return sequenceTimeline;
+  }
+
+  showGlobalTimeline () {
+    this.interactive.showAllSequences();
+    this.addMorph(this.globalTimeline);
+    this.sequenceTimelines.forEach(timeline => timeline.remove());
   }
 }
 
