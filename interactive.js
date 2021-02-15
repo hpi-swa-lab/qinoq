@@ -6,8 +6,8 @@ import { COLOR_SCHEME } from './colors.js';
 
 export class Interactive extends Morph {
   static example () {
-    const interactive = new Interactive({ extent: pt(400, 300) });
-    interactive.initialize(500);
+    const interactive = new Interactive();
+    interactive.initialize(pt(400, 300), 500);
 
     const foregroundLayer = Layer.exampleForegroundLayer();
     const backgroundLayer = Layer.exampleBackgroundLayer();
@@ -52,8 +52,9 @@ export class Interactive extends Morph {
     };
   }
 
-  initialize (length = 500) {
+  initialize (extent = pt(400, 300), length = 500) {
     this.length = length;
+    this.extent = extent;
     this.initScrollOverlay();
   }
 

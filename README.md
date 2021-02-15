@@ -38,8 +38,8 @@ The `Interactive`, `Layer` and `Sequence` classes hold static example methods th
 ### Creating an Interactive
 
 ```js
-const interactive = new Interactive({ extent: pt(400, 300) });
-interactive.initialize(500); //length of the interactive
+const interactive = new Interactive();
+interactive.initialize(pt(400, 300), 500); //extent and length of the interactive
 ```
 
 ### Adding Layers to an Interactive
