@@ -375,8 +375,7 @@ export class TimelineSequence extends Morph {
   }
 
   onDoubleMouseDown (event) {
-    this.interactive.hideAllSequencesExcept(this.sequence);
-    this.interactive.redraw();
+    this.timeline.owner.initializeSequenceView(this.sequence);
   }
 
   onMouseDown (event) {
