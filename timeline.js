@@ -372,7 +372,13 @@ export class TimelineSequence extends Morph {
     this.addMorphBack(this.leftResizer);
   }
 
+  onDoubleMouseDown (event) {
+    this.interactive.hideAllSequencesExcept(this.sequence);
+    this.interactive.redraw();
+  }
+
   onMouseDown (event) {
+    super.onMouseDown(event);
     this.timeline.deselectAllSequences();
     this.selected = true;
     this.bringToFront();
@@ -443,6 +449,10 @@ export class TimelineSequence extends Morph {
 
   get timeline () {
     return this.timelineLayer.timeline;
+  }
+
+  get interactive () {
+    return this.timeline.interactive;
   }
 
   onResizeRight (event) {
