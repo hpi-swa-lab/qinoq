@@ -21,7 +21,9 @@ export class Timeline extends Morph {
     return {
       ui: {
         defaultValue: {}
-      }
+      },
+      interactive: {},
+      _timelineLayerDict: {}
     };
   }
 
