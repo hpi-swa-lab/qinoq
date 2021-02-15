@@ -121,6 +121,7 @@ export class Interactive extends Morph {
         seq.isHiddenByForce = true;
       }
     });
+    this.redraw();
   }
 }
 
