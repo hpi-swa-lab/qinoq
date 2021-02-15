@@ -32,6 +32,8 @@ export class InteractivesEditor extends Morph {
       },
       sequenceTimelines: {
         defaultValue: []
+      },
+      globalTimeline: {
       }
     };
   }
@@ -52,9 +54,9 @@ export class InteractivesEditor extends Morph {
     this.preview.initialize(this);
     this.addMorph(this.preview);
     this.morphInspector = this.addMorph(new InteractiveMorphInspector({ position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0) }));
-    this.timeline = new Timeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT) });
-    this.timeline.initialize();
-    this.addMorph(this.timeline);
+    this.globalTimeline = new Timeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT) });
+    this.globalTimeline.initialize();
+    this.addMorph(this.globalTimeline);
   }
 
   initializeLayout () {
@@ -73,14 +75,13 @@ export class InteractivesEditor extends Morph {
   }
 
   initializeTimeline (interactive) {
-    this.timeline.loadContent(interactive);
+    this.globalTimeline.loadContent(interactive);
   }
 
   initializeSequenceView (sequence) {
-    debugger;
     this.interactive.hideAllSequencesExcept(sequence);
     this.sequenceTimelines.push(this.initializeSequenceTimeline(sequence));
-    this.timeline.remove();
+    this.globalTimeline.remove();
   }
 
   initializeSequenceTimeline (sequence) {
