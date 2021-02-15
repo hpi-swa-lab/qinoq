@@ -114,6 +114,14 @@ export class Interactive extends Morph {
       sequence.layer = this.layers[0];
     }
   }
+
+  hideAllSequencesExcept (sequence) {
+    this.sequences.forEach(seq => {
+      if (sequence != seq) {
+        seq.isHiddenByForce = true;
+      }
+    });
+  }
 }
 
 class InteractiveScrollHolder extends Morph {
@@ -211,6 +219,9 @@ export class Sequence extends Morph {
       },
       extent: {
         defaultValue: pt(0, 0)
+      },
+      isHiddenByForce: {
+        defaultValue: false
       }
     };
   }
@@ -250,6 +261,9 @@ export class Sequence extends Morph {
   }
 
   isDisplayed () {
+    if (this.isHiddenByForce) {
+      return false;
+    }
     return this._progress >= 0 && this._progress < 1 && !this.layer.hidden;
   }
 
