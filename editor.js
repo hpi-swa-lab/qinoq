@@ -80,6 +80,7 @@ export class InteractivesEditor extends Morph {
 
   initializeSequenceView (sequence) {
     this.interactive.showOnly(sequence);
+    this.interactive.scrollPosition = sequence.start;
     this.sequenceTimelines.push(this.initializeSequenceTimeline(sequence));
     this.globalTimeline.remove();
   }
