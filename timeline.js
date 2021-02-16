@@ -140,8 +140,12 @@ export class Timeline extends Morph {
   }
 
   onScrollPositionChange (scrollPosition) {
-    this.ui.cursor.displayValue = Math.round(scrollPosition);
+    this.ui.cursor.displayValue = this.getDisplayValueFromScroll(scrollPosition);
     this.ui.cursor.location = this.getPositionFromScroll(scrollPosition);
+  }
+
+  getDisplayValueFromScroll (scrollPosition) {
+    return Math.round(scrollPosition);
   }
 
   getPositionFromScroll (scroll) {
@@ -219,6 +223,10 @@ export class SequenceTimeline extends Timeline {
       return CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH;
     }
     return CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.sequence.progress;
+  }
+
+  getDisplayValueFromScroll (scrollPosition) {
+    return this.sequence.progress.toFixed(2);
   }
 }
 
