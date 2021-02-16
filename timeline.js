@@ -120,7 +120,7 @@ export class Timeline extends Morph {
     seq.initialize(sequence, this.getTimelineLayerFor(sequence.layer));
   }
 
-  loadContent (interactive) {
+  loadInteractive (interactive) {
     this.interactive = interactive;
     this._timelineLayerDict = {};
 
@@ -133,6 +133,10 @@ export class Timeline extends Morph {
     this.onScrollPositionChange(this.interactive.scrollPosition);
 
     connect(this.interactive, 'scrollPosition', this, 'onScrollPositionChange');
+  }
+
+  loadSequence () {
+
   }
 
   onScrollPositionChange (scrollPosition) {
