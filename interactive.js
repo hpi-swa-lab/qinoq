@@ -64,7 +64,7 @@ export class Interactive extends Morph {
     this.scrollOverlay.initialize(this);
     const scrollLengthContainer = new Morph({
       name: 'scrollable content',
-      extent: pt(this.width, this.length >= this.heigth ? 2 * this.length : this.height + this.length),
+      extent: pt(this.width, this.length >= this.height ? 2 * this.length : this.height + this.length),
       halosEnabled: false
     });
     this.scrollOverlay.addMorph(scrollLengthContainer);
