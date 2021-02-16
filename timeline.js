@@ -36,9 +36,10 @@ export class Timeline extends Morph {
 
   initializeCursor () {
     this.ui.cursor = new TimelineCursor();
-    this.ui.cursor.initialize();
+    this.ui.cursor.initialize(0);
     this.ui.layerContainer.addMorph(this.ui.cursor);
     this.ui.cursor.location = this.getPositionFromScroll(0);
+
     this.ui.cursor.height = this.height;
   }
 
@@ -120,7 +121,6 @@ export class Timeline extends Morph {
     this.initializeCursor();
     this.onScrollPositionChange(this.owner.scrollPositionOfPreview);
     // TODO: currently it is assumed that this.interactive is set going forward
-    // this.owner.scrollPositionFromPreview
     connect(this.owner, 'scrollPositionOfPreview', this, 'onScrollPositionChange');
   }
 
@@ -221,12 +221,12 @@ export class SequenceTimeline extends Timeline {
 
   getPositionFromScroll (scroll) {
     if (scroll < this.sequence.start) {
-      return CONSTANTS.INITIAL_X_OFFSET;
+      return CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
     }
     if (scroll >= this.sequence.end) {
-      return CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH;
+      return CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
     }
-    return CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.sequence.progress;
+    return (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.sequence.progress) + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
   }
 
   getDisplayValueFromScroll (scrollPosition) {
@@ -605,7 +605,6 @@ class TimelineCursor extends Morph {
       displayValue: {
         defaultValue: 0,
         type: 'Number',
-        isFloat: false,
         set (displayValue) {
           this.setProperty('displayValue', displayValue);
           this.redraw();

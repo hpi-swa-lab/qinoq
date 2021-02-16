@@ -36,7 +36,9 @@ export class InteractivesEditor extends Morph {
       },
       globalTimeline: {
       },
-      scrollPositionOfPreview: {}
+      scrollPositionOfPreview: {
+        defaultValue: 0
+      }
     };
   }
 

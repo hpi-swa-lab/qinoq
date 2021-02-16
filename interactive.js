@@ -212,6 +212,7 @@ export class Sequence extends Morph {
       start: {},
       duration: {},
       _progress: {
+        defaultValue: 0,
         isFloat: true
       },
       layer: {},
@@ -301,12 +302,6 @@ export class Sequence extends Morph {
   }
 
   updateProgress (scrollPosition) {
-    if (scrollPosition < this.start) {
-      this._progress = 0;
-    } else if (scrollPosition > this.end) {
-      this._progress = 1;
-    } else {
-      this._progress = (scrollPosition - this.start) / this.duration;
-    }
+    this._progress = (scrollPosition - this.start) / this.duration;
   }
 }
