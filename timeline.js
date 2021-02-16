@@ -567,11 +567,12 @@ class TimelineCursor extends Morph {
       name: {
         defaultValue: 'cursor'
       },
-      ui: {}
+      ui: {},
+      unit: {}
     };
   }
 
-  initialize (displayValue = 0) {
+  initialize (unit = 'absolute', displayValue = 0) {
     this.initializeSubmorphs();
     this.initializeAppearance();
     this.displayValue = displayValue;
