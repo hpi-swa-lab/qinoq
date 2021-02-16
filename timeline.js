@@ -485,7 +485,7 @@ export class TimelineSequence extends Morph {
   }
 
   setOverlappingAppearance () {
-    this.fill = this.isOverlappingOtherSequence() ? COLOR_SCHEME.ERROR: COLOR_SCHEME.SURFACE;
+    this.fill = this.isOverlappingOtherSequence() ? COLOR_SCHEME.ERROR : COLOR_SCHEME.SURFACE;
   }
 
   isOverlappingOtherSequence () {
@@ -528,7 +528,7 @@ class TimelineCursor extends Morph {
         }
       },
       fontColor: {
-        defaultValue: COLOR_SCHEME.ON_SURFACE,
+        defaultValue: COLOR_SCHEME.ON_SECONDARY,
         set (color) {
           this.setProperty('fontColor', color);
           this.updateColor();
