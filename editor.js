@@ -1,9 +1,10 @@
 import { Window } from 'lively.components';
 import { pt, Color } from 'lively.graphics';
 import { VerticalLayout, ProportionalLayout, Morph } from 'lively.morphic';
-import { Timeline, SequenceTimeline } from './timeline.js';
+import { Timeline, GlobalTimeline, SequenceTimeline } from './timeline.js';
 import { Interactive } from 'interactives-editor';
 import { COLOR_SCHEME } from './colors';
+import { connect } from 'lively.bindings';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 900,
@@ -20,7 +21,7 @@ export class InteractivesEditor extends Morph {
       interactive: {
         set (interactive) {
           this.setProperty('interactive', interactive);
-          this.initializeTimeline(interactive);
+          this.initializeGlobalTimeline(interactive);
           this.initializePreview(interactive);
         }
       },
@@ -34,7 +35,8 @@ export class InteractivesEditor extends Morph {
         defaultValue: []
       },
       globalTimeline: {
-      }
+      },
+      scrollPositionOfPreview: {}
     };
   }
 
@@ -54,7 +56,7 @@ export class InteractivesEditor extends Morph {
     this.preview.initialize(this);
     this.addMorph(this.preview);
     this.morphInspector = this.addMorph(new InteractiveMorphInspector({ position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0) }));
-    this.globalTimeline = new Timeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT) });
+    this.globalTimeline = new GlobalTimeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT) });
 
     this.globalTimeline.initialize();
     this.addMorph(this.globalTimeline);
@@ -69,14 +71,16 @@ export class InteractivesEditor extends Morph {
 
   loadInteractive (interactive) {
     this.interactive = interactive;
+    // TODO: clean up connection when interactive leaves editor
+    connect(this.interactive, 'scrollPosition', this, 'scrollPositionOfPreview');
   }
 
   initializePreview (interactive) {
     this.preview.setContent(interactive);
   }
 
-  initializeTimeline (interactive) {
-    this.globalTimeline.loadInteractive(interactive);
+  initializeGlobalTimeline (interactive) {
+    this.globalTimeline.loadContent(interactive);
   }
 
   initializeSequenceView (sequence) {
@@ -89,8 +93,8 @@ export class InteractivesEditor extends Morph {
   initializeSequenceTimeline (sequence) {
     const sequenceTimeline = new SequenceTimeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT), name: `${sequence.name} timeline` });
     this.addMorph(sequenceTimeline);
-    sequenceTimeline.initialize(sequence, this.interactive);
-    sequenceTimeline.loadSequence();
+    sequenceTimeline.initialize();
+    sequenceTimeline.loadContent(sequence);
     return sequenceTimeline;
   }
 
