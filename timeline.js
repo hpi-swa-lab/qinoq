@@ -13,7 +13,8 @@ const CONSTANTS = {
   MINIMAL_SEQUENCE_WIDTH: 20,
   CURSOR_WIDTH: 2,
   CURSOR_FONT_SIZE: 10,
-  WARNING_WIDTH: 5
+  WARNING_WIDTH: 5,
+  IN_EDIT_MODE_SEQUENCE_WIDTH: 800
 };
 
 export class Timeline extends Morph {
@@ -135,8 +136,22 @@ export class Timeline extends Morph {
     connect(this.interactive, 'scrollPosition', this, 'onScrollPositionChange');
   }
 
-  loadSequence () {
+  loadSequence (sequence) {
+    this.sequence = sequence;
+    this._timelineLayerDict = {};
 
+    this.sequence.submorphs.forEach(morph => {
+      const timelineLayer = this.createTimelineLayer(morph);
+      // this is more or less just a visual placeholder
+      // when keyframe editing capabilities are introduced, this should probably pulled out into a class
+      timelineLayer.addMorph(new Morph({
+        extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
+        position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET),
+        fill: COLOR_SCHEME.WHITE,
+        borderColor: COLOR_SCHEME.BLUE,
+        borderWidth: 2
+      }));
+    });
   }
 
   onScrollPositionChange (scrollPosition) {
