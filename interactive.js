@@ -261,9 +261,9 @@ export class Sequence extends Morph {
   static treeExample () {
     const treeSequence = new Sequence({ name: 'tree sequence' });
     treeSequence.initialize(0, 500);
-    const stemMorph = new Morph({ fill: Color.rgbHex('734c30'), extent: pt(30, 60) });
+    const stemMorph = new Morph({ fill: Color.rgbHex('734c30'), extent: pt(30, 60), name: 'stem' });
     const vertices = [pt(60, 0), pt(90, 50), pt(70, 50), pt(100, 100), pt(70, 100), pt(110, 150), pt(10, 150), pt(50, 100), pt(20, 100), pt(50, 50), pt(30, 50)];
-    const crownMorph = new Polygon({ fill: Color.rgbHex('74a57f'), vertices: vertices });
+    const crownMorph = new Polygon({ fill: Color.rgbHex('74a57f'), vertices: vertices, name: 'leafs' });
     treeSequence.addMorph(stemMorph);
     treeSequence.addMorph(crownMorph);
     stemMorph.position = pt(200, 220);
