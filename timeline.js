@@ -190,7 +190,7 @@ export class TimelineLayer extends Morph {
         defaultValue: true
       },
       fill: {
-        defaultValue: COLOR_SCHEME.GREY
+        defaultValue: COLOR_SCHEME.TERNARY
       },
       height: {
         defaultValue: CONSTANTS.LAYER_HEIGHT
@@ -277,7 +277,7 @@ export class TimelineSequence extends Morph {
         defaultValue: 1
       },
       borderColor: {
-        defaultValue: COLOR_SCHEME.BLACK
+        defaultValue: COLOR_SCHEME.SECONDARY
       },
       borderRadius: {
         defaultValue: 3
@@ -371,7 +371,7 @@ export class TimelineSequence extends Morph {
   }
 
   onSelectionChange (selected) {
-    this.borderColor = selected ? COLOR_SCHEME.BLUE : COLOR_SCHEME.BLACK;
+    this.borderColor = selected ? COLOR_SCHEME.FOCUSSED : COLOR_SCHEME.SECONDARY;
   }
 
   onDragStart (event) {
@@ -409,8 +409,8 @@ export class TimelineSequence extends Morph {
         fill: new LinearGradient({
           vector: 'eastwest',
           stops: [
-            { offset: 0, color: COLOR_SCHEME.ORANGE.withA(0.2) },
-            { offset: 1, color: COLOR_SCHEME.ORANGE.withA(0) }
+            { offset: 0, color: COLOR_SCHEME.ACCENT.withA(0.2) },
+            { offset: 1, color: COLOR_SCHEME.ACCENT.withA(0) }
           ]
         })
       });
@@ -485,7 +485,7 @@ export class TimelineSequence extends Morph {
   }
 
   setOverlappingAppearance () {
-    this.fill = this.isOverlappingOtherSequence() ? COLOR_SCHEME.RED : COLOR_SCHEME.WHITE;
+    this.fill = this.isOverlappingOtherSequence() ? COLOR_SCHEME.INVALID : COLOR_SCHEME.PRIMARY;
   }
 
   isOverlappingOtherSequence () {
@@ -521,14 +521,14 @@ class TimelineCursor extends Morph {
         }
       },
       fill: {
-        defaultValue: COLOR_SCHEME.ORANGE,
+        defaultValue: COLOR_SCHEME.ACCENT,
         set (color) {
           this.setProperty('fill', color);
           this.updateColor();
         }
       },
       fontColor: {
-        defaultValue: COLOR_SCHEME.WHITE,
+        defaultValue: COLOR_SCHEME.PRIMARY,
         set (color) {
           this.setProperty('fontColor', color);
           this.updateColor();
