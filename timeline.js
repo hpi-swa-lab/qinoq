@@ -190,7 +190,7 @@ export class TimelineLayer extends Morph {
         defaultValue: true
       },
       fill: {
-        defaultValue: COLOR_SCHEME.TERNARY
+        defaultValue: COLOR_SCHEME.BACKGROUND_VARIANT
       },
       height: {
         defaultValue: CONSTANTS.LAYER_HEIGHT
@@ -277,7 +277,7 @@ export class TimelineSequence extends Morph {
         defaultValue: 1
       },
       borderColor: {
-        defaultValue: COLOR_SCHEME.SECONDARY
+        defaultValue: COLOR_SCHEME.ON_BACKGROUND
       },
       borderRadius: {
         defaultValue: 3
@@ -371,7 +371,7 @@ export class TimelineSequence extends Morph {
   }
 
   onSelectionChange (selected) {
-    this.borderColor = selected ? COLOR_SCHEME.FOCUSSED : COLOR_SCHEME.SECONDARY;
+    this.borderColor = selected ? COLOR_SCHEME.PRIMARY : COLOR_SCHEME.ON_BACKGROUND;
   }
 
   onDragStart (event) {
@@ -409,8 +409,8 @@ export class TimelineSequence extends Morph {
         fill: new LinearGradient({
           vector: 'eastwest',
           stops: [
-            { offset: 0, color: COLOR_SCHEME.ACCENT.withA(0.2) },
-            { offset: 1, color: COLOR_SCHEME.ACCENT.withA(0) }
+            { offset: 0, color: COLOR_SCHEME.SECONDARY.withA(0.2) },
+            { offset: 1, color: COLOR_SCHEME.SECONDARY.withA(0) }
           ]
         })
       });
@@ -485,7 +485,7 @@ export class TimelineSequence extends Morph {
   }
 
   setOverlappingAppearance () {
-    this.fill = this.isOverlappingOtherSequence() ? COLOR_SCHEME.INVALID : COLOR_SCHEME.PRIMARY;
+    this.fill = this.isOverlappingOtherSequence() ? COLOR_SCHEME.ERROR: COLOR_SCHEME.SURFACE;
   }
 
   isOverlappingOtherSequence () {
@@ -521,14 +521,14 @@ class TimelineCursor extends Morph {
         }
       },
       fill: {
-        defaultValue: COLOR_SCHEME.ACCENT,
+        defaultValue: COLOR_SCHEME.SECONDARY,
         set (color) {
           this.setProperty('fill', color);
           this.updateColor();
         }
       },
       fontColor: {
-        defaultValue: COLOR_SCHEME.PRIMARY,
+        defaultValue: COLOR_SCHEME.ON_SURFACE,
         set (color) {
           this.setProperty('fontColor', color);
           this.updateColor();
