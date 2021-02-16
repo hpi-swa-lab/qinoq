@@ -88,7 +88,8 @@ export class InteractivesEditor extends Morph {
   initializeSequenceTimeline (sequence) {
     const sequenceTimeline = new Timeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT), name: `${sequence.name} timeline` });
     this.addMorph(sequenceTimeline);
-    sequenceTimeline.loadSequence();
+    sequenceTimeline.initialize();
+    sequenceTimeline.loadSequence(sequence);
     return sequenceTimeline;
   }
 
