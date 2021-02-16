@@ -1,7 +1,7 @@
 import { Window } from 'lively.components';
 import { pt, Color } from 'lively.graphics';
 import { VerticalLayout, ProportionalLayout, Morph } from 'lively.morphic';
-import { Timeline } from './timeline.js';
+import { Timeline, SequenceTimeline } from './timeline.js';
 import { Interactive } from 'interactives-editor';
 import { COLOR_SCHEME } from './colors';
 
@@ -55,6 +55,7 @@ export class InteractivesEditor extends Morph {
     this.addMorph(this.preview);
     this.morphInspector = this.addMorph(new InteractiveMorphInspector({ position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0) }));
     this.globalTimeline = new Timeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT) });
+
     this.globalTimeline.initialize();
     this.addMorph(this.globalTimeline);
   }
@@ -86,10 +87,10 @@ export class InteractivesEditor extends Morph {
   }
 
   initializeSequenceTimeline (sequence) {
-    const sequenceTimeline = new Timeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT), name: `${sequence.name} timeline` });
+    const sequenceTimeline = new SequenceTimeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT), name: `${sequence.name} timeline` });
     this.addMorph(sequenceTimeline);
-    sequenceTimeline.initialize();
-    sequenceTimeline.loadSequence(sequence);
+    sequenceTimeline.initialize(sequence, this.interactive);
+    sequenceTimeline.loadSequence();
     return sequenceTimeline;
   }
 

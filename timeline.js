@@ -24,7 +24,9 @@ export class Timeline extends Morph {
         defaultValue: {}
       },
       interactive: {},
-      _timelineLayerDict: {}
+      _timelineLayerDict: {},
+      start: {},
+      end: {}
     };
   }
 
@@ -122,6 +124,8 @@ export class Timeline extends Morph {
   }
 
   loadInteractive (interactive) {
+    this.start = 0;
+    this.end = interactive.length;
     this.interactive = interactive;
     this._timelineLayerDict = {};
 
@@ -132,26 +136,7 @@ export class Timeline extends Morph {
     this.updateLayerPositions();
 
     this.onScrollPositionChange(this.interactive.scrollPosition);
-
     connect(this.interactive, 'scrollPosition', this, 'onScrollPositionChange');
-  }
-
-  loadSequence (sequence) {
-    this.sequence = sequence;
-    this._timelineLayerDict = {};
-
-    this.sequence.submorphs.forEach(morph => {
-      const timelineLayer = this.createTimelineLayer(morph);
-      // this is more or less just a visual placeholder
-      // when keyframe editing capabilities are introduced, this should probably pulled out into a class
-      timelineLayer.addMorph(new Morph({
-        extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
-        position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET),
-        fill: COLOR_SCHEME.WHITE,
-        borderColor: COLOR_SCHEME.BLUE,
-        borderWidth: 2
-      }));
-    });
   }
 
   onScrollPositionChange (scrollPosition) {
@@ -192,6 +177,48 @@ export class Timeline extends Morph {
     this.timelineLayers.forEach(timelineLayer => {
       timelineLayer.deselectAllSequences();
     });
+  }
+}
+
+export class SequenceTimeline extends Timeline {
+  initialize (sequence, interactive) {
+    this.interactive = interactive;
+    this.sequence = sequence;
+    this.start = sequence.start;
+    this.end = sequence.start + sequence.duration;
+    this.layout = new ProportionalLayout({ lastExtent: this.extent });
+    this.initializeLayerInfoContainer();
+    this.initializeLayerContainer();
+    this.initializeCursor();
+  }
+
+  loadSequence (interactive) {
+    this._timelineLayerDict = {};
+    this.sequence.submorphs.forEach(morph => {
+      const timelineLayer = this.createTimelineLayer(morph);
+      // this is more or less just a visual placeholder
+      // when keyframe editing capabilities are introduced, this should probably pulled out into a class
+      timelineLayer.addMorph(new Morph({
+        extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
+        position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET),
+        fill: COLOR_SCHEME.WHITE,
+        borderColor: COLOR_SCHEME.BLUE,
+        borderWidth: 2
+      }));
+    });
+
+    this.onScrollPositionChange(this.interactive.scrollPosition);
+    connect(this.interactive, 'scrollPosition', this, 'onScrollPositionChange');
+  }
+
+  getPositionFromScroll (scroll) {
+    if (scroll < this.start) {
+      return CONSTANTS.INITIAL_X_OFFSET;
+    }
+    if (scroll >= this.end) {
+      return CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH;
+    }
+    return CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.sequence.progress;
   }
 }
 
