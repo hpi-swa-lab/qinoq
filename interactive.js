@@ -3,6 +3,7 @@ import { Color, pt } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
 import { COLOR_SCHEME } from './colors.js';
+import { PointAnimation } from './animations.js';
 
 export class Interactive extends Morph {
   static example () {
@@ -242,6 +243,8 @@ export class Sequence extends Morph {
           this.setProperty('opacity', opacity);
           if (!this._lockOpacity) this._originalOpacity = opacity;
         }
+      animations: {
+        defaultValue: []
       }
     };
   }
@@ -272,6 +275,7 @@ export class Sequence extends Morph {
     treeSequence.addMorph(crownMorph);
     stemMorph.position = pt(200, 220);
     crownMorph.position = pt(165, 110);
+    treeSequence.animations = [PointAnimation.example(crownMorph, 'position')];
     return treeSequence;
   }
 
@@ -301,5 +305,6 @@ export class Sequence extends Morph {
 
   updateProgress (scrollPosition) {
     this._progress = (scrollPosition - this.start) / this.duration;
+    this.animations.forEach(animation => animation.progress = this._progress);
   }
 }
