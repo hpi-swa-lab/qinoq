@@ -24,9 +24,7 @@ export class Timeline extends Morph {
         defaultValue: {}
       },
       interactive: {},
-      _timelineLayerDict: {},
-      start: {},
-      end: {}
+      _timelineLayerDict: {}
     };
   }
 
@@ -34,7 +32,6 @@ export class Timeline extends Morph {
     this.layout = new ProportionalLayout({ lastExtent: this.extent });
     this.initializeLayerInfoContainer();
     this.initializeLayerContainer();
-    this.initializeCursor();
   }
 
   initializeCursor () {
@@ -118,14 +115,43 @@ export class Timeline extends Morph {
     return timelineLayer;
   }
 
+  loadContent (content) {
+    this.onLoadContent(content);
+    this.initializeCursor();
+    this.onScrollPositionChange(this.owner.scrollPositionOfPreview);
+    // TODO: currently it is assumed that this.interactive is set going forward
+    // this.owner.scrollPositionFromPreview
+    connect(this.owner, 'scrollPositionOfPreview', this, 'onScrollPositionChange');
+  }
+
+  onLoadContent (content) {
+    /* subclass responsibility */
+  }
+
+  onScrollPositionChange (scrollPosition) {
+    this.ui.cursor.displayValue = this.getDisplayValueFromScroll(scrollPosition);
+    this.ui.cursor.location = this.getPositionFromScroll(scrollPosition);
+  }
+
+  getDisplayValueFromScroll (scrollPosition) {
+    /* subclass responsibility */
+  }
+
+  getPositionFromScroll (scroll) {
+    /* subclass responsibility */
+  }
+
+  getScrollFromPosition (position) {
+    /* subclass responsibility */
+  }
+}
+export class GlobalTimeline extends Timeline {
   createTimelineSequence (sequence) {
     const seq = new TimelineSequence();
     seq.initialize(sequence, this.getTimelineLayerFor(sequence.layer));
   }
 
-  loadInteractive (interactive) {
-    this.start = 0;
-    this.end = interactive.length;
+  onLoadContent (interactive) {
     this.interactive = interactive;
     this._timelineLayerDict = {};
 
@@ -134,14 +160,6 @@ export class Timeline extends Morph {
     });
     this.interactive.sequences.forEach(sequence => this.createTimelineSequence(sequence));
     this.updateLayerPositions();
-
-    this.onScrollPositionChange(this.interactive.scrollPosition);
-    connect(this.interactive, 'scrollPosition', this, 'onScrollPositionChange');
-  }
-
-  onScrollPositionChange (scrollPosition) {
-    this.ui.cursor.displayValue = this.getDisplayValueFromScroll(scrollPosition);
-    this.ui.cursor.location = this.getPositionFromScroll(scrollPosition);
   }
 
   getDisplayValueFromScroll (scrollPosition) {
@@ -183,18 +201,9 @@ export class Timeline extends Morph {
     });
   }
 }
-
 export class SequenceTimeline extends Timeline {
-  initialize (sequence, interactive) {
-    this.interactive = interactive;
+  onLoadContent (sequence) {
     this.sequence = sequence;
-    this.layout = new ProportionalLayout({ lastExtent: this.extent });
-    this.initializeLayerInfoContainer();
-    this.initializeLayerContainer();
-    this.initializeCursor();
-  }
-
-  loadSequence (interactive) {
     this._timelineLayerDict = {};
     this.sequence.submorphs.forEach(morph => {
       const timelineLayer = this.createTimelineLayer(morph);
@@ -208,9 +217,6 @@ export class SequenceTimeline extends Timeline {
         borderWidth: 2
       }));
     });
-
-    this.onScrollPositionChange(this.interactive.scrollPosition);
-    connect(this.interactive, 'scrollPosition', this, 'onScrollPositionChange');
   }
 
   getPositionFromScroll (scroll) {
