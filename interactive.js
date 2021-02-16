@@ -271,6 +271,14 @@ export class Sequence extends Morph {
     return treeSequence;
   }
 
+  get end () {
+    return this.start + this.duration;
+  }
+
+  get progress () {
+    return this._progress;
+  }
+
   initialize (start, duration) {
     this.start = start;
     this.duration = duration;
