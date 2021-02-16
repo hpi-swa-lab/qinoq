@@ -245,7 +245,7 @@ export class Sequence extends Morph {
   static backgroundNightExample () {
     const backgroundSequence = new Sequence({ name: 'night background' });
     backgroundSequence.initialize(0, 250);
-    const backgroundMorph = new Morph({ fill: Color.rgbHex('272a7c'), extent: pt(400, 300) });
+    const backgroundMorph = new Morph({ fill: Color.rgbHex('272a7c'), extent: pt(400, 300), name: 'night background' });
     backgroundSequence.addMorph(backgroundMorph);
     return backgroundSequence;
   }
@@ -253,7 +253,7 @@ export class Sequence extends Morph {
   static backgroundDayExample () {
     const backgroundSequence = new Sequence({ name: 'day background' });
     backgroundSequence.initialize(250, 250);
-    const backgroundMorph = new Morph({ fill: Color.rgbHex('60b2e5'), extent: pt(400, 300) });
+    const backgroundMorph = new Morph({ fill: Color.rgbHex('60b2e5'), extent: pt(400, 300), name: 'day background' });
     backgroundSequence.addMorph(backgroundMorph);
     return backgroundSequence;
   }

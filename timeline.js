@@ -188,8 +188,6 @@ export class SequenceTimeline extends Timeline {
   initialize (sequence, interactive) {
     this.interactive = interactive;
     this.sequence = sequence;
-    this.start = sequence.start;
-    this.end = sequence.start + sequence.duration;
     this.layout = new ProportionalLayout({ lastExtent: this.extent });
     this.initializeLayerInfoContainer();
     this.initializeLayerContainer();
@@ -216,10 +214,10 @@ export class SequenceTimeline extends Timeline {
   }
 
   getPositionFromScroll (scroll) {
-    if (scroll < this.start) {
+    if (scroll < this.sequence.start) {
       return CONSTANTS.INITIAL_X_OFFSET;
     }
-    if (scroll >= this.end) {
+    if (scroll >= this.sequence.end) {
       return CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH;
     }
     return CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.sequence.progress;
@@ -635,12 +633,11 @@ class TimelineCursor extends Morph {
       name: {
         defaultValue: 'cursor'
       },
-      ui: {},
-      unit: {}
+      ui: {}
     };
   }
 
-  initialize (unit = 'absolute', displayValue = 0) {
+  initialize (displayValue = 0) {
     this.initializeSubmorphs();
     this.initializeAppearance();
     this.displayValue = displayValue;
