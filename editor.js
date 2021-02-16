@@ -83,7 +83,7 @@ class Preview extends Morph {
         defaultValue: pt(CONSTANTS.PREVIEW_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT)
       },
       borderColor: {
-        defaultValue: COLOR_SCHEME.TERNARY
+        defaultValue: COLOR_SCHEME.ON_SURFACE
       },
       borderWidth: {
         defaultValue: CONSTANTS.BORDER_WIDTH
@@ -128,7 +128,7 @@ class SequenceOverview extends Morph {
         defaultValue: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT)
       },
       borderColor: {
-        defaultValue: COLOR_SCHEME.TERNARY
+        defaultValue: COLOR_SCHEME.ON_SURFACE
       },
       borderWidth: {
         defaultValue: CONSTANTS.BORDER_WIDTH
@@ -147,7 +147,7 @@ class InteractiveMorphInspector extends Morph {
         defaultValue: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT)
       },
       borderColor: {
-        defaultValue: COLOR_SCHEME.TERNARY
+        defaultValue: COLOR_SCHEME.ON_SURFACE
       },
       borderWidth: {
         defaultValue: CONSTANTS.BORDER_WIDTH
