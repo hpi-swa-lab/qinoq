@@ -39,7 +39,6 @@ export class Timeline extends Morph {
     this.ui.cursor.initialize(0);
     this.ui.layerContainer.addMorph(this.ui.cursor);
     this.ui.cursor.location = this.getPositionFromScroll(0);
-
     this.ui.cursor.height = this.height;
   }
 
@@ -119,9 +118,8 @@ export class Timeline extends Morph {
   loadContent (content) {
     this.onLoadContent(content);
     this.initializeCursor();
-    this.onScrollPositionChange(this.owner.scrollPositionOfPreview);
-    // TODO: currently it is assumed that this.interactive is set going forward
-    connect(this.owner, 'scrollPositionOfPreview', this, 'onScrollPositionChange');
+    this.onScrollPositionChange(this.owner.previewScrollPosition);
+    connect(this.owner, 'previewScrollPosition', this, 'onScrollPositionChange');
   }
 
   onLoadContent (content) {
