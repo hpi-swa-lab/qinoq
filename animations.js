@@ -27,7 +27,7 @@ class Animation {
   }
 
   // LERP
-  linearInterpolation (progress, start, end) {
+  static linearInterpolation (progress, start, end) {
     return (progress - start.position) / (end.position - start.position);
   }
 
@@ -54,7 +54,7 @@ export class PointAnimation extends Animation {
     return animation;
   }
 
-  constructor (targetMorph, property, interpolation = this.linearInterpolation) {
+  constructor (targetMorph, property, interpolation = Animation.linearInterpolation) {
     super(targetMorph, property);
     this.interpolation = interpolation;
   }
