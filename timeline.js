@@ -362,8 +362,9 @@ export class TimelineSequence extends Morph {
     });
 
     connect(this.rightResizer, 'onDrag', this, 'onResizeRight');
+    connect(this.rightResizer, 'onDragStart', this, 'onResizeStart');
     connect(this.leftResizer, 'onDrag', this, 'onResizeLeft');
-    connect(this.leftResizer, 'onDragStart', this, 'onResizeLeftStart');
+    connect(this.leftResizer, 'onDragStart', this, 'onResizeStart');
 
     this.addMorphBack(this.rightResizer);
     this.addMorphBack(this.leftResizer);
@@ -455,17 +456,20 @@ export class TimelineSequence extends Morph {
     this.extent = pt(newSequenceWidth, this.height);
     this.rightResizer.position = pt(this.rightResizer.position.x, 0);
 
+    if (this.isOverlappingOtherSequence()) {
+      this.width = this.startWidth;
+      this.rightResizer.position = pt(this.width - this.rightResizer.width, 0);
+    }
     this.updateSequenceAfterArrangement();
   }
 
-  onResizeLeftStart (event) {
+  onResizeStart (event) {
     this.leftResizer.startPosition = this.leftResizer.globalPosition;
     this.startWidth = this.width;
     this.startPosition = this.globalPosition;
   }
 
   onResizeLeft (event) {
-    console.log(event);
     const dragDelta = event.startPosition.x - event.position.x;
     const newSequenceWidth = this.startWidth + dragDelta;
     const rightResizerGlobalPosition = this.rightResizer.globalPosition;
@@ -479,6 +483,11 @@ export class TimelineSequence extends Morph {
     } else {
       this.globalPosition = pt(this.startPosition.x - dragDelta, this.globalPosition.y);
       this.extent = pt(newSequenceWidth, this.height);
+    }
+
+    if (this.isOverlappingOtherSequence()) {
+      this.width = this.startWidth;
+      this.globalPosition = this.startPosition;
     }
 
     this.leftResizer.position = pt(0, 0);
