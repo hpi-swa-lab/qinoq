@@ -523,11 +523,13 @@ export class TimelineSequence extends Morph {
       this.width = this.startWidth;
       this.rightResizer.position = pt(this.width - this.rightResizer.width, 0);
     }
+
     this.updateSequenceAfterArrangement();
   }
 
   onResizeStart (event) {
     this.leftResizer.startPosition = this.leftResizer.globalPosition;
+    this.rightResizer.startPosition = pt(this.rightResizer.globalPosition.x + this.rightResizer.width, this.rightResizer.globalPositioy);
     this.startWidth = this.width;
     this.startPosition = this.globalPosition;
   }
@@ -537,24 +539,29 @@ export class TimelineSequence extends Morph {
     const newSequenceWidth = this.startWidth + dragDelta;
     const rightResizerGlobalPosition = this.rightResizer.globalPosition;
 
+    const leftTimelineEnd = this.timelineLayer.globalPosition.x + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+
+    const minimalSequenceWidthReached = newSequenceWidth <= CONSTANTS.MINIMAL_SEQUENCE_WIDTH;
+    const leftEndOfTimelineReached = this.leftResizer.startPosition.x - dragDelta < leftTimelineEnd;
+
     // stop resizing due to minimal width
-    if (newSequenceWidth <= CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
+    if (minimalSequenceWidthReached) {
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
       this.globalPosition = pt(rightResizerGlobalPosition.x + this.rightResizer.width - CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.globalPosition.y);
-      this.showWarningLeft();
     }
     // stop resizing due to end of timeline
-    else if (event.position.x < this.timelineLayer.globalPosition.x) {
-      this.fill = COLOR_SCHEME.ERROR;
-      this.width = this.startWidth;
-      this.globalPosition = this.startPosition;
+    else if (leftEndOfTimelineReached) {
+      this.showWarningLeft();
+      this.extent = pt(this.rightResizer.startPosition.x - leftTimelineEnd, this.height);
+      this.globalPosition = pt(leftTimelineEnd, this.owner.globalPosition.y + CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     } else {
       this.globalPosition = pt(this.startPosition.x - dragDelta, this.globalPosition.y);
       this.extent = pt(newSequenceWidth, this.height);
     }
 
+    this.setOverlappingAppearance();
+
     if (this.isOverlappingOtherSequence()) {
-      this.setOverlappingAppearance();
       this.width = this.startWidth;
       this.globalPosition = this.startPosition;
     }
