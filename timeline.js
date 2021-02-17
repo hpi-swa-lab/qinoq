@@ -465,6 +465,7 @@ export class TimelineSequence extends Morph {
   }
 
   onResizeLeft (event) {
+    console.log(event);
     const dragDelta = event.startPosition.x - event.position.x;
     const newSequenceWidth = this.startWidth + dragDelta;
     const rightResizerGlobalPosition = this.rightResizer.globalPosition;
@@ -472,6 +473,9 @@ export class TimelineSequence extends Morph {
     if (newSequenceWidth <= CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
       this.globalPosition = pt(rightResizerGlobalPosition.x + this.rightResizer.width - CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.globalPosition.y);
+    } else if (event.position.x < this.timelineLayer.globalPosition.x) {
+      this.width = this.startWidth;
+      this.globalPosition = this.startPosition;
     } else {
       this.globalPosition = pt(this.startPosition.x - dragDelta, this.globalPosition.y);
       this.extent = pt(newSequenceWidth, this.height);
