@@ -26,6 +26,7 @@ class Animation {
     return { start: this.keyframes[this.keyframes.length - 1] };
   }
 
+  // LERP
   linearInterpolation (progress, start, end) {
     return (progress - start.position) / (end.position - start.position);
   }
@@ -35,7 +36,7 @@ class Animation {
   }
 }
 
-class Keyframe {
+export class Keyframe {
   constructor (position, value) {
     this.position = position;
     this.value = value;
@@ -61,10 +62,11 @@ export class PointAnimation extends Animation {
   set progress (progress) {
     const { start, end } = this.getClosestKeyframes(progress);
     if (start && end) {
-      const dist = end.position - start.position;
+      console.log('Between keyframes ' + start.position + '  ' + end.position);
       const factor = this.interpolation(progress, start, end);
-      const value = pt((end.value.x - start.value.x) * factor,
-        (end.value.y - start.value.y) * factor);
+      console.log('Factor ' + factor);
+      const value = pt(start.value.x + (end.value.x - start.value.x) * factor,
+        start.value.y + (end.value.y - start.value.y) * factor);
       this.target[this.property] = value;
       return;
     }
