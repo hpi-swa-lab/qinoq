@@ -255,6 +255,7 @@ export class Sequence extends Morph {
           this.setProperty('opacity', opacity);
           if (!this._lockOpacity) this._originalOpacity = opacity;
         }
+      },
       animations: {
         defaultValue: []
       }
@@ -278,8 +279,7 @@ export class Sequence extends Morph {
     const sunrise = new Keyframe(0, Color.rgbHex('#ff4d00'));
     const daylight = new Keyframe(0.3, Color.rgbHex('60b2e5'));
     const colorAnimation = new ColorAnimation(backgroundMorph, 'fill');
-    colorAnimation.addKeyframe(sunrise);
-    colorAnimation.addKeyframe(daylight);
+    colorAnimation.addKeyframes([sunrise, daylight]);
     backgroundSequence.addAnimation(colorAnimation);
     return backgroundSequence;
   }
@@ -296,17 +296,15 @@ export class Sequence extends Morph {
     crownMorph.position = pt(165, 110);
     return treeSequence;
   }
-  
+
   static sunExample () {
     const sunSequence = new Sequence({ name: 'sun sequence' });
     sunSequence.initialize(200, 300);
-    const sun = new Ellipse({ extent: pt(70, 70), fill: Color.rgb(250, 250, 20), position: pt(0, 350) });
+    const sun = new Ellipse({ name: 'sun', extent: pt(70, 70), fill: Color.rgb(250, 250, 20), position: pt(0, 350) });
     sunSequence.addMorph(sun);
 
     const sunAnimation = new PointAnimation(sun, 'position');
-    sunAnimation.addKeyframe(new Keyframe(0, pt(0, 350)));
-    sunAnimation.addKeyframe(new Keyframe(0.5, pt(40, 80)));
-    sunAnimation.addKeyframe(new Keyframe(1, pt(180, 15)));
+    sunAnimation.addKeyframes([new Keyframe(0, pt(0, 350)), new Keyframe(0.5, pt(40, 80)), new Keyframe(1, pt(180, 15))]);
     sunSequence.addAnimation(sunAnimation);
     return sunSequence;
   }
