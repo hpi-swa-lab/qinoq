@@ -214,8 +214,8 @@ export class SequenceTimeline extends Timeline {
       timelineLayer.addMorph(new Morph({
         extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
         position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET),
-        fill: COLOR_SCHEME.WHITE,
-        borderColor: COLOR_SCHEME.BLUE,
+        fill: COLOR_SCHEME.SURFACE,
+        borderColor: COLOR_SCHEME.ON_SURFACE,
         borderWidth: 2
       }));
     });
