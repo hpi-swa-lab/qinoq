@@ -333,6 +333,7 @@ export class TimelineSequence extends Morph {
       reactsToPointer: false
     }));
     timelineLayer.addMorph(this);
+    this.initializeResizers();
     this._isInitializing = false;
   }
 
