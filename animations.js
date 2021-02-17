@@ -1,8 +1,9 @@
 import { pt } from 'lively.graphics';
 class Animation {
-  constructor (targetMorph, property) {
+  constructor (targetMorph, property, interpolation = Animation.lerp) {
     this.target = targetMorph;
     this.property = property;
+    this.interpolation = interpolation;
     this.keyframes = [];
   }
 
@@ -26,8 +27,8 @@ class Animation {
     return { start: this.keyframes[this.keyframes.length - 1] };
   }
 
-  // LERP
-  static linearInterpolation (progress, start, end) {
+  // Linear Interpolation
+  static lerp (progress, start, end) {
     return (progress - start.position) / (end.position - start.position);
   }
 
@@ -54,17 +55,30 @@ export class PointAnimation extends Animation {
     return animation;
   }
 
-  constructor (targetMorph, property, interpolation = Animation.linearInterpolation) {
-    super(targetMorph, property);
-    this.interpolation = interpolation;
-  }
-
   set progress (progress) {
     const { start, end } = this.getClosestKeyframes(progress);
     if (start && end) {
       const factor = this.interpolation(progress, start, end);
       const value = pt(start.value.x + (end.value.x - start.value.x) * factor,
         start.value.y + (end.value.y - start.value.y) * factor);
+      this.target[this.property] = value;
+      return;
+    }
+    if (start) {
+      this.target[this.property] = start.value;
+    }
+    if (end) {
+      this.target[this.property] = end.value;
+    }
+  }
+}
+
+export class ColorAnimation extends Animation {
+  set progress (progress) {
+    const { start, end } = this.getClosestKeyframes(progress);
+    if (start && end) {
+      const factor = this.interpolation(progress, start, end);
+      const value = start.value.interpolate(factor, end.value);
       this.target[this.property] = value;
       return;
     }
