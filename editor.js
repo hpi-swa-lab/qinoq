@@ -3,8 +3,8 @@ import { pt, Color } from 'lively.graphics';
 import { VerticalLayout, ProportionalLayout, Morph } from 'lively.morphic';
 import { Timeline, GlobalTimeline, SequenceTimeline } from './timeline.js';
 import { Interactive } from 'interactives-editor';
-import { COLOR_SCHEME } from './colors';
 import { connect } from 'lively.bindings';
+import { COLOR_SCHEME } from './colors.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 900,
@@ -36,7 +36,7 @@ export class InteractivesEditor extends Morph {
       },
       globalTimeline: {
       },
-      scrollPositionOfPreview: {
+      previewScrollPosition: {
         defaultValue: 0
       }
     };
@@ -73,8 +73,7 @@ export class InteractivesEditor extends Morph {
 
   loadInteractive (interactive) {
     this.interactive = interactive;
-    // TODO: clean up connection when interactive leaves editor
-    connect(this.interactive, 'scrollPosition', this, 'scrollPositionOfPreview');
+    connect(this.interactive, 'scrollPosition', this, 'previewScrollPosition');
   }
 
   initializePreview (interactive) {
