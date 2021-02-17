@@ -363,8 +363,10 @@ export class TimelineSequence extends Morph {
 
     connect(this.rightResizer, 'onDrag', this, 'onResizeRight');
     connect(this.rightResizer, 'onDragStart', this, 'onResizeStart');
+    connect(this.rightResizer, 'onDragEnd', this, 'resetAppearance');
     connect(this.leftResizer, 'onDrag', this, 'onResizeLeft');
     connect(this.leftResizer, 'onDragStart', this, 'onResizeStart');
+    connect(this.leftResizer, 'onDragEnd', this, 'resetAppearance');
 
     this.addMorphBack(this.rightResizer);
     this.addMorphBack(this.leftResizer);
@@ -447,6 +449,7 @@ export class TimelineSequence extends Morph {
     const newSequenceWidth = this.rightResizer.position.x + this.rightResizer.width;
 
     if (newSequenceWidth < CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
+      this.fill = COLOR_SCHEME.ERROR;
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
       this.rightResizer.position = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH - this.rightResizer.width, 0);
       this.updateSequenceAfterArrangement();
@@ -457,6 +460,7 @@ export class TimelineSequence extends Morph {
     this.rightResizer.position = pt(this.rightResizer.position.x, 0);
 
     if (this.isOverlappingOtherSequence()) {
+      this.setOverlappingAppearance();
       this.width = this.startWidth;
       this.rightResizer.position = pt(this.width - this.rightResizer.width, 0);
     }
@@ -474,10 +478,15 @@ export class TimelineSequence extends Morph {
     const newSequenceWidth = this.startWidth + dragDelta;
     const rightResizerGlobalPosition = this.rightResizer.globalPosition;
 
+    // stop resizing due to minimal width
     if (newSequenceWidth <= CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
+      this.fill = COLOR_SCHEME.ERROR;
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
       this.globalPosition = pt(rightResizerGlobalPosition.x + this.rightResizer.width - CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.globalPosition.y);
-    } else if (event.position.x < this.timelineLayer.globalPosition.x) {
+    }
+    // stop resizing due to end of timeline
+    else if (event.position.x < this.timelineLayer.globalPosition.x) {
+      this.fill = COLOR_SCHEME.ERROR;
       this.width = this.startWidth;
       this.globalPosition = this.startPosition;
     } else {
@@ -486,6 +495,7 @@ export class TimelineSequence extends Morph {
     }
 
     if (this.isOverlappingOtherSequence()) {
+      this.setOverlappingAppearance();
       this.width = this.startWidth;
       this.globalPosition = this.startPosition;
     }
@@ -504,6 +514,10 @@ export class TimelineSequence extends Morph {
 
   setOverlappingAppearance () {
     this.fill = this.isOverlappingOtherSequence() ? COLOR_SCHEME.ERROR : COLOR_SCHEME.SURFACE;
+  }
+
+  resetAppearance () {
+    this.fill = COLOR_SCHEME.SURFACE;
   }
 
   isOverlappingOtherSequence () {
