@@ -189,6 +189,10 @@ export class TimelineLayer extends Morph {
       grabbable: {
         defaultValue: true
       },
+      draggable: {
+      // setting grabbable sets draggable to true but only via the setter and not with the default value, but we need draggable to be true as well
+        defaultValue: true
+      },
       fill: {
         defaultValue: COLOR_SCHEME.BACKGROUND_VARIANT
       },
