@@ -118,8 +118,8 @@ export class Timeline extends Morph {
   loadContent (content) {
     this.onLoadContent(content);
     this.initializeCursor();
-    this.onScrollPositionChange(this.owner.previewScrollPosition);
-    connect(this.owner, 'previewScrollPosition', this, 'onScrollPositionChange');
+    this.onScrollPositionChange(this.editor.previewScrollPosition);
+    connect(this.editor, 'previewScrollPosition', this, 'onScrollPositionChange');
   }
 
   onLoadContent (content) {
@@ -141,6 +141,10 @@ export class Timeline extends Morph {
 
   getScrollFromPosition (position) {
     /* subclass responsibility */
+  }
+
+  get editor () {
+    return this.owner;
   }
 }
 export class GlobalTimeline extends Timeline {
