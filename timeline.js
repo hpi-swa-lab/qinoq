@@ -498,19 +498,7 @@ export class TimelineSequence extends Morph {
     super.onDrag(event);
     if (this.position.x <= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
       this.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-      const warning = new Morph({
-        position: pt(0, 0),
-        extent: pt(CONSTANTS.WARNING_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
-        fill: new LinearGradient({
-          vector: 'eastwest',
-          stops: [
-            { offset: 0, color: COLOR_SCHEME.SECONDARY.withA(0.2) },
-            { offset: 1, color: COLOR_SCHEME.SECONDARY.withA(0) }
-          ]
-        })
-      });
-      this.addMorph(warning);
-      warning.fadeOut(1000);
+      this.showWarningLeft();
     } else {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     }
@@ -540,7 +528,7 @@ export class TimelineSequence extends Morph {
     const newSequenceWidth = this.rightResizer.position.x + this.rightResizer.width;
 
     if (newSequenceWidth < CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
-      this.fill = COLOR_SCHEME.ERROR;
+      this.showWarningRight();
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
       this.rightResizer.position = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH - this.rightResizer.width, 0);
       this.updateSequenceAfterArrangement();
@@ -571,9 +559,9 @@ export class TimelineSequence extends Morph {
 
     // stop resizing due to minimal width
     if (newSequenceWidth <= CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
-      this.fill = COLOR_SCHEME.ERROR;
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
       this.globalPosition = pt(rightResizerGlobalPosition.x + this.rightResizer.width - CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.globalPosition.y);
+      this.showWarningLeft();
     }
     // stop resizing due to end of timeline
     else if (event.position.x < this.timelineLayer.globalPosition.x) {
@@ -601,6 +589,38 @@ export class TimelineSequence extends Morph {
     this.sequence.duration = this.timeline.getDurationFromWidth(this.width);
     this.sequence.start = this.timeline.getScrollFromPosition(this.position.x);
     this.timeline.interactive.redraw();
+  }
+
+  showWarningLeft (fadeout = 1000) {
+    const warning = new Morph({
+      position: pt(0, 0),
+      extent: pt(CONSTANTS.WARNING_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
+      fill: new LinearGradient({
+        vector: 'eastwest',
+        stops: [
+          { offset: 0, color: COLOR_SCHEME.SECONDARY.withA(0.2) },
+          { offset: 1, color: COLOR_SCHEME.SECONDARY.withA(0) }
+        ]
+      })
+    });
+    this.addMorph(warning);
+    warning.fadeOut(fadeout);
+  }
+
+  showWarningRight (fadeout = 1000) {
+    const warning = new Morph({
+      position: pt(this.width - CONSTANTS.WARNING_WIDTH, 0),
+      extent: pt(CONSTANTS.WARNING_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
+      fill: new LinearGradient({
+        vector: 'westeast',
+        stops: [
+          { offset: 0, color: COLOR_SCHEME.SECONDARY.withA(0.2) },
+          { offset: 1, color: COLOR_SCHEME.SECONDARY.withA(0) }
+        ]
+      })
+    });
+    this.addMorph(warning);
+    warning.fadeOut(fadeout);
   }
 
   setOverlappingAppearance () {
