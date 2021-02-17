@@ -24,7 +24,9 @@ export class Timeline extends Morph {
         defaultValue: {}
       },
       interactive: {},
-      _timelineLayerDict: {}
+      _timelineLayerDict: {
+        defaultValue: {}
+      }
     };
   }
 
@@ -155,7 +157,6 @@ export class GlobalTimeline extends Timeline {
 
   onLoadContent (interactive) {
     this.interactive = interactive;
-    this._timelineLayerDict = {};
 
     this.interactive.layers.forEach(layer => {
       const timelineLayer = this.createTimelineLayer(layer);
@@ -206,7 +207,6 @@ export class GlobalTimeline extends Timeline {
 export class SequenceTimeline extends Timeline {
   onLoadContent (sequence) {
     this.sequence = sequence;
-    this._timelineLayerDict = {};
     this.sequence.submorphs.forEach(morph => {
       const timelineLayer = this.createTimelineLayer(morph);
       // this is more or less just a visual placeholder
