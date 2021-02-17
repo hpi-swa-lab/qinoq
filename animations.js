@@ -62,9 +62,7 @@ export class PointAnimation extends Animation {
   set progress (progress) {
     const { start, end } = this.getClosestKeyframes(progress);
     if (start && end) {
-      console.log('Between keyframes ' + start.position + '  ' + end.position);
       const factor = this.interpolation(progress, start, end);
-      console.log('Factor ' + factor);
       const value = pt(start.value.x + (end.value.x - start.value.x) * factor,
         start.value.y + (end.value.y - start.value.y) * factor);
       this.target[this.property] = value;

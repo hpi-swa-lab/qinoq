@@ -1,9 +1,9 @@
-import { Morph, Polygon } from 'lively.morphic';
+import { Morph, Ellipse, Polygon } from 'lively.morphic';
 import { Color, pt } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
 import { COLOR_SCHEME } from './colors.js';
-import { PointAnimation } from './animations.js';
+import { PointAnimation, Keyframe } from './animations.js';
 
 export class Interactive extends Morph {
   static example () {
@@ -11,19 +11,24 @@ export class Interactive extends Morph {
     interactive.initialize(pt(400, 300), 500);
 
     const foregroundLayer = Layer.exampleForegroundLayer();
+    const middleLayer = Layer.exampleMiddleLayer();
     const backgroundLayer = Layer.exampleBackgroundLayer();
     const day = Sequence.backgroundDayExample();
     day.layer = backgroundLayer;
     const night = Sequence.backgroundNightExample();
     night.layer = backgroundLayer;
     const tree = Sequence.treeExample();
-    tree.layer = foregroundLayer;
+    tree.layer = middleLayer;
+    const sun = Sequence.sunExample();
+    sun.layer = foregroundLayer;
 
     interactive.addLayer(backgroundLayer);
+    interactive.addLayer(middleLayer);
     interactive.addLayer(foregroundLayer);
     interactive.addSequence(day);
     interactive.addSequence(night);
     interactive.addSequence(tree);
+    interactive.addSequence(sun);
     interactive.redraw();
     return interactive;
   }
@@ -177,10 +182,17 @@ export class Layer {
     return layer;
   }
 
+  static exampleMiddleLayer () {
+    const layer = new Layer();
+    layer.name = 'Middle';
+    layer.zIndex = 10;
+    return layer;
+  }
+
   static exampleForegroundLayer () {
     const layer = new Layer();
     layer.name = 'Foreground';
-    layer.zIndex = 10;
+    layer.zIndex = 20;
     return layer;
   }
 
@@ -275,8 +287,20 @@ export class Sequence extends Morph {
     treeSequence.addMorph(crownMorph);
     stemMorph.position = pt(200, 220);
     crownMorph.position = pt(165, 110);
-    treeSequence.animations = [PointAnimation.example(crownMorph, 'position')];
     return treeSequence;
+  }
+  
+  static sunExample () {
+    const sunSequence = new Sequence({ name: 'sun sequence' });
+    sunSequence.initialize(200, 300);
+    const sun = new Ellipse({ extent: pt(70, 70), fill: Color.rgb(250, 250, 20), position: pt(0, 350) });
+    sunSequence.addMorph(sun);
+    const sunAnimation = new PointAnimation(sun, 'position');
+    sunAnimation.addKeyframe(new Keyframe(0, pt(0, 350)));
+    sunAnimation.addKeyframe(new Keyframe(0.5, pt(40, 80)));
+    sunAnimation.addKeyframe(new Keyframe(1, pt(180, 15)));
+    sunSequence.animations = [sunAnimation];
+    return sunSequence;
   }
 
   get end () {
