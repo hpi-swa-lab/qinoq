@@ -120,15 +120,15 @@ export class Timeline extends Morph {
   loadContent (content) {
     this.onLoadContent(content);
     this.initializeCursor();
-    this.onScrollPositionChange(this.editor.previewScrollPosition);
-    connect(this.editor, 'previewScrollPosition', this, 'onScrollPositionChange');
+    this.onScrollChange(this.editor.interactiveScrollPosition);
+    connect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange');
   }
 
   onLoadContent (content) {
     /* subclass responsibility */
   }
 
-  onScrollPositionChange (scrollPosition) {
+  onScrollChange (scrollPosition) {
     this.ui.cursor.displayValue = this.getDisplayValueFromScroll(scrollPosition);
     this.ui.cursor.location = this.getPositionFromScroll(scrollPosition);
   }
@@ -137,11 +137,11 @@ export class Timeline extends Morph {
     /* subclass responsibility */
   }
 
-  getPositionFromScroll (scroll) {
+  getPositionFromScroll (scrollPosition) {
     /* subclass responsibility */
   }
 
-  getScrollFromPosition (position) {
+  getScrollFromPosition (positionPosition) {
     /* subclass responsibility */
   }
 
@@ -169,8 +169,8 @@ export class GlobalTimeline extends Timeline {
     return Math.round(scrollPosition);
   }
 
-  getPositionFromScroll (scroll) {
-    return scroll + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+  getPositionFromScroll (scrollPosition) {
+    return scrollPosition + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
   }
 
   getScrollFromPosition (position) {
@@ -221,11 +221,11 @@ export class SequenceTimeline extends Timeline {
     });
   }
 
-  getPositionFromScroll (scroll) {
-    if (scroll < this.sequence.start) {
+  getPositionFromScroll (scrollPosition) {
+    if (scrollPosition < this.sequence.start) {
       return CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
     }
-    if (scroll >= this.sequence.end) {
+    if (scrollPosition >= this.sequence.end) {
       return CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
     }
     return (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.sequence.progress) + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;

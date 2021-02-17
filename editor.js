@@ -36,7 +36,7 @@ export class InteractivesEditor extends Morph {
       },
       globalTimeline: {
       },
-      previewScrollPosition: {
+      interactiveScrollPosition: {
         defaultValue: 0
       }
     };
@@ -73,7 +73,8 @@ export class InteractivesEditor extends Morph {
 
   loadInteractive (interactive) {
     this.interactive = interactive;
-    connect(this.interactive, 'scrollPosition', this, 'previewScrollPosition');
+    connect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
+    connect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
   }
 
   initializePreview (interactive) {
@@ -86,7 +87,7 @@ export class InteractivesEditor extends Morph {
 
   initializeSequenceView (sequence) {
     this.interactive.showOnly(sequence);
-    this.interactive.scrollPosition = sequence.start;
+    this.interactiveScrollPosition = sequence.start;
     this.sequenceTimelines.push(this.initializeSequenceTimeline(sequence));
     this.globalTimeline.remove();
   }
