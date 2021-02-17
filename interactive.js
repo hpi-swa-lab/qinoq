@@ -3,7 +3,7 @@ import { Color, pt } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
 import { COLOR_SCHEME } from './colors.js';
-import { PointAnimation, Keyframe } from './animations.js';
+import { PointAnimation, ColorAnimation, Keyframe } from './animations.js';
 
 export class Interactive extends Morph {
   static example () {
@@ -274,6 +274,13 @@ export class Sequence extends Morph {
     backgroundSequence.initialize(250, 250);
     const backgroundMorph = new Morph({ fill: Color.rgbHex('60b2e5'), extent: pt(400, 300), name: 'day background' });
     backgroundSequence.addMorph(backgroundMorph);
+
+    const sunrise = new Keyframe(0, Color.rgbHex('#ff4d00'));
+    const daylight = new Keyframe(0.3, Color.rgbHex('60b2e5'));
+    const colorAnimation = new ColorAnimation(backgroundMorph, 'fill');
+    colorAnimation.addKeyframe(sunrise);
+    colorAnimation.addKeyframe(daylight);
+    backgroundSequence.addAnimation(colorAnimation);
     return backgroundSequence;
   }
 
@@ -295,11 +302,12 @@ export class Sequence extends Morph {
     sunSequence.initialize(200, 300);
     const sun = new Ellipse({ extent: pt(70, 70), fill: Color.rgb(250, 250, 20), position: pt(0, 350) });
     sunSequence.addMorph(sun);
+
     const sunAnimation = new PointAnimation(sun, 'position');
     sunAnimation.addKeyframe(new Keyframe(0, pt(0, 350)));
     sunAnimation.addKeyframe(new Keyframe(0.5, pt(40, 80)));
     sunAnimation.addKeyframe(new Keyframe(1, pt(180, 15)));
-    sunSequence.animations = [sunAnimation];
+    sunSequence.addAnimation(sunAnimation);
     return sunSequence;
   }
 
@@ -330,5 +338,9 @@ export class Sequence extends Morph {
   updateProgress (scrollPosition) {
     this._progress = (scrollPosition - this.start) / this.duration;
     this.animations.forEach(animation => animation.progress = this._progress);
+  }
+
+  addAnimation (animation) {
+    this.animations.push(animation);
   }
 }
