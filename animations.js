@@ -9,6 +9,15 @@ class Animation {
 
   addKeyframe (keyframe) {
     this.keyframes.push(keyframe);
+    this._sortKeyframes();
+  }
+
+  addKeyframes (keyframes) {
+    this.keyframes = this.keyframes.concat(keyframes);
+    this._sortKeyframes();
+  }
+
+  _sortKeyframes () {
     this.keyframes.sort((a, b) => a.position - b.position);
   }
 
