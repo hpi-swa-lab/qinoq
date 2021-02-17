@@ -235,8 +235,13 @@ export class Sequence extends Morph {
           this.applyUnfocusedEffect();
         }
       },
-      originalOpacity: {
-        defaultValue: -1 // -1 means not set by convention
+      originalOpacity: { defaultValue: 1 },
+      opacity: {
+        defaultValue: 1,
+        set (opacity) {
+          this.setProperty('opacity', opacity);
+          if (!this._lockOpacity) this._originalOpacity = opacity;
+        }
       }
     };
   }
@@ -288,17 +293,10 @@ export class Sequence extends Morph {
   }
 
   applyUnfocusedEffect () {
-    if (this.focused) {
-      if (this.originalOpacity !== -1) {
-        this.opacity = this.originalOpacity;
-        this.originalOpacity = -1;
-      }
-    } else {
-      if (this.originalOpacity === -1) {
-        this.originalOpacity = this.opacity;
-      }
-      this.opacity = 0.2; // TODO: define a better effect
-    }
+    // stop opacity setter from copying changes to originalOpacity
+    this._lockOpacity = true;
+    this.opacity = this.focused ? this._originalOpacity : 0.2; // TODO: define a better effect
+    this._lockOpacity = true;
   }
 
   updateProgress (scrollPosition) {
