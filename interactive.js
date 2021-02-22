@@ -57,6 +57,10 @@ export class Interactive extends Morph {
     this.length = length;
     this.extent = extent;
     this.initScrollOverlay();
+    // VDOM seems to hold older nodes and mistakes them for the new ScrollHolder
+    // this leads to unexpected jumps of the scrollPosition
+    // therefore we reset it again here with respect to the rendering routine
+    this.whenRendered().then(() => { this.scrollOverlay.scroll = pt(0, 0); });
   }
 
   initScrollOverlay () {
