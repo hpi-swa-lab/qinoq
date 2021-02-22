@@ -112,7 +112,7 @@ export class Timeline extends Morph {
     }));
     timelineLayer.layerInfo = layerInfo;
     layerInfo.addMorph(layerInfo.layerLabel);
-    this.ui.layerInfoContainer.addMorph(layerInfo);
+    this.ui.layerInfoContainer.addMorphBack(layerInfo);
     this._timelineLayerDict[layer.id] = timelineLayer;
     return timelineLayer;
   }
@@ -216,7 +216,8 @@ export class SequenceTimeline extends Timeline {
         position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET),
         fill: COLOR_SCHEME.SURFACE,
         borderColor: COLOR_SCHEME.ON_SURFACE,
-        borderWidth: 2
+        borderWidth: 2,
+        tooltip: morph.name
       }));
     });
   }
