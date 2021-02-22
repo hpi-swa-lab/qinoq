@@ -14,6 +14,7 @@ const CONSTANTS = {
   CURSOR_WIDTH: 2,
   CURSOR_FONT_SIZE: 10,
   WARNING_WIDTH: 8,
+  FULL_WARNING_OPACITY_AT_DRAG_DELTA: 50,
   IN_EDIT_MODE_SEQUENCE_WIDTH: 800
 };
 
@@ -425,10 +426,10 @@ export class TimelineSequence extends Morph {
 
     connect(this.rightResizer, 'onDrag', this, 'onResizeRight');
     connect(this.rightResizer, 'onDragStart', this, 'onResizeStart');
-    connect(this.rightResizer, 'onDragEnd', this, 'setDefaultAppearance');
+    connect(this.rightResizer, 'onDragEnd', this, 'onResizeEnd');
     connect(this.leftResizer, 'onDrag', this, 'onResizeLeft');
     connect(this.leftResizer, 'onDragStart', this, 'onResizeStart');
-    connect(this.leftResizer, 'onDragEnd', this, 'setDefaultAppearance');
+    connect(this.leftResizer, 'onDragEnd', this, 'onResizeEnd');
 
     this.addMorphBack(this.rightResizer);
     this.addMorphBack(this.leftResizer);
@@ -471,6 +472,8 @@ export class TimelineSequence extends Morph {
         // this.env.undoManager.removeLatestUndo(); uncomment as soon as it is merged in the lively.next:master
       });
     }
+    this.hideWarningLeft();
+    this.hideWarningRight();
     delete event.hand.dragTimelineSequenceStates;
   }
 
@@ -478,7 +481,7 @@ export class TimelineSequence extends Morph {
     super.onDrag(event);
     if (this.position.x <= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
       this.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-      this.showWarningLeft();
+      this.showWarningLeft(event.hand.position.x);
     } else {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     }
@@ -508,7 +511,7 @@ export class TimelineSequence extends Morph {
     const newSequenceWidth = this.rightResizer.position.x + this.rightResizer.width;
 
     if (newSequenceWidth < CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
-      this.showWarningRight();
+      this.showWarningRight(event.hand.position.x);
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
       this.rightResizer.position = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH - this.rightResizer.width, 0);
       this.updateSequenceAfterArrangement();
@@ -548,11 +551,11 @@ export class TimelineSequence extends Morph {
     if (minimalSequenceWidthReached) {
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
       this.globalPosition = pt(rightResizerGlobalPosition.x + this.rightResizer.width - CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.globalPosition.y);
-      this.showWarningLeft();
+      this.showWarningLeft(dragDelta);
     }
     // stop resizing due to end of timeline
     else if (leftEndOfTimelineReached) {
-      this.showWarningLeft();
+      this.showWarningLeft(dragDelta);
       this.extent = pt(this.rightResizer.startUpperRightCorner.x - leftTimelineEnd, this.height);
       this.globalPosition = pt(leftTimelineEnd, this.owner.globalPosition.y + CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     } else {
@@ -573,42 +576,76 @@ export class TimelineSequence extends Morph {
     this.updateSequenceAfterArrangement();
   }
 
+  onResizeEnd (event) {
+    this.hideWarningLeft();
+    this.hideWarningRight();
+    this.setDefaultAppearance();
+  }
+
   updateSequenceAfterArrangement () {
     this.sequence.duration = this.timeline.getDurationFromWidth(this.width);
     this.sequence.start = this.timeline.getScrollFromPosition(this.position.x);
     this.timeline.interactive.redraw();
   }
 
-  showWarningLeft (fadeout = 1000) {
-    const warning = new Morph({
-      position: pt(0, 0),
-      extent: pt(CONSTANTS.WARNING_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
-      fill: new LinearGradient({
-        vector: 'eastwest',
-        stops: [
-          { offset: 0, color: COLOR_SCHEME.SECONDARY.withA(0.2) },
-          { offset: 1, color: COLOR_SCHEME.SECONDARY.withA(0) }
-        ]
-      })
-    });
+  showWarningLeft (dragValue) {
+    const newWarning = !this.warningStartLeft;
+    if (newWarning) this.warningStartLeft = dragValue;
+    const currentDrag = this.warningStartLeft - dragValue;
+    const strength = currentDrag / CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA;
+    const warning = !newWarning
+      ? this.getSubmorphNamed('warning left')
+      : new Morph({
+        name: 'warning left',
+        position: pt(0, 0),
+        extent: pt(CONSTANTS.WARNING_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
+        fill: new LinearGradient({
+          vector: 'eastwest',
+          stops: [
+            { offset: 0, color: COLOR_SCHEME.SECONDARY.withA(1) },
+            { offset: 1, color: COLOR_SCHEME.SECONDARY.withA(0) }
+          ]
+        })
+      });
+    warning.opacity = strength;
     this.addMorph(warning);
-    warning.fadeOut(fadeout);
   }
 
-  showWarningRight (fadeout = 1000) {
-    const warning = new Morph({
-      position: pt(this.width - CONSTANTS.WARNING_WIDTH, 0),
-      extent: pt(CONSTANTS.WARNING_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
-      fill: new LinearGradient({
-        vector: 'westeast',
-        stops: [
-          { offset: 0, color: COLOR_SCHEME.SECONDARY.withA(0.2) },
-          { offset: 1, color: COLOR_SCHEME.SECONDARY.withA(0) }
-        ]
-      })
+  hideWarningLeft (fadeout = 1000) {
+    delete this.warningStartLeft;
+    this.withAllSubmorphsDo(morph => {
+      if (morph.name == 'warning left') morph.fadeOut(fadeout);
     });
+  }
+
+  showWarningRight (dragValue) {
+    const newWarning = !this.warningStartRight;
+    if (newWarning) this.warningStartRight = dragValue;
+    const currentDrag = this.warningStartRight - dragValue;
+    const strength = currentDrag / CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA;
+    const warning = !newWarning
+      ? this.getSubmorphNamed('warning left')
+      : new Morph({
+        name: 'warning left',
+        position: pt(this.width - CONSTANTS.WARNING_WIDTH, 0),
+        extent: pt(CONSTANTS.WARNING_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
+        fill: new LinearGradient({
+          vector: 'westeast',
+          stops: [
+            { offset: 0, color: COLOR_SCHEME.SECONDARY.withA(1) },
+            { offset: 1, color: COLOR_SCHEME.SECONDARY.withA(0) }
+          ]
+        })
+      });
+    warning.opacity = strength;
     this.addMorph(warning);
-    warning.fadeOut(fadeout);
+  }
+
+  hideWarningRight (fadeout = 1000) {
+    delete this.warningStartRight;
+    this.withAllSubmorphsDo(morph => {
+      if (morph.name == 'warning right') morph.fadeOut(fadeout);
+    });
   }
 
   setOverlappingAppearance () {
