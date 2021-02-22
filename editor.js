@@ -105,6 +105,31 @@ export class InteractivesEditor extends Morph {
     this.addMorph(this.globalTimeline);
     this.sequenceTimelines.forEach(timeline => timeline.remove());
   }
+
+  get keybindings () {
+    return [
+      { keys: 'Left', command: 'move scrollposition backwards' },
+      { keys: 'Right', command: 'move scrollposition forward' }
+    ].concat(super.keybindings);
+  }
+
+  get commands () {
+    return [
+      {
+        name: 'move scrollposition forward',
+        doc: 'Move the scrollPosition of the interactive forward by one unit',
+        exec: () => {
+          this.interactive.scrollPosition++;
+        }
+      },
+      {
+        name: 'move scrollposition backwards',
+        doc: 'Move the scrollPosition of the interactive back by one unit',
+        exec: () => {
+          this.interactive.scrollPosition--;
+        }
+      }];
+  }
 }
 
 class Preview extends Morph {
