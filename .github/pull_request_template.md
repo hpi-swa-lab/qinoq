@@ -3,12 +3,12 @@ closes [fill in your issues here]
 ## Features that still work:
 ### Sequences in GlobalTimeline:
 
-	- [ ] are resizeable
-	- [ ] can't be dragged onto each other
+	- [ ] are resizeable both left and right
+	- [ ] can't be dragged or resized onto each other
 	- [ ] can't be dragged or resized beyond the timeline bounds
 	- [ ] double clicking brings you to the sequence view
 
-### Timelinelayer:
+### TimelineLayer:
 
 	- [ ] can be changed in order via drag and drop
 	- [ ] the labels change accordingly
