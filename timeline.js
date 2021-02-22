@@ -13,7 +13,7 @@ const CONSTANTS = {
   MINIMAL_SEQUENCE_WIDTH: 20,
   CURSOR_WIDTH: 2,
   CURSOR_FONT_SIZE: 10,
-  WARNING_WIDTH: 5,
+  WARNING_WIDTH: 8,
   IN_EDIT_MODE_SEQUENCE_WIDTH: 800
 };
 
@@ -425,10 +425,10 @@ export class TimelineSequence extends Morph {
 
     connect(this.rightResizer, 'onDrag', this, 'onResizeRight');
     connect(this.rightResizer, 'onDragStart', this, 'onResizeStart');
-    connect(this.rightResizer, 'onDragEnd', this, 'resetAppearance');
+    connect(this.rightResizer, 'onDragEnd', this, 'setDefaultAppearance');
     connect(this.leftResizer, 'onDrag', this, 'onResizeLeft');
     connect(this.leftResizer, 'onDragStart', this, 'onResizeStart');
-    connect(this.leftResizer, 'onDragEnd', this, 'resetAppearance');
+    connect(this.leftResizer, 'onDragEnd', this, 'setDefaultAppearance');
 
     this.addMorphBack(this.rightResizer);
     this.addMorphBack(this.leftResizer);
@@ -467,7 +467,7 @@ export class TimelineSequence extends Morph {
         sequence.position = dragState.previousPosition;
         sequence.remove();
         sequence.timelineLayer = dragState.previousTimelineLayer;
-        sequence.setOverlappingAppearance();
+        sequence.updateAppearance();
         // this.env.undoManager.removeLatestUndo(); uncomment as soon as it is merged in the lively.next:master
       });
     }
@@ -482,7 +482,7 @@ export class TimelineSequence extends Morph {
     } else {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     }
-    this.setOverlappingAppearance();
+    this.updateAppearance();
     this.updateSequenceAfterArrangement();
   }
 
@@ -519,17 +519,17 @@ export class TimelineSequence extends Morph {
     this.rightResizer.position = pt(this.rightResizer.position.x, 0);
 
     if (this.isOverlappingOtherSequence()) {
-      this.setOverlappingAppearance();
       this.width = this.startWidth;
       this.rightResizer.position = pt(this.width - this.rightResizer.width, 0);
     }
 
+    this.updateAppearance();
     this.updateSequenceAfterArrangement();
   }
 
   onResizeStart (event) {
-    this.leftResizer.startPosition = this.leftResizer.globalPosition;
-    this.rightResizer.startPosition = pt(this.rightResizer.globalPosition.x + this.rightResizer.width, this.rightResizer.globalPositioy);
+    this.leftResizer.startUpperLeftCorner = this.leftResizer.globalPosition;
+    this.rightResizer.startUpperRightCorner = pt(this.rightResizer.globalPosition.x + this.rightResizer.width, this.rightResizer.globalPosition.y);
     this.startWidth = this.width;
     this.startPosition = this.globalPosition;
   }
@@ -542,7 +542,7 @@ export class TimelineSequence extends Morph {
     const leftTimelineEnd = this.timelineLayer.globalPosition.x + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
 
     const minimalSequenceWidthReached = newSequenceWidth <= CONSTANTS.MINIMAL_SEQUENCE_WIDTH;
-    const leftEndOfTimelineReached = this.leftResizer.startPosition.x - dragDelta < leftTimelineEnd;
+    const leftEndOfTimelineReached = this.leftResizer.startUpperLeftCorner.x - dragDelta < leftTimelineEnd;
 
     // stop resizing due to minimal width
     if (minimalSequenceWidthReached) {
@@ -553,14 +553,14 @@ export class TimelineSequence extends Morph {
     // stop resizing due to end of timeline
     else if (leftEndOfTimelineReached) {
       this.showWarningLeft();
-      this.extent = pt(this.rightResizer.startPosition.x - leftTimelineEnd, this.height);
+      this.extent = pt(this.rightResizer.startUpperRightCorner.x - leftTimelineEnd, this.height);
       this.globalPosition = pt(leftTimelineEnd, this.owner.globalPosition.y + CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     } else {
       this.globalPosition = pt(this.startPosition.x - dragDelta, this.globalPosition.y);
       this.extent = pt(newSequenceWidth, this.height);
     }
 
-    this.setOverlappingAppearance();
+    this.updateAppearance();
 
     if (this.isOverlappingOtherSequence()) {
       this.width = this.startWidth;
@@ -612,12 +612,20 @@ export class TimelineSequence extends Morph {
   }
 
   setOverlappingAppearance () {
-    this.fill = this.isOverlappingOtherSequence() ? COLOR_SCHEME.ERROR : COLOR_SCHEME.SURFACE;
+    this.fill = COLOR_SCHEME.ERROR;
   }
 
-  resetAppearance () {
+  setDefaultAppearance () {
     this.fill = COLOR_SCHEME.SURFACE;
     this.borderColor = COLOR_SCHEME.ON_BACKGROUND;
+  }
+
+  updateAppearance () {
+    if (this.isOverlappingOtherSequence()) {
+      this.setOverlappingAppearance();
+    } else {
+      this.setDefaultAppearance();
+    }
   }
 
   isOverlappingOtherSequence () {
