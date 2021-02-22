@@ -548,6 +548,7 @@ export class TimelineSequence extends Morph {
     if (minimalSequenceWidthReached) {
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
       this.globalPosition = pt(rightResizerGlobalPosition.x + this.rightResizer.width - CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.globalPosition.y);
+      this.showWarningLeft();
     }
     // stop resizing due to end of timeline
     else if (leftEndOfTimelineReached) {
