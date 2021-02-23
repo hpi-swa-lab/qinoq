@@ -85,7 +85,7 @@ export class Timeline extends Morph {
     }));
     timelineLayer.layerInfo = layerInfo;
     layerInfo.addMorph(layerInfo.layerLabel);
-    this.ui.layerInfoContainer.addMorph(layerInfo);
+    this.ui.layerInfoContainer.addMorphBack(layerInfo);
     this._timelineLayerDict[layer.id] = timelineLayer;
     return timelineLayer;
   }
@@ -210,7 +210,8 @@ export class GlobalTimeline extends Timeline {
     });
   }
 }
-export class SequenceTimeline extends Timeline {
+
+class SequenceTimeline extends Timeline {
   onLoadContent (sequence) {
     this.sequence = sequence;
 
