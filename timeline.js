@@ -15,7 +15,8 @@ const CONSTANTS = {
   CURSOR_FONT_SIZE: 10,
   WARNING_WIDTH: 8,
   FULL_WARNING_OPACITY_AT_DRAG_DELTA: 50,
-  IN_EDIT_MODE_SEQUENCE_WIDTH: 800
+  IN_EDIT_MODE_SEQUENCE_WIDTH: 800,
+  KEYFRAME_EXTENT: pt(23, 23)
 };
 
 export class Timeline extends Morph {
@@ -258,7 +259,7 @@ export class TimelineKeyframe extends Morph {
     return {
       extent: {
         // TODO: Constant
-        defaultValue: pt(23, 23)
+        defaultValue: CONSTANTS.KEYFRAME_EXTENT
       },
       fill: {
         defaultValue: COLOR_SCHEME.SECONDARY
@@ -287,7 +288,7 @@ export class TimelineKeyframe extends Morph {
 
   getPositionFromKeyframe () {
     const x = (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.keyframe.position);
-    const y = (CONSTANTS.SEQUENCE_HEIGHT / 2) - (Math.sqrt(2) * this.extent.x / 2);
+    const y = (CONSTANTS.SEQUENCE_HEIGHT / 2) - (Math.sqrt(2) * CONSTANTS.KEYFRAME_EXTENT.x / 2);
     return pt(x, y);
   }
 }
