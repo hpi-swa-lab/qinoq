@@ -245,6 +245,37 @@ export class SequenceTimeline extends Timeline {
   }
 }
 
+export class TimelineKeyframe extends Morph {
+  static get properties () {
+    return {
+      extent: {
+        // TODO: Constant
+        defaultValue: pt(23, 23)
+      },
+      fill: {
+        defaultValue: COLOR_SCHEME.SECONDARY
+      },
+      rotation: {
+        defaultValue: Math.PI / 4
+      },
+      keyframe: {
+        set (keyframe) {
+          this.setProperty('keyframe', keyframe);
+          this.name = keyframe.name;
+          this.tooltip = this.name;
+        }
+      },
+      name: {
+        type: String
+      }
+    };
+  }
+
+  initialize (keyframe) {
+    this.keyframe = keyframe;
+  }
+}
+
 export class TimelineLayer extends Morph {
   static get properties () {
     return {
