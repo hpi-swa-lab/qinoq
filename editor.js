@@ -109,7 +109,8 @@ export class InteractivesEditor extends Morph {
   get keybindings () {
     return [
       { keys: 'Left', command: 'move scrollposition backwards' },
-      { keys: 'Right', command: 'move scrollposition forward' }
+      { keys: 'Right', command: 'move scrollposition forward' },
+      { keys: 'Esc', command: 'show global timeline' }
     ].concat(super.keybindings);
   }
 
@@ -130,6 +131,15 @@ export class InteractivesEditor extends Morph {
         exec: () => {
           if (this.interactive) {
             this.interactive.scrollPosition--;
+          }
+        }
+      },
+      {
+        name: 'show global timeline',
+        doc: 'Show the global timeline',
+        exec: () => {
+          if (this.interactive) {
+            this.showGlobalTimeline();
           }
         }
       }];
