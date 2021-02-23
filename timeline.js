@@ -228,6 +228,8 @@ export class SequenceTimeline extends Timeline {
       timelineLayer.addMorph(keyframeBox);
       const animationsForMorph = this.sequence.animations.filter(animation => animation.target === morph);
       animationsForMorph.forEach(animation => {
+        // TOOD: Refactor this when we talked about how to properly store this
+        keyframeBox.animation = animation;
         animation.keyframes.forEach(keyframe => {
           keyframeBox.addMorph(new TimelineKeyframe().initialize(keyframe));
         });
@@ -271,12 +273,18 @@ export class TimelineKeyframe extends Morph {
         set (keyframe) {
           this.setProperty('keyframe', keyframe);
           this.name = keyframe.name;
-          this.tooltip = this.name;
-          this.position = this.getPositionFromKeyframe();
+          this.position = this.getKeyframePositionFromRelativePosition(this.keyframe.position);
         }
       },
       name: {
-        type: String
+        type: String,
+        set (name) {
+          this.setProperty('name', name);
+          this.tooltip = this.name;
+          if (this.keyframe) {
+            this.keyframe.name = this.name;
+          }
+        }
       }
     };
   }
@@ -286,10 +294,26 @@ export class TimelineKeyframe extends Morph {
     return this;
   }
 
-  getPositionFromKeyframe () {
-    const x = (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.keyframe.position);
+  getKeyframePositionFromRelativePosition (relativePosition) {
+    const x = (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * relativePosition);
     const y = (CONSTANTS.SEQUENCE_HEIGHT / 2) - (Math.sqrt(2) * CONSTANTS.KEYFRAME_EXTENT.x / 2);
     return pt(x, y);
+  }
+
+  menuItems (evt) {
+    return [
+      ['Rename Keyframe', async () => this.name = await $world.prompt('Keyframe name:', { input: this.keyframe.name })],
+      ['Delete Keyframe', () => this.remove()],
+      ['Edit Keyframe Position (0 to 1)', async () => {
+        this.keyframe.position = await $world.prompt('Keyframe position:', { input: this.keyframe.position });
+        this.position = this.getKeyframePositionFromRelativePosition(this.keyframe.position);
+      }]
+    ];
+  }
+
+  remove () {
+    this.owner.animation.removeKeyframe(this.keyframe);
+    super.remove();
   }
 }
 

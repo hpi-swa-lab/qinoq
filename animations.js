@@ -24,6 +24,10 @@ class Animation {
     }
   }
 
+  removeKeyframe (keyframe) {
+    arr.remove(this.keyframes, keyframe);
+  }
+
   addKeyframes (keyframes) {
     keyframes.forEach(keyframe => this.addKeyframe(keyframe, true));
     this._sortKeyframes();
