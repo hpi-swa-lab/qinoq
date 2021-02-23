@@ -218,14 +218,15 @@ export class SequenceTimeline extends Timeline {
       const timelineLayer = this.createTimelineLayer(morph);
       // this is more or less just a visual placeholder
       // when keyframe editing capabilities are introduced, this should probably pulled out into a class
-      timelineLayer.addMorph(new Morph({
-        extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.LAYER_HEIGHT),
-        position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0),
-        fill: COLOR_SCHEME.SURFACE_VARIANT,
-        name: 'key frame box'
-      }));
+      timelineLayer.addActiveAreaMorph();
       this.sequence.getAnimationsForMorph(morph).forEach(animation => {
         // TOOD: Refactor this when we talked about how to properly store this
+        const animationArea = this.createTimelineLayer(morph);
+        animationArea.addActiveAreaMorph();
+        animationArea.animation = animation;
+        animation.keyframes.forEach(keyframe => {
+          animationArea.addMorph(new TimelineKeyframe().initialize(keyframe));
+        });
         timelineLayer.animation = animation;
         animation.keyframes.forEach(keyframe => {
           timelineLayer.addMorph(new TimelineKeyframe().initialize(keyframe));
@@ -420,7 +421,14 @@ export class GlobalTimelineLayer extends TimelineLayer {
 }
 
 class SequenceTimelineLayer extends TimelineLayer {
-
+  addActiveAreaMorph () {
+    this.addMorph(new Morph({
+      extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.LAYER_HEIGHT),
+      position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0),
+      fill: COLOR_SCHEME.SURFACE_VARIANT,
+      name: 'key frame box'
+    }));
+  }
 }
 
 export class TimelineSequence extends Morph {
