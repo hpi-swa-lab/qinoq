@@ -101,22 +101,6 @@ export class Timeline extends Morph {
     return Object.values(this._timelineLayerDict);
   }
 
-  createTimelineLayer (layer) {
-    const timelineLayer = new TimelineLayer();
-    timelineLayer.initialize(this.ui.layerContainer, layer);
-    this.ui.layerContainer.addMorphBack(timelineLayer);
-    const layerInfo = new Morph();
-    layerInfo.height = CONSTANTS.LAYER_HEIGHT;
-    layerInfo.layerLabel = (new Label({
-      textString: layer.name
-    }));
-    timelineLayer.layerInfo = layerInfo;
-    layerInfo.addMorph(layerInfo.layerLabel);
-    this.ui.layerInfoContainer.addMorphBack(layerInfo);
-    this._timelineLayerDict[layer.id] = timelineLayer;
-    return timelineLayer;
-  }
-
   loadContent (content) {
     this.onLoadContent(content);
     this.initializeCursor();
@@ -163,6 +147,22 @@ export class GlobalTimeline extends Timeline {
     });
     this.interactive.sequences.forEach(sequence => this.createTimelineSequence(sequence));
     this.updateLayerPositions();
+  }
+
+  createTimelineLayer (layer) {
+    const timelineLayer = new GlobalTimelineLayer();
+    timelineLayer.initialize(this.ui.layerContainer, layer);
+    this.ui.layerContainer.addMorphBack(timelineLayer);
+    const layerInfo = new Morph();
+    layerInfo.height = CONSTANTS.LAYER_HEIGHT;
+    layerInfo.layerLabel = (new Label({
+      textString: layer.name
+    }));
+    timelineLayer.layerInfo = layerInfo;
+    layerInfo.addMorph(layerInfo.layerLabel);
+    this.ui.layerInfoContainer.addMorph(layerInfo);
+    this._timelineLayerDict[layer.id] = timelineLayer;
+    return timelineLayer;
   }
 
   getDisplayValueFromScroll (scrollPosition) {
@@ -219,6 +219,22 @@ export class SequenceTimeline extends Timeline {
         borderWidth: 2
       }));
     });
+  }
+
+  createTimelineLayer (layer) {
+    const timelineLayer = new SequenceTimelineLayer();
+    timelineLayer.initialize(this.ui.layerContainer, layer);
+    this.ui.layerContainer.addMorphBack(timelineLayer);
+    const layerInfo = new Morph();
+    layerInfo.height = CONSTANTS.LAYER_HEIGHT;
+    layerInfo.layerLabel = (new Label({
+      textString: layer.name
+    }));
+    timelineLayer.layerInfo = layerInfo;
+    layerInfo.addMorph(layerInfo.layerLabel);
+    this.ui.layerInfoContainer.addMorph(layerInfo);
+    this._timelineLayerDict[layer.id] = timelineLayer;
+    return timelineLayer;
   }
 
   getPositionFromScroll (scrollPosition) {
@@ -286,17 +302,20 @@ export class TimelineLayer extends Morph {
     return this.layer.name;
   }
 
-  get timelineSequences () {
-    return this.submorphs.filter(submorph => !!submorph.isTimelineSequence);
-  }
-
   updateLayerPosition () {
     this.timeline.updateLayerPositions();
   }
 
-  onMouseDown (event) {
-    super.onMouseDown(event);
-    this.timeline.deselectAllSequences();
+  onBeingDroppedOn (hand, recipient) {
+    this.container.addMorphBack(this);
+    this.timeline.arrangeLayerInfos();
+    this.timeline.updateZIndicesFromTimelineLayerPositions();
+  }
+}
+
+export class GlobalTimelineLayer extends TimelineLayer {
+  get timelineSequences () {
+    return this.submorphs.filter(submorph => !!submorph.isTimelineSequence);
   }
 
   onHoverIn (event) {
@@ -308,10 +327,9 @@ export class TimelineLayer extends Morph {
     }
   }
 
-  onBeingDroppedOn (hand, recipient) {
-    this.container.addMorphBack(this);
-    this.timeline.arrangeLayerInfos();
-    this.timeline.updateZIndicesFromTimelineLayerPositions();
+  onMouseDown (event) {
+    super.onMouseDown(event);
+    this.timeline.deselectAllSequences();
   }
 
   getAllSequencesIntersectingWith (rectangle) {
@@ -323,6 +341,10 @@ export class TimelineLayer extends Morph {
       timelineSequence.selected = false;
     });
   }
+}
+
+class SequenceTimelineLayer extends TimelineLayer {
+
 }
 
 export class TimelineSequence extends Morph {
