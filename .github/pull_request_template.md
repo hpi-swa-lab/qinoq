@@ -4,7 +4,7 @@ closes [fill in your issues here]
 ### Sequences in GlobalTimeline:
 
 	- [ ] the tree sequence is resizeable both left and right
-	- [ ] the day sequence can't be dragged or resized onto the day sequence
+	- [ ] the day sequence can't be dragged or resized onto the night sequence
 	- [ ] the night sequence can't be dragged or resized beyond the timeline bounds
 	- [ ] double clicking on the tree sequence brings you to the sequence view
 
