@@ -250,18 +250,8 @@ export class TimelineLayer extends Morph {
       layerInfo: {},
       container: {},
       layer: {},
-      nativeCursor: {
-        defaultValue: 'grab'
-      },
       focusable: {
         defaultValue: false
-      },
-      grabbable: {
-        defaultValue: true
-      },
-      draggable: {
-      // setting grabbable sets draggable to true but only via the setter and not with the default value, but we need draggable to be true as well
-        defaultValue: true
       },
       fill: {
         defaultValue: COLOR_SCHEME.BACKGROUND_VARIANT
@@ -297,15 +287,24 @@ export class TimelineLayer extends Morph {
   updateLayerPosition () {
     this.timeline.updateLayerPositions();
   }
-
-  onBeingDroppedOn (hand, recipient) {
-    this.container.addMorphBack(this);
-    this.timeline.arrangeLayerInfos();
-    this.timeline.updateZIndicesFromTimelineLayerPositions();
-  }
 }
 
 export class GlobalTimelineLayer extends TimelineLayer {
+  static get properties () {
+    return {
+      grabbable: {
+        defaultValue: true
+      },
+      draggable: {
+      // setting grabbable sets draggable to true but only via the setter and not with the default value, but we need draggable to be true as well
+        defaultValue: true
+      },
+      nativeCursor: {
+        defaultValue: 'grab'
+      }
+    };
+  }
+
   get timelineSequences () {
     return this.submorphs.filter(submorph => !!submorph.isTimelineSequence);
   }
@@ -322,6 +321,12 @@ export class GlobalTimelineLayer extends TimelineLayer {
   onMouseDown (event) {
     super.onMouseDown(event);
     this.timeline.deselectAllSequences();
+  }
+
+  onBeingDroppedOn (hand, recipient) {
+    this.container.addMorphBack(this);
+    this.timeline.arrangeLayerInfos();
+    this.timeline.updateZIndicesFromTimelineLayerPositions();
   }
 
   getAllSequencesIntersectingWith (rectangle) {
