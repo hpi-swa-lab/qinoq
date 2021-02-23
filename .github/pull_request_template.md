@@ -3,15 +3,15 @@ closes [fill in your issues here]
 ## Features that still work:
 ### Sequences in GlobalTimeline:
 
-	- [ ] are resizeable both left and right
-	- [ ] can't be dragged or resized onto each other
-	- [ ] can't be dragged or resized beyond the timeline bounds
-	- [ ] double clicking brings you to the sequence view
+	- [ ] the tree sequence is resizeable both left and right
+	- [ ] the day sequence can't be dragged or resized onto the day sequence
+	- [ ] the night sequence can't be dragged or resized beyond the timeline bounds
+	- [ ] double clicking on the tree sequence brings you to the sequence view
 
 ### TimelineLayer:
 
-	- [ ] can be changed in order via drag and drop
-	- [ ] the labels change accordingly
+	- [ ] one can bring the background layer to the front via drag and drop and the tree is not visible afterwards
+	- [ ] the info labels change accordingly
 
 ### GlobalTimelineCursor:
 
@@ -21,4 +21,5 @@ closes [fill in your issues here]
 
 	- [ ] can be opened
 	- [ ] is scrollable
+	- [ ] can be loaded in the editor via drag and drop
 	
