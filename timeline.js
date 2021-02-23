@@ -226,8 +226,7 @@ export class SequenceTimeline extends Timeline {
         borderWidth: 2
       });
       timelineLayer.addMorph(keyframeBox);
-      const animationsForMorph = this.sequence.animations.filter(animation => animation.target === morph);
-      animationsForMorph.forEach(animation => {
+      this.sequence.getAnimationsForMorph(morph).forEach(animation => {
         // TOOD: Refactor this when we talked about how to properly store this
         keyframeBox.animation = animation;
         animation.keyframes.forEach(keyframe => {
@@ -260,7 +259,6 @@ export class TimelineKeyframe extends Morph {
   static get properties () {
     return {
       extent: {
-        // TODO: Constant
         defaultValue: CONSTANTS.KEYFRAME_EXTENT
       },
       fill: {
@@ -273,7 +271,7 @@ export class TimelineKeyframe extends Morph {
         set (keyframe) {
           this.setProperty('keyframe', keyframe);
           this.name = keyframe.name;
-          this.position = this.getKeyframePositionFromRelativePosition(this.keyframe.position);
+          this.position = this.getTimelineKeyframePositionFromProgress(this.keyframe.position);
         }
       },
       name: {
@@ -294,8 +292,8 @@ export class TimelineKeyframe extends Morph {
     return this;
   }
 
-  getKeyframePositionFromRelativePosition (relativePosition) {
-    const x = (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * relativePosition);
+  getTimelineKeyframePositionFromProgress (progress) {
+    const x = (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * progress);
     const y = (CONSTANTS.SEQUENCE_HEIGHT / 2) - (Math.sqrt(2) * CONSTANTS.KEYFRAME_EXTENT.x / 2);
     return pt(x, y);
   }
@@ -304,11 +302,21 @@ export class TimelineKeyframe extends Morph {
     return [
       ['Rename Keyframe', async () => this.name = await $world.prompt('Keyframe name:', { input: this.keyframe.name })],
       ['Delete Keyframe', () => this.remove()],
-      ['Edit Keyframe Position (0 to 1)', async () => {
-        this.keyframe.position = await $world.prompt('Keyframe position:', { input: this.keyframe.position });
-        this.position = this.getKeyframePositionFromRelativePosition(this.keyframe.position);
-      }]
+      ['Edit Keyframe Position (0 to 1)', async () => { await this.promptUserForNewPosition(); }]
     ];
+  }
+
+  async promptUserForNewPosition () {
+    const newPosition = await $world.prompt('Keyframe position:', { input: this.keyframe.position });
+    if (newPosition) {
+      if (newPosition >= 0 && newPosition <= 1) {
+        this.keyframe.position = newPosition;
+        this.position = this.getTimelineKeyframePositionFromProgress(this.keyframe.position);
+      } else {
+        await $world.inform('Enter a value between 0 and 1.');
+        await this.promptUserForNewPosition();
+      }
+    }
   }
 
   remove () {

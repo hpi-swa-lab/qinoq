@@ -391,4 +391,8 @@ export class Sequence extends Morph {
     this.addAnimation(newAnimation);
     return newAnimation;
   }
+
+  getAnimationsForMorph (morph) {
+    return this.animations.filter(animation => animation.target === morph);
+  }
 }
