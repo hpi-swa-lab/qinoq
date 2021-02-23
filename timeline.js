@@ -218,20 +218,17 @@ export class SequenceTimeline extends Timeline {
       const timelineLayer = this.createTimelineLayer(morph);
       // this is more or less just a visual placeholder
       // when keyframe editing capabilities are introduced, this should probably pulled out into a class
-      const keyframeBox = new Morph({
-        extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
-        position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET),
-        fill: COLOR_SCHEME.SURFACE,
-        borderColor: COLOR_SCHEME.ON_SURFACE,
-        borderWidth: 2,
+      timelineLayer.addMorph(new Morph({
+        extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.LAYER_HEIGHT),
+        position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0),
+        fill: COLOR_SCHEME.SURFACE_VARIANT,
         name: 'key frame box'
-      });
-      timelineLayer.addMorph(keyframeBox);
+      }));
       this.sequence.getAnimationsForMorph(morph).forEach(animation => {
         // TOOD: Refactor this when we talked about how to properly store this
-        keyframeBox.animation = animation;
+        timelineLayer.animation = animation;
         animation.keyframes.forEach(keyframe => {
-          keyframeBox.addMorph(new TimelineKeyframe().initialize(keyframe));
+          timelineLayer.addMorph(new TimelineKeyframe().initialize(keyframe));
         });
       });
     });
@@ -294,8 +291,8 @@ export class TimelineKeyframe extends Morph {
   }
 
   getTimelineKeyframePositionFromProgress (progress) {
-    const x = (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * progress);
-    const y = (CONSTANTS.SEQUENCE_HEIGHT / 2) - (Math.sqrt(2) * CONSTANTS.KEYFRAME_EXTENT.x / 2);
+    const x = (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * progress) + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+    const y = (CONSTANTS.LAYER_HEIGHT / 2) - (Math.sqrt(2) * CONSTANTS.KEYFRAME_EXTENT.x / 2);
     return pt(x, y);
   }
 
