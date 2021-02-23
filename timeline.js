@@ -72,6 +72,22 @@ export class Timeline extends Morph {
     this.addMorph(this.ui.layerInfoContainer);
   }
 
+  createTimelineLayer (layer) {
+    const timelineLayer = this.getTimelineLayer();
+    timelineLayer.initialize(this.ui.layerContainer, layer);
+    this.ui.layerContainer.addMorphBack(timelineLayer);
+    const layerInfo = new Morph();
+    layerInfo.height = CONSTANTS.LAYER_HEIGHT;
+    layerInfo.layerLabel = (new Label({
+      textString: layer.name
+    }));
+    timelineLayer.layerInfo = layerInfo;
+    layerInfo.addMorph(layerInfo.layerLabel);
+    this.ui.layerInfoContainer.addMorph(layerInfo);
+    this._timelineLayerDict[layer.id] = timelineLayer;
+    return timelineLayer;
+  }
+
   arrangeLayerInfos () {
     this.timelineLayers.forEach(timelineLayer => {
       const layerInfo = timelineLayer.layerInfo;
@@ -139,6 +155,10 @@ export class GlobalTimeline extends Timeline {
     seq.initialize(sequence, this.getTimelineLayerFor(sequence.layer));
   }
 
+  getTimelineLayer () {
+    return new GlobalTimelineLayer();
+  }
+
   onLoadContent (interactive) {
     this.interactive = interactive;
 
@@ -147,22 +167,6 @@ export class GlobalTimeline extends Timeline {
     });
     this.interactive.sequences.forEach(sequence => this.createTimelineSequence(sequence));
     this.updateLayerPositions();
-  }
-
-  createTimelineLayer (layer) {
-    const timelineLayer = new GlobalTimelineLayer();
-    timelineLayer.initialize(this.ui.layerContainer, layer);
-    this.ui.layerContainer.addMorphBack(timelineLayer);
-    const layerInfo = new Morph();
-    layerInfo.height = CONSTANTS.LAYER_HEIGHT;
-    layerInfo.layerLabel = (new Label({
-      textString: layer.name
-    }));
-    timelineLayer.layerInfo = layerInfo;
-    layerInfo.addMorph(layerInfo.layerLabel);
-    this.ui.layerInfoContainer.addMorph(layerInfo);
-    this._timelineLayerDict[layer.id] = timelineLayer;
-    return timelineLayer;
   }
 
   getDisplayValueFromScroll (scrollPosition) {
@@ -221,20 +225,8 @@ export class SequenceTimeline extends Timeline {
     });
   }
 
-  createTimelineLayer (layer) {
-    const timelineLayer = new SequenceTimelineLayer();
-    timelineLayer.initialize(this.ui.layerContainer, layer);
-    this.ui.layerContainer.addMorphBack(timelineLayer);
-    const layerInfo = new Morph();
-    layerInfo.height = CONSTANTS.LAYER_HEIGHT;
-    layerInfo.layerLabel = (new Label({
-      textString: layer.name
-    }));
-    timelineLayer.layerInfo = layerInfo;
-    layerInfo.addMorph(layerInfo.layerLabel);
-    this.ui.layerInfoContainer.addMorph(layerInfo);
-    this._timelineLayerDict[layer.id] = timelineLayer;
-    return timelineLayer;
+  getTimelineLayer () {
+    return new SequenceTimelineLayer();
   }
 
   getPositionFromScroll (scrollPosition) {
