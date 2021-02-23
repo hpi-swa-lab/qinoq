@@ -91,7 +91,7 @@ export function createAnimationForPropertyType (propType, targetMorph, property)
   $world.setStatusMessage('Could not match property type');
 }
 export class Keyframe {
-  constructor (position, value, name = 'a keyframe') {
+  constructor (position, value, name = 'aKeyframe') {
     this.position = position;
     this.value = value;
     this.name = name;
