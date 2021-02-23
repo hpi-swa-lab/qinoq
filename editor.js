@@ -5,6 +5,7 @@ import { Timeline, GlobalTimeline, SequenceTimeline } from './timeline.js';
 import { Interactive } from 'interactives-editor';
 import { connect } from 'lively.bindings';
 import { COLOR_SCHEME } from './colors.js';
+import Inspector from 'lively.ide/js/inspector.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 900,
@@ -58,6 +59,7 @@ export class InteractivesEditor extends Morph {
     this.preview.initialize(this);
     this.addMorph(this.preview);
     this.morphInspector = this.addMorph(new InteractiveMorphInspector({ position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0) }));
+    this.morphInspector.initialize();
     this.globalTimeline = new GlobalTimeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT) });
 
     this.globalTimeline.initialize();
@@ -171,7 +173,7 @@ class SequenceOverview extends Morph {
   }
 }
 
-class InteractiveMorphInspector extends Morph {
+class InteractiveMorphInspector extends Inspector {
   static get properties () {
     return {
       name: {
@@ -185,7 +187,30 @@ class InteractiveMorphInspector extends Morph {
       },
       borderWidth: {
         defaultValue: CONSTANTS.BORDER_WIDTH
+      },
+      shownProperties: {
+        defaultValue: ['position', 'fill', 'extent']
       }
     };
+  }
+
+  async filterProperties () {
+    await this.ui.propertyTree.treeData.filter({
+      maxDepth: 0,
+      showUnknown: false,
+      showInternal: false,
+      iterator: (node) => this.shownProperties.includes(node.key)
+    });
+    this.ui.propertyTree.update();
+  }
+
+  async initialize () {
+    this.extent = pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT);
+
+    // Remove UI elements from general inspector not needed in this context
+    this.ui.unknowns.remove();
+    this.ui.internals.remove();
+    this.ui.terminalToggler.remove();
+    this.ui.searchField.remove();
   }
 }
