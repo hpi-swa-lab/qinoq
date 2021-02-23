@@ -212,17 +212,25 @@ export class GlobalTimeline extends Timeline {
 export class SequenceTimeline extends Timeline {
   onLoadContent (sequence) {
     this.sequence = sequence;
+
     this.sequence.submorphs.forEach(morph => {
       const timelineLayer = this.createTimelineLayer(morph);
       // this is more or less just a visual placeholder
       // when keyframe editing capabilities are introduced, this should probably pulled out into a class
-      timelineLayer.addMorph(new Morph({
+      const keyframeBox = new Morph({
         extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
         position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET),
         fill: COLOR_SCHEME.SURFACE,
         borderColor: COLOR_SCHEME.ON_SURFACE,
         borderWidth: 2
-      }));
+      });
+      timelineLayer.addMorph(keyframeBox);
+      const animationsForMorph = this.sequence.animations.filter(animation => animation.target === morph);
+      animationsForMorph.forEach(animation => {
+        animation.keyframes.forEach(keyframe => {
+          keyframeBox.addMorph(new TimelineKeyframe().initialize(keyframe));
+        });
+      });
     });
   }
 
@@ -263,6 +271,7 @@ export class TimelineKeyframe extends Morph {
           this.setProperty('keyframe', keyframe);
           this.name = keyframe.name;
           this.tooltip = this.name;
+          this.position = this.getPositionFromKeyframe();
         }
       },
       name: {
@@ -273,6 +282,13 @@ export class TimelineKeyframe extends Morph {
 
   initialize (keyframe) {
     this.keyframe = keyframe;
+    return this;
+  }
+
+  getPositionFromKeyframe () {
+    const x = (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.keyframe.position);
+    const y = (CONSTANTS.SEQUENCE_HEIGHT / 2) - (Math.sqrt(2) * this.extent.x / 2);
+    return pt(x, y);
   }
 }
 
