@@ -315,11 +315,11 @@ export class Sequence extends Morph {
     sunSequence.addMorph(sun);
 
     const sunPositionAnimation = new PointAnimation(sun, 'position');
-    sunPositionAnimation.addKeyframes([new Keyframe(0, pt(0, 350)), new Keyframe(0.5, pt(40, 80)), new Keyframe(1, pt(180, 15))]);
+    sunPositionAnimation.addKeyframes([new Keyframe(0, pt(0, 350), 'start'), new Keyframe(0.5, pt(40, 80), 'middle'), new Keyframe(1, pt(180, 15), 'end')]);
     sunSequence.addAnimation(sunPositionAnimation);
 
     const sunScaleAnimation = new NumberAnimation(sun, 'scale');
-    sunScaleAnimation.addKeyframes([new Keyframe(0, 0.6), new Keyframe(0.6, 1)]);
+    sunScaleAnimation.addKeyframes([new Keyframe(0, 0.6, 'start'), new Keyframe(0.6, 1, 'end')]);
     sunSequence.addAnimation(sunScaleAnimation);
     return sunSequence;
   }
