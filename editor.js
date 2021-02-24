@@ -1,6 +1,6 @@
-import { Window } from 'lively.components';
-import { pt, Color } from 'lively.graphics';
-import { VerticalLayout, Label, ProportionalLayout, Morph } from 'lively.morphic';
+import { Window, Button } from 'lively.components';
+import { pt, rect, Color } from 'lively.graphics';
+import { VerticalLayout, Icon, Label, ProportionalLayout, Morph } from 'lively.morphic';
 import { Timeline, GlobalTimeline, SequenceTimeline } from './timeline.js';
 import { Interactive, Sequence } from 'interactives-editor';
 import { connect, disconnect } from 'lively.bindings';
@@ -8,6 +8,7 @@ import { COLOR_SCHEME } from './colors.js';
 import Inspector from 'lively.ide/js/inspector.js';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
 import { Keyframe } from './animations.js';
+import { InteractiveMorphSelector } from 'lively.halos';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 900,
@@ -255,6 +256,22 @@ class InteractiveMorphInspector extends Morph {
     this.ui.positionX = new NumberWidget({ position: pt(65, 15) });
     this.ui.positionY = new NumberWidget({ position: pt(65, 45) });
     this.ui.positionKeyframe = new KeyframeButton({ position: pt(165, 15), inspector: this, property: 'position', propType: 'point' });
+
+    this.ui.targetPicker = new Button({
+      name: 'targetPicker',
+      padding: rect(2, 2, 0, 0),
+      borderRadius: 15,
+      master: {
+        auto: 'styleguide://System/buttons/light'
+      },
+      tooltip: 'Change Inspection Target',
+      label: Icon.textAttribute('crosshairs'),
+      extent: pt(25, 25),
+      position: pt(7, 270)
+    });
+    this.ui.targetPicker.onMouseDown = async (evt) => {
+      this.targetMorph = await InteractiveMorphSelector.selectMorph($world, null, morph => morph._morphInInteractive);
+    };
 
     Object.values(this.ui).forEach(morph => this.addMorph(morph));
   }
