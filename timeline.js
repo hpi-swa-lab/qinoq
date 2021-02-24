@@ -1,4 +1,4 @@
-import { Morph, HorizontalLayout, ProportionalLayout, Label, VerticalLayout } from 'lively.morphic';
+import { Morph, Icon, HorizontalLayout, ProportionalLayout, Label, VerticalLayout } from 'lively.morphic';
 import { pt, LinearGradient, rect, Color } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 import { COLOR_SCHEME } from './colors.js';
@@ -212,27 +212,35 @@ export class GlobalTimeline extends Timeline {
 }
 
 export class SequenceTimeline extends Timeline {
+  static get properties () {
+    return {
+      timelineLayers: {
+        defaultValue: []
+      }
+    };
+  }
+
+  createOverviewTimelineLayer (morph) {
+    const timelineLayer = super.createTimelineLayer(morph);
+    timelineLayer.initializeAsOverviewLayer();
+    return timelineLayer;
+  }
+
   onLoadContent (sequence) {
     this.sequence = sequence;
 
     this.sequence.submorphs.forEach(morph => {
-      const timelineLayer = this.createTimelineLayer(morph);
+      const timelineLayer = this.createOverviewTimelineLayer(morph);
       // this is more or less just a visual placeholder
       // when keyframe editing capabilities are introduced, this should probably pulled out into a class
       timelineLayer.addActiveAreaMorph();
       this.sequence.getAnimationsForMorph(morph).forEach(animation => {
-        // TOOD: Refactor this when we talked about how to properly store this
-        const animationArea = this.createTimelineLayer(morph);
-        animationArea.addActiveAreaMorph();
-        animationArea.animation = animation;
-        animation.keyframes.forEach(keyframe => {
-          animationArea.addMorph(new TimelineKeyframe().initialize(keyframe));
-        });
         timelineLayer.animation = animation;
         animation.keyframes.forEach(keyframe => {
           timelineLayer.addMorph(new TimelineKeyframe().initialize(keyframe));
         });
       });
+      this.timelineLayers.push(timelineLayer);
     });
   }
 
@@ -422,6 +430,20 @@ export class GlobalTimelineLayer extends TimelineLayer {
 }
 
 class SequenceTimelineLayer extends TimelineLayer {
+  static get properties () {
+    return {
+      isExpanded: {
+        defaultValue: false,
+        set (isExpanded) {
+          this.setProperty('isExpanded', isExpanded);
+          if (this.layerInfo && this.layerInfo.getSubmorphNamed('collapseButton')) {
+            isExpanded ? this.expand() : this.collapse();
+          }
+        }
+      }
+    };
+  }
+
   addActiveAreaMorph () {
     this.addMorph(new Morph({
       extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.LAYER_HEIGHT),
@@ -429,6 +451,25 @@ class SequenceTimelineLayer extends TimelineLayer {
       fill: COLOR_SCHEME.SURFACE_VARIANT,
       name: 'key frame box'
     }));
+  }
+
+  initializeAsOverviewLayer () {
+    const arrowLabel = new Label({ name: 'collapseButton', position: pt(10, 10), fontSize: 15 });
+    Icon.setIcon(arrowLabel, 'caret-right');
+    this.layerInfo.addMorph(arrowLabel);
+    arrowLabel.onMouseDown = (evt) => {
+      this.isExpanded = !this.isExpanded;
+    };
+  }
+
+  collapse () {
+    const arrowLabel = this.layerInfo.getSubmorphNamed('collapseButton');
+    Icon.setIcon(arrowLabel, 'caret-right');
+  }
+
+  expand () {
+    const arrowLabel = this.layerInfo.getSubmorphNamed('collapseButton');
+    Icon.setIcon(arrowLabel, 'caret-down');
   }
 }
 
