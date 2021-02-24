@@ -211,7 +211,7 @@ export class GlobalTimeline extends Timeline {
   }
 }
 
-class SequenceTimeline extends Timeline {
+export class SequenceTimeline extends Timeline {
   onLoadContent (sequence) {
     this.sequence = sequence;
 
