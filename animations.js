@@ -46,6 +46,15 @@ class Animation {
   }
 }
 
+export function createAnimationForPropertyType (propType, targetMorph, property) {
+  switch (propType) {
+    case 'point':
+      return new PointAnimation(targetMorph, property);
+    case 'color':
+      return new ColorAnimation(targetMorph, property);
+  }
+  $world.setStatusMessage('Could not match property type');
+}
 export class Keyframe {
   constructor (position, value) {
     this.position = position;
@@ -99,3 +108,5 @@ export class ColorAnimation extends Animation {
     }
   }
 }
+
+// To add String, Number

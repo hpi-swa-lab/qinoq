@@ -3,7 +3,7 @@ import { Color, pt } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
 import { COLOR_SCHEME } from './colors.js';
-import { PointAnimation, ColorAnimation, Keyframe } from './animations.js';
+import { PointAnimation, createAnimationForPropertyType, ColorAnimation, Keyframe } from './animations.js';
 
 export class Interactive extends Morph {
   static example () {
@@ -369,14 +369,13 @@ export class Sequence extends Morph {
   }
 
   // Generic interface to add a keyframe to a sequence
-  addKeyframeToMorph (keyframe, morph, property) {
+  addKeyframeToMorph (keyframe, morph, property, proptype = 'point') {
     const fittingAnimations = this.animations.filter(a => a.target === morph && a.property === property);
     if (fittingAnimations.length === 1) {
       fittingAnimations[0].addKeyframe(keyframe);
       return fittingAnimations[0];
     }
-    // TODO: Switch for property type
-    const newAnimation = new PointAnimation(morph, property);
+    const newAnimation = createAnimationForPropertyType(proptype, morph, property);
     newAnimation.addKeyframe(keyframe);
     this.addAnimation(newAnimation);
     return newAnimation;
