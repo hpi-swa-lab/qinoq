@@ -234,13 +234,16 @@ export class SequenceTimeline extends Timeline {
       // this is more or less just a visual placeholder
       // when keyframe editing capabilities are introduced, this should probably pulled out into a class
       timelineLayer.addActiveAreaMorph();
-      this.sequence.getAnimationsForMorph(morph).forEach(animation => {
-        timelineLayer.animation = animation;
-        animation.keyframes.forEach(keyframe => {
-          timelineLayer.addMorph(new TimelineKeyframe().initialize(keyframe));
-        });
-      });
+      this.addTimelineKeyframesForLayer(timelineLayer);
       this.timelineLayers.push(timelineLayer);
+    });
+  }
+
+  addTimelineKeyframesForLayer (timelineLayer) {
+    this.sequence.getAnimationsForMorph(timelineLayer.layer).forEach(animation => {
+      animation.keyframes.forEach(keyframe => {
+        timelineLayer.addMorph(new TimelineKeyframe().initialize(keyframe, animation));
+      });
     });
   }
 
@@ -282,6 +285,7 @@ export class TimelineKeyframe extends Morph {
           this.position = this.getTimelineKeyframePositionFromProgress(this.keyframe.position);
         }
       },
+      animation: {},
       name: {
         type: String,
         set (name) {
@@ -295,7 +299,8 @@ export class TimelineKeyframe extends Morph {
     };
   }
 
-  initialize (keyframe) {
+  initialize (keyframe, animation) {
+    this.animation = animation;
     this.keyframe = keyframe;
     return this;
   }
@@ -328,8 +333,16 @@ export class TimelineKeyframe extends Morph {
   }
 
   remove () {
-    this.owner.animation.removeKeyframe(this.keyframe);
+    this.animation.removeKeyframe(this.keyframe);
     super.remove();
+  }
+
+  removeMorphOnly () {
+    super.remove();
+  }
+
+  get isTimelineKeyframe () {
+    return true;
   }
 }
 
@@ -440,6 +453,9 @@ class SequenceTimelineLayer extends TimelineLayer {
             isExpanded ? this.expand() : this.collapse();
           }
         }
+      },
+      isOverviewLayer: {
+        defaultValue: false
       }
     };
   }
@@ -454,6 +470,7 @@ class SequenceTimelineLayer extends TimelineLayer {
   }
 
   initializeAsOverviewLayer () {
+    this.isOverviewLayer = true;
     const arrowLabel = new Label({ name: 'collapseButton', position: pt(10, 10), fontSize: 15 });
     Icon.setIcon(arrowLabel, 'caret-right');
     this.layerInfo.addMorph(arrowLabel);
@@ -465,11 +482,27 @@ class SequenceTimelineLayer extends TimelineLayer {
   collapse () {
     const arrowLabel = this.layerInfo.getSubmorphNamed('collapseButton');
     Icon.setIcon(arrowLabel, 'caret-right');
+    this.opacity = 1;
+    this.tooltip = this.layer.name;
+    this.reactsToPointer = true;
+    this.owner.owner.addTimelineKeyframesForLayer(this);
   }
 
   expand () {
     const arrowLabel = this.layerInfo.getSubmorphNamed('collapseButton');
     Icon.setIcon(arrowLabel, 'caret-down');
+    this.opacity = 0;
+    this.tooltip = '';
+    this.reactsToPointer = false;
+    this.removeAllTimelineKeyframes();
+  }
+
+  removeAllTimelineKeyframes () {
+    this.withAllSubmorphsDo(submorph => {
+      if (submorph.isTimelineKeyframe) {
+        submorph.removeMorphOnly();
+      }
+    });
   }
 }
 
