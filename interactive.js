@@ -362,7 +362,6 @@ export class Sequence extends Morph {
   }
 
   onLoad () {
-    super.onLoad();
     this.withAllSubmorphsDo(sm => sm._morphInInteractive = true);
   }
 
@@ -372,10 +371,12 @@ export class Sequence extends Morph {
 
   // Generic interface to add a keyframe to a sequence
   addKeyframeToMorph (keyframe, morph, property, proptype = 'point') {
-    const fittingAnimations = this.animations.filter(a => a.target === morph && a.property === property);
-    if (fittingAnimations.length === 1) {
-      fittingAnimations[0].addKeyframe(keyframe);
-      return fittingAnimations[0];
+    const possibleAnimations = this.animations.filter(a => a.target === morph && a.property === property);
+    if (possibleAnimations.length === 1) {
+      const existingAnimation = possibleAnimations[0];
+
+      existingAnimation.addKeyframe(keyframe);
+      return existingAnimation;
     }
     const newAnimation = createAnimationForPropertyType(proptype, morph, property);
     newAnimation.addKeyframe(keyframe);
