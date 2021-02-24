@@ -28,6 +28,9 @@ export class Timeline extends Morph {
       interactive: {},
       _timelineLayerDict: {
         defaultValue: {}
+      },
+      clipMode: {
+        defaultValue: 'auto'
       }
     };
   }
