@@ -74,14 +74,14 @@ export class Timeline extends Morph {
     this.addMorph(this.ui.layerInfoContainer);
   }
 
-  createTimelineLayer (layer) {
+  createTimelineLayer (layer, name = undefined) {
     const timelineLayer = this.getTimelineLayer();
     timelineLayer.initialize(this.ui.layerContainer, layer);
     this.ui.layerContainer.addMorphBack(timelineLayer);
     const layerInfo = new Morph();
     layerInfo.height = CONSTANTS.LAYER_HEIGHT;
     layerInfo.layerLabel = (new Label({
-      textString: layer.name
+      textString: name || layer.name
     }));
     timelineLayer.layerInfo = layerInfo;
     layerInfo.addMorph(layerInfo.layerLabel);
@@ -244,6 +244,28 @@ export class SequenceTimeline extends Timeline {
       animation.keyframes.forEach(keyframe => {
         timelineLayer.addMorph(new TimelineKeyframe().initialize(keyframe, animation));
       });
+    });
+  }
+
+  createPropertyLayers (timelineLayer) {
+    const morph = timelineLayer.layer;
+    this.sequence.getAnimationsForMorph(morph).forEach(animation => {
+      // we assume that each sequence only holds one animation per morph per property
+      const animationLayer = super.createTimelineLayer(morph, animation.property);
+      animationLayer.addActiveAreaMorph();
+      animation.keyframes.forEach(keyframe => {
+        animationLayer.addMorph(new TimelineKeyframe().initialize(keyframe, animation));
+      });
+    });
+  }
+
+  removePropertyTimelines (timelineLayer) {
+    const morph = timelineLayer.layer;
+    this.withAllSubmorphsDo(submorph => {
+      if (submorph.isSequenceTimelineLayer && submorph.layer === morph && !submorph.isOverviewLayer) {
+        submorph.layerInfo.remove();
+        submorph.remove();
+      }
     });
   }
 
@@ -486,6 +508,7 @@ class SequenceTimelineLayer extends TimelineLayer {
     this.tooltip = this.layer.name;
     this.reactsToPointer = true;
     this.owner.owner.addTimelineKeyframesForLayer(this);
+    this.owner.owner.removePropertyTimelines(this);
   }
 
   expand () {
@@ -495,6 +518,7 @@ class SequenceTimelineLayer extends TimelineLayer {
     this.tooltip = '';
     this.reactsToPointer = false;
     this.removeAllTimelineKeyframes();
+    this.owner.owner.createPropertyLayers(this);
   }
 
   removeAllTimelineKeyframes () {
@@ -503,6 +527,10 @@ class SequenceTimelineLayer extends TimelineLayer {
         submorph.removeMorphOnly();
       }
     });
+  }
+
+  get isSequenceTimelineLayer () {
+    return true;
   }
 }
 
