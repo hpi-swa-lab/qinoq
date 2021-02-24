@@ -347,15 +347,16 @@ class KeyframeButton extends Morph {
       rotation: {
         defaultValue: Math.PI / 4
       },
+      nativeCursor: {
+        defaultValue: 'pointer'
+      },
       tooltip: {
         defaultValue: 'Create a keyframe'
       },
       mode: {
 
       },
-      inspector: {
-
-      },
+      inspector: { },
       property: {
         set (prop) {
           this.setProperty('property', prop);
