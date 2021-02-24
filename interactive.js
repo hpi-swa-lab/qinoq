@@ -55,6 +55,9 @@ export class Interactive extends Morph {
       },
       layers: {
         defaultValue: []
+      },
+      clipMode: {
+        defaultValue: 'hidden'
       }
     };
   }
