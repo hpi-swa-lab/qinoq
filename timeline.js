@@ -315,7 +315,7 @@ export class TimelineKeyframe extends Morph {
         set (keyframe) {
           this.setProperty('keyframe', keyframe);
           this.name = keyframe.name;
-          this.position = this.getTimelineKeyframePositionFromProgress(this.keyframe.position);
+          this.position = this.getPositionFromProgress(this.keyframe.position);
         }
       },
       animation: {},
@@ -338,7 +338,7 @@ export class TimelineKeyframe extends Morph {
     return this;
   }
 
-  getTimelineKeyframePositionFromProgress (progress) {
+  getPositionFromProgress (progress) {
     const x = (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * progress) + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
     const y = (CONSTANTS.LAYER_HEIGHT / 2) - (Math.sqrt(2) * CONSTANTS.KEYFRAME_EXTENT.x / 2);
     return pt(x, y);
@@ -357,7 +357,7 @@ export class TimelineKeyframe extends Morph {
     if (newPosition) {
       if (newPosition >= 0 && newPosition <= 1) {
         this.keyframe.position = newPosition;
-        this.position = this.getTimelineKeyframePositionFromProgress(this.keyframe.position);
+        this.position = this.getPositionFromProgress(this.keyframe.position);
       } else {
         await $world.inform('Enter a value between 0 and 1.');
         await this.promptUserForNewPosition();
@@ -498,7 +498,7 @@ class SequenceTimelineLayer extends TimelineLayer {
       extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.LAYER_HEIGHT),
       position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0),
       fill: COLOR_SCHEME.SURFACE_VARIANT,
-      name: 'key frame box'
+      name: 'active area'
     }));
   }
 
