@@ -301,6 +301,19 @@ export class Sequence extends Morph {
     const stemMorph = new Morph({ fill: Color.rgbHex('734c30'), extent: pt(30, 60), name: 'stem' });
     const vertices = [pt(60, 0), pt(90, 50), pt(70, 50), pt(100, 100), pt(70, 100), pt(110, 150), pt(10, 150), pt(50, 100), pt(20, 100), pt(50, 50), pt(30, 50)];
     const crownMorph = new Polygon({ fill: Color.rgbHex('74a57f'), vertices: vertices, name: 'leafs' });
+
+    const stemAnimation = new PointAnimation(stemMorph, 'extent');
+    stemAnimation.addKeyframes([new Keyframe(0, pt(10, 10), 'start'), new Keyframe(0.7, pt(30, 60), 'end')]);
+    treeSequence.addAnimation(stemAnimation);
+
+    const crownAnimation = new PointAnimation(crownMorph, 'extent');
+    crownAnimation.addKeyframes([new Keyframe(0, pt(100, 20), 'start'), new Keyframe(0.5, pt(100.0, 150.0), 'end')]);
+    treeSequence.addAnimation(crownAnimation);
+
+    const crownAnimation2 = new PointAnimation(crownMorph, 'position');
+    crownAnimation2.addKeyframes([new Keyframe(0, pt(165, 220), 'start'), new Keyframe(0.5, pt(165, 110), 'end')]);
+    treeSequence.addAnimation(crownAnimation2);
+
     treeSequence.addMorph(stemMorph);
     treeSequence.addMorph(crownMorph);
     stemMorph.position = pt(200, 220);
