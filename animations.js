@@ -7,13 +7,25 @@ class Animation {
     this.keyframes = [];
   }
 
-  addKeyframe (keyframe) {
+  // Maybe use some epsilon to accept keyframes within an interval
+  getKeyframeAt (position) {
+    return this.keyframes.find(kf => kf.position === position);
+  }
+
+  addKeyframe (keyframe, doNotSort = false) {
+    const existingKeyframe = this.getKeyframeAt(keyframe.position);
+    if (existingKeyframe) {
+      this.keyframes = this.keyframes.filter(kf => kf.position != keyframe.position);
+    }
     this.keyframes.push(keyframe);
-    this._sortKeyframes();
+
+    if (!doNotSort) {
+      this._sortKeyframes();
+    }
   }
 
   addKeyframes (keyframes) {
-    this.keyframes = this.keyframes.concat(keyframes);
+    keyframes.forEach(kf => this.addKeyframe(kf, true));
     this._sortKeyframes();
   }
 
