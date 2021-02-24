@@ -54,7 +54,8 @@ export class Timeline extends Morph {
       layout: new VerticalLayout({
         spacing: 2,
         resizeSubmorphs: true,
-        autoResize: true
+        autoResize: true,
+        orderByIndex: true
       })
     });
     this.addMorph(this.ui.layerContainer);
@@ -68,7 +69,8 @@ export class Timeline extends Morph {
       layout: new VerticalLayout({
         spacing: 2,
         resizeSubmorphs: true,
-        autoResize: false
+        autoResize: false,
+        orderByIndex: true
       })
     });
     this.addMorph(this.ui.layerInfoContainer);
@@ -249,9 +251,15 @@ export class SequenceTimeline extends Timeline {
 
   createPropertyLayers (timelineLayer) {
     const morph = timelineLayer.layer;
+    const indexInLayerContainer = this.ui.layerContainer.submorphs.indexOf(timelineLayer);
+    const indexInLayerInfoContainer = this.ui.layerInfoContainer.submorphs.indexOf(timelineLayer.layerInfo);
     this.sequence.getAnimationsForMorph(morph).forEach(animation => {
       // we assume that each sequence only holds one animation per morph per property
       const animationLayer = super.createTimelineLayer(morph, animation.property);
+      animationLayer.remove();
+      animationLayer.layerInfo.remove();
+      this.ui.layerContainer.addMorphAt(animationLayer, indexInLayerContainer + 1);
+      this.ui.layerInfoContainer.addMorphAt(animationLayer.layerInfo, indexInLayerInfoContainer + 1);
       animationLayer.addActiveAreaMorph();
       animation.keyframes.forEach(keyframe => {
         animationLayer.addMorph(new TimelineKeyframe().initialize(keyframe, animation));
