@@ -356,6 +356,11 @@ export class Sequence extends Morph {
     this.animations.forEach(animation => animation.progress = this._progress);
   }
 
+  addMorph (m) {
+    super.addMorph(m);
+    m._morphInInteractive = true; // TODO: Serialize this
+  }
+
   addAnimation (animation) {
     this.animations.push(animation);
   }
