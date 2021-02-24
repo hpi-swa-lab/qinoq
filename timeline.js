@@ -125,10 +125,12 @@ export class Timeline extends Morph {
   }
 
   loadContent (content) {
+    this._isLoading = true;
     this.onLoadContent(content);
     this.initializeCursor();
     this.onScrollChange(this.editor.interactiveScrollPosition);
     connect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange');
+    this._isLoading = false;
   }
 
   onLoadContent (content) {
@@ -219,7 +221,7 @@ export class GlobalTimeline extends Timeline {
 export class SequenceTimeline extends Timeline {
   createOverviewTimelineLayer (morph) {
     const timelineLayer = super.createTimelineLayer(morph);
-    timelineLayer.initializeAsOverviewLayer();
+    timelineLayer.addCollapseToggle();
     return timelineLayer;
   }
 
@@ -230,7 +232,6 @@ export class SequenceTimeline extends Timeline {
       const timelineLayer = this.createOverviewTimelineLayer(morph);
       // this is more or less just a visual placeholder
       // when keyframe editing capabilities are introduced, this should probably pulled out into a class
-      timelineLayer.addActiveAreaMorph();
       this.addTimelineKeyframesForLayer(timelineLayer);
     });
   }
@@ -254,7 +255,6 @@ export class SequenceTimeline extends Timeline {
       animationLayer.layerInfo.remove();
       this.ui.layerContainer.addMorphAt(animationLayer, indexInLayerContainer + 1);
       this.ui.layerInfoContainer.addMorphAt(animationLayer.layerInfo, indexInLayerInfoContainer + 1);
-      animationLayer.addActiveAreaMorph();
       animation.keyframes.forEach(keyframe => {
         animationLayer.addMorph(new TimelineKeyframe().initialize(keyframe, animation));
       });
@@ -264,7 +264,7 @@ export class SequenceTimeline extends Timeline {
   removePropertyTimelines (timelineLayer) {
     const morph = timelineLayer.layer;
     this.withAllSubmorphsDo(submorph => {
-      if (submorph.isSequenceTimelineLayer && submorph.layer === morph && !submorph.isOverviewLayer) {
+      if (submorph.isTimelineLayer && submorph.layer === morph && !submorph.isOverviewLayer) {
         submorph.layerInfo.remove();
         submorph.remove();
       }
@@ -272,7 +272,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   getTimelineLayer () {
-    return new SequenceTimelineLayer();
+    return this._isLoading ? new OverviewSequenceTimelineLayer() : new TimelineLayer();
   }
 
   getPositionFromScroll (scrollPosition) {
@@ -392,6 +392,7 @@ export class TimelineLayer extends Morph {
     this.layer = layer;
     this.container = container;
     this.tooltip = layer.name;
+    this.addActiveAreaMorph();
   }
 
   isTimelineLayer () {
@@ -412,6 +413,15 @@ export class TimelineLayer extends Morph {
 
   updateLayerPosition () {
     this.timeline.updateLayerPositions();
+  }
+
+  addActiveAreaMorph () {
+    this.addMorph(new Morph({
+      extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.LAYER_HEIGHT),
+      position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0),
+      fill: COLOR_SCHEME.SURFACE_VARIANT,
+      name: 'active area'
+    }));
   }
 }
 
@@ -466,7 +476,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
   }
 }
 
-class SequenceTimelineLayer extends TimelineLayer {
+class OverviewSequenceTimelineLayer extends TimelineLayer {
   static get properties () {
     return {
       isExpanded: {
@@ -479,22 +489,12 @@ class SequenceTimelineLayer extends TimelineLayer {
         }
       },
       isOverviewLayer: {
-        defaultValue: false
+        defaultValue: true
       }
     };
   }
 
-  addActiveAreaMorph () {
-    this.addMorph(new Morph({
-      extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.LAYER_HEIGHT),
-      position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0),
-      fill: COLOR_SCHEME.SURFACE_VARIANT,
-      name: 'active area'
-    }));
-  }
-
-  initializeAsOverviewLayer () {
-    this.isOverviewLayer = true;
+  addCollapseToggle () {
     const arrowLabel = new Label({ name: 'collapseButton', position: pt(10, 10), fontSize: 15 });
     Icon.setIcon(arrowLabel, 'caret-right');
     this.layerInfo.addMorph(arrowLabel);
@@ -529,10 +529,6 @@ class SequenceTimelineLayer extends TimelineLayer {
         submorph.removeMorphOnly();
       }
     });
-  }
-
-  get isSequenceTimelineLayer () {
-    return true;
   }
 }
 
