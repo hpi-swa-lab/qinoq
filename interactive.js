@@ -361,7 +361,12 @@ export class Sequence extends Morph {
 
   addMorph (m) {
     super.addMorph(m);
-    m._morphInInteractive = true; // TODO: Serialize this
+    m._morphInInteractive = true;
+  }
+
+  onLoad () {
+    super.onLoad();
+    this.withAllSubmorphsDo(sm => sm._morphInInteractive = true);
   }
 
   addAnimation (animation) {
