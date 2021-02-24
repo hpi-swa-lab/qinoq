@@ -267,13 +267,7 @@ export class Sequence extends Morph {
   }
 
   static getSequenceOfMorph (morph) {
-    let currentMorph = morph;
-    while (currentMorph && !currentMorph.isSequence && !currentMorph.isWorld) {
-      currentMorph = currentMorph.owner;
-    }
-    if (currentMorph.isSequence) {
-      return currentMorph;
-    }
+    return morph.ownerChain().find(m => m.isSequence);
   }
 
   static backgroundNightExample () {
