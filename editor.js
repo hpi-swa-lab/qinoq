@@ -240,6 +240,7 @@ class InteractiveMorphInspector extends Morph {
         set (m) {
           this.disbandConnections();
           this.setProperty('targetMorph', m);
+          this.ui.headline.textString = m.toString();
           this.updatePositionInInspector();
           this.createConnections();
         }
@@ -252,10 +253,10 @@ class InteractiveMorphInspector extends Morph {
   }
 
   build () {
-    this.ui.positionLabel = new Label({ name: 'position label', textString: 'Position', position: pt(15, 15) });
-    this.ui.positionX = new NumberWidget({ position: pt(65, 15) });
-    this.ui.positionY = new NumberWidget({ position: pt(65, 45) });
-    this.ui.positionKeyframe = new KeyframeButton({ position: pt(165, 15), inspector: this, property: 'position', propType: 'point' });
+    this.ui.positionLabel = new Label({ name: 'position label', textString: 'Position', position: pt(15, 0) });
+    this.ui.positionX = new NumberWidget({ position: pt(65, 0) });
+    this.ui.positionY = new NumberWidget({ position: pt(65, 30) });
+    this.ui.positionKeyframe = new KeyframeButton({ position: pt(165, 0), inspector: this, property: 'position', propType: 'point' });
 
     this.ui.targetPicker = new Button({
       name: 'targetPicker',
@@ -267,13 +268,32 @@ class InteractiveMorphInspector extends Morph {
       tooltip: 'Change Inspection Target',
       label: Icon.textAttribute('crosshairs'),
       extent: pt(25, 25),
-      position: pt(7, 270)
+      position: pt(5, 5)
     });
     this.ui.targetPicker.onMouseDown = async (evt) => {
       this.targetMorph = await InteractiveMorphSelector.selectMorph($world, null, morph => morph._morphInInteractive);
     };
 
-    Object.values(this.ui).forEach(morph => this.addMorph(morph));
+    this.ui.headlinePane = new Morph();
+    this.ui.headline = new Label({ name: 'headline', textString: 'No morph selected', fontWeight: 'bold' });
+    this.ui.headlinePane.addMorph(this.ui.headline);
+
+    this.ui.propertyPane = new Morph();
+    this.ui.propertyPane.addMorph(this.ui.positionLabel);
+    this.ui.propertyPane.addMorph(this.ui.positionX);
+    this.ui.propertyPane.addMorph(this.ui.positionY);
+    this.ui.propertyPane.addMorph(this.ui.positionKeyframe);
+
+    this.ui.footerPane = new Morph();
+    this.ui.footerPane.addMorph(this.ui.targetPicker);
+
+    this.addMorph(this.ui.headlinePane);
+    this.addMorph(this.ui.propertyPane);
+    this.addMorph(this.ui.footerPane);
+    this.layout = new VerticalLayout({
+      autoResize: false,
+      spacing: 5
+    });
   }
 
   disbandConnections () {
