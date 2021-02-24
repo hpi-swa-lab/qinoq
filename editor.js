@@ -1,11 +1,13 @@
 import { Window } from 'lively.components';
 import { pt, Color } from 'lively.graphics';
-import { VerticalLayout, ProportionalLayout, Morph } from 'lively.morphic';
+import { VerticalLayout, Label, ProportionalLayout, Morph } from 'lively.morphic';
 import { Timeline, GlobalTimeline, SequenceTimeline } from './timeline.js';
-import { Interactive } from 'interactives-editor';
-import { connect } from 'lively.bindings';
+import { Interactive, Sequence } from 'interactives-editor';
+import { connect, disconnect } from 'lively.bindings';
 import { COLOR_SCHEME } from './colors.js';
 import Inspector from 'lively.ide/js/inspector.js';
+import { NumberWidget } from 'lively.ide/value-widgets.js';
+import { Keyframe } from './animations.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 900,
@@ -212,7 +214,7 @@ class SequenceOverview extends Morph {
   }
 }
 
-class InteractiveMorphInspector extends Inspector {
+class InteractiveMorphInspector extends Morph {
   static get properties () {
     return {
       name: {
@@ -229,27 +231,115 @@ class InteractiveMorphInspector extends Inspector {
       },
       shownProperties: {
         defaultValue: ['position', 'fill', 'extent']
+      },
+      ui: {
+        defaultValue: {}
+      },
+      targetMorph: {
+        set (m) {
+          this.disbandConnections();
+          this.setProperty('targetMorph', m);
+          this.updatePositionInInspector();
+          this.createConnections();
+        }
       }
     };
   }
 
-  async filterProperties () {
-    await this.ui.propertyTree.treeData.filter({
-      maxDepth: 0,
-      showUnknown: false,
-      showInternal: false,
-      iterator: (node) => this.shownProperties.includes(node.key)
-    });
-    this.ui.propertyTree.update();
+  get interactive () {
+    return this.owner.interactive;
+  }
+
+  build () {
+    this.ui.positionLabel = new Label({ name: 'position label', textString: 'Position', position: pt(15, 15) });
+    this.ui.positionX = new NumberWidget({ position: pt(65, 15) });
+    this.ui.positionY = new NumberWidget({ position: pt(65, 45) });
+    this.ui.positionKeyframe = new KeyframeButton({ position: pt(165, 15), inspector: this, property: 'position', propType: 'point' });
+
+    Object.values(this.ui).forEach(morph => this.addMorph(morph));
+  }
+
+  disbandConnections () {
+    if (this.targetMorph) {
+      disconnect(this.ui.positionX, 'number', this, 'updatePositionInMorph');
+      disconnect(this.ui.positionY, 'number', this, 'updatePositionInMorph');
+      disconnect(this.targetMorph, 'position', this, 'updatePositionInInspector');
+    }
+  }
+
+  createConnections () {
+    connect(this.ui.positionX, 'number', this, 'updatePositionInMorph');
+    connect(this.ui.positionY, 'number', this, 'updatePositionInMorph');
+    connect(this.targetMorph, 'position', this, 'updatePositionInInspector');
+  }
+
+  updatePositionInInspector () {
+    if (this._updatingMorph) {
+      return;
+    }
+    this._updatingInspector = true;
+    this.ui.positionX.number = this.targetMorph.position.x;
+    this.ui.positionY.number = this.targetMorph.position.y;
+    this._updatingInspector = false;
+  }
+
+  updatePositionInMorph () {
+    if (this._updatingInspector) {
+      return;
+    }
+    this._updatingMorph = true;
+    this.targetMorph.position = pt(this.ui.positionX.number, this.ui.positionY.number);
+    this._updatingMorph = false;
   }
 
   async initialize () {
     this.extent = pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT);
+    this.build();
+  }
+}
 
-    // Remove UI elements from general inspector not needed in this context
-    this.ui.unknowns.remove();
-    this.ui.internals.remove();
-    this.ui.terminalToggler.remove();
-    this.ui.searchField.remove();
+class KeyframeButton extends Morph {
+  static get properties () {
+    return {
+      fill: {
+        defaultValue: COLOR_SCHEME.SECONDARY
+      },
+      extent: {
+        defaultValue: pt(15, 15)
+      },
+      rotation: {
+        defaultValue: Math.PI / 4
+      },
+      tooltip: {
+        defaultValue: 'Create a keyframe'
+      },
+      mode: {
+
+      },
+      inspector: {
+
+      },
+      property: {
+        set (prop) {
+          this.setProperty('property', prop);
+          this.tooltip = `Create a keyframe for the ${prop} property`;
+        }
+      },
+      propType: {}
+    };
+  }
+
+  get target () {
+    return this.inspector.targetMorph;
+  }
+
+  get currentValue () {
+    return this.target[this.property];
+  }
+
+  onMouseDown (evt) {
+    super.onMouseDown(evt);
+    const sequence = Sequence.getSequenceOfMorph(this.target);
+    const animation = sequence.addKeyframeToMorph(new Keyframe(sequence.progress, this.currentValue), this.target, this.property);
   }
 }

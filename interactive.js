@@ -269,6 +269,16 @@ export class Sequence extends Morph {
     };
   }
 
+  static getSequenceOfMorph (morph) {
+    let currentMorph = morph;
+    while (currentMorph && !currentMorph.isSequence && !currentMorph.isWorld) {
+      currentMorph = currentMorph.owner;
+    }
+    if (currentMorph.isSequence) {
+      return currentMorph;
+    }
+  }
+
   static backgroundNightExample () {
     const backgroundSequence = new Sequence({ name: 'night background' });
     backgroundSequence.initialize(0, 250);
@@ -333,6 +343,10 @@ export class Sequence extends Morph {
     return this._progress >= 0 && this._progress < 1 && !this.layer.hidden;
   }
 
+  get isSequence () {
+    return true;
+  }
+
   applyUnfocusedEffect () {
     // stop opacity setter from copying changes to originalOpacity
     this._lockOpacity = true;
@@ -347,5 +361,19 @@ export class Sequence extends Morph {
 
   addAnimation (animation) {
     this.animations.push(animation);
+  }
+
+  // Generic interface to add a keyframe to a sequence
+  addKeyframeToMorph (keyframe, morph, property) {
+    const fittingAnimations = this.animations.filter(a => a.target === morph && a.property === property);
+    if (fittingAnimations.length === 1) {
+      fittingAnimations[0].addKeyframe(keyframe);
+      return fittingAnimations[0];
+    }
+    // TODO: Switch for property type
+    const newAnimation = new PointAnimation(morph, property);
+    newAnimation.addKeyframe(keyframe);
+    this.addAnimation(newAnimation);
+    return newAnimation;
   }
 }
