@@ -217,14 +217,6 @@ export class GlobalTimeline extends Timeline {
 }
 
 export class SequenceTimeline extends Timeline {
-  static get properties () {
-    return {
-      timelineLayers: {
-        defaultValue: []
-      }
-    };
-  }
-
   createOverviewTimelineLayer (morph) {
     const timelineLayer = super.createTimelineLayer(morph);
     timelineLayer.initializeAsOverviewLayer();
@@ -240,7 +232,6 @@ export class SequenceTimeline extends Timeline {
       // when keyframe editing capabilities are introduced, this should probably pulled out into a class
       timelineLayer.addActiveAreaMorph();
       this.addTimelineKeyframesForLayer(timelineLayer);
-      this.timelineLayers.push(timelineLayer);
     });
   }
 
