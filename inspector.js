@@ -161,8 +161,15 @@ export class InteractiveMorphInspector extends Morph {
       return;
     }
     this._updatingInspector = true;
-    this.propertyControls.position.x.number = this.targetMorph.position.x;
-    this.propertyControls.position.y.number = this.targetMorph.position.y;
+    this.displayedProperties.forEach(property => {
+      const propType = this.possibleProperties[property];
+      switch (propType) {
+        case 'point':
+          this.propertyControls[property].x.number = this.targetMorph[property].x;
+          this.propertyControls[property].y.number = this.targetMorph[property].y;
+          break;
+      }
+    });
     this._updatingInspector = false;
   }
 
@@ -171,7 +178,14 @@ export class InteractiveMorphInspector extends Morph {
       return;
     }
     this._updatingMorph = true;
-    this.targetMorph.position = pt(this.propertyControls.position.x.number, this.propertyControls.position.y.number);
+    this.displayedProperties.forEach(property => {
+      const propType = this.possibleProperties[property];
+      switch (propType) {
+        case 'point':
+          this.targetMorph[property] = pt(this.propertyControls[property].x.number, this.propertyControls[property].y.number);
+          break;
+      }
+    });
     this._updatingMorph = false;
   }
 
