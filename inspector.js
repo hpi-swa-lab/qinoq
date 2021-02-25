@@ -17,10 +17,10 @@ export class InteractiveMorphInspector extends Morph {
       borderColor: {
         defaultValue: COLOR_SCHEME.BACKGROUND_VARIANT
       },
-      shownProperties: {
-        defaultValue: ['position', 'fill', 'extent']
-      },
       ui: {
+        defaultValue: {}
+      },
+      propertyControls: {
         defaultValue: {}
       },
       targetMorph: {
@@ -28,6 +28,7 @@ export class InteractiveMorphInspector extends Morph {
           this.disbandConnections();
           this.setProperty('targetMorph', m);
           this.ui.headline.textString = m.toString();
+          this.buildPropertyControls();
           this.updatePositionInInspector();
           this.createConnections();
         }
@@ -35,16 +36,58 @@ export class InteractiveMorphInspector extends Morph {
     };
   }
 
+  get possibleProperties () {
+    return {
+      // extent: 'point',
+      position: 'point',
+      fill: 'color'
+    };
+  }
+
   get interactive () {
     return this.owner.interactive;
   }
 
-  build () {
-    this.ui.positionLabel = new Label({ name: 'position label', textString: 'Position', position: pt(15, 0) });
-    this.ui.positionX = new NumberWidget({ position: pt(65, 0) });
-    this.ui.positionY = new NumberWidget({ position: pt(65, 30) });
-    this.ui.positionKeyframe = new KeyframeButton({ position: pt(165, 0), inspector: this, property: 'position', propType: 'point' });
+  get propertiesToDisplay () {
+    const possible = Object.keys(this.possibleProperties);
+    return possible.filter(prop => prop in this.targetMorph);
+  }
 
+  buildPropertyControls () {
+    if (!this.targetMorph) {
+      return;
+    }
+    const props = this.propertiesToDisplay;
+    props.forEach(propToInspect => {
+      const propType = this.possibleProperties[propToInspect];
+      this.buildPropertyControl(propToInspect, propType);
+    });
+  }
+
+  buildPropertyControl (property, propType) {
+    if (propType === 'point') {
+      this.propertyControls[property] = {};
+      this.propertyControls[property].label = new Label({
+        name: `${property} label`,
+        textString: property,
+        position: pt(15, 0)
+      });
+      this.propertyControls[property].x = new NumberWidget({ position: pt(65, 0) });
+      this.propertyControls[property].y = new NumberWidget({ position: pt(65, 30) });
+      this.propertyControls[property].keyframe = new KeyframeButton({
+        position: pt(165, 0),
+        inspector: this,
+        property,
+        propType
+      });
+      this.ui[property] = new Morph();
+
+      Object.values(this.propertyControls[property]).forEach(m => this.ui[property].addMorph(m));
+      this.ui.propertyPane.addMorph(this.ui[property]);
+    }
+  }
+
+  build () {
     this.ui.targetPicker = new Button({
       name: 'targetPicker',
       padding: rect(2, 2, 0, 0),
@@ -66,10 +109,6 @@ export class InteractiveMorphInspector extends Morph {
     this.ui.headlinePane.addMorph(this.ui.headline);
 
     this.ui.propertyPane = new Morph();
-    this.ui.propertyPane.addMorph(this.ui.positionLabel);
-    this.ui.propertyPane.addMorph(this.ui.positionX);
-    this.ui.propertyPane.addMorph(this.ui.positionY);
-    this.ui.propertyPane.addMorph(this.ui.positionKeyframe);
 
     this.ui.footerPane = new Morph();
     this.ui.footerPane.addMorph(this.ui.targetPicker);
@@ -85,15 +124,15 @@ export class InteractiveMorphInspector extends Morph {
 
   disbandConnections () {
     if (this.targetMorph) {
-      disconnect(this.ui.positionX, 'number', this, 'updatePositionInMorph');
-      disconnect(this.ui.positionY, 'number', this, 'updatePositionInMorph');
+      disconnect(this.propertyControls.position.x, 'number', this, 'updatePositionInMorph');
+      disconnect(this.propertyControls.position.y, 'number', this, 'updatePositionInMorph');
       disconnect(this.targetMorph, 'position', this, 'updatePositionInInspector');
     }
   }
 
   createConnections () {
-    connect(this.ui.positionX, 'number', this, 'updatePositionInMorph');
-    connect(this.ui.positionY, 'number', this, 'updatePositionInMorph');
+    connect(this.propertyControls.position.x, 'number', this, 'updatePositionInMorph');
+    connect(this.propertyControls.position.y, 'number', this, 'updatePositionInMorph');
     connect(this.targetMorph, 'position', this, 'updatePositionInInspector');
   }
 
@@ -102,8 +141,8 @@ export class InteractiveMorphInspector extends Morph {
       return;
     }
     this._updatingInspector = true;
-    this.ui.positionX.number = this.targetMorph.position.x;
-    this.ui.positionY.number = this.targetMorph.position.y;
+    this.propertyControls.position.x.number = this.targetMorph.position.x;
+    this.propertyControls.position.y.number = this.targetMorph.position.y;
     this._updatingInspector = false;
   }
 
@@ -112,7 +151,7 @@ export class InteractiveMorphInspector extends Morph {
       return;
     }
     this._updatingMorph = true;
-    this.targetMorph.position = pt(this.ui.positionX.number, this.ui.positionY.number);
+    this.targetMorph.position = pt(this.propertyControls.position.x.number, this.propertyControls.position.y.number);
     this._updatingMorph = false;
   }
 
