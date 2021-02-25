@@ -25,12 +25,15 @@ export class InteractiveMorphInspector extends Morph {
       },
       targetMorph: {
         set (m) {
-          this.disbandConnections();
-          this.setProperty('targetMorph', m);
-          this.ui.headline.textString = m.toString();
-          this.buildPropertyControls();
-          this.updateInInspector();
-          this.createConnections();
+          if (m) {
+            this.disbandConnections();
+            this.setProperty('targetMorph', m);
+            this.ui.headline.textString = m.toString();
+
+            this.buildPropertyControls();
+            this.updateInInspector();
+            this.createConnections();
+          }
         }
       }
     };
@@ -38,7 +41,7 @@ export class InteractiveMorphInspector extends Morph {
 
   get possibleProperties () {
     return {
-      // extent: 'point',
+      extent: 'point',
       position: 'point',
       fill: 'color'
     };
@@ -61,6 +64,7 @@ export class InteractiveMorphInspector extends Morph {
     if (!this.targetMorph) {
       return;
     }
+    this.ui.propertyPane.submorphs.forEach(m => m.remove());
     const props = this.propertiesToDisplay;
     props.forEach(propToInspect => {
       const propType = this.possibleProperties[propToInspect];
@@ -113,6 +117,7 @@ export class InteractiveMorphInspector extends Morph {
     this.ui.headlinePane.addMorph(this.ui.headline);
 
     this.ui.propertyPane = new Morph();
+    this.ui.propertyPane.layout = new VerticalLayout({ spacing: 2 });
 
     this.ui.footerPane = new Morph();
     this.ui.footerPane.addMorph(this.ui.targetPicker);
