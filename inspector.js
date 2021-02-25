@@ -29,7 +29,7 @@ export class InteractiveMorphInspector extends Morph {
           this.setProperty('targetMorph', m);
           this.ui.headline.textString = m.toString();
           this.buildPropertyControls();
-          this.updatePositionInInspector();
+          this.updateInInspector();
           this.createConnections();
         }
       }
@@ -42,6 +42,10 @@ export class InteractiveMorphInspector extends Morph {
       position: 'point',
       fill: 'color'
     };
+  }
+
+  get displayedProperties () {
+    return Object.keys(this.propertyControls);
   }
 
   get interactive () {
@@ -124,19 +128,35 @@ export class InteractiveMorphInspector extends Morph {
 
   disbandConnections () {
     if (this.targetMorph) {
-      disconnect(this.propertyControls.position.x, 'number', this, 'updatePositionInMorph');
-      disconnect(this.propertyControls.position.y, 'number', this, 'updatePositionInMorph');
-      disconnect(this.targetMorph, 'position', this, 'updatePositionInInspector');
+      this.displayedProperties.forEach(inspectedProperty => {
+        const propType = this.possibleProperties[inspectedProperty];
+        switch (propType) {
+          case 'point':
+            disconnect(this.propertyControls[inspectedProperty].x, 'number', this, 'updateInMorph');
+            disconnect(this.propertyControls[inspectedProperty].y, 'number', this, 'updateInMorph');
+            disconnect(this.targetMorph, inspectedProperty, this, 'updateInInspector');
+            break;
+        }
+      });
     }
   }
 
   createConnections () {
-    connect(this.propertyControls.position.x, 'number', this, 'updatePositionInMorph');
-    connect(this.propertyControls.position.y, 'number', this, 'updatePositionInMorph');
-    connect(this.targetMorph, 'position', this, 'updatePositionInInspector');
+    this.displayedProperties.forEach(inspectedProperty => {
+      const propType = this.possibleProperties[inspectedProperty];
+
+      switch (propType) {
+        case 'point':
+
+          connect(this.propertyControls[inspectedProperty].x, 'number', this, 'updateInMorph');
+          connect(this.propertyControls[inspectedProperty].y, 'number', this, 'updateInMorph');
+          connect(this.targetMorph, inspectedProperty, this, 'updateInInspector');
+          break;
+      }
+    });
   }
 
-  updatePositionInInspector () {
+  updateInInspector () {
     if (this._updatingMorph) {
       return;
     }
@@ -146,7 +166,7 @@ export class InteractiveMorphInspector extends Morph {
     this._updatingInspector = false;
   }
 
-  updatePositionInMorph () {
+  updateInMorph () {
     if (this._updatingInspector) {
       return;
     }
