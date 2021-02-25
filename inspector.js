@@ -18,6 +18,9 @@ export class InteractiveMorphInspector extends Morph {
       borderColor: {
         defaultValue: COLOR_SCHEME.BACKGROUND_VARIANT
       },
+      clipMode: {
+        defaultValue: 'auto'
+      },
       ui: {
         defaultValue: {}
       },
