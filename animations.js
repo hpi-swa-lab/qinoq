@@ -87,37 +87,49 @@ export class PointAnimation extends Animation {
 
   set progress (progress) {
     const { start, end } = this.getClosestKeyframes(progress);
-    if (start && end) {
+    if (!!start && !!end) {
       const factor = this.interpolation(progress, start, end);
       const value = pt(start.value.x + (end.value.x - start.value.x) * factor,
         start.value.y + (end.value.y - start.value.y) * factor);
       this.target[this.property] = value;
-      return;
+      return value;
     }
     if (start) {
       this.target[this.property] = start.value;
+      return start.value;
     }
     if (end) {
       this.target[this.property] = end.value;
+      return end.value;
     }
+  }
+
+  get type () {
+    return 'point';
   }
 }
 
 export class ColorAnimation extends Animation {
   set progress (progress) {
     const { start, end } = this.getClosestKeyframes(progress);
-    if (start && end) {
+    if (!!start && !!end) {
       const factor = this.interpolation(progress, start, end);
       const value = start.value.interpolate(factor, end.value);
       this.target[this.property] = value;
-      return;
+      return value;
     }
     if (start) {
       this.target[this.property] = start.value;
+      return start.value;
     }
     if (end) {
       this.target[this.property] = end.value;
+      return end.value;
     }
+  }
+
+  get type () {
+    return 'color';
   }
 }
 

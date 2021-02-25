@@ -7,6 +7,7 @@ import { InteractiveMorphSelector } from 'lively.halos';
 import { disconnect, connect } from 'lively.bindings';
 import { Sequence } from 'interactives-editor';
 import { Keyframe } from './animations.js';
+import { ColorPickerField } from 'lively.ide/styling/color-picker.js';
 
 export class InteractiveMorphInspector extends Morph {
   static get properties () {
@@ -28,7 +29,7 @@ export class InteractiveMorphInspector extends Morph {
           if (m) {
             this.disbandConnections();
             this.setProperty('targetMorph', m);
-            this.ui.headline.textString = m.toString();
+            this.ui.headline.textString = 'Inspecting ' + m.toString();
 
             this.buildPropertyControls();
             this.updateInInspector();
@@ -73,26 +74,38 @@ export class InteractiveMorphInspector extends Morph {
   }
 
   buildPropertyControl (property, propType) {
-    if (propType === 'point') {
-      this.propertyControls[property] = {};
-      this.propertyControls[property].label = new Label({
-        name: `${property} label`,
-        textString: property,
-        position: pt(15, 0)
-      });
-      this.propertyControls[property].x = new NumberWidget({ position: pt(65, 0) });
-      this.propertyControls[property].y = new NumberWidget({ position: pt(65, 30) });
-      this.propertyControls[property].keyframe = new KeyframeButton({
-        position: pt(165, 0),
-        inspector: this,
-        property,
-        propType
-      });
-      this.ui[property] = new Morph();
+    this.propertyControls[property] = {};
+    this.propertyControls[property].label = new Label({
+      name: `${property} label`,
+      textString: property,
+      position: pt(15, 0)
+    });
+    switch (propType) {
+      case 'point':
 
-      Object.values(this.propertyControls[property]).forEach(m => this.ui[property].addMorph(m));
-      this.ui.propertyPane.addMorph(this.ui[property]);
+        this.propertyControls[property].x = new NumberWidget({ position: pt(65, 0) });
+        this.propertyControls[property].y = new NumberWidget({ position: pt(65, 30) });
+        this.propertyControls[property].keyframe = new KeyframeButton({
+          position: pt(165, 0),
+          inspector: this,
+          property,
+          propType
+        });
+
+        break;
+      case 'color':
+        this.propertyControls[property].color = new ColorPickerField({ position: pt(65, 0), colorValue: this.targetMorph[property] });
+        this.propertyControls[property].keyframe = new KeyframeButton({
+          position: pt(165, 0),
+          inspector: this,
+          property,
+          propType
+        });
+        break;
     }
+    this.ui[property] = new Morph();
+    Object.values(this.propertyControls[property]).forEach(m => this.ui[property].addMorph(m));
+    this.ui.propertyPane.addMorph(this.ui[property]);
   }
 
   build () {
@@ -135,11 +148,14 @@ export class InteractiveMorphInspector extends Morph {
     if (this.targetMorph) {
       this.displayedProperties.forEach(inspectedProperty => {
         const propType = this.possibleProperties[inspectedProperty];
+        disconnect(this.targetMorph, inspectedProperty, this, 'updateInInspector');
         switch (propType) {
           case 'point':
             disconnect(this.propertyControls[inspectedProperty].x, 'number', this, 'updateInMorph');
             disconnect(this.propertyControls[inspectedProperty].y, 'number', this, 'updateInMorph');
-            disconnect(this.targetMorph, inspectedProperty, this, 'updateInInspector');
+            break;
+          case 'color':
+            disconnect(this.propertyControls[inspectedProperty].color, 'colorValue', this, 'updateInMorph');
             break;
         }
       });
@@ -149,13 +165,14 @@ export class InteractiveMorphInspector extends Morph {
   createConnections () {
     this.displayedProperties.forEach(inspectedProperty => {
       const propType = this.possibleProperties[inspectedProperty];
-
+      connect(this.targetMorph, inspectedProperty, this, 'updateInInspector');
       switch (propType) {
         case 'point':
-
           connect(this.propertyControls[inspectedProperty].x, 'number', this, 'updateInMorph');
           connect(this.propertyControls[inspectedProperty].y, 'number', this, 'updateInMorph');
-          connect(this.targetMorph, inspectedProperty, this, 'updateInInspector');
+          break;
+        case 'color':
+          connect(this.propertyControls[inspectedProperty].color, 'colorValue', this, 'updateInMorph');
           break;
       }
     });
@@ -173,6 +190,9 @@ export class InteractiveMorphInspector extends Morph {
           this.propertyControls[property].x.number = this.targetMorph[property].x;
           this.propertyControls[property].y.number = this.targetMorph[property].y;
           break;
+        case 'color':
+          this.propertyControls[property].color.colorValue = this.targetMorph[property];
+          break;
       }
     });
     this._updatingInspector = false;
@@ -188,6 +208,9 @@ export class InteractiveMorphInspector extends Morph {
       switch (propType) {
         case 'point':
           this.targetMorph[property] = pt(this.propertyControls[property].x.number, this.propertyControls[property].y.number);
+          break;
+        case 'color':
+          this.targetMorph[property] = this.propertyControls[property].color.colorValue;
           break;
       }
     });
@@ -242,6 +265,6 @@ class KeyframeButton extends Morph {
   onMouseDown (evt) {
     super.onMouseDown(evt);
     const sequence = Sequence.getSequenceOfMorph(this.target);
-    const animation = sequence.addKeyframeToMorph(new Keyframe(sequence.progress, this.currentValue), this.target, this.property);
+    const animation = sequence.addKeyframeToMorph(new Keyframe(sequence.progress, this.currentValue), this.target, this.property, this.propType);
   }
 }
