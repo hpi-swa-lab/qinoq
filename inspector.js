@@ -85,27 +85,19 @@ export class InteractiveMorphInspector extends Morph {
     });
     switch (propType) {
       case 'point':
-
         this.propertyControls[property].x = new NumberWidget({ position: pt(65, 0) });
         this.propertyControls[property].y = new NumberWidget({ position: pt(65, 30) });
-        this.propertyControls[property].keyframe = new KeyframeButton({
-          position: pt(165, 0),
-          inspector: this,
-          property,
-          propType
-        });
-
         break;
       case 'color':
         this.propertyControls[property].color = new ColorPickerField({ position: pt(65, 0), colorValue: this.targetMorph[property] });
-        this.propertyControls[property].keyframe = new KeyframeButton({
-          position: pt(165, 0),
-          inspector: this,
-          property,
-          propType
-        });
         break;
     }
+    this.propertyControls[property].keyframe = new KeyframeButton({
+      position: pt(165, 0),
+      inspector: this,
+      property,
+      propType
+    });
     this.ui[property] = new Morph();
     Object.values(this.propertyControls[property]).forEach(m => this.ui[property].addMorph(m));
     this.ui.propertyPane.addMorph(this.ui[property]);
@@ -194,7 +186,7 @@ export class InteractiveMorphInspector extends Morph {
           this.propertyControls[property].y.number = this.targetMorph[property].y;
           break;
         case 'color':
-          this.propertyControls[property].color.colorValue = this.targetMorph[property];
+          this.propertyControls[property].color.update(this.targetMorph[property]);
           break;
       }
     });

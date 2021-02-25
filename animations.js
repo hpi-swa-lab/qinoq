@@ -92,6 +92,7 @@ export class PointAnimation extends Animation {
       const value = pt(start.value.x + (end.value.x - start.value.x) * factor,
         start.value.y + (end.value.y - start.value.y) * factor);
       this.target[this.property] = value;
+      return;
     }
     if (start) {
       this.target[this.property] = start.value;
@@ -113,6 +114,7 @@ export class ColorAnimation extends Animation {
       const factor = this.interpolation(progress, start, end);
       const value = start.value.interpolate(factor, end.value);
       this.target[this.property] = value;
+      return;
     }
     if (start) {
       this.target[this.property] = start.value;
