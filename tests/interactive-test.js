@@ -1,3 +1,4 @@
+/* global it, describe, beforeEach */
 import { expect } from 'mocha-es6';
 import { Interactive, Layer, Sequence } from 'interactives-editor';
 import { pt } from 'lively.graphics';
