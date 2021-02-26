@@ -16,12 +16,12 @@ describe('Interactive object', () => {
     sequenceOne.initialize(0, 10);
     sequenceTwo.initialize(8, 10);
 
-    foreground = new Layer();
-    foreground.zIndex = 0;
-    sequenceOne.layer = foreground;
     background = new Layer();
-    background.zIndex = 10;
-    sequenceTwo.layer = background;
+    background.zIndex = 0;
+    sequenceOne.layer = background;
+    foreground = new Layer();
+    foreground.zIndex = 10;
+    sequenceTwo.layer = foreground;
 
     interactive.addLayer(foreground);
     interactive.addLayer(background);
@@ -36,7 +36,7 @@ describe('Interactive object', () => {
 
   it('correctly sorts sequences after their layer indizes', () => {
     expect(interactive.sequences).equals([sequenceOne, sequenceTwo]);
-    foreground.zIndex = 11;
+    background.zIndex = 11;
     expect(interactive.sequences).equals([sequenceTwo, sequenceOne]);
   });
 
