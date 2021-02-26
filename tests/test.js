@@ -36,12 +36,15 @@ describe('Sequence object', () => {
   });
 });
 describe('Layer object', () => {
+  let layer;
+  beforeEach(() => {
+    layer = new Layer();
+  });
+
   it('is equal to itself', () => {
-    const layer = new Layer();
     expect(layer.equals(layer)).to.be.true;
   });
   it('is not equal to another layer', () => {
-    const layer = new Layer();
     const anotherLayer = new Layer();
     expect(layer.equals(anotherLayer)).to.be.false;
   });
