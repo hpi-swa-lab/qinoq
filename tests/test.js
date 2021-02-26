@@ -1,5 +1,6 @@
 import { expect } from 'mocha-es6';
-import { Sequence, Layer } from 'interactives-editor';
+import { Sequence, Interactive, Layer } from 'interactives-editor';
+import { pt } from 'lively.graphics';
 describe('Sequence object', () => {
   // TODO: test functions regarding animations
   // TODO: test focusedEffect and its setting logic
@@ -43,5 +44,39 @@ describe('Layer object', () => {
     const layer = new Layer();
     const anotherLayer = new Layer();
     expect(layer.equals(anotherLayer)).to.be.false;
+  });
+});
+
+describe('Interactive object', () => {
+  let interactive;
+  beforeEach(() => {
+    interactive = new Interactive();
+  });
+  it('is an interactive', () => {
+    expect(interactive.isInteractive).to.be.true;
+  });
+  it('correctly sorts sequences after their layer indizes', () => {
+    interactive.initialize(pt(10, 10), 20);
+    const sequenceOne = new Sequence();
+    const sequenceTwo = new Sequence();
+    sequenceOne.initialize(0, 10);
+    sequenceTwo.initialize(10, 10);
+    const foreground = new Layer();
+    foreground.zIndex = 0;
+    sequenceOne.layer = foreground;
+    const background = new Layer();
+    background.zIndex = 10;
+    sequenceTwo.layer = background;
+
+    interactive.addLayer(foreground);
+    interactive.addLayer(background);
+
+    interactive.addSequence(sequenceOne);
+    interactive.addSequence(sequenceTwo);
+
+    expect(interactive.sequences).equals([sequenceOne, sequenceTwo]);
+
+    foreground.zIndex = 11;
+    expect(interactive.sequences).equals([sequenceTwo, sequenceOne]);
   });
 });
