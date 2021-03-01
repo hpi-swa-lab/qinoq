@@ -79,10 +79,10 @@ export class Timeline extends Morph {
     this.addMorph(this.ui.layerInfoContainer);
   }
 
-  createTimelineLayer (layer, name = undefined) {
+  createTimelineLayer (layer, addIndex = 0, name = undefined) {
     const timelineLayer = this.getTimelineLayer();
     timelineLayer.initialize(this.ui.layerContainer, layer);
-    this.ui.layerContainer.addMorphBack(timelineLayer);
+    this.ui.layerContainer.addMorphAt(timelineLayer, addIndex);
     const layerInfo = new Morph();
     layerInfo.height = CONSTANTS.LAYER_HEIGHT;
     layerInfo.layerLabel = (new Label({
@@ -90,7 +90,7 @@ export class Timeline extends Morph {
     }));
     timelineLayer.layerInfo = layerInfo;
     layerInfo.addMorph(layerInfo.layerLabel);
-    this.ui.layerInfoContainer.addMorphBack(layerInfo);
+    this.ui.layerInfoContainer.addMorphAt(layerInfo, addIndex);
     this._timelineLayerDict[layer.id] = timelineLayer;
     return timelineLayer;
   }
@@ -237,34 +237,32 @@ export class SequenceTimeline extends Timeline {
   }
 
   addTimelineKeyframesForLayer (timelineLayer) {
-    this.sequence.getAnimationsForMorph(timelineLayer.layer).forEach(animation => {
-      animation.keyframes.forEach(keyframe => {
-        timelineLayer.addMorph(new TimelineKeyframe().initialize(keyframe, animation));
-      });
+    this.sequence.getAnimationsForMorph(timelineLayer.morph).forEach(animation => {
+      this.addKeyframesForAnimation(animation, timelineLayer);
+    });
+  }
+
+  addKeyframesForAnimation (animation, timelineLayer) {
+    animation.keyframes.forEach(keyframe => {
+      timelineLayer.addMorph(new TimelineKeyframe().initialize(keyframe, animation));
     });
   }
 
   createPropertyLayers (timelineLayer) {
-    const morph = timelineLayer.layer;
+    const morph = timelineLayer.morph;
     const indexInLayerContainer = this.ui.layerContainer.submorphs.indexOf(timelineLayer);
     const indexInLayerInfoContainer = this.ui.layerInfoContainer.submorphs.indexOf(timelineLayer.layerInfo);
     this.sequence.getAnimationsForMorph(morph).forEach(animation => {
       // we assume that each sequence only holds one animation per morph per property
-      const animationLayer = super.createTimelineLayer(morph, animation.property);
-      animationLayer.remove();
-      animationLayer.layerInfo.remove();
-      this.ui.layerContainer.addMorphAt(animationLayer, indexInLayerContainer + 1);
-      this.ui.layerInfoContainer.addMorphAt(animationLayer.layerInfo, indexInLayerInfoContainer + 1);
-      animation.keyframes.forEach(keyframe => {
-        animationLayer.addMorph(new TimelineKeyframe().initialize(keyframe, animation));
-      });
+      const animationLayer = super.createTimelineLayer(morph, indexInLayerContainer + 1, animation.property);
+      this.addKeyframesForAnimation(animation, animationLayer);
     });
   }
 
   removePropertyTimelines (timelineLayer) {
-    const morph = timelineLayer.layer;
+    const morph = timelineLayer.morph;
     this.withAllSubmorphsDo(submorph => {
-      if (submorph.isTimelineLayer && submorph.layer === morph && !submorph.isOverviewLayer) {
+      if (submorph.isTimelineLayer && submorph.morph === morph && !submorph.isOverviewLayer) {
         submorph.layerInfo.remove();
         submorph.remove();
       }
@@ -272,7 +270,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   getTimelineLayer () {
-    return this._isLoading ? new OverviewSequenceTimelineLayer() : new TimelineLayer();
+    return this._isLoading ? new OverviewSequenceTimelineLayer() : new SequenceTimelineLayer();
   }
 
   getPositionFromScroll (scrollPosition) {
@@ -375,7 +373,6 @@ export class TimelineLayer extends Morph {
     return {
       layerInfo: {},
       container: {},
-      layer: {},
       focusable: {
         defaultValue: false
       },
@@ -389,9 +386,7 @@ export class TimelineLayer extends Morph {
   }
 
   initialize (container, layer) {
-    this.layer = layer;
     this.container = container;
-    this.tooltip = layer.name;
     this.addActiveAreaMorph();
   }
 
@@ -425,6 +420,20 @@ export class TimelineLayer extends Morph {
   }
 }
 
+export class SequenceTimelineLayer extends TimelineLayer {
+  static get properties () {
+    return {
+      morph: {}
+    };
+  }
+
+  initialize (container, morph) {
+    super.initialize(container);
+    this.tooltip = morph;
+    this.morph = morph;
+  }
+}
+
 export class GlobalTimelineLayer extends TimelineLayer {
   static get properties () {
     return {
@@ -437,8 +446,15 @@ export class GlobalTimelineLayer extends TimelineLayer {
       },
       nativeCursor: {
         defaultValue: 'grab'
-      }
+      },
+      layer: {}
     };
+  }
+
+  initialize (container, layer) {
+    super.initialize(container);
+    this.tooltip = layer.name;
+    this.morph = layer;
   }
 
   get timelineSequences () {
@@ -476,7 +492,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
   }
 }
 
-class OverviewSequenceTimelineLayer extends TimelineLayer {
+class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   static get properties () {
     return {
       isExpanded: {
@@ -507,7 +523,7 @@ class OverviewSequenceTimelineLayer extends TimelineLayer {
     const arrowLabel = this.layerInfo.getSubmorphNamed('collapseButton');
     Icon.setIcon(arrowLabel, 'caret-right');
     this.opacity = 1;
-    this.tooltip = this.layer.name;
+    this.tooltip = this.morph.name;
     this.reactsToPointer = true;
     this.owner.owner.addTimelineKeyframesForLayer(this);
     this.owner.owner.removePropertyTimelines(this);
