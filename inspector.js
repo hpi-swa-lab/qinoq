@@ -103,7 +103,7 @@ export class InteractiveMorphInspector extends Morph {
     this.ui.propertyPane.addMorph(this.ui[property]);
   }
 
-  build () {
+  buildTargetPicker () {
     this.ui.targetPicker = new Button({
       name: 'targetPicker',
       padding: rect(2, 2, 0, 0),
@@ -111,7 +111,7 @@ export class InteractiveMorphInspector extends Morph {
       master: {
         auto: 'styleguide://System/buttons/light'
       },
-      tooltip: 'Change Inspection Target',
+      tooltip: 'Choose Inspection Target',
       label: Icon.textAttribute('crosshairs'),
       extent: pt(25, 25),
       position: pt(5, 5)
@@ -119,6 +119,10 @@ export class InteractiveMorphInspector extends Morph {
     this.ui.targetPicker.onMouseDown = async (evt) => {
       this.targetMorph = await InteractiveMorphSelector.selectMorph($world, null, morph => morph._morphInInteractive);
     };
+  }
+
+  build () {
+    this.buildTargetPicker();
 
     this.ui.headlinePane = new Morph();
     this.ui.headline = new Label({ name: 'headline', textString: 'No morph selected', fontWeight: 'bold' });
@@ -260,6 +264,6 @@ class KeyframeButton extends Morph {
   onMouseDown (evt) {
     super.onMouseDown(evt);
     const sequence = Sequence.getSequenceOfMorph(this.target);
-    const animation = sequence.addKeyframeToMorph(new Keyframe(sequence.progress, this.currentValue), this.target, this.property, this.propType);
+    const animation = sequence.addKeyframeForMorph(new Keyframe(sequence.progress, this.currentValue), this.target, this.property, this.propType);
   }
 }

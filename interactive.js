@@ -364,7 +364,7 @@ export class Sequence extends Morph {
   }
 
   // Generic interface to add a keyframe to a sequence
-  addKeyframeToMorph (keyframe, morph, property, proptype = 'point') {
+  addKeyframeForMorph (keyframe, morph, property, proptype = 'point') {
     const possibleAnimations = this.animations.filter(a => a.target === morph && a.property === property);
     if (possibleAnimations.length === 1) {
       const existingAnimation = possibleAnimations[0];

@@ -7,7 +7,7 @@ class Animation {
     this.keyframes = [];
   }
 
-  // Maybe use some epsilon to accept keyframes within an interval
+  // TODO: Maybe use some epsilon to accept keyframes within an interval
   getKeyframeAt (position) {
     return this.keyframes.find(kf => kf.position === position);
   }
