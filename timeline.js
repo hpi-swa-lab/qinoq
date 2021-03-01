@@ -608,6 +608,21 @@ export class TimelineSequence extends Morph {
     this.timeline.interactive.redraw();
   }
 
+  createWarningMorph (morphSuffix, morphPosition, gradientVector) {
+    return new Morph({
+      name: `warning ${morphSuffix}`,
+      position: morphPosition,
+      extent: pt(CONSTANTS.WARNING_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
+      fill: new LinearGradient({
+        vector: gradientVector,
+        stops: [
+          { offset: 0, color: COLOR_SCHEME.SECONDARY.withA(1) },
+          { offset: 1, color: COLOR_SCHEME.SECONDARY.withA(0) }
+        ]
+      })
+    });
+  }
+
   showWarningLeft (dragValue) {
     const newWarning = !this.warningStartLeft;
     if (newWarning) this.warningStartLeft = dragValue;
@@ -615,27 +630,9 @@ export class TimelineSequence extends Morph {
     const strength = currentDrag / CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA;
     const warning = !newWarning
       ? this.getSubmorphNamed('warning left')
-      : new Morph({
-        name: 'warning left',
-        position: pt(0, 0),
-        extent: pt(CONSTANTS.WARNING_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
-        fill: new LinearGradient({
-          vector: 'eastwest',
-          stops: [
-            { offset: 0, color: COLOR_SCHEME.SECONDARY.withA(1) },
-            { offset: 1, color: COLOR_SCHEME.SECONDARY.withA(0) }
-          ]
-        })
-      });
+      : this.createWarningMorph('left', pt(0, 0), 'eastwest');
     warning.opacity = strength;
     this.addMorph(warning);
-  }
-
-  hideWarningLeft (fadeout = 1000) {
-    delete this.warningStartLeft;
-    this.withAllSubmorphsDo(morph => {
-      if (morph.name == 'warning left') morph.fadeOut(fadeout);
-    });
   }
 
   showWarningRight (dragValue) {
@@ -644,28 +641,26 @@ export class TimelineSequence extends Morph {
     const currentDrag = this.warningStartRight - dragValue;
     const strength = currentDrag / CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA;
     const warning = !newWarning
-      ? this.getSubmorphNamed('warning left')
-      : new Morph({
-        name: 'warning left',
-        position: pt(this.width - CONSTANTS.WARNING_WIDTH, 0),
-        extent: pt(CONSTANTS.WARNING_WIDTH, CONSTANTS.SEQUENCE_HEIGHT),
-        fill: new LinearGradient({
-          vector: 'westeast',
-          stops: [
-            { offset: 0, color: COLOR_SCHEME.SECONDARY.withA(1) },
-            { offset: 1, color: COLOR_SCHEME.SECONDARY.withA(0) }
-          ]
-        })
-      });
+      ? this.getSubmorphNamed('warning right')
+      : this.createWarningMorph('right', pt(this.width - CONSTANTS.WARNING_WIDTH, 0), 'westeast');
     warning.opacity = strength;
     this.addMorph(warning);
   }
 
+  hideWarning (morphSuffix, fadeout = 1000) {
+    this.withAllSubmorphsDo(morph => {
+      if (morph.name == `warning ${morphSuffix}`) morph.fadeOut(fadeout);
+    });
+  }
+
+  hideWarningLeft (fadeout = 1000) {
+    delete this.warningStartLeft;
+    this.hideWarning('left', fadeout);
+  }
+
   hideWarningRight (fadeout = 1000) {
     delete this.warningStartRight;
-    this.withAllSubmorphsDo(morph => {
-      if (morph.name == 'warning right') morph.fadeOut(fadeout);
-    });
+    this.hideWarning('right', fadeout);
   }
 
   setOverlappingAppearance () {
