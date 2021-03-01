@@ -47,7 +47,17 @@ export class InteractiveMorphInspector extends Morph {
     return {
       extent: 'point',
       position: 'point',
-      fill: 'color'
+      fill: 'color',
+      blur: 'number',
+      flipped: 'number',
+      tilted: 'number',
+      grayscale: 'number',
+      opacity: 'number',
+      rotation: 'number',
+      scale: 'number',
+      fontSize: 'number',
+      lineHeight: 'number',
+      progress: 'number'
     };
   }
 
