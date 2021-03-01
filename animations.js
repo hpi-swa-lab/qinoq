@@ -1,4 +1,5 @@
 import { pt } from 'lively.graphics';
+import { arr } from 'lively.lang';
 class Animation {
   constructor (targetMorph, property, interpolation = Animation.lerp) {
     this.target = targetMorph;
@@ -15,7 +16,7 @@ class Animation {
   addKeyframe (newKeyframe, doNotSort = false) {
     const existingKeyframe = this.getKeyframeAt(newKeyframe.position);
     if (existingKeyframe) {
-      this.keyframes = this.keyframes.filter(keyframe => keyframe.position != newKeyframe.position);
+      arr.remove(this.keyframes, existingKeyframe);
     }
     this.keyframes.push(newKeyframe);
 
