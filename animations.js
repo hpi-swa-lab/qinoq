@@ -65,6 +65,8 @@ export function createAnimationForPropertyType (propType, targetMorph, property)
       return new PointAnimation(targetMorph, property);
     case 'color':
       return new ColorAnimation(targetMorph, property);
+    case 'number':
+      return new NumberAnimation(targetMorph, property);
   }
   $world.setStatusMessage('Could not match property type');
 }
@@ -80,7 +82,7 @@ export class NumberAnimation extends Animation {
     const { start, end } = this.getClosestKeyframes(progress);
     if (!!start && !!end) {
       const factor = this.interpolation(progress, start, end);
-      const value = start.value.x + (end.value.x - start.value.x) * factor;
+      const value = start.value + (end.value - start.value) * factor;
       this.target[this.property] = value;
       return;
     }
@@ -93,7 +95,7 @@ export class NumberAnimation extends Animation {
   }
 
   get type () {
-    return 'Number';
+    return 'number';
   }
 }
 

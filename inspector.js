@@ -96,10 +96,13 @@ export class InteractiveMorphInspector extends Morph {
     switch (propType) {
       case 'point':
         this.propertyControls[property].x = new NumberWidget({ position: pt(65, 0) });
-        this.propertyControls[property].y = new NumberWidget({ position: pt(65, 30) });
+        this.propertyControls[property].y = new NumberWidget({ position: pt(65, 27) });
         break;
       case 'color':
         this.propertyControls[property].color = new ColorPickerField({ position: pt(65, 0), colorValue: this.targetMorph[property] });
+        break;
+      case 'number':
+        this.propertyControls[property].number = new NumberWidget({ position: pt(65, 0), floatingPoint: true });
         break;
     }
     this.propertyControls[property].keyframe = new KeyframeButton({
@@ -167,6 +170,9 @@ export class InteractiveMorphInspector extends Morph {
           case 'color':
             disconnect(this.propertyControls[inspectedProperty].color, 'colorValue', this, 'updateInMorph');
             break;
+          case 'number':
+            disconnect(this.propertyControls[inspectedProperty].number, 'number', this, 'updateInMorph');
+            break;
         }
       });
     }
@@ -183,6 +189,9 @@ export class InteractiveMorphInspector extends Morph {
           break;
         case 'color':
           connect(this.propertyControls[inspectedProperty].color, 'colorValue', this, 'updateInMorph');
+          break;
+        case 'number':
+          connect(this.propertyControls[inspectedProperty].number, 'number', this, 'updateInMorph');
           break;
       }
     });
@@ -203,6 +212,9 @@ export class InteractiveMorphInspector extends Morph {
         case 'color':
           this.propertyControls[property].color.update(this.targetMorph[property]);
           break;
+        case 'number':
+          this.propertyControls[property].number.number = this.targetMorph[property];
+          break;
       }
     });
     this._updatingInspector = false;
@@ -221,6 +233,9 @@ export class InteractiveMorphInspector extends Morph {
           break;
         case 'color':
           this.targetMorph[property] = this.propertyControls[property].color.colorValue;
+          break;
+        case 'number':
+          this.targetMorph[property] = this.propertyControls[property].number.number;
           break;
       }
     });
