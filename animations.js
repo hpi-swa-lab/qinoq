@@ -75,6 +75,28 @@ export class Keyframe {
   }
 }
 
+export class NumberAnimation extends Animation {
+  set progress (progress) {
+    const { start, end } = this.getClosestKeyframes(progress);
+    if (!!start && !!end) {
+      const factor = this.interpolation(progress, start, end);
+      const value = start.value.x + (end.value.x - start.value.x) * factor;
+      this.target[this.property] = value;
+      return;
+    }
+    if (start) {
+      this.target[this.property] = start.value;
+    }
+    if (end) {
+      this.target[this.property] = end.value;
+    }
+  }
+
+  get type () {
+    return 'Number';
+  }
+}
+
 export class PointAnimation extends Animation {
   static example (target, property) {
     const animation = new PointAnimation(target, property);
