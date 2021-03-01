@@ -411,7 +411,7 @@ export class TimelineLayer extends Morph {
   }
 
   get index () {
-    return this.owner.submorphs.indexOf(this);
+    return this.container.submorphs.indexOf(this);
   }
 
   addActiveAreaMorph () {
