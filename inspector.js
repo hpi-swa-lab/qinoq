@@ -247,7 +247,9 @@ class KeyframeButton extends Morph {
         defaultValue: 'solid'
       },
       mode: {
-        defaultValue: 'default'
+        defaultValue: 'default',
+        type: 'Enum',
+        values: ['default', 'activated']
       },
       inspector: { },
       animation: {},
