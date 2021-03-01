@@ -98,6 +98,7 @@ export class InteractiveMorphInspector extends Morph {
       property,
       propType
     });
+    this.propertyControls[property].keyframe.initialize();
     this.ui[property] = new Morph();
     Object.values(this.propertyControls[property]).forEach(m => this.ui[property].addMorph(m));
     this.ui.propertyPane.addMorph(this.ui[property]);
@@ -233,16 +234,32 @@ class KeyframeButton extends Morph {
       rotation: {
         defaultValue: Math.PI / 4
       },
+      borderColor: {
+        defaultValue: COLOR_SCHEME.SECONDARY
+      },
       nativeCursor: {
         defaultValue: 'pointer'
       },
       tooltip: {
         defaultValue: 'Create a keyframe'
       },
+      borderStyle: {
+        defaultValue: 'solid'
+      },
       mode: {
-
+        defaultValue: 'default'
       },
       inspector: { },
+      animation: {},
+      sequence: {
+        set (s) {
+          if (this.sequence) {
+            disconnect(s, 'updateProgress', this, 'updateStyle');
+          }
+          connect(s, 'updateProgress', this, 'updateStyle');
+          this.setProperty('sequence', s);
+        }
+      },
       property: {
         set (prop) {
           this.setProperty('property', prop);
@@ -261,9 +278,62 @@ class KeyframeButton extends Morph {
     return this.target[this.property];
   }
 
+  initialize () {
+    this.setDefaultStyle();
+  }
+
+  setDefaultStyle () {
+    this.fill = COLOR_SCHEME.TRANSPARENT;
+    this.borderWidth = 2;
+  }
+
+  setHoverStyle () {
+    this.fill = COLOR_SCHEME.SECONDARY_VARIANT;
+    this.borderWidth = 0;
+  }
+
+  setClickStyle () {
+    this.fill = COLOR_SCHEME.SECONDARY_VARIANT;
+    this.borderWidth = 2;
+  }
+
+  setActivatedStyle () {
+    this.fill = COLOR_SCHEME.SECONDARY;
+    this.borderWidth = 0;
+  }
+
   onMouseDown (evt) {
     super.onMouseDown(evt);
-    const sequence = Sequence.getSequenceOfMorph(this.target);
-    const animation = sequence.addKeyframeForMorph(new Keyframe(sequence.progress, this.currentValue), this.target, this.property, this.propType);
+    this.setClickStyle();
+  }
+
+  onMouseUp (evt) {
+    this.setActivatedStyle();
+    this.mode = 'activated';
+    this.sequence = Sequence.getSequenceOfMorph(this.target);
+    this.animation = this.sequence.addKeyframeForMorph(new Keyframe(this.sequence.progress, this.currentValue), this.target, this.property, this.propType);
+  }
+
+  onHoverIn (evt) {
+    this.setHoverStyle();
+  }
+
+  onHoverOut (evt) {
+    if (this.mode == 'activated') {
+      this.setActivatedStyle();
+    } else {
+      this.setDefaultStyle();
+    }
+  }
+
+  updateStyle () {
+    const animationPosition = this.sequence.progress;
+    if (this.animation.getKeyframeAt(animationPosition)) {
+      this.mode = 'activated';
+      this.setActivatedStyle();
+    } else {
+      this.mode = 'default';
+      this.setDefaultStyle();
+    }
   }
 }
