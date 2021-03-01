@@ -28,11 +28,11 @@ export class InteractiveMorphInspector extends Morph {
         defaultValue: {}
       },
       targetMorph: {
-        set (m) {
-          if (m) {
+        set (morph) {
+          if (morph) {
             this.disbandConnections();
-            this.setProperty('targetMorph', m);
-            this.ui.headline.textString = 'Inspecting ' + m.toString();
+            this.setProperty('targetMorph', morph);
+            this.ui.headline.textString = `Inspecting ${morph.toString()}`;
 
             this.buildPropertyControls();
             this.updateInInspector();
@@ -68,7 +68,7 @@ export class InteractiveMorphInspector extends Morph {
     if (!this.targetMorph) {
       return;
     }
-    this.ui.propertyPane.submorphs.forEach(m => m.remove());
+    this.ui.propertyPane.submorphs.forEach(morph => morph.remove());
     const props = this.propertiesToDisplay;
     props.forEach(propToInspect => {
       const propType = this.possibleProperties[propToInspect];
@@ -100,7 +100,7 @@ export class InteractiveMorphInspector extends Morph {
     });
     this.propertyControls[property].keyframe.initialize();
     this.ui[property] = new Morph();
-    Object.values(this.propertyControls[property]).forEach(m => this.ui[property].addMorph(m));
+    Object.values(this.propertyControls[property]).forEach(morph => this.ui[property].addMorph(morph));
     this.ui.propertyPane.addMorph(this.ui[property]);
   }
 

@@ -350,13 +350,13 @@ export class Sequence extends Morph {
     this.animations.forEach(animation => animation.progress = this._progress);
   }
 
-  addMorph (m) {
-    super.addMorph(m);
-    m._morphInInteractive = true;
+  addMorph (morph) {
+    super.addMorph(morph);
+    morph._morphInInteractive = true;
   }
 
   onLoad () {
-    this.withAllSubmorphsDo(sm => sm._morphInInteractive = true);
+    this.withAllSubmorphsDo(morph => morph._morphInInteractive = true);
   }
 
   addAnimation (animation) {
@@ -365,9 +365,9 @@ export class Sequence extends Morph {
 
   // Generic interface to add a keyframe to a sequence
   addKeyframeForMorph (keyframe, morph, property, proptype = 'point') {
-    const possibleAnimations = this.animations.filter(a => a.target === morph && a.property === property);
-    if (possibleAnimations.length === 1) {
-      const existingAnimation = possibleAnimations[0];
+    const possibleAnimations = this.animations.filter(animation => animation.target === morph && animation.property === property);
+    if (possibleAnimations.length > 0) {
+      const existingAnimation = possibleAnimations[0]; // Assumes only one animation per property/morph combination
 
       existingAnimation.addKeyframe(keyframe);
       return existingAnimation;
