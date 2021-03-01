@@ -284,6 +284,15 @@ class KeyframeButton extends Morph {
     this.setDefaultStyle();
   }
 
+  onMouseUp (evt) {
+    this.setActivatedStyle();
+    this.mode = 'activated';
+    this.sequence = Sequence.getSequenceOfMorph(this.target);
+    this.animation = this.sequence.addKeyframeForMorph(new Keyframe(this.sequence.progress, this.currentValue), this.target, this.property, this.propType);
+  }
+
+  // The rest is styling. This may be improved with a master component. See styleguides/keyframe-inspector.json
+
   setDefaultStyle () {
     this.fill = COLOR_SCHEME.TRANSPARENT;
     this.borderWidth = 2;
@@ -307,13 +316,6 @@ class KeyframeButton extends Morph {
   onMouseDown (evt) {
     super.onMouseDown(evt);
     this.setClickStyle();
-  }
-
-  onMouseUp (evt) {
-    this.setActivatedStyle();
-    this.mode = 'activated';
-    this.sequence = Sequence.getSequenceOfMorph(this.target);
-    this.animation = this.sequence.addKeyframeForMorph(new Keyframe(this.sequence.progress, this.currentValue), this.target, this.property, this.propType);
   }
 
   onHoverIn (evt) {
