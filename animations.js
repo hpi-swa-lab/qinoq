@@ -9,15 +9,15 @@ class Animation {
 
   // TODO: Maybe use some epsilon to accept keyframes within an interval
   getKeyframeAt (position) {
-    return this.keyframes.find(kf => kf.position === position);
+    return this.keyframes.find(keyframe => keyframe.position === position);
   }
 
-  addKeyframe (keyframe, doNotSort = false) {
-    const existingKeyframe = this.getKeyframeAt(keyframe.position);
+  addKeyframe (newKeyframe, doNotSort = false) {
+    const existingKeyframe = this.getKeyframeAt(newKeyframe.position);
     if (existingKeyframe) {
-      this.keyframes = this.keyframes.filter(kf => kf.position != keyframe.position);
+      this.keyframes = this.keyframes.filter(keyframe => keyframe.position != newKeyframe.position);
     }
-    this.keyframes.push(keyframe);
+    this.keyframes.push(newKeyframe);
 
     if (!doNotSort) {
       this._sortKeyframes();
@@ -25,7 +25,7 @@ class Animation {
   }
 
   addKeyframes (keyframes) {
-    keyframes.forEach(kf => this.addKeyframe(kf, true));
+    keyframes.forEach(keyframe => this.addKeyframe(keyframe, true));
     this._sortKeyframes();
   }
 
