@@ -322,6 +322,10 @@ export class Sequence extends Morph {
     cloudPositionAnimation.addKeyframes([new Keyframe(0, pt(100, 50), 'start'), new Keyframe(1, pt(200, 50), 'end')]);
     skySequence.addAnimation(cloudPositionAnimation);
 
+    const cloudOpacityAnimation = new NumberAnimation(cloud, 'opacity');
+    cloudOpacityAnimation.addKeyframes([new Keyframe(0.1, 0, 'start'), new Keyframe(0.4, 1, 'fully visible')]);
+    skySequence.addAnimation(cloudOpacityAnimation);
+
     const sunPositionAnimation = new PointAnimation(sun, 'position');
     sunPositionAnimation.addKeyframes([new Keyframe(0, pt(0, 350), 'start'), new Keyframe(0.5, pt(40, 80), 'middle'), new Keyframe(1, pt(180, 15), 'end')]);
     skySequence.addAnimation(sunPositionAnimation);
