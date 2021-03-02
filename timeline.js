@@ -96,12 +96,12 @@ export class Timeline extends Morph {
   }
 
   arrangeLayerInfos () {
-    this.ui.layerInfoContainer.setProperty('submorphs', []);
+    this.ui.layerInfoContainer.removeAllMorphs();
     const layerInfos = Array(this.timelineLayers.length).fill(0);
     this.timelineLayers.forEach(timelineLayer => {
       layerInfos[timelineLayer.index] = timelineLayer.layerInfo;
     });
-    this.ui.layerInfoContainer.setProperty('submorphs', layerInfos);
+    this.ui.layerInfoContainer.submorphs = layerInfos;
     this.ui.layerInfoContainer.layout.apply();
   }
 
@@ -489,7 +489,14 @@ export class GlobalTimelineLayer extends TimelineLayer {
   }
 
   onBeingDroppedOn (hand, recipient) {
-    this.container.addMorphBack(this);
+    let index = (hand.position.y - this.container.globalPosition.y) / (this.extent.y + 2 * this.container.layout.spacing);
+    if (index < 0) {
+      index = 0;
+    }
+    if (index > this.container.submorphs.length - 1) {
+      index = this.container.submorphs.length - 1;
+    }
+    this.container.addMorphAt(this, Math.round(index));
     this.timeline.arrangeLayerInfos();
     this.timeline.updateZIndicesFromTimelineLayerPositions();
   }
