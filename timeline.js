@@ -1,5 +1,5 @@
 import { Morph, Icon, HorizontalLayout, ProportionalLayout, Label, VerticalLayout } from 'lively.morphic';
-import { pt, LinearGradient, rect, Color } from 'lively.graphics';
+import { pt, LinearGradient, rect } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 import { COLOR_SCHEME } from './colors.js';
 
