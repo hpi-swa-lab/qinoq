@@ -3,7 +3,7 @@ import { Color, pt } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
 import { COLOR_SCHEME } from './colors.js';
-import { PointAnimation, createAnimationForPropertyType, ColorAnimation, Keyframe } from './animations.js';
+import { PointAnimation, NumberAnimation, createAnimationForPropertyType, ColorAnimation, Keyframe } from './animations.js';
 
 export class Interactive extends Morph {
   static example () {
@@ -314,9 +314,13 @@ export class Sequence extends Morph {
     const sun = new Ellipse({ name: 'sun', extent: pt(70, 70), fill: Color.rgb(250, 250, 20), position: pt(0, 350) });
     sunSequence.addMorph(sun);
 
-    const sunAnimation = new PointAnimation(sun, 'position');
-    sunAnimation.addKeyframes([new Keyframe(0, pt(0, 350)), new Keyframe(0.5, pt(40, 80)), new Keyframe(1, pt(180, 15))]);
-    sunSequence.addAnimation(sunAnimation);
+    const sunPositionAnimation = new PointAnimation(sun, 'position');
+    sunPositionAnimation.addKeyframes([new Keyframe(0, pt(0, 350)), new Keyframe(0.5, pt(40, 80)), new Keyframe(1, pt(180, 15))]);
+    sunSequence.addAnimation(sunPositionAnimation);
+
+    const sunScaleAnimation = new NumberAnimation(sun, 'scale');
+    sunScaleAnimation.addKeyframes([new Keyframe(0, 0.6), new Keyframe(0.6, 1)]);
+    sunSequence.addAnimation(sunScaleAnimation);
     return sunSequence;
   }
 
