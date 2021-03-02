@@ -80,7 +80,7 @@ export class Timeline extends Morph {
   }
 
   createTimelineLayer (layer, index = 0, name = undefined) {
-    const timelineLayer = this.getTimelineLayer();
+    const timelineLayer = this.getNewTimelineLayer();
     timelineLayer.initialize(this.ui.layerContainer, layer);
     this.ui.layerContainer.addMorphAt(timelineLayer, index);
     const layerInfo = new Morph();
@@ -128,12 +128,12 @@ export class Timeline extends Morph {
   }
 
   loadContent (content) {
-    this._isLoading = true;
+    this._inInitialConstruction = true;
     this.onLoadContent(content);
     this.initializeCursor();
     this.onScrollChange(this.editor.interactiveScrollPosition);
     connect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange');
-    this._isLoading = false;
+    this._inInitialConstruction = false;
   }
 
   onLoadContent (content) {
@@ -167,7 +167,7 @@ export class GlobalTimeline extends Timeline {
     seq.initialize(sequence, this.getTimelineLayerFor(sequence.layer));
   }
 
-  getTimelineLayer () {
+  getNewTimelineLayer () {
     return new GlobalTimelineLayer();
   }
 
@@ -268,8 +268,8 @@ export class SequenceTimeline extends Timeline {
     });
   }
 
-  getTimelineLayer () {
-    return this._isLoading ? new OverviewSequenceTimelineLayer() : new SequenceTimelineLayer();
+  getNewTimelineLayer () {
+    return this._inInitialConstruction ? new OverviewSequenceTimelineLayer() : new SequenceTimelineLayer();
   }
 
   getPositionFromScroll (scrollPosition) {
@@ -355,10 +355,10 @@ export class TimelineKeyframe extends Morph {
 
   remove () {
     this.animation.removeKeyframe(this.keyframe);
-    super.remove();
+    this.removeMorph();
   }
 
-  removeMorphOnly () {
+  removeMorph () {
     super.remove();
   }
 
@@ -434,7 +434,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
 
   initialize (container, morph) {
     super.initialize(container);
-    this.tooltip = morph;
+    this.tooltip = morph.name;
     this.morph = morph;
   }
 }
@@ -556,7 +556,7 @@ class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   removeAllTimelineKeyframes () {
     this.withAllSubmorphsDo(submorph => {
       if (submorph.isTimelineKeyframe) {
-        submorph.removeMorphOnly();
+        submorph.removeMorph();
       }
     });
   }
