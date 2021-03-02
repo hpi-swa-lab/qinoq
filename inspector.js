@@ -102,7 +102,20 @@ export class InteractiveMorphInspector extends Morph {
         this.propertyControls[property].color = new ColorPickerField({ position: pt(65, 0), colorValue: this.targetMorph[property] });
         break;
       case 'number':
-        this.propertyControls[property].number = new NumberWidget({ position: pt(65, 0), floatingPoint: true });
+        const spec = this.propertiesAndPropertySettings().properties[property];
+        let floatingPoint = spec.isFloat;
+        let unit = '';
+        let min = -Infinity;
+        let max = Infinity;
+        if (spec.isFloat && spec.max == 1) {
+          // Use a percentage value instead of just numbers
+          unit = '%';
+          floatingPoint = false; // Numbers have too many digits with floating point
+          min = 0;
+          max = 100;
+        }
+
+        this.propertyControls[property].number = new NumberWidget({ position: pt(65, 0), floatingPoint, unit, min, max });
         break;
     }
     this.propertyControls[property].keyframe = new KeyframeButton({
@@ -213,7 +226,11 @@ export class InteractiveMorphInspector extends Morph {
           this.propertyControls[property].color.update(this.targetMorph[property]);
           break;
         case 'number':
-          this.propertyControls[property].number.number = this.targetMorph[property];
+          if (this.propertyControls[property].number.unit == '%') {
+            this.propertyControls[property].number.number = this.targetMorph[property] * 100;
+          } else {
+            this.propertyControls[property].number.number = this.targetMorph[property];
+          }
           break;
       }
     });
@@ -235,7 +252,11 @@ export class InteractiveMorphInspector extends Morph {
           this.targetMorph[property] = this.propertyControls[property].color.colorValue;
           break;
         case 'number':
-          this.targetMorph[property] = this.propertyControls[property].number.number;
+          if (this.propertyControls[property].number.unit == '%') {
+            this.targetMorph[property] = this.propertyControls[property].number.number / 100;
+          } else {
+            this.targetMorph[property] = this.propertyControls[property].number.number;
+          }
           break;
       }
     });
