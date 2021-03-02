@@ -1,4 +1,4 @@
-import { Morph, VerticalLayout, Icon, Label } from 'lively.morphic';
+import { Morph, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
 import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
@@ -163,19 +163,17 @@ export class InteractiveMorphInspector extends Morph {
   build () {
     this.buildTargetPicker();
 
-    this.ui.headlinePane = new Morph();
+    this.ui.headlinePane = new Morph({ name: 'headline pane' });
     this.ui.headline = new Label({ name: 'headline', textString: 'No morph selected', fontWeight: 'bold' });
+    this.ui.headlinePane.layout = new HorizontalLayout({ spacing: 5, align: 'center' });
     this.ui.headlinePane.addMorph(this.ui.headline);
+    this.ui.headlinePane.addMorph(this.ui.targetPicker);
 
-    this.ui.propertyPane = new Morph();
+    this.ui.propertyPane = new Morph({ name: 'property pane' });
     this.ui.propertyPane.layout = new VerticalLayout({ spacing: 2 });
-
-    this.ui.footerPane = new Morph();
-    this.ui.footerPane.addMorph(this.ui.targetPicker);
 
     this.addMorph(this.ui.headlinePane);
     this.addMorph(this.ui.propertyPane);
-    this.addMorph(this.ui.footerPane);
     this.layout = new VerticalLayout({
       autoResize: false,
       spacing: 5
