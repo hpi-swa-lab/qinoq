@@ -96,11 +96,13 @@ export class Timeline extends Morph {
   }
 
   arrangeLayerInfos () {
+    this.ui.layerInfoContainer.setProperty('submorphs', []);
+    const layerInfos = Array(this.timelineLayers.length).fill(0);
     this.timelineLayers.forEach(timelineLayer => {
-      const layerInfo = timelineLayer.layerInfo;
-      const indexInLayerContainer = timelineLayer.index;
-      this.ui.layerInfoContainer.addMorphAt(layerInfo, indexInLayerContainer);
+      layerInfos[timelineLayer.index] = timelineLayer.layerInfo;
     });
+    this.ui.layerInfoContainer.setProperty('submorphs', layerInfos);
+    this.ui.layerInfoContainer.layout.apply();
   }
 
   updateLayerPositions () {
@@ -220,6 +222,11 @@ export class GlobalTimeline extends Timeline {
 }
 
 export class SequenceTimeline extends Timeline {
+  initialize () {
+    super.initialize();
+    this.ui.layerContainer.layout.orderByIndex = true;
+  }
+
   createOverviewTimelineLayer (morph) {
     const timelineLayer = super.createTimelineLayer(morph);
     timelineLayer.addCollapseToggle();
