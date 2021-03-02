@@ -565,6 +565,11 @@ class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   }
 
   expand () {
+    if (!this.containsKeyframes()) {
+      this.isExpanded = false;
+      $world.inform('Expanding is only available for morphs with keyframes.');
+      return;
+    }
     const arrowLabel = this.layerInfo.getSubmorphNamed('collapseButton');
     Icon.setIcon(arrowLabel, 'caret-down');
     this.opacity = 0;
@@ -580,6 +585,16 @@ class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
         submorph.removeMorph();
       }
     });
+  }
+
+  containsKeyframes () {
+    let containsKeyframes = false;
+    this.withAllSubmorphsDo(submorph => {
+      if (submorph.isTimelineKeyframe) {
+        containsKeyframes = true;
+      }
+    });
+    return containsKeyframes;
   }
 
   updateTimelineKeyframes () {
