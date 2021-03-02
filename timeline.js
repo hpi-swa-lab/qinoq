@@ -550,7 +550,7 @@ class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     this.layerInfo.addMorph(arrowLabel);
     arrowLabel.onMouseDown = (evt) => {
       this.isExpanded = !this.isExpanded;
-      this.owner.whenRendered().then(() => this.timeline.ui.cursor.height = this.timeline.height);
+      this.owner.whenRendered().then(() => this.timeline.ui.cursor.height = this.timeline.ui.layerContainer.height);
     };
   }
 
