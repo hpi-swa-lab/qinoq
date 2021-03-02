@@ -102,20 +102,7 @@ export class InteractiveMorphInspector extends Morph {
         this.propertyControls[property].color = new ColorPickerField({ position: pt(65, 0), colorValue: this.targetMorph[property] });
         break;
       case 'number':
-        const spec = this.propertiesAndPropertySettings().properties[property];
-        let floatingPoint = spec.isFloat;
-        let unit = '';
-        let min = -Infinity;
-        let max = Infinity;
-        if (spec.isFloat && spec.max == 1) {
-          // Use a percentage value instead of just numbers
-          unit = '%';
-          floatingPoint = false; // Numbers have too many digits with floating point
-          min = 0;
-          max = 100;
-        }
-
-        this.propertyControls[property].number = new NumberWidget({ position: pt(65, 0), floatingPoint, unit, min, max });
+        this.buildNumberPropertyControl(property);
         break;
     }
     this.propertyControls[property].keyframe = new KeyframeButton({
@@ -128,6 +115,23 @@ export class InteractiveMorphInspector extends Morph {
     this.ui[property] = new Morph();
     Object.values(this.propertyControls[property]).forEach(morph => this.ui[property].addMorph(morph));
     this.ui.propertyPane.addMorph(this.ui[property]);
+  }
+
+  buildNumberPropertyControl (property) {
+    const spec = this.propertiesAndPropertySettings().properties[property];
+    let floatingPoint = spec.isFloat;
+    let unit = '';
+    let min = -Infinity;
+    let max = Infinity;
+    if (spec.isFloat && spec.max == 1) {
+      // Use a percentage value instead of just numbers
+      unit = '%';
+      floatingPoint = false; // Numbers have too many digits with floating point
+      min = 0;
+      max = 100;
+    }
+
+    this.propertyControls[property].number = new NumberWidget({ position: pt(65, 0), floatingPoint, unit, min, max });
   }
 
   buildTargetPicker () {
