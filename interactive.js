@@ -3,7 +3,7 @@ import { Color, pt } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
 import { COLOR_SCHEME } from './colors.js';
-import { PointAnimation, NumberAnimation, createAnimationForPropertyType, ColorAnimation, Keyframe } from './animations.js';
+import { Keyframe, createAnimationForPropertyType, NumberAnimation, PointAnimation, ColorAnimation } from 'interactives-editor';
 
 export class Interactive extends Morph {
   static example () {
