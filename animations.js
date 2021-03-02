@@ -70,7 +70,7 @@ class Animation {
 
   interpolate (progress, start, end) {
     // Subclass responsibility
-    // Each animation type implements an interpolate type that interpolates the corresponding type
+    // Each animation type implements an interpolate method that interpolates the corresponding type
     throw new Error('Subclass responsibility');
   }
 }
