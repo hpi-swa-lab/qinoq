@@ -255,7 +255,7 @@ export class SequenceTimeline extends Timeline {
           if (!submorph.isExpanded) {
             submorph.updateTimelineKeyframes();
           } else {
-            this.removePropertyTimelines(submorph);
+            this.removePropertyLayers(submorph);
             this.createPropertyLayers(submorph);
           }
         }
@@ -273,7 +273,7 @@ export class SequenceTimeline extends Timeline {
     });
   }
 
-  removePropertyTimelines (timelineLayer) {
+  removePropertyLayers (timelineLayer) {
     const morph = timelineLayer.morph;
     this.withAllSubmorphsDo(submorph => {
       if (submorph.isTimelineLayer && submorph.morph === morph && !submorph.isOverviewLayer) {
@@ -561,7 +561,7 @@ class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     this.tooltip = this.morph.name;
     this.reactsToPointer = true;
     this.timeline.addTimelineKeyframesForLayer(this);
-    this.timeline.removePropertyTimelines(this);
+    this.timeline.removePropertyLayers(this);
   }
 
   expand () {
