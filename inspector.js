@@ -370,6 +370,7 @@ class KeyframeButton extends Morph {
     this.setActivatedStyle();
     this.mode = 'activated';
     this.animation = this.sequence.addKeyframeForMorph(new Keyframe(this.sequence.progress, this.currentValue), this.target, this.property, this.propType);
+    this.inspector.owner.sequenceTimelines.forEach(sequenceTimeline => sequenceTimeline.updateLayers());
   }
 
   // The rest is styling. This may be improved with a master component. See styleguides/keyframe-inspector.json

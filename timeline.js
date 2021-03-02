@@ -248,6 +248,21 @@ export class SequenceTimeline extends Timeline {
     });
   }
 
+  updateLayers () {
+    this.withAllSubmorphsDo(submorph => {
+      if (submorph.isTimelineLayer) {
+        if (submorph.isOverviewLayer) {
+          if (!submorph.isExpanded) {
+            submorph.updateTimelineKeyframes();
+          } else {
+            this.removePropertyTimelines(submorph);
+            this.createPropertyLayers(submorph);
+          }
+        }
+      }
+    });
+  }
+
   createPropertyLayers (timelineLayer) {
     const morph = timelineLayer.morph;
     const indexInLayerContainer = timelineLayer.index;
@@ -565,6 +580,11 @@ class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
         submorph.removeMorph();
       }
     });
+  }
+
+  updateTimelineKeyframes () {
+    this.removeAllTimelineKeyframes();
+    this.timeline.addTimelineKeyframesForLayer(this);
   }
 }
 
