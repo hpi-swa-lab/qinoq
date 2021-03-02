@@ -44,7 +44,7 @@ export class InteractiveMorphInspector extends Morph {
             this.ui.headline.textString = `Inspecting ${morph.toString()}`;
 
             this.buildPropertyControls();
-            this.updateInInspector();
+            this.refreshAllPropertiesInInspector();
             this.createConnections();
           }
         }
@@ -212,7 +212,7 @@ export class InteractiveMorphInspector extends Morph {
   createConnections () {
     this.displayedProperties.forEach(inspectedProperty => {
       const propType = this.possibleProperties[inspectedProperty];
-      connect(this.targetMorph, inspectedProperty, this, 'updateInInspector');
+      connect(this.targetMorph, inspectedProperty, this, 'updateInInspector', { converter: '() => {return {property, propType}}', varMapping: { property: inspectedProperty, propType } });
       switch (propType) {
         case 'point':
           connect(this.propertyControls[inspectedProperty].x, 'number', this, 'updateInMorph');
@@ -228,29 +228,46 @@ export class InteractiveMorphInspector extends Morph {
     });
   }
 
-  updateInInspector () {
+  updatePropertyInInspector (property, propType) {
+    this._updatingInspector = true;
+    switch (propType) {
+      case 'point':
+        this.propertyControls[property].x.number = this.targetMorph[property].x;
+        this.propertyControls[property].y.number = this.targetMorph[property].y;
+        break;
+      case 'color':
+        this.propertyControls[property].color.update(this.targetMorph[property]);
+        break;
+      case 'number':
+        if (this.propertyControls[property].number.unit == '%') {
+          this.propertyControls[property].number.number = this.targetMorph[property] * 100;
+        } else {
+          this.propertyControls[property].number.number = this.targetMorph[property];
+        }
+        break;
+    }
+    this._updatingInspector = false;
+  }
+
+  updateInInspector (spec) {
+    if (this._updatingMorph) {
+      return;
+    }
+    if (!spec) {
+      return;
+    }
+    const { property, propType } = spec;
+    this.updatePropertyInInspector(property, propType);
+  }
+
+  refreshAllPropertiesInInspector () {
     if (this._updatingMorph) {
       return;
     }
     this._updatingInspector = true;
     this.displayedProperties.forEach(property => {
       const propType = this.possibleProperties[property];
-      switch (propType) {
-        case 'point':
-          this.propertyControls[property].x.number = this.targetMorph[property].x;
-          this.propertyControls[property].y.number = this.targetMorph[property].y;
-          break;
-        case 'color':
-          this.propertyControls[property].color.update(this.targetMorph[property]);
-          break;
-        case 'number':
-          if (this.propertyControls[property].number.unit == '%') {
-            this.propertyControls[property].number.number = this.targetMorph[property] * 100;
-          } else {
-            this.propertyControls[property].number.number = this.targetMorph[property];
-          }
-          break;
-      }
+      this.updatePropertyInInspector(property, propType);
     });
     this._updatingInspector = false;
   }
@@ -318,12 +335,12 @@ class KeyframeButton extends Morph {
       inspector: { },
       animation: { },
       sequence: {
-        set (s) {
+        set (sequence) {
           if (this.sequence) {
-            disconnect(s, 'updateProgress', this, 'updateStyle');
+            disconnect(sequence, 'updateProgress', this, 'updateStyle');
           }
-          connect(s, 'updateProgress', this, 'updateStyle');
-          this.setProperty('sequence', s);
+          connect(sequence, 'updateProgress', this, 'updateStyle');
+          this.setProperty('sequence', sequence);
         }
       },
       property: {
@@ -394,18 +411,23 @@ class KeyframeButton extends Morph {
     }
   }
 
-  updateStyle () {
+  async updateStyle () {
+    if (this._updatingStyle) {
+      return true;
+    }
+    this._updatingStyle = true;
     if (!this.animation) {
       return;
     }
     const animationPosition = this.sequence.progress;
 
-    if (this.animation.getKeyframeAt(animationPosition)) {
+    if (animationPosition >= 0 && animationPosition <= 1 && this.animation.getKeyframeAt(animationPosition)) {
       this.mode = 'activated';
       this.setActivatedStyle();
     } else {
       this.mode = 'default';
       this.setDefaultStyle();
     }
+    this._updatingStyle = false;
   }
 }
