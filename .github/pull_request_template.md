@@ -13,9 +13,10 @@ Closes [fill in your issues here]
 - [ ] one can bring the background layer to the front via drag and drop and the tree is not visible afterwards
 - [ ] the info labels change accordingly
 
-### GlobalTimelineCursor:
+### TimelineCursor:
 
 - [ ] scrolls when scrolling in the interactive
+- [ ] with open interactive, scroll position (and cursor position) may be changed with arrow keys
 
 ### Interactive:
 
@@ -32,13 +33,9 @@ Closes [fill in your issues here]
 - [ ] when expanding both morphs the cursor is still visible over all layers
 - [ ] pressing ESC brings one back to the GlobalTimeline
 
-### Editor:
-
-- [ ] with open interactive, scroll position may be changed with arrow keys
-	
 ### Inspector:
 
-- [ ] the tree leafs can be selected to inspect
+- [ ] the tree leaves can be selected to inspect with the target selector
 - [ ] correct values for position, extent and opacity are shown
 - [ ] when setting two keyframes for different position values at different scroll positions, an animation is created and can be viewed
 - [ ] when scrolling in the scrollytelling, created keyframes are shown by a different icon in the inspector
