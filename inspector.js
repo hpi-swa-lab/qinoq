@@ -5,9 +5,18 @@ import { NumberWidget } from 'lively.ide/value-widgets.js';
 import { Button } from 'lively.components';
 import { InteractiveMorphSelector } from 'lively.halos';
 import { disconnect, connect } from 'lively.bindings';
-import { Sequence } from 'interactives-editor';
-import { Keyframe } from './animations.js';
+import { Sequence, Keyframe } from 'interactives-editor';
 import { ColorPickerField } from 'lively.ide/styling/color-picker.js';
+
+const CONSTANTS = {
+  LABEL_X: 10,
+  WIDGET_X: 65,
+  WIDGET_ONE_Y: 0,
+  WIDGET_TWO_Y: 27,
+  KEYFRAME_BUTTON_X: 165,
+  TARGET_PICKER_DIAMETER: 25,
+  TARGET_PICKER_BORDER_RADIUS: 15
+};
 
 export class InteractiveMorphInspector extends Morph {
   static get properties () {
@@ -98,22 +107,22 @@ export class InteractiveMorphInspector extends Morph {
     this.propertyControls[property].label = new Label({
       name: `${property} label`,
       textString: property,
-      position: pt(15, 0)
+      position: pt(CONSTANTS.LABEL_X, 0)
     });
     switch (propType) {
       case 'point':
-        this.propertyControls[property].x = new NumberWidget({ position: pt(65, 0) });
-        this.propertyControls[property].y = new NumberWidget({ position: pt(65, 27) });
+        this.propertyControls[property].x = new NumberWidget({ position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y) });
+        this.propertyControls[property].y = new NumberWidget({ position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_TWO_Y) });
         break;
       case 'color':
-        this.propertyControls[property].color = new ColorPickerField({ position: pt(65, 0), colorValue: this.targetMorph[property] });
+        this.propertyControls[property].color = new ColorPickerField({ position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y), colorValue: this.targetMorph[property] });
         break;
       case 'number':
         this.buildNumberPropertyControl(property);
         break;
     }
     this.propertyControls[property].keyframe = new KeyframeButton({
-      position: pt(165, 0),
+      position: pt(CONSTANTS.KEYFRAME_BUTTON_X, CONSTANTS.WIDGET_ONE_Y),
       inspector: this,
       property,
       propType,
@@ -131,7 +140,7 @@ export class InteractiveMorphInspector extends Morph {
     let unit = '';
     let min = -Infinity;
     let max = Infinity;
-    if (spec.isFloat && spec.max == 1) {
+    if (spec.isFloat && spec.max === 1) {
       // Use a percentage value instead of just numbers
       unit = '%';
       floatingPoint = false; // Numbers have too many digits with floating point
@@ -139,21 +148,20 @@ export class InteractiveMorphInspector extends Morph {
       max = 100;
     }
 
-    this.propertyControls[property].number = new NumberWidget({ position: pt(65, 0), floatingPoint, unit, min, max });
+    this.propertyControls[property].number = new NumberWidget({ position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y), floatingPoint, unit, min, max });
   }
 
   buildTargetPicker () {
     this.ui.targetPicker = new Button({
       name: 'targetPicker',
       padding: rect(2, 2, 0, 0),
-      borderRadius: 15,
+      borderRadius: CONSTANTS.TARGET_PICKER_BORDER_RADIUS,
       master: {
         auto: 'styleguide://System/buttons/light'
       },
       tooltip: 'Choose Inspection Target',
       label: Icon.textAttribute('crosshairs'),
-      extent: pt(25, 25),
-      position: pt(5, 5)
+      extent: pt(CONSTANTS.TARGET_PICKER_DIAMETER, CONSTANTS.TARGET_PICKER_DIAMETER)
     });
     this.ui.targetPicker.onMouseDown = async (evt) => {
       this.targetMorph = await InteractiveMorphSelector.selectMorph($world, null, morph => morph._morphInInteractive);
