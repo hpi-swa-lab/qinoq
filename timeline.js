@@ -79,10 +79,10 @@ export class Timeline extends Morph {
     this.addMorph(this.ui.layerInfoContainer);
   }
 
-  createTimelineLayer (layer, addIndex = 0, name = undefined) {
+  createTimelineLayer (layer, index = 0, name = undefined) {
     const timelineLayer = this.getTimelineLayer();
     timelineLayer.initialize(this.ui.layerContainer, layer);
-    this.ui.layerContainer.addMorphAt(timelineLayer, addIndex);
+    this.ui.layerContainer.addMorphAt(timelineLayer, index);
     const layerInfo = new Morph();
     layerInfo.height = CONSTANTS.LAYER_HEIGHT;
     layerInfo.layerLabel = (new Label({
@@ -90,14 +90,14 @@ export class Timeline extends Morph {
     }));
     timelineLayer.layerInfo = layerInfo;
     layerInfo.addMorph(layerInfo.layerLabel);
-    this.ui.layerInfoContainer.addMorphAt(layerInfo, addIndex);
+    this.ui.layerInfoContainer.addMorphAt(layerInfo, index);
     this._timelineLayerDict[layer.id] = timelineLayer;
     return timelineLayer;
   }
 
   arrangeLayerInfos () {
     this.ui.layerInfoContainer.removeAllMorphs();
-    const layerInfos = Array(this.timelineLayers.length).fill(0);
+    const layerInfos = new Array(this.timelineLayers.length);
     this.timelineLayers.forEach(timelineLayer => {
       layerInfos[timelineLayer.index] = timelineLayer.layerInfo;
     });
@@ -137,7 +137,7 @@ export class Timeline extends Morph {
   }
 
   onLoadContent (content) {
-    /* subclass responsibility */
+    throw new Error('Subclass resposibility');
   }
 
   onScrollChange (scrollPosition) {
@@ -146,15 +146,15 @@ export class Timeline extends Morph {
   }
 
   getDisplayValueFromScroll (scrollPosition) {
-    /* subclass responsibility */
+    throw new Error('Subclass resposibility');
   }
 
   getPositionFromScroll (scrollPosition) {
-    /* subclass responsibility */
+    throw new Error('Subclass resposibility');
   }
 
   getScrollFromPosition (positionPosition) {
-    /* subclass responsibility */
+    throw new Error('Subclass resposibility');
   }
 
   get editor () {
@@ -222,11 +222,6 @@ export class GlobalTimeline extends Timeline {
 }
 
 export class SequenceTimeline extends Timeline {
-  initialize () {
-    super.initialize();
-    this.ui.layerContainer.layout.orderByIndex = true;
-  }
-
   createOverviewTimelineLayer (morph) {
     const timelineLayer = super.createTimelineLayer(morph);
     timelineLayer.addCollapseToggle();
@@ -235,11 +230,8 @@ export class SequenceTimeline extends Timeline {
 
   onLoadContent (sequence) {
     this.sequence = sequence;
-
     this.sequence.submorphs.forEach(morph => {
       const timelineLayer = this.createOverviewTimelineLayer(morph);
-      // this is more or less just a visual placeholder
-      // when keyframe editing capabilities are introduced, this should probably pulled out into a class
       this.addTimelineKeyframesForLayer(timelineLayer);
     });
   }
