@@ -2,6 +2,7 @@ import { Morph, Icon, HorizontalLayout, ProportionalLayout, Label, VerticalLayou
 import { pt, LinearGradient, rect, Color } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 import { COLOR_SCHEME } from './colors.js';
+import { Sequence } from 'interactives-editor';
 
 const CONSTANTS = {
   LAYER_INFO_WIDTH: 50,
@@ -360,6 +361,13 @@ export class TimelineKeyframe extends Morph {
 
   removeMorph () {
     super.remove();
+  }
+
+  onMouseUp (evt) {
+    const sequence = Sequence.getSequenceOfMorph(this.animation.target);
+    const scrollPosition = sequence.start + (sequence.duration * this.keyframe.position);
+    // TODO: find a better way to reference the interactive or the editor
+    this.owner.timeline.owner.interactiveScrollPosition = scrollPosition;
   }
 
   get isTimelineKeyframe () {
