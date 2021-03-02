@@ -70,7 +70,10 @@ export class InteractiveMorphInspector extends Morph {
   }
 
   get sequence () {
-    return Sequence.getSequenceOfMorph(this.targetMorph);
+    if (this.targetMorph) {
+      return Sequence.getSequenceOfMorph(this.targetMorph);
+    }
+    return undefined;
   }
 
   get propertiesToDisplay () {
