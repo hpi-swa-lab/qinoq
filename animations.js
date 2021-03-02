@@ -1,10 +1,9 @@
 import { pt } from 'lively.graphics';
 import { arr } from 'lively.lang';
 class Animation {
-  constructor (targetMorph, property, interpolation = Animation.lerp) {
+  constructor (targetMorph, property) {
     this.target = targetMorph;
     this.property = property;
-    this.interpolation = interpolation;
     this.keyframes = [];
   }
 
@@ -50,12 +49,29 @@ class Animation {
   }
 
   // Linear Interpolation
-  static lerp (progress, start, end) {
-    return (progress - start.position) / (end.position - start.position);
+  set progress (progress) {
+    const { start, end } = this.getClosestKeyframes(progress);
+    if (!!start && !!end) {
+      this.target[this.property] = this.interpolate(progress, start, end);
+      return;
+    }
+    if (start) {
+      this.target[this.property] = start.value;
+    }
+    if (end) {
+      this.target[this.property] = end.value;
+    }
   }
 
-  set progress (progress) {
-    // Do some math (subclass responsibility)
+  // Linear Interpolation helper
+  lerp (start, end, t) {
+    return (t - start.position) / (end.position - start.position);
+  }
+
+  interpolate (progress, start, end) {
+    // Subclass responsibility
+    // Each animation type implements an interpolate type that interpolates the corresponding type
+    throw new Error('Subclass responsibility');
   }
 }
 
@@ -78,20 +94,9 @@ export class Keyframe {
 }
 
 export class NumberAnimation extends Animation {
-  set progress (progress) {
-    const { start, end } = this.getClosestKeyframes(progress);
-    if (!!start && !!end) {
-      const factor = this.interpolation(progress, start, end);
-      const value = start.value + (end.value - start.value) * factor;
-      this.target[this.property] = value;
-      return;
-    }
-    if (start) {
-      this.target[this.property] = start.value;
-    }
-    if (end) {
-      this.target[this.property] = end.value;
-    }
+  interpolate (progress, end, start) {
+    const factor = this.lerp(start, end, progress);
+    return start.value + (end.value - start.value) * factor;
   }
 
   get type () {
@@ -110,21 +115,10 @@ export class PointAnimation extends Animation {
     return animation;
   }
 
-  set progress (progress) {
-    const { start, end } = this.getClosestKeyframes(progress);
-    if (!!start && !!end) {
-      const factor = this.interpolation(progress, start, end);
-      const value = pt(start.value.x + (end.value.x - start.value.x) * factor,
-        start.value.y + (end.value.y - start.value.y) * factor);
-      this.target[this.property] = value;
-      return;
-    }
-    if (start) {
-      this.target[this.property] = start.value;
-    }
-    if (end) {
-      this.target[this.property] = end.value;
-    }
+  interpolate (progress, end, start) {
+    const factor = this.lerp(start, end, progress);
+    return pt(start.value.x + (end.value.x - start.value.x) * factor,
+      start.value.y + (end.value.y - start.value.y) * factor);
   }
 
   get type () {
@@ -133,20 +127,9 @@ export class PointAnimation extends Animation {
 }
 
 export class ColorAnimation extends Animation {
-  set progress (progress) {
-    const { start, end } = this.getClosestKeyframes(progress);
-    if (!!start && !!end) {
-      const factor = this.interpolation(progress, start, end);
-      const value = start.value.interpolate(factor, end.value);
-      this.target[this.property] = value;
-      return;
-    }
-    if (start) {
-      this.target[this.property] = start.value;
-    }
-    if (end) {
-      this.target[this.property] = end.value;
-    }
+  interpolate (progress, end, start) {
+    const factor = this.lerp(start, end, progress);
+    return start.value.interpolate(factor, end.value);
   }
 
   get type () {
