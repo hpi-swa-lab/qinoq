@@ -69,6 +69,10 @@ export class InteractiveMorphInspector extends Morph {
     return this.owner.interactive;
   }
 
+  get sequence () {
+    return Sequence.getSequenceOfMorph(this.targetMorph);
+  }
+
   get propertiesToDisplay () {
     const possible = Object.keys(this.possibleProperties);
     return possible.filter(prop => prop in this.targetMorph);
@@ -109,7 +113,8 @@ export class InteractiveMorphInspector extends Morph {
       position: pt(165, 0),
       inspector: this,
       property,
-      propType
+      propType,
+      sequence: this.sequence
     });
     this.propertyControls[property].keyframe.initialize();
     this.ui[property] = new Morph();
@@ -302,7 +307,7 @@ class KeyframeButton extends Morph {
         values: ['default', 'activated']
       },
       inspector: { },
-      animation: {},
+      animation: { },
       sequence: {
         set (s) {
           if (this.sequence) {
@@ -332,12 +337,12 @@ class KeyframeButton extends Morph {
 
   initialize () {
     this.setDefaultStyle();
+    this.animation = this.sequence.getAnimationForMorphProperty(this.target, this.property);
   }
 
   onMouseUp (evt) {
     this.setActivatedStyle();
     this.mode = 'activated';
-    this.sequence = Sequence.getSequenceOfMorph(this.target);
     this.animation = this.sequence.addKeyframeForMorph(new Keyframe(this.sequence.progress, this.currentValue), this.target, this.property, this.propType);
   }
 
@@ -381,7 +386,11 @@ class KeyframeButton extends Morph {
   }
 
   updateStyle () {
+    if (!this.animation) {
+      return;
+    }
     const animationPosition = this.sequence.progress;
+
     if (this.animation.getKeyframeAt(animationPosition)) {
       this.mode = 'activated';
       this.setActivatedStyle();

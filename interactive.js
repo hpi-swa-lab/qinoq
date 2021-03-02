@@ -370,12 +370,19 @@ export class Sequence extends Morph {
     this.animations.push(animation);
   }
 
-  // Generic interface to add a keyframe to a sequence
-  addKeyframeForMorph (keyframe, morph, property, proptype = 'point') {
+  getAnimationForMorphProperty (morph, property) {
+    // Assumes only one animation per property/morph combination
     const possibleAnimations = this.animations.filter(animation => animation.target === morph && animation.property === property);
     if (possibleAnimations.length > 0) {
-      const existingAnimation = possibleAnimations[0]; // Assumes only one animation per property/morph combination
+      return possibleAnimations[0];
+    }
+    return undefined;
+  }
 
+  // Generic interface to add a keyframe to a sequence
+  addKeyframeForMorph (keyframe, morph, property, proptype = 'point') {
+    const existingAnimation = this.getAnimationForMorphProperty(morph, property);
+    if (existingAnimation) {
       existingAnimation.addKeyframe(keyframe);
       return existingAnimation;
     }
