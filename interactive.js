@@ -1,4 +1,4 @@
-import { Morph, Ellipse, Polygon } from 'lively.morphic';
+import { Morph, Image, Ellipse, Polygon } from 'lively.morphic';
 import { Color, pt } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
@@ -19,8 +19,8 @@ export class Interactive extends Morph {
     night.layer = backgroundLayer;
     const tree = Sequence.treeExample();
     tree.layer = middleLayer;
-    const sun = Sequence.sunExample();
-    sun.layer = foregroundLayer;
+    const sky = Sequence.skyExample();
+    sky.layer = foregroundLayer;
 
     interactive.addLayer(backgroundLayer);
     interactive.addLayer(middleLayer);
@@ -28,7 +28,7 @@ export class Interactive extends Morph {
     interactive.addSequence(day);
     interactive.addSequence(night);
     interactive.addSequence(tree);
-    interactive.addSequence(sun);
+    interactive.addSequence(sky);
     interactive.redraw();
     return interactive;
   }
@@ -302,18 +302,6 @@ export class Sequence extends Morph {
     const vertices = [pt(60, 0), pt(90, 50), pt(70, 50), pt(100, 100), pt(70, 100), pt(110, 150), pt(10, 150), pt(50, 100), pt(20, 100), pt(50, 50), pt(30, 50)];
     const crownMorph = new Polygon({ fill: Color.rgbHex('74a57f'), vertices: vertices, name: 'leafs' });
 
-    const stemAnimation = new PointAnimation(stemMorph, 'extent');
-    stemAnimation.addKeyframes([new Keyframe(0, pt(10, 10), 'start'), new Keyframe(0.7, pt(30, 60), 'end')]);
-    treeSequence.addAnimation(stemAnimation);
-
-    const crownAnimation = new PointAnimation(crownMorph, 'extent');
-    crownAnimation.addKeyframes([new Keyframe(0, pt(100, 20), 'start'), new Keyframe(0.5, pt(100.0, 150.0), 'end')]);
-    treeSequence.addAnimation(crownAnimation);
-
-    const crownAnimation2 = new PointAnimation(crownMorph, 'position');
-    crownAnimation2.addKeyframes([new Keyframe(0, pt(165, 220), 'start'), new Keyframe(0.5, pt(165, 110), 'end')]);
-    treeSequence.addAnimation(crownAnimation2);
-
     treeSequence.addMorph(stemMorph);
     treeSequence.addMorph(crownMorph);
     stemMorph.position = pt(200, 220);
@@ -321,20 +309,27 @@ export class Sequence extends Morph {
     return treeSequence;
   }
 
-  static sunExample () {
-    const sunSequence = new Sequence({ name: 'sun sequence' });
-    sunSequence.initialize(200, 300);
+  static skyExample () {
+    const skySequence = new Sequence({ name: 'sky sequence' });
+    skySequence.initialize(200, 300);
     const sun = new Ellipse({ name: 'sun', extent: pt(70, 70), fill: Color.rgb(250, 250, 20), position: pt(0, 350) });
-    sunSequence.addMorph(sun);
+    skySequence.addMorph(sun);
+
+    const cloud = new Image({ name: 'cloud', extent: pt(100, 50), imageUrl: 'https://cdn.pixabay.com/photo/2017/06/20/04/42/cloud-2421760_960_720.png' });
+
+    skySequence.addMorph(cloud);
+    const cloudPositionAnimation = new PointAnimation(cloud, 'position');
+    cloudPositionAnimation.addKeyframes([new Keyframe(0, pt(100, 50), 'start'), new Keyframe(1, pt(200, 50), 'end')]);
+    skySequence.addAnimation(cloudPositionAnimation);
 
     const sunPositionAnimation = new PointAnimation(sun, 'position');
     sunPositionAnimation.addKeyframes([new Keyframe(0, pt(0, 350), 'start'), new Keyframe(0.5, pt(40, 80), 'middle'), new Keyframe(1, pt(180, 15), 'end')]);
-    sunSequence.addAnimation(sunPositionAnimation);
+    skySequence.addAnimation(sunPositionAnimation);
 
     const sunScaleAnimation = new NumberAnimation(sun, 'scale');
     sunScaleAnimation.addKeyframes([new Keyframe(0, 0.6, 'start'), new Keyframe(0.6, 1, 'end')]);
-    sunSequence.addAnimation(sunScaleAnimation);
-    return sunSequence;
+    skySequence.addAnimation(sunScaleAnimation);
+    return skySequence;
   }
 
   get end () {
