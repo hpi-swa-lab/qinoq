@@ -1,8 +1,7 @@
 /* global it, describe, beforeEach */
 import { expect } from 'mocha-es6';
 import { Morph } from 'lively.morphic';
-import { PointAnimation, Keyframe } from '../animations.js';
-import { pt } from 'lively.graphics';
+import { NumberAnimation, Keyframe } from '../animations.js';
 
 // TODO:
 // PointAnimation concrete implementation
@@ -14,13 +13,12 @@ describe('Animation object', () => {
   const addKeyFrames = function () {
     keyFrameOne = new Keyframe(0, 1);
     keyFrameTwo = new Keyframe(10, 0);
-    animation.addKeyframe(keyFrameOne);
-    animation.addKeyframe(keyFrameTwo);
+    animation.addKeyframes([keyFrameOne, keyFrameTwo]);
   };
 
   beforeEach(() => {
     targetMorph = new Morph();
-    animation = new PointAnimation(targetMorph, 'opacity');
+    animation = new NumberAnimation(targetMorph, 'opacity');
   });
 
   it('holds keyframes in correct order', () => {
@@ -41,8 +39,8 @@ describe('Animation object', () => {
 
   it('interpolates linearly', () => {
     addKeyFrames();
-    expect(PointAnimation.lerp(0, keyFrameOne, keyFrameTwo)).equals(0);
-    expect(PointAnimation.lerp(5, keyFrameOne, keyFrameTwo)).equals(0.5);
-    expect(PointAnimation.lerp(10, keyFrameOne, keyFrameTwo)).equals(1);
+    expect(animation.lerp(keyFrameOne, keyFrameTwo, 0)).equals(0);
+    expect(animation.lerp(keyFrameOne, keyFrameTwo, 5)).equals(0.5);
+    expect(animation.lerp(keyFrameOne, keyFrameTwo, 10)).equals(1);
   });
 });
