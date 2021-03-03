@@ -255,12 +255,20 @@ export class Sequence extends Morph {
           this.applyUnfocusedEffect();
         }
       },
-      originalOpacity: { defaultValue: 1 },
+      _originalOpacity: { defaultValue: 1 },
+      _originalGrayscale: { defualtValue: 0 },
       opacity: {
         defaultValue: 1,
         set (opacity) {
           this.setProperty('opacity', opacity);
-          if (!this._lockOpacity) this._originalOpacity = opacity;
+          if (!this._lockEffect) this._originalOpacity = opacity;
+        }
+      },
+      grayScale: {
+        defaultValue: 0,
+        set (grayscale) {
+          this.setProperty('grayscale', grayscale);
+          if (!this._lockEffect) this._originalGrayscale = grayscale;
         }
       },
       animations: {
@@ -359,9 +367,10 @@ export class Sequence extends Morph {
 
   applyUnfocusedEffect () {
     // stop opacity setter from copying changes to originalOpacity
-    this._lockOpacity = true;
-    this.opacity = this.focused ? this._originalOpacity : 0.2; // TODO: define a better effect
-    this._lockOpacity = true;
+    this._lockEffect = true;
+    this.opacity = this.focused ? this._originalOpacity : 0.2;
+    this.grayscale = this.focused ? this._originalGrayscale : 1;
+    this._lockEffect = false;
   }
 
   updateProgress (scrollPosition) {
