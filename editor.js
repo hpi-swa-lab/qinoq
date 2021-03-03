@@ -52,13 +52,12 @@ export class InteractivesEditor extends Morph {
   }
 
   initializePanels () {
-    this.sequenceOverview = this.addMorph(new SequenceOverview({ position: pt(0, 0) }));
-    this.preview = new Preview();
-    this.preview.initialize(this);
+    this.sequenceOverview = this.addMorph(new SequenceOverview({ position: pt(0, 0), editor: this }));
+    this.preview = new Preview({ editor: this });
     this.addMorph(this.preview);
-    this.morphInspector = this.addMorph(new InteractiveMorphInspector({ position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0), extent: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT), borderWidth: CONSTANTS.BORDER_WIDTH }));
+    this.morphInspector = this.addMorph(new InteractiveMorphInspector({ position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0), extent: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT), borderWidth: CONSTANTS.BORDER_WIDTH, editor: this }));
     this.morphInspector.initialize();
-    this.globalTimeline = new GlobalTimeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT) });
+    this.globalTimeline = new GlobalTimeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT), editor: this });
 
     this.globalTimeline.initialize();
     this.addMorph(this.globalTimeline);
@@ -93,7 +92,7 @@ export class InteractivesEditor extends Morph {
   }
 
   initializeSequenceTimeline (sequence) {
-    const sequenceTimeline = new SequenceTimeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT), name: `${sequence.name} timeline` });
+    const sequenceTimeline = new SequenceTimeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT), name: `${sequence.name} timeline`, editor: this });
     this.addMorph(sequenceTimeline);
     sequenceTimeline.initialize();
     sequenceTimeline.loadContent(sequence);
@@ -163,12 +162,9 @@ class Preview extends Morph {
       },
       position: {
         defaultValue: pt(CONSTANTS.SIDEBAR_WIDTH, 0)
-      }
+      },
+      editor: {}
     };
-  }
-
-  initialize (editor) {
-    this.editor = editor;
   }
 
   onDrop (evt) {
@@ -205,7 +201,8 @@ class SequenceOverview extends Morph {
       },
       borderWidth: {
         defaultValue: CONSTANTS.BORDER_WIDTH
-      }
+      },
+      editor: {}
     };
   }
 }
