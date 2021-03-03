@@ -1,6 +1,9 @@
 /* global it, describe, beforeEach */
 import { expect } from 'mocha-es6';
 import { Sequence, Layer } from 'interactives-editor';
+import { Morph } from 'lively.morphic';
+import { Keyframe, NumberAnimation } from '../animations.js';
+import { clone } from 'lively.lang/object.js';
 
 describe('Sequence object', () => {
   // TODO: test functions regarding animations
@@ -36,5 +39,40 @@ describe('Sequence object', () => {
     sequence.layer.hidden = true;
     sequence.updateProgress(0);
     expect(sequence.isDisplayed()).to.be.false;
+  });
+
+  it('return an animation for a morph for a property', () => {
+    const morph = new Morph();
+    sequence.addMorph(morph);
+    const opacityAnimation = new NumberAnimation(morph, 'opacity');
+    const keyFrame = new Keyframe(0, 1);
+    opacityAnimation.addKeyframe(keyFrame);
+    expect(sequence.getAnimationForMorphProperty(morph, 'opacity')).to.be.undefined;
+    sequence.addAnimation(opacityAnimation);
+    expect(sequence.getAnimationForMorphProperty(morph, 'opacity')).to.deep.equal(opacityAnimation);
+  });
+
+  it('adds a new keyframe to an existing animation', () => {
+    const morph = new Morph();
+    sequence.addMorph(morph);
+    const opacityAnimation = new NumberAnimation(morph, 'opacity');
+    const keyFrame = new Keyframe(0, 1);
+    opacityAnimation.addKeyframe(keyFrame);
+    sequence.addAnimation(opacityAnimation);
+    const newKeyframe = new Keyframe(0.8, 0.8);
+    sequence.addKeyframeForMorph(newKeyframe, morph, 'opacity', 'number');
+    expect(sequence.getAnimationsForMorph(morph)).to.have.length(1);
+  });
+
+  it('adds a new keyframe to a new animation', () => {
+    const morph = new Morph();
+    sequence.addMorph(morph);
+    const opacityAnimation = new NumberAnimation(morph, 'opacity');
+    const keyFrame = new Keyframe(0, 1);
+    opacityAnimation.addKeyframe(keyFrame);
+    sequence.addAnimation(opacityAnimation);
+    const newKeyframe = new Keyframe(0.8, 0.8);
+    sequence.addKeyframeForMorph(newKeyframe, morph, 'rotation', 'number');
+    expect(sequence.getAnimationsForMorph(morph)).to.have.length(2);
   });
 });

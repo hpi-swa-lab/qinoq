@@ -26,6 +26,13 @@ describe('Animation object', () => {
     expect(animation.keyframes).equals([keyFrameOne, keyFrameTwo]);
   });
 
+  it('respects not sorting when adding a new keyframe', () => {
+    addKeyFrames();
+    const newKeyframe = new Keyframe(5, 0.5);
+    animation.addKeyframe(newKeyframe, true);
+    expect(animation.keyframes[2]).equals(newKeyframe);
+  });
+
   it('finds the closest keyframe', () => {
     expect(animation.getClosestKeyframes()).to.be.empty.and.to.be.an('object');
     keyFrameOne = new Keyframe(10, 0);
