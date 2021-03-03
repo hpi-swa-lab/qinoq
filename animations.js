@@ -1,5 +1,6 @@
 import { pt } from 'lively.graphics';
 import { arr } from 'lively.lang';
+import { Sequence } from 'interactives-editor';
 class Animation {
   constructor (targetMorph, property) {
     this.target = targetMorph;
@@ -95,6 +96,12 @@ export class Keyframe {
     this.position = position;
     this.value = value;
     this.name = name;
+  }
+
+  calculatePositionInScrollyTelling (animationTargetMorph) {
+    const sequence = Sequence.getSequenceOfMorph(animationTargetMorph);
+    const scrollPosition = sequence.start + (sequence.duration * this.position);
+    return scrollPosition;
   }
 }
 
