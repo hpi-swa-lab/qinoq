@@ -297,6 +297,10 @@ export class SequenceTimeline extends Timeline {
     return (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.sequence.progress) + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
   }
 
+  getScrollFromPosition (position) {
+    return position.x / (CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH);
+  }
+
   getDisplayValueFromScroll (scrollPosition) {
     return this.sequence.progress.toFixed(2);
   }
@@ -338,6 +342,7 @@ export class TimelineKeyframe extends Morph {
   initialize (keyframe, animation) {
     this.animation = animation;
     this.keyframe = keyframe;
+    this.draggable = true;
     return this;
   }
 
@@ -381,6 +386,45 @@ export class TimelineKeyframe extends Morph {
     const scrollPosition = this.keyframe.calculatePositionInScrollyTelling(this.animation.target);
     // TODO: find a better way to reference the interactive or the editor
     this.owner.timeline.owner.interactiveScrollPosition = scrollPosition;
+  }
+
+  onDragStart (event) {
+    this.undoStart('keyframe-move');
+    event.hand.dragKeyframeStates = [{
+      timelineKeyframe: this,
+      keyframe: this.keyframe,
+      previousPosition: this.keyframe.position
+    }];
+  }
+
+  onDragEnd (event) {
+    this.undoStop('keyframe-move');
+    const dragStates = event.hand.dragKeyframeStates;
+    if (!this.checkForValidDrag(dragStates)) {
+      dragStates.forEach(dragState => {
+        dragState.keyframe.position = dragState.previousPosition;
+        dragState.timelineKeyframe.position = this.getPositionFromProgress(this.keyframe.position);
+      });
+      // this.env.undoManager.removeLatestUndo(); uncomment as soon as it is merged in the lively.next:master
+    }
+    delete event.hand.dragKeyframeStates;
+  }
+
+  checkForValidDrag (dragStates) {
+    let validDrag = true;
+    dragStates.forEach(dragState => {
+      if (dragState.keyframe.position < 0 || dragState.keyframe.position > 1) {
+        validDrag = false;
+        return true;
+      }
+    });
+    return validDrag;
+  }
+
+  onDrag (event) {
+    super.onDrag(event);
+    this.keyframe.position = this.owner.timeline.getScrollFromPosition(this.position);
+    this.position = this.getPositionFromProgress(this.keyframe.position);
   }
 
   get isTimelineKeyframe () {
