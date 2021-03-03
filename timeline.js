@@ -335,6 +335,12 @@ export class TimelineKeyframe extends Morph {
             this.keyframe.name = this.name;
           }
         }
+      },
+      position: {
+        set (point) {
+          this.setProperty('position', point);
+          if (this.layer) this.keyframe.position = this.layer.timeline.getScrollFromPosition(this.position);
+        }
       }
     };
   }
@@ -344,6 +350,10 @@ export class TimelineKeyframe extends Morph {
     this.keyframe = keyframe;
     this.draggable = true;
     return this;
+  }
+
+  get layer () {
+    return this.owner;
   }
 
   getPositionFromProgress (progress) {
@@ -385,7 +395,7 @@ export class TimelineKeyframe extends Morph {
   onMouseUp (evt) {
     const scrollPosition = this.keyframe.calculatePositionInScrollyTelling(this.animation.target);
     // TODO: find a better way to reference the interactive or the editor
-    this.owner.timeline.owner.interactiveScrollPosition = scrollPosition;
+    this.layer.timeline.owner.interactiveScrollPosition = scrollPosition;
   }
 
   onDragStart (event) {
@@ -400,13 +410,14 @@ export class TimelineKeyframe extends Morph {
   onDragEnd (event) {
     this.undoStop('keyframe-move');
     const dragStates = event.hand.dragKeyframeStates;
-    if (!this.checkForValidDrag(dragStates)) {
+    /* if (!this.checkForValidDrag(dragStates)) {
       dragStates.forEach(dragState => {
         dragState.keyframe.position = dragState.previousPosition;
         dragState.timelineKeyframe.position = this.getPositionFromProgress(this.keyframe.position);
       });
       // this.env.undoManager.removeLatestUndo(); uncomment as soon as it is merged in the lively.next:master
-    }
+    } */
+    this.layer.timeline.owner.interactive.redraw();
     delete event.hand.dragKeyframeStates;
   }
 
@@ -423,7 +434,8 @@ export class TimelineKeyframe extends Morph {
 
   onDrag (event) {
     super.onDrag(event);
-    this.keyframe.position = this.owner.timeline.getScrollFromPosition(this.position);
+    if (this.keyframe.position < 0) this.keyframe.position = 0;
+    if (this.keyframe.position > 1) this.keyframe.position = 1;
     this.position = this.getPositionFromProgress(this.keyframe.position);
   }
 
