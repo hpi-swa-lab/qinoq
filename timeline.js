@@ -26,6 +26,7 @@ export class Timeline extends Morph {
         defaultValue: {}
       },
       interactive: {},
+      editor: {},
       _timelineLayerDict: {
         defaultValue: {}
       },
@@ -42,7 +43,7 @@ export class Timeline extends Morph {
   }
 
   initializeCursor () {
-    this.ui.cursor = new TimelineCursor();
+    this.ui.cursor = new TimelineCursor({ editor: this.editor });
     this.ui.cursor.initialize(0);
     this.ui.layerContainer.addMorph(this.ui.cursor);
     this.ui.cursor.location = this.getPositionFromScroll(0);
@@ -156,19 +157,15 @@ export class Timeline extends Morph {
   getScrollFromPosition (positionPosition) {
     throw new Error('Subclass resposibility');
   }
-
-  get editor () {
-    return this.owner;
-  }
 }
 export class GlobalTimeline extends Timeline {
   createTimelineSequence (sequence) {
-    const seq = new TimelineSequence();
+    const seq = new TimelineSequence({ editor: this.editor });
     seq.initialize(sequence, this.getTimelineLayerFor(sequence.layer));
   }
 
   getNewTimelineLayer () {
-    return new GlobalTimelineLayer();
+    return new GlobalTimelineLayer({ editor: this.editor });
   }
 
   onLoadContent (interactive) {
@@ -244,7 +241,7 @@ export class SequenceTimeline extends Timeline {
 
   addKeyframesForAnimation (animation, timelineLayer) {
     animation.keyframes.forEach(keyframe => {
-      timelineLayer.addMorph(new TimelineKeyframe().initialize(keyframe, animation));
+      timelineLayer.addMorph(new TimelineKeyframe({ editor: this.editor }).initialize(keyframe, animation));
     });
   }
 
@@ -284,7 +281,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   getNewTimelineLayer () {
-    return this._inInitialConstruction ? new OverviewSequenceTimelineLayer() : new SequenceTimelineLayer();
+    return this._inInitialConstruction ? new OverviewSequenceTimelineLayer({ editor: this.editor }) : new SequenceTimelineLayer({ editor: this.editor });
   }
 
   getPositionFromScroll (scrollPosition) {
@@ -326,6 +323,7 @@ export class TimelineKeyframe extends Morph {
         }
       },
       animation: {},
+      editor: {},
       name: {
         type: String,
         set (name) {
@@ -394,8 +392,7 @@ export class TimelineKeyframe extends Morph {
 
   onMouseUp (evt) {
     const scrollPosition = this.keyframe.calculatePositionInScrollyTelling(this.animation.target);
-    // TODO: find a better way to reference the interactive or the editor
-    this.layer.timeline.owner.interactiveScrollPosition = scrollPosition;
+    this.editor.interactiveScrollPosition = scrollPosition;
   }
 
   onDragStart (event) {
@@ -410,14 +407,7 @@ export class TimelineKeyframe extends Morph {
   onDragEnd (event) {
     this.undoStop('keyframe-move');
     const dragStates = event.hand.dragKeyframeStates;
-    /* if (!this.checkForValidDrag(dragStates)) {
-      dragStates.forEach(dragState => {
-        dragState.keyframe.position = dragState.previousPosition;
-        dragState.timelineKeyframe.position = this.getPositionFromProgress(this.keyframe.position);
-      });
-      // this.env.undoManager.removeLatestUndo(); uncomment as soon as it is merged in the lively.next:master
-    } */
-    this.layer.timeline.owner.interactive.redraw();
+    this.editor.interactive.redraw();
     delete event.hand.dragKeyframeStates;
   }
 
@@ -447,6 +437,7 @@ export class TimelineKeyframe extends Morph {
 export class TimelineLayer extends Morph {
   static get properties () {
     return {
+      editor: {},
       layerInfo: {},
       container: {},
       focusable: {
@@ -479,6 +470,7 @@ export class TimelineLayer extends Morph {
   }
 
   get name () {
+    // layer depends on concrete subclass
     return this.layer.name;
   }
 
@@ -683,6 +675,7 @@ export class TimelineSequence extends Morph {
       borderRadius: {
         defaultValue: 3
       },
+      editor: {},
       sequence: {
         set (sequence) {
           this.setProperty('sequence', sequence);
@@ -770,7 +763,7 @@ export class TimelineSequence extends Morph {
   }
 
   onDoubleMouseDown (event) {
-    this.timeline.owner.initializeSequenceView(this.sequence);
+    this.editor.initializeSequenceView(this.sequence);
   }
 
   onMouseDown (event) {
@@ -1042,7 +1035,8 @@ class TimelineCursor extends Morph {
       name: {
         defaultValue: 'cursor'
       },
-      ui: {}
+      ui: {},
+      editor: {}
     };
   }
 

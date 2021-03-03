@@ -48,7 +48,8 @@ export class InteractiveMorphInspector extends Morph {
             this.createConnections();
           }
         }
-      }
+      },
+      editor: {}
     };
   }
 
@@ -75,7 +76,7 @@ export class InteractiveMorphInspector extends Morph {
   }
 
   get interactive () {
-    return this.owner.interactive;
+    return this.editor.interactive;
   }
 
   get sequence () {
@@ -124,6 +125,7 @@ export class InteractiveMorphInspector extends Morph {
     this.propertyControls[property].keyframe = new KeyframeButton({
       position: pt(CONSTANTS.KEYFRAME_BUTTON_X, CONSTANTS.WIDGET_ONE_Y),
       inspector: this,
+      editor: this.editor,
       property,
       propType,
       sequence: this.sequence
@@ -334,6 +336,7 @@ class KeyframeButton extends Morph {
       },
       inspector: { },
       animation: { },
+      editor: {},
       sequence: {
         set (sequence) {
           if (this.sequence) {
@@ -370,7 +373,7 @@ class KeyframeButton extends Morph {
     this.setActivatedStyle();
     this.mode = 'activated';
     this.animation = this.sequence.addKeyframeForMorph(new Keyframe(this.sequence.progress, this.currentValue), this.target, this.property, this.propType);
-    this.inspector.owner.sequenceTimelines.forEach(sequenceTimeline => sequenceTimeline.updateLayers());
+    this.editor.sequenceTimelines.forEach(sequenceTimeline => sequenceTimeline.updateLayers());
   }
 
   // The rest is styling. This may be improved with a master component. See styleguides/keyframe-inspector.json
