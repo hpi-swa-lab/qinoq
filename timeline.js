@@ -339,6 +339,9 @@ export class TimelineKeyframe extends Morph {
           this.setProperty('position', point);
           if (this.layer) this.keyframe.position = this.layer.timeline.getScrollFromPosition(this.position);
         }
+      },
+      draggable: {
+        defaultValue: true
       }
     };
   }
@@ -406,7 +409,6 @@ export class TimelineKeyframe extends Morph {
 
   onDragEnd (event) {
     this.undoStop('keyframe-move');
-    const dragStates = event.hand.dragKeyframeStates;
     this.editor.interactive.redraw();
     delete event.hand.dragKeyframeStates;
   }
@@ -427,6 +429,7 @@ export class TimelineKeyframe extends Morph {
     if (this.keyframe.position < 0) this.keyframe.position = 0;
     if (this.keyframe.position > 1) this.keyframe.position = 1;
     this.position = this.getPositionFromProgress(this.keyframe.position);
+    this.editor.interactive.redraw();
   }
 
   get isTimelineKeyframe () {
@@ -469,11 +472,6 @@ export class TimelineLayer extends Morph {
     return this.owner.owner;
   }
 
-  get name () {
-    // layer depends on concrete subclass
-    return this.layer.name;
-  }
-
   updateLayerPosition () {
     this.timeline.updateLayerPositions();
   }
@@ -506,6 +504,10 @@ export class SequenceTimelineLayer extends TimelineLayer {
     this.tooltip = morph.name;
     this.morph = morph;
   }
+
+  get name () {
+    return this.morph.name;
+  }
 }
 
 export class GlobalTimelineLayer extends TimelineLayer {
@@ -533,6 +535,10 @@ export class GlobalTimelineLayer extends TimelineLayer {
 
   get timelineSequences () {
     return this.submorphs.filter(submorph => !!submorph.isTimelineSequence);
+  }
+
+  get name () {
+    return this.layer.name;
   }
 
   onHoverIn (event) {
