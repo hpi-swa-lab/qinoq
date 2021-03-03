@@ -364,8 +364,7 @@ export class TimelineKeyframe extends Morph {
   }
 
   onMouseUp (evt) {
-    const sequence = Sequence.getSequenceOfMorph(this.animation.target);
-    const scrollPosition = sequence.start + (sequence.duration * this.keyframe.position);
+    const scrollPosition = this.keyframe.calculatePositionInScrollyTelling(this.animation.target);
     // TODO: find a better way to reference the interactive or the editor
     this.owner.timeline.owner.interactiveScrollPosition = scrollPosition;
   }
