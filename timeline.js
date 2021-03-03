@@ -2,7 +2,6 @@ import { Morph, Icon, HorizontalLayout, ProportionalLayout, Label, VerticalLayou
 import { pt, LinearGradient, rect, Color } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 import { COLOR_SCHEME } from './colors.js';
-import { Sequence } from 'interactives-editor';
 
 const CONSTANTS = {
   LAYER_INFO_WIDTH: 50,
