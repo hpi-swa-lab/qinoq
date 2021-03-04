@@ -36,7 +36,8 @@ export class Timeline extends Morph {
     };
   }
 
-  initialize () {
+  initialize (editor) {
+    this.editor = editor;
     this.layout = new ProportionalLayout({ lastExtent: this.extent });
     this.initializeLayerInfoContainer();
     this.initializeLayerContainer();
@@ -82,7 +83,7 @@ export class Timeline extends Morph {
 
   createTimelineLayer (layer, index = 0, name = undefined) {
     const timelineLayer = this.getNewTimelineLayer();
-    timelineLayer.initialize(this.ui.layerContainer, layer);
+    timelineLayer.initialize(this.editor, this.ui.layerContainer, layer);
     this.ui.layerContainer.addMorphAt(timelineLayer, index);
     const layerInfo = new Morph();
     layerInfo.height = CONSTANTS.LAYER_HEIGHT;
@@ -164,8 +165,8 @@ export class Timeline extends Morph {
 }
 export class GlobalTimeline extends Timeline {
   createTimelineSequence (sequence) {
-    const seq = new TimelineSequence({ editor: this.editor });
-    seq.initialize(sequence, this.getTimelineLayerFor(sequence.layer));
+    const seq = new TimelineSequence();
+    seq.initialize(this.editor, sequence, this.getTimelineLayerFor(sequence.layer));
   }
 
   getNewTimelineLayer () {
@@ -460,7 +461,9 @@ export class TimelineLayer extends Morph {
     };
   }
 
-  initialize (container, layer) {
+  initialize (editor, container, layer) {
+    this.editor = editor;
+    this.layer = layer;
     this.container = container;
     this.addActiveAreaMorph();
   }
@@ -474,7 +477,7 @@ export class TimelineLayer extends Morph {
   }
 
   get timeline () {
-    return this.owner.owner;
+    return this.editor.globalTimeline;
   }
 
   updateLayerPosition () {
@@ -720,8 +723,9 @@ export class TimelineSequence extends Morph {
     };
   }
 
-  initialize (sequence, timelineLayer) {
+  initialize (editor, sequence, timelineLayer) {
     this._isInitializing = true;
+    this.editor = editor;
     this.sequence = sequence;
     this.timelineLayer = timelineLayer;
 
