@@ -61,7 +61,7 @@ export class InteractivesEditor extends Morph {
       extent: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT),
       borderWidth: CONSTANTS.BORDER_WIDTH
     });
-    this.morphInspector.initialize();
+    this.morphInspector.initialize(this);
     this.addMorph(this.morphInspector);
 
     this.globalTimeline = new GlobalTimeline({
@@ -149,13 +149,12 @@ export class InteractivesEditor extends Morph {
   get keybindings () {
     return [
       { keys: 'Left', command: 'move scrollposition backwards' },
-      { keys: 'Right', command: 'move scrollposition forward' },
-      { keys: 'Esc', command: 'show global timeline' }
+      { keys: 'Right', command: 'move scrollposition forward' }
     ].concat(super.keybindings);
   }
 
   get sequenceTimelines () {
-    return this.tabs.map(tab => tab.content);
+    return this.tabs.filter(tab => tab !== this.globalTab).map(tab => tab.content);
   }
 
   get tabs () {
@@ -193,15 +192,6 @@ export class InteractivesEditor extends Morph {
             this.interactive.scrollPosition--;
           }
         }
-      },
-      {
-        name: 'show global timeline',
-        doc: 'Show the global timeline',
-        exec: () => {
-          if (this.interactive) {
-            this.showGlobalTimeline();
-          }
-        }
       }];
   }
 }
@@ -224,8 +214,16 @@ class Preview extends Morph {
       position: {
         defaultValue: pt(CONSTANTS.SIDEBAR_WIDTH, 0)
       },
-      editor: {}
+      _editor: {}
     };
+  }
+
+  get editor () {
+    return this.editor;
+  }
+
+  initialize (editor) {
+    this._editor = editor;
   }
 
   onDrop (evt) {

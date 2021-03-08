@@ -49,8 +49,12 @@ export class InteractiveMorphInspector extends Morph {
           }
         }
       },
-      editor: {}
+      _editor: {}
     };
+  }
+
+  get editor () {
+    return this._editor;
   }
 
   get possibleProperties () {
@@ -125,12 +129,11 @@ export class InteractiveMorphInspector extends Morph {
     this.propertyControls[property].keyframe = new KeyframeButton({
       position: pt(CONSTANTS.KEYFRAME_BUTTON_X, CONSTANTS.WIDGET_ONE_Y),
       inspector: this,
-      editor: this.editor,
       property,
       propType,
       sequence: this.sequence
     });
-    this.propertyControls[property].keyframe.initialize();
+    this.propertyControls[property].keyframe.initialize(this.editor);
     this.ui[property] = new Morph();
     Object.values(this.propertyControls[property]).forEach(morph => this.ui[property].addMorph(morph));
     this.ui.propertyPane.addMorph(this.ui[property]);
@@ -300,7 +303,8 @@ export class InteractiveMorphInspector extends Morph {
     this._updatingMorph = false;
   }
 
-  async initialize () {
+  async initialize (editor) {
+    this._editor = editor;
     this.build();
   }
 
@@ -347,7 +351,7 @@ class KeyframeButton extends Morph {
       },
       inspector: { },
       animation: { },
-      editor: {},
+      _editor: {},
       sequence: {
         set (sequence) {
           if (this.sequence) {
@@ -367,6 +371,10 @@ class KeyframeButton extends Morph {
     };
   }
 
+  get editor () {
+    return this._editor;
+  }
+
   get target () {
     return this.inspector.targetMorph;
   }
@@ -375,7 +383,8 @@ class KeyframeButton extends Morph {
     return this.target[this.property];
   }
 
-  initialize () {
+  initialize (editor) {
+    this._editor = editor;
     this.setDefaultStyle();
     this.animation = this.sequence.getAnimationForMorphProperty(this.target, this.property);
   }

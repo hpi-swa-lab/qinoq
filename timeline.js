@@ -28,7 +28,7 @@ export class Timeline extends Morph {
         }
       },
       interactive: {},
-      editor: {},
+      _editor: {},
       _timelineLayerDict: {
         defaultValue: {}
       },
@@ -38,15 +38,19 @@ export class Timeline extends Morph {
     };
   }
 
+  get editor () {
+    return this._editor;
+  }
+
   initialize (editor) {
-    this.editor = editor;
+    this._editor = editor;
     this.layout = new ProportionalLayout({ lastExtent: this.extent });
     this.initializeLayerInfoContainer();
     this.initializeLayerContainer();
   }
 
   initializeCursor () {
-    this.ui.cursor = new TimelineCursor({ editor: this.editor });
+    this.ui.cursor = new TimelineCursor();
     this.ui.cursor.initialize(0);
     this.ui.layerContainer.addMorph(this.ui.cursor);
     this.ui.cursor.location = this.getPositionFromScroll(0);
@@ -81,6 +85,10 @@ export class Timeline extends Morph {
       })
     });
     this.addMorph(this.ui.layerInfoContainer);
+  }
+
+  getNewTimelineLayer () {
+    throw new Error('Subclass resposibility');
   }
 
   createTimelineLayer (layer, index = 0, name = undefined) {
@@ -142,7 +150,7 @@ export class Timeline extends Morph {
     this.onScrollChange(this.editor.interactiveScrollPosition);
     connect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange');
     connect(content, 'name', this, 'name', { converter: newName => `${newName.toLowerCase()} timeline` }).update(content.name);
-	this._inInitialConstruction = false;
+    this._inInitialConstruction = false;
   }
 
   onLoadContent (content) {
@@ -174,15 +182,13 @@ export class GlobalTimeline extends Timeline {
   }
 
   getNewTimelineLayer () {
-    return new GlobalTimelineLayer({ editor: this.editor });
+    return new GlobalTimelineLayer();
   }
 
   onLoadContent (interactive) {
     this.interactive = interactive;
 
-    this.interactive.layers.forEach(layer => {
-      const timelineLayer = this.createTimelineLayer(layer);
-    });
+    this.interactive.layers.forEach(layer => this.createTimelineLayer(layer));
     this.interactive.sequences.forEach(sequence => {
       const timeline_seq = this.createTimelineSequence(sequence);
       connect(sequence, 'name', timeline_seq, 'caption');
@@ -246,7 +252,7 @@ export class SequenceTimeline extends Timeline {
   isSequenceTimeline () {
     return true;
   }
-  
+
   createOverviewTimelineLayer (morph) {
     const timelineLayer = super.createTimelineLayer(morph);
     timelineLayer.addCollapseToggle();
@@ -269,7 +275,7 @@ export class SequenceTimeline extends Timeline {
 
   addKeyframesForAnimation (animation, timelineLayer) {
     animation.keyframes.forEach(keyframe => {
-      timelineLayer.addMorph(new TimelineKeyframe({ editor: this.editor }).initialize(keyframe, animation));
+      timelineLayer.addMorph(new TimelineKeyframe().initialize(this.editor, keyframe, animation));
     });
   }
 
@@ -309,7 +315,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   getNewTimelineLayer () {
-    return this._inInitialConstruction ? new OverviewSequenceTimelineLayer({ editor: this.editor }) : new SequenceTimelineLayer({ editor: this.editor });
+    return this._inInitialConstruction ? new OverviewSequenceTimelineLayer() : new SequenceTimelineLayer();
   }
 
   getPositionFromScroll (scrollPosition) {
@@ -351,7 +357,6 @@ export class TimelineKeyframe extends Morph {
         }
       },
       animation: {},
-      editor: {},
       name: {
         type: String,
         set (name) {
@@ -370,11 +375,17 @@ export class TimelineKeyframe extends Morph {
       },
       draggable: {
         defaultValue: true
-      }
+      },
+	  _editor: {}
     };
   }
 
-  initialize (keyframe, animation) {
+  get editor () {
+    return this._editor;
+  }
+
+  initialize (editor, keyframe, animation) {
+    this._editor = editor;
     this.animation = animation;
     this.keyframe = keyframe;
     this.draggable = true;
@@ -469,7 +480,6 @@ export class TimelineKeyframe extends Morph {
 export class TimelineLayer extends Morph {
   static get properties () {
     return {
-      editor: {},
       layerInfo: {},
       container: {},
       focusable: {
@@ -480,13 +490,17 @@ export class TimelineLayer extends Morph {
       },
       height: {
         defaultValue: CONSTANTS.LAYER_HEIGHT
-      }
+      },
+	  _editor: {}
     };
   }
 
-  initialize (editor, container, layer) {
-    this.editor = editor;
-    this.layer = layer;
+  get editor () {
+    return this._editor;
+  }
+
+  initialize (editor, container) {
+    this._editor = editor;
     this.container = container;
     this.addActiveAreaMorph();
   }
@@ -500,7 +514,7 @@ export class TimelineLayer extends Morph {
   }
 
   get timeline () {
-    return this.editor.globalTimeline;
+    return this.owner.owner;
   }
 
   updateLayerPosition () {
@@ -530,8 +544,8 @@ export class SequenceTimelineLayer extends TimelineLayer {
     };
   }
 
-  initialize (container, morph) {
-    super.initialize(container);
+  initialize (editor, container, morph) {
+    super.initialize(editor, container);
     this.tooltip = morph.name;
     this.morph = morph;
   }
@@ -558,8 +572,8 @@ export class GlobalTimelineLayer extends TimelineLayer {
     };
   }
 
-  initialize (container, layer) {
-    super.initialize(container);
+  initialize (editor, container, layer) {
+    super.initialize(editor, container);
     this.layer = layer;
     this.tooltip = layer.name;
   }
@@ -658,7 +672,7 @@ class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     this.tooltip = '';
     this.reactsToPointer = false;
     this.removeAllTimelineKeyframes();
-    this.timeline.createPropertyLayers(this);
+	  this.timeline.createPropertyLayers(this);
   }
 
   removeAllTimelineKeyframes () {
@@ -747,13 +761,18 @@ export class TimelineSequence extends Morph {
           this.setProperty('selected', selected);
           this.onSelectionChange(selected);
         }
-      }
+      },
+	  _editor: {}
     };
+  }
+
+  get editor () {
+    return this._editor;
   }
 
   initialize (editor, sequence, timelineLayer) {
     this._isInitializing = true;
-    this.editor = editor;
+    this._editor = editor;
     this.sequence = sequence;
     this.timelineLayer = timelineLayer;
 
@@ -1083,8 +1102,7 @@ class TimelineCursor extends Morph {
       name: {
         defaultValue: 'cursor'
       },
-      ui: {},
-      editor: {}
+      ui: {}
     };
   }
 
