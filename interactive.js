@@ -366,7 +366,7 @@ export class Sequence extends Morph {
   }
 
   applyUnfocusedEffect () {
-    // stop opacity setter from copying changes to originalOpacity
+    // stop opacity and grayscale setters from overwriting saved effects
     this._lockEffect = true;
     this.opacity = this.focused ? this._originalOpacity : 0.2;
     this.grayscale = this.focused ? this._originalGrayscale : 1;
