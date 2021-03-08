@@ -5,6 +5,7 @@ import { connect, disconnect } from 'lively.bindings';
 import { COLOR_SCHEME } from './colors.js';
 import { InteractiveMorphInspector } from './inspector.js';
 import { resource } from 'lively.resources';
+import { arr } from 'lively.lang';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 900,
@@ -219,7 +220,7 @@ class Preview extends Morph {
   }
 
   get editor () {
-    return this.editor;
+    return this._editor;
   }
 
   initialize (editor) {
@@ -230,7 +231,8 @@ class Preview extends Morph {
     if (evt.type != 'morphicdrop') {
       return;
     }
-    const grabbedMorph = evt.hand.grabbedMorphs[0];
+    debugger;
+    const grabbedMorph = arr.first(evt.hand.grabbedMorphs);
     if (grabbedMorph.isInteractive) {
       this.editor.loadInteractive(grabbedMorph);
     } else {
@@ -239,6 +241,7 @@ class Preview extends Morph {
   }
 
   loadContent (interactive) {
+    debugger;
     this.withAllSubmorphsDo(submorph => {
       if (submorph !== this) submorph.remove();
     });
