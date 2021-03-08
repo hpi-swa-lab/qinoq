@@ -303,6 +303,17 @@ export class InteractiveMorphInspector extends Morph {
   async initialize () {
     this.build();
   }
+
+  deselect () {
+    this.disbandConnections();
+    Object.values(this.ui).forEach(uiElement => {
+      if (uiElement.isMorph) {
+        uiElement.remove();
+      }
+    });
+    this.build();
+    this.targetMorph = undefined;
+  }
 }
 
 class KeyframeButton extends Morph {
