@@ -866,6 +866,10 @@ export class TimelineSequence extends Morph {
         this.env.undoManager.removeLatestUndo();
       });
     }
+    if (this.snapIndicator) {
+      this.snapIndicator.remove();
+      this.snapIndicator = undefined;
+    }
     this.hideWarningLeft();
     this.hideWarningRight();
     delete event.hand.dragTimelineSequenceStates;
@@ -879,8 +883,28 @@ export class TimelineSequence extends Morph {
     } else {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     }
+    if (this.snapIndicator) this.snapIndicator.remove();
+    if (this.isOverlappingOtherSequence()) {
+      const sequences = this.overlappingSequences;
+      const lastSequence = sequences.reduce(function (prev, curr) { return (prev.topRight.x > curr.topRight.x) ? prev : curr; });
+      const dragDelta = lastSequence.topRight.x - this.position.x;
+
+      if (Math.abs(dragDelta) < lastSequence.extent.x / 2) {
+        this.position = pt(lastSequence.position.x + lastSequence.extent.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+        this.snapIndicator = this.buildSnapIndicator(pt(0, 0));
+      } else if ((lastSequence.position.x - this.extent.x) >= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
+        this.position = pt(lastSequence.position.x - this.extent.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+        this.snapIndicator = this.buildSnapIndicator(pt(this.extent.x - 4, 0));
+      }
+      this.addMorph(this.snapIndicator);
+    }
+
     this.updateAppearance();
     this.updateSequenceAfterArrangement();
+  }
+
+  buildSnapIndicator (position) {
+    return new Morph({ fill: COLOR_SCHEME.PRIMARY, position: position, extent: pt(4, CONSTANTS.SEQUENCE_HEIGHT) });
   }
 
   onTimelineLayerChange (timelineLayer) {
@@ -1056,8 +1080,12 @@ export class TimelineSequence extends Morph {
   }
 
   isOverlappingOtherSequence () {
-    const blockingSequences = this.timelineLayer.getAllSequencesIntersectingWith(this.bounds());
-    return blockingSequences.length > 1; // must be > 1 since blockingSequences always contain the dragged sequence itself
+    return this.overlappingSequences.length > 0;
+  }
+
+  get overlappingSequences () {
+    const overlappingSequences = this.timelineLayer.getAllSequencesIntersectingWith(this.bounds());
+    return overlappingSequences.filter(sequence => sequence != this);
   }
 }
 
