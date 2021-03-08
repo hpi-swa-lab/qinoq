@@ -140,7 +140,7 @@ export class InteractiveMorphInspector extends Morph {
   }
 
   buildNumberPropertyControl (property) {
-    const spec = this.propertiesAndPropertySettings().properties[property];
+    const spec = this.targetMorph.propertiesAndPropertySettings().properties[property];
     let floatingPoint = spec.isFloat;
     let unit = '';
     let min = -Infinity;
