@@ -377,6 +377,7 @@ export class TimelineKeyframe extends Morph {
       if (newPosition >= 0 && newPosition <= 1) {
         this.keyframe.position = newPosition;
         this.position = this.getPositionFromProgress(this.keyframe.position);
+        this.editor.interactive.redraw();
       } else {
         await $world.inform('Enter a value between 0 and 1.');
         await this.promptUserForNewPosition();
