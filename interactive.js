@@ -130,9 +130,11 @@ export class Interactive extends Morph {
   }
 
   showOnly (sequence) {
-    this.sequences.forEach(seq => {
-      seq.focused = sequence == seq;
-    });
+    if (sequence) {
+      this.sequences.forEach(seq => {
+        seq.focused = sequence == seq;
+      });
+    }
     this.redraw();
   }
 

@@ -23,7 +23,9 @@ export class Timeline extends Morph {
   static get properties () {
     return {
       ui: {
-        defaultValue: {}
+        initialize () {
+          this.ui = {};
+        }
       },
       interactive: {},
       editor: {},
@@ -139,7 +141,8 @@ export class Timeline extends Morph {
     this.initializeCursor();
     this.onScrollChange(this.editor.interactiveScrollPosition);
     connect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange');
-    this._inInitialConstruction = false;
+    connect(content, 'name', this, 'name', { converter: newName => `${newName.toLowerCase()} timeline` }).update(content.name);
+	this._inInitialConstruction = false;
   }
 
   onLoadContent (content) {
@@ -167,6 +170,7 @@ export class GlobalTimeline extends Timeline {
   createTimelineSequence (sequence) {
     const seq = new TimelineSequence();
     seq.initialize(this.editor, sequence, this.getTimelineLayerFor(sequence.layer));
+    return seq;
   }
 
   getNewTimelineLayer () {
@@ -179,7 +183,10 @@ export class GlobalTimeline extends Timeline {
     this.interactive.layers.forEach(layer => {
       const timelineLayer = this.createTimelineLayer(layer);
     });
-    this.interactive.sequences.forEach(sequence => this.createTimelineSequence(sequence));
+    this.interactive.sequences.forEach(sequence => {
+      const timeline_seq = this.createTimelineSequence(sequence);
+      connect(sequence, 'name', timeline_seq, 'caption');
+    });
     this.updateLayerPositions();
   }
 
@@ -224,6 +231,22 @@ export class GlobalTimeline extends Timeline {
 }
 
 export class SequenceTimeline extends Timeline {
+  static get properties () {
+    return {
+      _sequence: {
+        defaultValue: {}
+      }
+    };
+  }
+
+  get sequence () {
+    return this._sequence;
+  }
+
+  isSequenceTimeline () {
+    return true;
+  }
+  
   createOverviewTimelineLayer (morph) {
     const timelineLayer = super.createTimelineLayer(morph);
     timelineLayer.addCollapseToggle();
@@ -231,7 +254,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   onLoadContent (sequence) {
-    this.sequence = sequence;
+    this._sequence = sequence;
     this.sequence.submorphs.forEach(morph => {
       const timelineLayer = this.createOverviewTimelineLayer(morph);
       this.addTimelineKeyframesForLayer(timelineLayer);
@@ -686,7 +709,12 @@ export class TimelineSequence extends Morph {
       borderRadius: {
         defaultValue: 3
       },
-      editor: {},
+      caption: {
+        set (caption) {
+          if (!caption) return;
+          this.getSubmorphNamed('aLabel').textString = caption;
+        }
+      },
       sequence: {
         set (sequence) {
           this.setProperty('sequence', sequence);
@@ -734,11 +762,11 @@ export class TimelineSequence extends Morph {
     this.position = pt(startPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     this.width = endPosition - startPosition;
     this.addMorph(new Label({
-      textString: sequence.name,
       padding: rect(5, 4, 0, 0),
       reactsToPointer: false
     }));
     timelineLayer.addMorph(this);
+    this.caption = sequence.name;
     this.initializeResizers();
     this._isInitializing = false;
   }
