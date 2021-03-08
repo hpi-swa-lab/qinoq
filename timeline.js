@@ -805,10 +805,7 @@ export class TimelineSequence extends Morph {
         // this.env.undoManager.removeLatestUndo(); uncomment as soon as it is merged in the lively.next:master
       });
     }
-    if (this.snapIndicator) {
-      this.snapIndicator.remove();
-      this.snapIndicator = undefined;
-    }
+    this.removeSnapIndicator();
     this.hideWarningLeft();
     this.hideWarningRight();
     delete event.hand.dragTimelineSequenceStates;
@@ -828,21 +825,30 @@ export class TimelineSequence extends Morph {
     this.updateSequenceAfterArrangement();
   }
 
+  removeSnapIndicator () {
+    if (this.snapIndicator) {
+      this.snapIndicator.remove();
+      this.snapIndicator = undefined;
+    }
+  }
+
   checkSnapping () {
-    if (this.snapIndicator) this.snapIndicator.remove();
+    this.removeSnapIndicator();
+
     if (this.isOverlappingOtherSequence()) {
       const lastSequence = this.overlappingSequences.reduce((prev, curr) => { return (prev.topRight.x > curr.topRight.x) ? prev : curr; });
       let newPositionX = this.position.x;
 
-      if (Math.abs(lastSequence.topRight.x - this.position.x) < lastSequence.extent.x / 2) {
-        newPositionX = lastSequence.position.x + lastSequence.extent.x;
+      if (Math.abs(lastSequence.topRight.x - this.position.x) < lastSequence.width / 2) {
+        newPositionX = lastSequence.position.x + lastSequence.width;
         this.snapIndicator = this.buildSnapIndicator(pt(newPositionX - 4, this.position.y - 3));
       } else if ((lastSequence.position.x - this.width) >= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
         newPositionX = lastSequence.position.x - this.width;
         this.snapIndicator = this.buildSnapIndicator(pt(newPositionX + this.width - 4, this.position.y - 3));
       }
+
       this.position = pt(newPositionX, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-      if (this.snapIndicator) this.owner.addMorph(this.snapIndicator);
+      if (this.snapIndicator) { this.owner.addMorph(this.snapIndicator); }
     }
   }
 
