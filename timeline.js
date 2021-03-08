@@ -607,10 +607,7 @@ class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     Icon.setIcon(arrowLabel, 'caret-right');
     arrowLabel.nativeCursor = 'pointer';
     this.layerInfo.addMorph(arrowLabel);
-    arrowLabel.onMouseDown = (evt) => {
-      this.isExpanded = !this.isExpanded;
-      this.owner.whenRendered().then(() => this.timeline.ui.cursor.height = this.timeline.ui.layerContainer.height);
-    };
+    arrowLabel.onMouseDown = (evt) => { this.isExpanded = !this.isExpanded; };
   }
 
   collapse () {
@@ -1018,6 +1015,14 @@ class TimelineCursor extends Morph {
           this.redraw();
         }
       },
+      height: {
+        set (height) {
+          if (this.editor && height < this.editor.timeline.height) {
+            return;
+          }
+          this.setProperty('extent', pt(this.extent.x, height));
+        }
+      },
       location: {
         // location: where the cursor should point at
         // position: actual position of the morph, which is dependent on the location and the width of the cursor
@@ -1109,5 +1114,9 @@ class TimelineCursor extends Morph {
 
   updatePosition () {
     this.position = pt(this.location - this.width / 2 + 2, this.position.y);
+  }
+
+  onOwnerChanged (newOwner) {
+    if (newOwner) { connect(newOwner, 'extent', this, 'height', { converter: (pt) => pt.y }); }
   }
 }
