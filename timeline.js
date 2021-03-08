@@ -802,7 +802,7 @@ export class TimelineSequence extends Morph {
         sequence.remove();
         sequence.timelineLayer = dragState.previousTimelineLayer;
         sequence.updateAppearance();
-        // this.env.undoManager.removeLatestUndo(); uncomment as soon as it is merged in the lively.next:master
+        this.env.undoManager.removeLatestUndo();
       });
     }
     this.hideWarningLeft();
