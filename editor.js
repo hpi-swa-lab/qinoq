@@ -1,7 +1,7 @@
 import { pt } from 'lively.graphics';
 import { ProportionalLayout, Morph } from 'lively.morphic';
 import { GlobalTimeline, SequenceTimeline } from './timeline.js';
-import { connect } from 'lively.bindings';
+import { connect, disconnect } from 'lively.bindings';
 import { COLOR_SCHEME } from './colors.js';
 import { InteractiveMorphInspector } from './inspector.js';
 
@@ -71,9 +71,16 @@ export class InteractivesEditor extends Morph {
   }
 
   loadInteractive (interactive) {
+    if (this.interactive) {
+      disconnect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
+      disconnect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
+      this.interactive.remove();
+      this.morphInspector.deselect();
+    }
     this.interactive = interactive;
     connect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
     connect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
+    this.showGlobalTimeline();
   }
 
   initializePreview (interactive) {
