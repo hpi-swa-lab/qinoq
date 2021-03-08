@@ -105,6 +105,11 @@ export class InteractivesEditor extends Morph {
     this.sequenceTimelines.forEach(timeline => timeline.remove());
   }
 
+  get timeline () {
+    // TODO change as soon as the tab layout is implemented
+    return this.submorphs.includes(this.globalTimeline) ? this.globalTimeline : this.sequenceTimelines[0];
+  }
+
   get keybindings () {
     return [
       { keys: 'Left', command: 'move scrollposition backwards' },
