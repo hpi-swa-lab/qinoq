@@ -947,6 +947,7 @@ export class TimelineSequence extends Morph {
     } else {
       this.globalPosition = pt(this.startPosition.x - dragDelta, this.globalPosition.y);
       this.extent = pt(newSequenceWidth, this.height);
+      this.hideWarningLeft();
     }
 
     this.updateAppearance();
@@ -992,7 +993,7 @@ export class TimelineSequence extends Morph {
   showWarningLeft (dragValue) {
     const newWarning = !this.warningStartLeft;
     if (newWarning) this.warningStartLeft = dragValue;
-    const currentDrag = this.warningStartLeft - dragValue;
+    const currentDrag = Math.abs(this.warningStartLeft - dragValue);
     const strength = currentDrag / CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA;
     const warning = !newWarning
       ? this.getSubmorphNamed('warning left')
