@@ -1,4 +1,4 @@
-import { Morph, Icon, HorizontalLayout, ProportionalLayout, Label, VerticalLayout } from 'lively.morphic';
+import { Morph, Polygon, Icon, HorizontalLayout, ProportionalLayout, Label, VerticalLayout } from 'lively.morphic';
 import { pt, LinearGradient, rect } from 'lively.graphics';
 import { connect, disconnect } from 'lively.bindings';
 import { COLOR_SCHEME } from './colors.js';
@@ -883,28 +883,33 @@ export class TimelineSequence extends Morph {
     } else {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     }
-    if (this.snapIndicator) this.snapIndicator.remove();
-    if (this.isOverlappingOtherSequence()) {
-      const sequences = this.overlappingSequences;
-      const lastSequence = sequences.reduce(function (prev, curr) { return (prev.topRight.x > curr.topRight.x) ? prev : curr; });
-      const dragDelta = lastSequence.topRight.x - this.position.x;
-
-      if (Math.abs(dragDelta) < lastSequence.extent.x / 2) {
-        this.position = pt(lastSequence.position.x + lastSequence.extent.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-        this.snapIndicator = this.buildSnapIndicator(pt(0, 0));
-      } else if ((lastSequence.position.x - this.extent.x) >= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
-        this.position = pt(lastSequence.position.x - this.extent.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-        this.snapIndicator = this.buildSnapIndicator(pt(this.extent.x - 4, 0));
-      }
-      this.addMorph(this.snapIndicator);
-    }
+    this.checkSnapping();
 
     this.updateAppearance();
     this.updateSequenceAfterArrangement();
   }
 
+  checkSnapping () {
+    if (this.snapIndicator) this.snapIndicator.remove();
+    if (this.isOverlappingOtherSequence()) {
+      const lastSequence = this.overlappingSequences.reduce((prev, curr) => { return (prev.topRight.x > curr.topRight.x) ? prev : curr; });
+      let newPositionX = this.position.x;
+
+      if (Math.abs(lastSequence.topRight.x - this.position.x) < lastSequence.extent.x / 2) {
+        newPositionX = lastSequence.position.x + lastSequence.extent.x;
+        this.snapIndicator = this.buildSnapIndicator(pt(newPositionX - 4, this.position.y - 3));
+      } else if ((lastSequence.position.x - this.width) >= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
+        newPositionX = lastSequence.position.x - this.width;
+        this.snapIndicator = this.buildSnapIndicator(pt(newPositionX + this.width - 4, this.position.y - 3));
+      }
+      this.position = pt(newPositionX, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+      if (this.snapIndicator) this.owner.addMorph(this.snapIndicator);
+    }
+  }
+
   buildSnapIndicator (position) {
-    return new Morph({ fill: COLOR_SCHEME.PRIMARY, position: position, extent: pt(4, CONSTANTS.SEQUENCE_HEIGHT) });
+    const vertices = [pt(-4, -3), pt(4, -3), pt(1, 0), pt(1, CONSTANTS.SEQUENCE_HEIGHT), pt(4, CONSTANTS.SEQUENCE_HEIGHT + 3), pt(-4, CONSTANTS.SEQUENCE_HEIGHT + 3), pt(-1, CONSTANTS.SEQUENCE_HEIGHT), pt(-1, 0)];
+    return new Polygon({ fill: COLOR_SCHEME.PRIMARY, position: position, vertices: vertices });
   }
 
   onTimelineLayerChange (timelineLayer) {
