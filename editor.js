@@ -31,9 +31,6 @@ export class InteractivesEditor extends Morph {
       extent: {
         defaultValue: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT)
       },
-      sequenceTimelines: {
-        defaultValue: []
-      },
       globalTimeline: {
       },
       interactiveScrollPosition: {
@@ -73,14 +70,23 @@ export class InteractivesEditor extends Morph {
     });
     this.globalTimeline.initialize(this);
 
-    this.tabs = await resource('part://tabs/tabs').read();
-    this.tabs.name = 'tabs';
-    this.tabs.position = pt(0, CONSTANTS.SUBWINDOW_HEIGHT);
-    this.tabs.extent = pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT);
-    (await this.tabs.addTab('Scrollytelling', this.globalTimeline, (selected) => {
-      if (selected) this.showGlobalTimeline();
-    })).closeable = false;
-    this.addMorph(this.tabs);
+    this.tabContainer = await resource('part://tabs/tabs').read();
+    Object.assign(this.tabContainer, {
+      position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT),
+      extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT),
+      showNewTabButton: false,
+      tabHeight: 28
+    });
+
+    this.globalTab = await this.tabContainer.addTab('Scrollytelling', this.globalTimeline);
+    this.globalTab.closeable = false;
+    connect(this.globalTab, 'onSelectionChange', this, 'showGlobalTimeline', {
+      updater: ($update, selected) => {
+        if (selected) $update();
+      }
+    });
+
+    this.addMorph(this.tabContainer);
   }
 
   initializeLayout () {
@@ -97,7 +103,11 @@ export class InteractivesEditor extends Morph {
     this.interactive = interactive;
     connect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
     connect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
-    this.showGlobalTimeline();
+    connect(this.interactive, 'name', this.globalTab, 'caption').update(this.interactive.name);
+    connect(this.globalTab, 'caption', this.interactive, 'name');
+    connect(this.globalTab, 'onSelectionChange', this.interactive, 'showAllSequences', {
+      updater: '($update, selected) => {if (selected) $update()}'
+    });
   }
 
   clearInteractive () {
@@ -106,36 +116,34 @@ export class InteractivesEditor extends Morph {
     this.interactive.remove();
     this.morphInspector.deselect();
     this.sequenceTimelines.forEach(sequenceTimeline => disconnect(this, 'interactiveScrollPosition', sequenceTimeline, 'onScrollChange'));
-    this.sequenceTimelines = [];
   }
 
-  initializeSequenceView (sequence) {
+  async initializeSequenceView (sequence) {
     this.interactiveScrollPosition = sequence.start;
+
+    const sequenceTab = this.getTabFor(sequence);
+    if (sequenceTab) {
+      sequenceTab.selected = true;
+      return this.getTimelineFor(sequenceTab);
+    }
+
     const timeline = this.initializeSequenceTimeline(sequence);
-    this.tabs.addTab(sequence.name, timeline, (selected) => {
-      if (selected) this.interactive.showOnly(sequence);
-    });
-    this.sequenceTimelines.push(timeline);
+    const tab = await this.tabContainer.addTab(sequence.name, timeline);
+    connect(sequence, 'name', tab, 'caption');
+    connect(tab, 'caption', sequence, 'name');
+    connect(tab, 'onSelectionChange', this.interactive, 'showOnly', {
+      updater: `($update, selected) => {
+        if (selected) $update(sequence);
+      }`,
+      varMapping: { sequence: this.getSequenceFor(tab) }
+    }).update(tab.selected);
   }
 
   initializeSequenceTimeline (sequence) {
-    const sequenceTimeline = new SequenceTimeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT), name: `${sequence.name} timeline`, editor: this });
-    this.addMorph(sequenceTimeline);
+    const sequenceTimeline = new SequenceTimeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT) });
     sequenceTimeline.initialize(this);
     sequenceTimeline.loadContent(sequence);
     return sequenceTimeline;
-  }
-
-  showGlobalTimeline () {
-    if (!this.interactive) return;
-    this.interactive.showAllSequences();
-    this.addMorph(this.globalTimeline);
-    this.sequenceTimelines.forEach(timeline => timeline.remove());
-  }
-
-  get timeline () {
-    // TODO change as soon as the tab layout is implemented
-    return this.submorphs.includes(this.globalTimeline) ? this.globalTimeline : this.sequenceTimelines[0];
   }
 
   get keybindings () {
@@ -144,6 +152,26 @@ export class InteractivesEditor extends Morph {
       { keys: 'Right', command: 'move scrollposition forward' },
       { keys: 'Esc', command: 'show global timeline' }
     ].concat(super.keybindings);
+  }
+
+  get sequenceTimelines () {
+    return this.tabs.map(tab => tab.content);
+  }
+
+  get tabs () {
+    return this.tabContainer.tabs;
+  }
+
+  getTabFor (sequence) {
+    return this.tabs.find(tab => tab.content.isSequenceTimeline && tab.content.sequence === sequence);
+  }
+
+  getTimelineFor (tab) {
+    return tab.content;
+  }
+
+  getSequenceFor (tab) {
+    return this.getTimelineFor(tab).sequence;
   }
 
   get commands () {
