@@ -2,6 +2,7 @@ import { Morph, Icon, HorizontalLayout, ProportionalLayout, Label, VerticalLayou
 import { pt, LinearGradient, rect } from 'lively.graphics';
 import { connect, disconnect } from 'lively.bindings';
 import { COLOR_SCHEME } from './colors.js';
+import { arr } from 'lively.lang';
 
 const CONSTANTS = {
   LAYER_INFO_WIDTH: 50,
@@ -1068,14 +1069,6 @@ class TimelineCursor extends Morph {
           this.redraw();
         }
       },
-      height: {
-        set (height) {
-          if (this.editor && height < this.editor.timeline.height) {
-            return;
-          }
-          this.setProperty('extent', pt(this.extent.x, height));
-        }
-      },
       location: {
         // location: where the cursor should point at
         // position: actual position of the morph, which is dependent on the location and the width of the cursor
@@ -1170,10 +1163,19 @@ class TimelineCursor extends Morph {
 
   onOwnerChanged (newOwner) {
     super.onOwnerChanged(newOwner);
-    if (newOwner) {
+    if (newOwner && arr.include(newOwner.submorphs, this)) {
       if (this.previousOwner) disconnect(this.previousOwner, 'extent', this, 'height');
-      connect(newOwner, 'extent', this, 'height', { converter: (pt) => pt.y });
+      connect(newOwner, 'extent', this, 'height', {
+        updater: `($update, extent) => { 
+        if (extent.y >= target.timeline.height) $update(extent.y);
+        else $update(target.timeline.height)
+      }`
+      });
       this.previousOwner = newOwner;
     }
+  }
+
+  get timeline () {
+    return this.owner.owner;
   }
 }
