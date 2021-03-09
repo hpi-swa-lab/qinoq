@@ -1,6 +1,6 @@
 import { pt } from 'lively.graphics';
 import { ProportionalLayout, Morph } from 'lively.morphic';
-import { connect, disconnect } from 'lively.bindings';
+import { connect, disconnectAll, disconnect } from 'lively.bindings';
 import { COLOR_SCHEME } from './colors.js';
 import { InteractiveMorphInspector } from './inspector.js';
 import { resource } from 'lively.resources';
@@ -96,7 +96,6 @@ export class InteractivesEditor extends Morph {
     if (this.interactive) {
       this.clearInteractive();
     }
-
     this.interactive = interactive;
     connect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
     connect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
@@ -114,11 +113,20 @@ export class InteractivesEditor extends Morph {
   }
 
   clearInteractive () {
-    disconnect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
+    console.log('TEST');
     disconnect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
+    disconnectAll(this.interactive);
+    disconnectAll(this.globalTab);
+
+    this.tabs.forEach(tab => {
+      disconnectAll(tab);
+      disconnectAll(this.getTimelineFor(tab));
+      disconnectAll(this.getSequenceFor(tab));
+    });
+
     this.interactive.remove();
     this.morphInspector.deselect();
-    this.sequenceTimelines.forEach(sequenceTimeline => disconnect(this, 'interactiveScrollPosition', sequenceTimeline, 'onScrollChange'));
+    this.interactive = undefined;
   }
 
   async initializeSequenceView (sequence) {
