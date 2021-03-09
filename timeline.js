@@ -149,13 +149,19 @@ export class Timeline extends Morph {
     this.onLoadContent(content);
     this.initializeCursor();
     this.onScrollChange(this.editor.interactiveScrollPosition);
-    connect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange');
+    connect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange', {
+      updater: '($update, scrollPosition) => { if (target.displayed) $update(scrollPosition); }'
+    });
     connect(content, 'name', this, 'name', { converter: newName => `${newName.toLowerCase()} timeline` }).update(content.name);
     this._inInitialConstruction = false;
   }
 
   onLoadContent (content) {
     throw new Error('Subclass resposibility');
+  }
+
+  get displayed () {
+    return this === this.editor.displayedTimeline;
   }
 
   onScrollChange (scrollPosition) {

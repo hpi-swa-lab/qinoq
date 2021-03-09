@@ -105,6 +105,12 @@ export class InteractivesEditor extends Morph {
     connect(this.globalTab, 'onSelectionChange', this.interactive, 'showAllSequences', {
       updater: '($update, selected) => {if (selected) $update()}'
     });
+    connect(this.globalTab, 'onSelectionChange', this.getTimelineFor(this.globalTab), 'onScrollChange', {
+      updater: `($update, selected) => {
+        if (selected) $update(editor.interactiveScrollPosition);
+      }`,
+      varMapping: { editor: this }
+    }).update(this.globalTab.selected);
   }
 
   clearInteractive () {
@@ -134,6 +140,12 @@ export class InteractivesEditor extends Morph {
       }`,
       varMapping: { sequence: this.getSequenceFor(tab) }
     }).update(tab.selected);
+    connect(tab, 'onSelectionChange', this.getTimelineFor(tab), 'onScrollChange', {
+      updater: `($update, selected) => {
+        if (selected) $update(editor.interactiveScrollPosition);
+      }`,
+      varMapping: { editor: this }
+    }).update(tab.selected);
   }
 
   initializeSequenceTimeline (sequence) {
@@ -148,6 +160,10 @@ export class InteractivesEditor extends Morph {
       { keys: 'Left', command: 'move scrollposition backwards' },
       { keys: 'Right', command: 'move scrollposition forward' }
     ].concat(super.keybindings);
+  }
+
+  get displayedTimeline () {
+    return this.getTimelineFor(this.tabContainer.selectedTab);
   }
 
   get sequenceTimelines () {
