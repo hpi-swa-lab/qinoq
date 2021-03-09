@@ -1029,8 +1029,8 @@ export class TimelineSequence extends Morph {
     const dragDelta = this.leftResizer.position.x;
     const newSequenceWidth = sequenceState.previousWidth - dragDelta;
     // stop resizing due to minimal width
-    if (newSequenceWidth <= CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
-      this.showWarningLeft(Math.abs(dragDelta));
+    if (newSequenceWidth < CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
+      this.showWarningLeft(-dragDelta);
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
       this.position = pt(sequenceState.previousTopRight.x - CONSTANTS.MINIMAL_SEQUENCE_WIDTH, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     }
