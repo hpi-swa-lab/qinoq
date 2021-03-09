@@ -5,8 +5,8 @@ import { NumberWidget } from 'lively.ide/value-widgets.js';
 import { Button } from 'lively.components';
 import { InteractiveMorphSelector } from 'lively.halos';
 import { disconnect, connect } from 'lively.bindings';
-import { Sequence, Keyframe } from 'interactives-editor';
 import { ColorPickerField } from 'lively.ide/styling/color-picker.js';
+import { Sequence, Keyframe } from 'interactives-editor';
 
 const CONSTANTS = {
   LABEL_X: 10,

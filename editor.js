@@ -1,11 +1,11 @@
 import { pt } from 'lively.graphics';
 import { ProportionalLayout, Morph } from 'lively.morphic';
-import { GlobalTimeline, SequenceTimeline } from './timeline.js';
 import { connect, disconnect } from 'lively.bindings';
 import { COLOR_SCHEME } from './colors.js';
 import { InteractiveMorphInspector } from './inspector.js';
 import { resource } from 'lively.resources';
 import { arr } from 'lively.lang';
+import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 900,
