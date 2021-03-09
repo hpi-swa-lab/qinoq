@@ -142,7 +142,7 @@ export class Timeline extends Morph {
   loadContent (content) {
     if (this.submorphs.length !== 0) {
       this.submorphs.forEach(submorph => submorph.remove());
-      this.initialize();
+      this.initialize(this.editor);
     }
     this._inInitialConstruction = true;
     this.onLoadContent(content);

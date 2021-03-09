@@ -79,13 +79,8 @@ export class InteractivesEditor extends Morph {
       tabHeight: 28
     });
 
-    this.globalTab = await this.tabContainer.addTab('Scrollytelling', this.globalTimeline);
+    this.globalTab = await this.tabContainer.addTab('[no interactive loaded]', this.globalTimeline);
     this.globalTab.closeable = false;
-    connect(this.globalTab, 'onSelectionChange', this, 'showGlobalTimeline', {
-      updater: ($update, selected) => {
-        if (selected) $update();
-      }
-    });
 
     this.addMorph(this.tabContainer);
   }
@@ -101,6 +96,7 @@ export class InteractivesEditor extends Morph {
     if (this.interactive) {
       this.clearInteractive();
     }
+
     this.interactive = interactive;
     connect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
     connect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
