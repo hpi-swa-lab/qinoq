@@ -377,7 +377,7 @@ export class TimelineKeyframe extends Morph {
       draggable: {
         defaultValue: true
       },
-	  _editor: {}
+      _editor: {}
     };
   }
 
@@ -492,7 +492,7 @@ export class TimelineLayer extends Morph {
       height: {
         defaultValue: CONSTANTS.LAYER_HEIGHT
       },
-	  _editor: {}
+      _editor: {}
     };
   }
 
@@ -763,7 +763,7 @@ export class TimelineSequence extends Morph {
           this.onSelectionChange(selected);
         }
       },
-	  _editor: {}
+      _editor: {}
     };
   }
 
