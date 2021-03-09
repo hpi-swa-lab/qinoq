@@ -2,7 +2,7 @@ import { Morph, HorizontalLayout, Label } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
 import { pt } from 'lively.graphics';
 import { arr } from 'lively.lang';
-import { disconnect, connect } from 'lively.bindings';
+import { disconnect, disconnectAll, connect } from 'lively.bindings';
 import { CONSTANTS } from './constants.js';
 export class TimelineCursor extends Morph {
   static get properties () {
@@ -126,5 +126,10 @@ export class TimelineCursor extends Morph {
 
   get timeline () {
     return this.owner.owner;
+  }
+
+  remove () {
+    disconnectAll(this);
+    super.remove();
   }
 }

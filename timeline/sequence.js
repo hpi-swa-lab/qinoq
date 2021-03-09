@@ -1,7 +1,7 @@
 import { Morph, Polygon, Label } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
 import { pt, LinearGradient, rect } from 'lively.graphics';
-import { connect } from 'lively.bindings';
+import { connect, disconnectAll } from 'lively.bindings';
 import { CONSTANTS } from './constants.js';
 export class TimelineSequence extends Morph {
   static get properties () {
@@ -448,5 +448,11 @@ export class TimelineSequence extends Morph {
   get overlappingSequences () {
     const overlappingSequences = this.timelineLayer.getAllSequencesIntersectingWith(this.bounds());
     return overlappingSequences.filter(sequence => sequence != this);
+  }
+
+  remove () {
+    if (this.rightResizer) disconnectAll(this.rightResizer);
+    if (this.leftResizer) disconnectAll(this.leftResizer);
+    super.remove();
   }
 }
