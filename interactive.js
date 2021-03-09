@@ -4,6 +4,7 @@ import { connect } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
 import { COLOR_SCHEME } from './colors.js';
 import { Keyframe, createAnimationForPropertyType, NumberAnimation, PointAnimation, ColorAnimation } from 'interactives-editor';
+import { LottieMorph } from './interactive-morphs/lottie-morph.js';
 
 export class Interactive extends Morph {
   static example () {
@@ -319,20 +320,21 @@ export class Sequence extends Morph {
 
   static skyExample () {
     const skySequence = new Sequence({ name: 'sky sequence' });
-    skySequence.initialize(200, 300);
+    skySequence.initialize(0, 500);
+
+    const stars = new LottieMorph({ fill: Color.transparent, extent: pt(200, 200), position: pt(0, 0), name: 'lottie stars', animationDataUrl: 'https://assets4.lottiefiles.com/packages/lf20_Aerz0y.json' });
+    skySequence.addMorph(stars);
+
+    const starsOpacityAnimation = new NumberAnimation(stars, 'opacity');
+    starsOpacityAnimation.addKeyframes([new Keyframe(0, 1, 'fully visible'), new Keyframe(0.1, 0, 'faded out')]);
+    skySequence.addAnimation(starsOpacityAnimation);
+
+    const starProgressAnimation = new NumberAnimation(stars, 'progress');
+    starProgressAnimation.addKeyframes([new Keyframe(0, 0, 'start of the animation'), new Keyframe(0.1, 1, 'animation done')]);
+    skySequence.addAnimation(starProgressAnimation);
+
     const sun = new Ellipse({ name: 'sun', extent: pt(70, 70), fill: Color.rgb(250, 250, 20), position: pt(0, 350) });
     skySequence.addMorph(sun);
-
-    const cloud = new Image({ name: 'cloud', extent: pt(100, 50), imageUrl: 'https://cdn.pixabay.com/photo/2017/06/20/04/42/cloud-2421760_960_720.png' });
-
-    skySequence.addMorph(cloud);
-    const cloudPositionAnimation = new PointAnimation(cloud, 'position');
-    cloudPositionAnimation.addKeyframes([new Keyframe(0, pt(100, 50), 'start'), new Keyframe(1, pt(200, 50), 'end')]);
-    skySequence.addAnimation(cloudPositionAnimation);
-
-    const cloudOpacityAnimation = new NumberAnimation(cloud, 'opacity');
-    cloudOpacityAnimation.addKeyframes([new Keyframe(0.1, 0, 'start'), new Keyframe(0.4, 1, 'fully visible')]);
-    skySequence.addAnimation(cloudOpacityAnimation);
 
     const sunPositionAnimation = new PointAnimation(sun, 'position');
     sunPositionAnimation.addKeyframes([new Keyframe(0, pt(0, 350), 'start'), new Keyframe(0.5, pt(40, 80), 'middle'), new Keyframe(1, pt(180, 15), 'end')]);
@@ -341,6 +343,18 @@ export class Sequence extends Morph {
     const sunScaleAnimation = new NumberAnimation(sun, 'scale');
     sunScaleAnimation.addKeyframes([new Keyframe(0, 0.6, 'start'), new Keyframe(0.6, 1, 'end')]);
     skySequence.addAnimation(sunScaleAnimation);
+
+    const cloud = new Image({ name: 'cloud', extent: pt(100, 50), imageUrl: 'https://cdn.pixabay.com/photo/2017/06/20/04/42/cloud-2421760_960_720.png' });
+    skySequence.addMorph(cloud);
+
+    const cloudPositionAnimation = new PointAnimation(cloud, 'position');
+    cloudPositionAnimation.addKeyframes([new Keyframe(0, pt(100, 50), 'start'), new Keyframe(1, pt(200, 50), 'end')]);
+    skySequence.addAnimation(cloudPositionAnimation);
+
+    const cloudOpacityAnimation = new NumberAnimation(cloud, 'opacity');
+    cloudOpacityAnimation.addKeyframes([new Keyframe(0.1, 0, 'start'), new Keyframe(0.4, 1, 'fully visible')]);
+    skySequence.addAnimation(cloudOpacityAnimation);
+
     return skySequence;
   }
 

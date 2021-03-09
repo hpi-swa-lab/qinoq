@@ -91,6 +91,7 @@ export class LottieMorph extends HTMLMorph {
   }
 
   isReady () {
+    if (!this.lottieAnimation) return false;
     return this.lottieAnimation.isLoaded;
   }
 }
