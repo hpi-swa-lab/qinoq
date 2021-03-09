@@ -846,7 +846,7 @@ export class TimelineSequence extends Morph {
 
   onDragStart (event) {
     this.undoStart('timeline-sequence-move');
-    event.hand.dragTimelineSequenceStates = [{
+    event.hand.timelineSequenceStates = [{
       timelineSequence: this,
       previousPosition: this.position,
       previousTimelineLayer: this.timelineLayer
@@ -856,12 +856,12 @@ export class TimelineSequence extends Morph {
   onDragEnd (event) {
     this.undoStop('timeline-sequence-move');
     if (this.isOverlappingOtherSequence()) {
-      const dragStates = event.hand.dragTimelineSequenceStates;
-      dragStates.forEach(dragState => {
-        const sequence = dragState.timelineSequence;
-        sequence.position = dragState.previousPosition;
+      const sequenceStates = event.hand.timelineSequenceStates;
+      sequenceStates.forEach(sequenceState => {
+        const sequence = sequenceState.timelineSequence;
+        sequence.position = sequenceState.previousPosition;
         sequence.remove();
-        sequence.timelineLayer = dragState.previousTimelineLayer;
+        sequence.timelineLayer = sequenceState.previousTimelineLayer;
         sequence.updateAppearance();
         this.env.undoManager.removeLatestUndo();
       });
@@ -869,7 +869,7 @@ export class TimelineSequence extends Morph {
     this.removeSnapIndicator();
     this.hideWarningLeft();
     this.hideWarningRight();
-    delete event.hand.dragTimelineSequenceStates;
+    delete event.hand.timelineSequenceStates;
   }
 
   onDrag (event) {
@@ -880,7 +880,7 @@ export class TimelineSequence extends Morph {
     } else {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     }
-    this.checkSnapping(event);
+    this.checkDragSnapping(event);
 
     this.updateAppearance();
     this.updateSequenceAfterArrangement();
@@ -893,33 +893,33 @@ export class TimelineSequence extends Morph {
     }
   }
 
-  checkSnapping (event) {
+  checkDragSnapping (event) {
     this.removeSnapIndicator();
-    event.hand.dragTimelineSequenceStates.forEach(dragState => {
-      if (dragState.previousPosition.x < this.position.x) {
-        this.checkSnappingRight();
+    event.hand.timelineSequenceStates.forEach(sequenceState => {
+      if (sequenceState.previousPosition.x < this.position.x) {
+        this.checkDragSnappingRight();
       } else {
-        this.checkSnappingLeft();
+        this.checkDragSnappingLeft();
       }
     });
   }
 
-  checkSnappingLeft () {
+  checkDragSnappingLeft () {
     if (this.isOverlappingOtherSequence()) {
       const lastSequence = this.overlappingSequences.reduce((prev, curr) => { return (prev.topRight.x > curr.topRight.x) ? prev : curr; });
       if (Math.abs(lastSequence.topRight.x - this.position.x) < lastSequence.width / 4) {
         this.position = pt(lastSequence.topRight.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
         this.snapIndicator = this.buildSnapIndicator(pt(this.position.x - 4, this.position.y - 3));
-      } else {
+      } else if (lastSequence.position.x - this.width >= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
         this.position = pt(lastSequence.position.x - this.width, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
         this.snapIndicator = this.buildSnapIndicator(pt(this.position.x + this.width - 4, this.position.y - 3));
-        this.checkSnappingLeft();
+        this.checkDragSnappingLeft();
       }
       if (this.snapIndicator) { this.owner.addMorph(this.snapIndicator); }
     }
   }
 
-  checkSnappingRight (overlappingSequences) {
+  checkDragSnappingRight (overlappingSequences) {
     if (this.isOverlappingOtherSequence()) {
       const firstSequence = this.overlappingSequences.reduce((prev, curr) => { return (prev.position.x < curr.position.x) ? prev : curr; });
       const newPositionX = this.position.x;
@@ -929,9 +929,9 @@ export class TimelineSequence extends Morph {
       } else {
         this.position = pt(firstSequence.topRight.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
         this.snapIndicator = this.buildSnapIndicator(pt(this.position.x - 4, this.position.y - 3));
-        this.checkSnappingRight();
+        this.checkDragSnappingRight();
       }
-      if (this.snapIndicator) { this.owner.addMorph(this.snapIndicator); }
+      this.owner.addMorph(this.snapIndicator);
     }
   }
 
@@ -958,9 +958,40 @@ export class TimelineSequence extends Morph {
     return this.timeline.interactive;
   }
 
-  onResizeRight (event) {
-    const newSequenceWidth = this.rightResizer.position.x + this.rightResizer.width;
+  checkResizeSnapping (event, left) {
+    this.removeSnapIndicator();
+    event.hand.timelineSequenceStates.forEach(sequenceState => {
+      if (!left) {
+        this.checkResizeSnappingRight();
+      } else {
+        this.checkResizeSnappingLeft(sequenceState);
+      }
+    });
+  }
 
+  checkResizeSnappingRight () {
+    if (this.isOverlappingOtherSequence()) {
+      const overlappingSequence = this.overlappingSequences[0];
+      this.extent = pt(overlappingSequence.position.x - this.position.x, this.height);
+      this.rightResizer.position = pt(this.width - this.rightResizer.width, 0);
+      this.snapIndicator = this.buildSnapIndicator(pt(this.position.x + this.width - 4, this.position.y - 3));
+      this.owner.addMorph(this.snapIndicator);
+    }
+  }
+
+  checkResizeSnappingLeft (squenceState) {
+    if (this.isOverlappingOtherSequence()) {
+      const overlappingSequence = this.overlappingSequences[0];
+      this.extent = pt(squenceState.previousTopRight.x - overlappingSequence.topRight.x, this.height);
+      this.position = overlappingSequence.topRight;
+      this.leftResizer.position = this.position;
+      this.snapIndicator = this.buildSnapIndicator(pt(this.position.x - 4, this.position.y - 3));
+      this.owner.addMorph(this.snapIndicator);
+    }
+  }
+
+  onResizeRight (event) {
+    const newSequenceWidth = this.rightResizer.topRight.x;
     if (newSequenceWidth < CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
       this.showWarningRight(event.hand.position.x);
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
@@ -972,59 +1003,59 @@ export class TimelineSequence extends Morph {
     this.extent = pt(newSequenceWidth, this.height);
     this.rightResizer.position = pt(this.rightResizer.position.x, 0);
 
-    if (this.isOverlappingOtherSequence()) {
-      this.checkSnapping(event);
-      this.width = this.startWidth;
-      this.rightResizer.position = pt(this.width - this.rightResizer.width, 0);
-    }
+    this.checkResizeSnapping(event, false);
+    this.updateSequenceAfterArrangement();
+  }
 
+  onResizeLeft (event) {
+    const squenceState = event.hand.timelineSequenceStates[0];
+    const dragDelta = this.leftResizer.position.x;
+    const newSequenceWidth = squenceState.previousWidth - dragDelta;
+    // stop resizing due to minimal width
+    if (newSequenceWidth <= CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
+      this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
+      this.position = pt(squenceState.previousTopRight.x - CONSTANTS.MINIMAL_SEQUENCE_WIDTH, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+      this.showWarningLeft(dragDelta);
+    }
+    // stop resizing due to end of timeline
+    else if (squenceState.previousPosition.x + dragDelta < CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
+      this.showWarningLeft(dragDelta);
+      this.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+      this.extent = pt(squenceState.previousTopRight.x - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, this.height);
+    } else {
+      this.position = pt(squenceState.previousPosition.x + dragDelta, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+      this.extent = pt(newSequenceWidth, this.height);
+      this.hideWarningLeft();
+    }
+    this.checkResizeSnapping(event, true);
+    this.leftResizer.position = pt(0, 0);
+    this.rightResizer.position = pt(this.width - this.rightResizer.width, 0);
     this.updateSequenceAfterArrangement();
   }
 
   onResizeStart (event) {
-    this.leftResizer.startUpperLeftCorner = this.leftResizer.globalPosition;
-    this.rightResizer.startUpperRightCorner = pt(this.rightResizer.globalPosition.x + this.rightResizer.width, this.rightResizer.globalPosition.y);
-    this.startWidth = this.width;
-    this.startPosition = this.globalPosition;
-  }
-
-  onResizeLeft (event) {
-    const dragDelta = event.startPosition.x - event.position.x;
-    const newSequenceWidth = this.startWidth + dragDelta;
-    const rightResizerGlobalPosition = this.rightResizer.globalPosition;
-
-    const leftTimelineEnd = this.timelineLayer.globalPosition.x + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
-
-    // stop resizing due to minimal width
-    if (newSequenceWidth <= CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
-      this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
-      this.globalPosition = pt(rightResizerGlobalPosition.x + this.rightResizer.width - CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.globalPosition.y);
-      this.showWarningLeft(dragDelta);
-    }
-    // stop resizing due to end of timeline
-    else if (this.leftResizer.startUpperLeftCorner.x - dragDelta < leftTimelineEnd) {
-      this.showWarningLeft(dragDelta);
-      this.extent = pt(this.rightResizer.startUpperRightCorner.x - leftTimelineEnd, this.height);
-      this.globalPosition = pt(leftTimelineEnd, this.owner.globalPosition.y + CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-    } else {
-      this.globalPosition = pt(this.startPosition.x - dragDelta, this.globalPosition.y);
-      this.extent = pt(newSequenceWidth, this.height);
-      this.hideWarningLeft();
-    }
-
-    if (this.isOverlappingOtherSequence()) {
-      this.checkSnapping(event);
-      this.width = this.startWidth;
-      this.globalPosition = this.startPosition;
-    }
-
-    this.leftResizer.position = pt(0, 0);
-    this.rightResizer.globalPosition = rightResizerGlobalPosition;
-
-    this.updateSequenceAfterArrangement();
+    this.undoStart('timeline-sequence-resize');
+    event.hand.timelineSequenceStates = [{
+      timelineSequence: this,
+      previousPosition: this.position,
+      previousWidth: this.width,
+      previousTopRight: this.topRight
+    }];
   }
 
   onResizeEnd (event) {
+    this.undoStop('timeline-sequence-resize');
+    if (this.isOverlappingOtherSequence()) {
+      const sequenceStates = event.hand.timelineSequenceStates;
+      sequenceStates.forEach(sequenceState => {
+        const sequence = sequenceState.timelineSequence;
+        sequence.position = sequenceState.previousPosition;
+        sequence.remove();
+        sequence.timelineLayer = sequenceState.previousTimelineLayer;
+        sequence.updateAppearance();
+        // this.env.undoManager.removeLatestUndo(); uncomment as soon as it is merged in the lively.next:master
+      });
+    }
     this.hideWarningLeft();
     this.hideWarningRight();
     this.removeSnapIndicator();
