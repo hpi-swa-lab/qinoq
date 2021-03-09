@@ -743,6 +743,9 @@ export class TimelineSequence extends Morph {
           this.tooltip = sequence.name;
         }
       },
+      _isInitializing: {
+        defaultValue: true
+      },
       height: {
         defaultValue: CONSTANTS.SEQUENCE_HEIGHT
       },
@@ -754,12 +757,16 @@ export class TimelineSequence extends Morph {
           }
         }
       },
+      extent: {
+        set (extent) {
+          this.setProperty('extent', extent);
+          if (!this._isInitializing) { this.updateSequenceAfterArrangement(); }
+        }
+      },
       position: {
         set (position) {
           this.setProperty('position', position);
-          if (!this._isInitializing) {
-            this.updateSequenceAfterArrangement();
-          }
+          if (!this._isInitializing) { this.updateSequenceAfterArrangement(); }
         }
       },
       selected: {
@@ -997,14 +1004,13 @@ export class TimelineSequence extends Morph {
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
       this.rightResizer.position = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH - this.rightResizer.width, 0);
       this.updateSequenceAfterArrangement();
-      return;
+    } else {
+      this.extent = pt(newSequenceWidth, this.height);
+      this.rightResizer.position = pt(this.rightResizer.position.x, 0);
+
+      this.checkResizeSnapping(event, false);
+      this.updateSequenceAfterArrangement();
     }
-
-    this.extent = pt(newSequenceWidth, this.height);
-    this.rightResizer.position = pt(this.rightResizer.position.x, 0);
-
-    this.checkResizeSnapping(event, false);
-    this.updateSequenceAfterArrangement();
   }
 
   onResizeLeft (event) {
@@ -1034,6 +1040,7 @@ export class TimelineSequence extends Morph {
   }
 
   onResizeStart (event) {
+    this.env.undoManager.removeLatestUndo();
     this.undoStart('timeline-sequence-resize');
     event.hand.timelineSequenceStates = [{
       timelineSequence: this,
@@ -1045,17 +1052,6 @@ export class TimelineSequence extends Morph {
 
   onResizeEnd (event) {
     this.undoStop('timeline-sequence-resize');
-    if (this.isOverlappingOtherSequence()) {
-      const sequenceStates = event.hand.timelineSequenceStates;
-      sequenceStates.forEach(sequenceState => {
-        const sequence = sequenceState.timelineSequence;
-        sequence.position = sequenceState.previousPosition;
-        sequence.remove();
-        sequence.timelineLayer = sequenceState.previousTimelineLayer;
-        sequence.updateAppearance();
-        // this.env.undoManager.removeLatestUndo(); uncomment as soon as it is merged in the lively.next:master
-      });
-    }
     this.hideWarningLeft();
     this.hideWarningRight();
     this.removeSnapIndicator();
