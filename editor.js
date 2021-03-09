@@ -231,7 +231,6 @@ class Preview extends Morph {
     if (evt.type != 'morphicdrop') {
       return;
     }
-    debugger;
     const grabbedMorph = arr.first(evt.hand.grabbedMorphs);
     if (grabbedMorph.isInteractive) {
       this.editor.loadInteractive(grabbedMorph);
@@ -241,7 +240,6 @@ class Preview extends Morph {
   }
 
   loadContent (interactive) {
-    debugger;
     this.withAllSubmorphsDo(submorph => {
       if (submorph !== this) submorph.remove();
     });
