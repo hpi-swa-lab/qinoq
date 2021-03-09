@@ -299,7 +299,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   getScrollFromPosition (position) {
-    return position.x / (CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH);
+    return (position.x - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) / CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH;
   }
 
   getDisplayValueFromScroll (scrollPosition) {
@@ -399,7 +399,7 @@ export class TimelineKeyframe extends Morph {
   }
 
   onMouseUp (evt) {
-    const scrollPosition = this.keyframe.calculatePositionInScrollyTelling(this.animation.target);
+    const scrollPosition = this.keyframe.calculatePositionInInteractive(this.animation.target);
     this.editor.interactiveScrollPosition = scrollPosition;
   }
 

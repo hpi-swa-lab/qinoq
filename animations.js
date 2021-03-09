@@ -98,7 +98,7 @@ export class Keyframe {
     this.name = name;
   }
 
-  calculatePositionInScrollyTelling (animationTargetMorph) {
+  calculatePositionInInteractive (animationTargetMorph) {
     const sequence = Sequence.getSequenceOfMorph(animationTargetMorph);
     const scrollPosition = sequence.start + (sequence.duration * this.position);
     return scrollPosition;
