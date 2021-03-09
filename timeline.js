@@ -174,6 +174,7 @@ export class Timeline extends Morph {
     throw new Error('Subclass resposibility');
   }
 }
+
 export class GlobalTimeline extends Timeline {
   createTimelineSequence (sequence) {
     const seq = new TimelineSequence();
