@@ -1,6 +1,6 @@
 import { Morph, Icon, HorizontalLayout, ProportionalLayout, Label, VerticalLayout } from 'lively.morphic';
 import { pt, LinearGradient, rect } from 'lively.graphics';
-import { connect } from 'lively.bindings';
+import { connect, disconnect } from 'lively.bindings';
 import { COLOR_SCHEME } from './colors.js';
 
 const CONSTANTS = {
@@ -607,7 +607,7 @@ class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     Icon.setIcon(arrowLabel, 'caret-right');
     arrowLabel.nativeCursor = 'pointer';
     this.layerInfo.addMorph(arrowLabel);
-    arrowLabel.onMouseDown = (evt) => { this.isExpanded = !this.isExpanded; };
+    arrowLabel.onMouseUp = () => { this.isExpanded = !this.isExpanded; };
   }
 
   collapse () {
@@ -1117,6 +1117,11 @@ class TimelineCursor extends Morph {
   }
 
   onOwnerChanged (newOwner) {
-    if (newOwner) { connect(newOwner, 'extent', this, 'height', { converter: (pt) => pt.y }); }
+    super.onOwnerChanged(newOwner);
+    if (newOwner) {
+      if (this.previousOwner) disconnect(this.previousOwner, 'extent', this, 'height');
+      connect(newOwner, 'extent', this, 'height', { converter: (pt) => pt.y });
+      this.previousOwner = newOwner;
+    }
   }
 }
