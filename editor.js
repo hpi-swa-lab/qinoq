@@ -176,13 +176,9 @@ export class InteractivesEditor extends Morph {
 
   inputFieldFocused () {
     const focusedMorph = this.env.eventDispatcher.eventState.focusedMorph; // TODO: This could be done with a utility in EventDispatcher
-    if (focusedMorph) {
-      const className = focusedMorph.constructor.name;
-      if (this.inputFieldClasses.includes(className)) {
-        return true;
-      }
-    }
-    return false;
+    if (!focusedMorph) return false;
+    const className = focusedMorph.constructor.name;
+    return this.inputFieldClasses.includes(className);
   }
 
   get commands () {
