@@ -72,15 +72,21 @@ export class InteractivesEditor extends Morph {
 
   loadInteractive (interactive) {
     if (this.interactive) {
-      disconnect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
-      disconnect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
-      this.interactive.remove();
-      this.morphInspector.deselect();
+      this.clearInteractive();
     }
     this.interactive = interactive;
     connect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
     connect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
     this.showGlobalTimeline();
+  }
+
+  clearInteractive () {
+    disconnect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
+    disconnect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
+    this.interactive.remove();
+    this.morphInspector.deselect();
+    this.sequenceTimelines.forEach(sequenceTimeline => disconnect(this, 'interactiveScrollPosition', sequenceTimeline, 'onScrollChange'));
+    this.sequenceTimelines = [];
   }
 
   initializePreview (interactive) {

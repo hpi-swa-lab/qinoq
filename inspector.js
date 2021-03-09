@@ -311,8 +311,8 @@ export class InteractiveMorphInspector extends Morph {
         uiElement.remove();
       }
     });
-    this.build();
     this.targetMorph = undefined;
+    this.build();
   }
 }
 
