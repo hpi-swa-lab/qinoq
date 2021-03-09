@@ -1,5 +1,5 @@
 import { pt } from 'lively.graphics';
-import { ProportionalLayout, Morph } from 'lively.morphic';
+import { ProportionalLayout, VerticalLayout, Icon, Label, Morph } from 'lively.morphic';
 import { connect, disconnectAll, disconnect } from 'lively.bindings';
 import { COLOR_SCHEME } from './colors.js';
 import { InteractiveMorphInspector } from './inspector.js';
@@ -21,7 +21,9 @@ export class InteractivesEditor extends Morph {
     return {
       interactive: {
         set (interactive) {
+          this.clearInteractive();
           this.setProperty('interactive', interactive);
+          if (!interactive) return;
           this.preview.loadContent(interactive);
           this.globalTimeline.loadContent(interactive);
         }
@@ -76,7 +78,8 @@ export class InteractivesEditor extends Morph {
       position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT),
       extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT),
       showNewTabButton: false,
-      tabHeight: 28
+      tabHeight: 28,
+      visible: false
     });
 
     this.globalTab = await this.tabContainer.addTab('[no interactive loaded]', this.globalTimeline);
@@ -93,10 +96,10 @@ export class InteractivesEditor extends Morph {
   }
 
   loadInteractive (interactive) {
-    if (this.interactive) {
-      this.clearInteractive();
-    }
     this.interactive = interactive;
+
+    this.tabContainer.visible = true;
+
     connect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
     connect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
     connect(this.interactive, 'name', this.globalTab, 'caption').update(this.interactive.name);
@@ -112,21 +115,26 @@ export class InteractivesEditor extends Morph {
     }).update(this.globalTab.selected);
   }
 
+  disbandTabConnections (tab) {
+    disconnectAll(tab);
+    if (this.getTimelineFor(tab)) disconnectAll(this.getTimelineFor(tab));
+    if (this.getSequenceFor(tab)) disconnectAll(this.getSequenceFor(tab));
+  }
+
   clearInteractive () {
-    console.log('TEST');
+    if (!this.interactive) return;
     disconnect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
     disconnectAll(this.interactive);
-    disconnectAll(this.globalTab);
 
-    this.tabs.forEach(tab => {
-      disconnectAll(tab);
-      disconnectAll(this.getTimelineFor(tab));
-      disconnectAll(this.getSequenceFor(tab));
-    });
+    disconnect(this.globalTab, 'caption', this.interactive, 'name');
+    disconnect(this.globalTab, 'onSelectionChange', this.interactive, 'showAllSequences');
+    disconnect(this.globalTab, 'onSelectionChange', this.getTimelineFor(this.globalTab), 'onScrollChange');
+
+    this.tabs.forEach(tab => { if (tab !== this.globalTab) tab.close(); });
 
     this.interactive.remove();
     this.morphInspector.deselect();
-    this.interactive = undefined;
+    this.preview.showEmptyPreviewPlaceholder();
   }
 
   async initializeSequenceView (sequence) {
@@ -154,6 +162,7 @@ export class InteractivesEditor extends Morph {
       }`,
       varMapping: { editor: this }
     }).update(tab.selected);
+    connect(tab, 'onClose', tab, 'disbandTabConnections', { converter: '() => source' });
   }
 
   initializeSequenceTimeline (sequence) {
@@ -246,6 +255,9 @@ class Preview extends Morph {
       position: {
         defaultValue: pt(CONSTANTS.SIDEBAR_WIDTH, 0)
       },
+      placeholderCaption: {
+        defaultValue: 'Open an Interactive by grab-and-dropping it here.'
+      },
       _editor: {}
     };
   }
@@ -256,6 +268,7 @@ class Preview extends Morph {
 
   initialize (editor) {
     this._editor = editor;
+    this.showEmptyPreviewPlaceholder();
   }
 
   onDrop (evt) {
@@ -278,6 +291,42 @@ class Preview extends Morph {
     this.addMorph(interactive.scrollOverlay);
     interactive.position = pt(0, 0);
     this.extent = interactive.extent;
+  }
+
+  showEmptyPreviewPlaceholder () {
+    this.withAllSubmorphsDo(submorph => {
+      if (submorph !== this) submorph.remove();
+    });
+
+    const placeholderColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT_DARKER;
+
+    const icon = new Label({
+      fontSize: 120,
+      fontColor: placeholderColor
+    });
+    Icon.setIcon(icon, 'folder-open');
+
+    const text = new Label({
+      fontSize: 15,
+      fontColor: placeholderColor
+    });
+    text.textString = this.placeholderCaption;
+
+    const container = new Morph({
+      acceptsDrops: false,
+      extent: pt(this.width, this.height),
+      position: pt(0, 0),
+      fill: COLOR_SCHEME.TRANSPARENT,
+      layout: new VerticalLayout({
+        autoResize: false,
+        align: 'center',
+        direction: 'centered',
+        spacing: 6
+      }),
+      submorphs: [icon, text]
+    });
+
+    this.addMorph(container);
   }
 }
 
