@@ -672,7 +672,7 @@ class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     this.tooltip = '';
     this.reactsToPointer = false;
     this.removeAllTimelineKeyframes();
-	  this.timeline.createPropertyLayers(this);
+    this.timeline.createPropertyLayers(this);
   }
 
   removeAllTimelineKeyframes () {
