@@ -170,13 +170,28 @@ export class InteractivesEditor extends Morph {
     return this.getTimelineFor(tab).sequence;
   }
 
+  get inputFieldClasses () {
+    return ['ValueScrubber', 'ColorPropertyView'];
+  }
+
+  inputFieldFocused () {
+    const focusedMorph = this.env.eventDispatcher.eventState.focusedMorph; // TODO: This could be done with a utility in EventDispatcher
+    if (focusedMorph) {
+      const className = focusedMorph.constructor.name;
+      if (this.inputFieldClasses.includes(className)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   get commands () {
     return [
       {
         name: 'move scrollposition forward',
         doc: 'Move the scrollPosition of the interactive forward by one unit',
         exec: () => {
-          if (this.interactive) {
+          if (this.interactive && !this.inputFieldFocused()) {
             this.interactive.scrollPosition++;
           }
         }
@@ -185,7 +200,7 @@ export class InteractivesEditor extends Morph {
         name: 'move scrollposition backwards',
         doc: 'Move the scrollPosition of the interactive back by one unit',
         exec: () => {
-          if (this.interactive) {
+          if (this.interactive && !this.inputFieldFocused()) {
             this.interactive.scrollPosition--;
           }
         }
