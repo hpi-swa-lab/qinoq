@@ -395,7 +395,6 @@ class KeyframeButton extends Morph {
   }
 
   onMouseUp (evt) {
-    this.setActivatedStyle();
     this.mode = 'activated';
     this.animation = this.sequence.addKeyframeForMorph(new Keyframe(this.sequence.progress, this.currentValue), this.target, this.property, this.propType);
     this.editor.sequenceTimelines.forEach(sequenceTimeline => sequenceTimeline.updateLayers());
@@ -442,12 +441,12 @@ class KeyframeButton extends Morph {
 
   async updateStyle () {
     if (this._updatingStyle) {
-      return true;
+      return;
     }
-    this._updatingStyle = true;
     if (!this.animation) {
       return;
     }
+    this._updatingStyle = true;
     const animationPosition = this.sequence.progress;
 
     if (animationPosition >= 0 && animationPosition <= 1 && this.animation.getKeyframeAt(animationPosition)) {
