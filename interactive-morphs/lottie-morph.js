@@ -57,7 +57,7 @@ export class LottieMorph extends HTMLMorph {
   }
 
   async initialize () {
-    if (!this.world()) return; // do not initialize an animation on morphs not rendered
+    // if (!this.world()) return; // do not initialize an animation on morphs not rendered
     await this.whenRendered();
     this.domNode.innerHTML = '';
     this.lottieAnimation = Lottie.loadAnimation({

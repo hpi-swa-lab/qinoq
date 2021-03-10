@@ -23,9 +23,7 @@ export class InteractivesEditor extends Morph {
         set (interactive) {
           this.clearInteractive();
           this.setProperty('interactive', interactive);
-          if (!interactive) return;
-          this.preview.loadContent(interactive);
-          this.globalTimeline.loadContent(interactive);
+          this.initializeInteractive(interactive);
         }
       },
       name: {
@@ -95,8 +93,11 @@ export class InteractivesEditor extends Morph {
     this.extent = pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT);
   }
 
-  loadInteractive (interactive) {
-    this.interactive = interactive;
+  initializeInteractive (interactive) {
+    if (!interactive) return;
+
+    this.preview.loadContent(interactive);
+    this.globalTimeline.loadContent(interactive);
 
     this.tabContainer.visible = true;
 
@@ -124,7 +125,9 @@ export class InteractivesEditor extends Morph {
   clearInteractive () {
     if (!this.interactive) return;
     disconnect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
-    disconnectAll(this.interactive);
+    disconnect(this.interactive, 'name', this.globalTimeline, 'name');
+    disconnect(this.interactive, 'scrollPosition', this.globalTimeline, 'interactiveScrollPosition');
+    disconnect(this.interactive, 'name', this.globalTab, 'caption');
 
     disconnect(this.globalTab, 'caption', this.interactive, 'name');
     disconnect(this.globalTab, 'onSelectionChange', this.interactive, 'showAllSequences');
