@@ -180,7 +180,7 @@ export class GlobalTimeline extends Timeline {
     const newTimelineSequence = this.createTimelineSequence(sequence);
     const hand = this.world().firstHand;
     hand.grab(newTimelineSequence);
-    // newTimelineSequence.position = pt(0, 0);
+    newTimelineSequence.onGrabStart(hand);
     newTimelineSequence.center = pt(0, 0);
   }
 

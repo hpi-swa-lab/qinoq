@@ -30,7 +30,7 @@ export class TimelineLayer extends Morph {
     this.addActiveAreaMorph();
   }
 
-  isTimelineLayer () {
+  get isTimelineLayer () {
     return true;
   }
 

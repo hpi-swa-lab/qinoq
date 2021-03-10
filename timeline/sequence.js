@@ -1,7 +1,7 @@
 import { Morph, Polygon, Label } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
 import { pt, LinearGradient, rect } from 'lively.graphics';
-import { connect, disconnectAll } from 'lively.bindings';
+import { connect, disconnect, disconnectAll } from 'lively.bindings';
 import { CONSTANTS } from './constants.js';
 export class TimelineSequence extends Morph {
   static get properties () {
@@ -262,6 +262,29 @@ export class TimelineSequence extends Morph {
     this.updateSequenceAfterArrangement();
   }
 
+  onGrabStart (hand) {
+    connect(hand, 'position', this, 'updateGrabAppearance');
+  }
+
+  updateGrabAppearance (hand) {
+    const globalPositionCenter = pt(this.globalPosition.x + this.width / 2, this.globalPosition.y + this.height / 2);
+    const morphBeneath = this.morphBeneath(globalPositionCenter);
+    debugger;
+    if (!morphBeneath) {
+      this.setOutsideEditorAppearance();
+      return;
+    }
+    if (morphBeneath.isTimelineSequence || (morphBeneath.owner && morphBeneath.owner.isTimelineSequence)) {
+      this.setOverlappingAppearance();
+      return;
+    }
+    if (morphBeneath.name === 'active area') {
+      this.setDefaultAppearance();
+      return;
+    }
+    this.setOutsideEditorAppearance();
+  }
+
   onBeingDroppedOn (hand, recipient) {
     if (recipient.isTimelineLayer) {
       recipient.addMorph(this);
@@ -271,6 +294,8 @@ export class TimelineSequence extends Morph {
       if (this.isOverlappingOtherSequence()) {
         $world.setStatusMessage('Find a free spot!', COLOR_SCHEME.ERROR);
         hand.grab(this);
+      } else {
+        disconnect(hand, 'position', this, 'updateGrabAppearance');
       }
     } else {
       $world.setStatusMessage('Can not be dropped here!', COLOR_SCHEME.ERROR);
@@ -278,7 +303,7 @@ export class TimelineSequence extends Morph {
     }
   }
 
-  isTimelineSequence () {
+  get isTimelineSequence () {
     return true;
   }
 
@@ -446,6 +471,10 @@ export class TimelineSequence extends Morph {
 
   setOverlappingAppearance () {
     this.fill = COLOR_SCHEME.ERROR;
+  }
+
+  setOutsideEditorAppearance () {
+    this.fill = COLOR_SCHEME.BACKGROUND_VARIANT;
   }
 
   setDefaultAppearance () {
