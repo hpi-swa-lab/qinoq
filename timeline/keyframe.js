@@ -81,7 +81,7 @@ export class TimelineKeyframe extends Morph {
   }
 
   async promptUserForNewPosition () {
-    const newPosition = await $world.prompt('Keyframe position:', { input: this.keyframe.position });
+    const newPosition = await $world.prompt('Keyframe position:', { input: `${this.keyframe.position}` });
     if (newPosition) {
       if (newPosition >= 0 && newPosition <= 1) {
         this.keyframe.position = newPosition;
