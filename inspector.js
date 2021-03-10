@@ -45,6 +45,9 @@ export class InteractiveMorphInspector extends Morph {
 
             this.buildPropertyControls();
             this.refreshAllPropertiesInInspector();
+            for (const property in this.propertyControls) {
+              this.propertyControls[property].keyframe.updateStyle();
+            }
             this.createConnections();
           }
         }
