@@ -133,6 +133,10 @@ export class TimelineSequence extends Morph {
   }
 
   onDoubleMouseDown (event) {
+    this.openSequenceView();
+  }
+
+  openSequenceView () {
     this.editor.initializeSequenceView(this.sequence);
   }
 
@@ -454,5 +458,58 @@ export class TimelineSequence extends Morph {
     if (this.rightResizer) disconnectAll(this.rightResizer);
     if (this.leftResizer) disconnectAll(this.leftResizer);
     super.remove();
+  }
+
+  menuItems (evt) {
+    return [
+      ['Rename Sequence', async () => await this.promptName()],
+      ['Delete Sequence', () => this.delete()],
+      ['Edit duration', async () => await this.promptDuration()],
+      ['Edit start position', async () => await this.promptStart()],
+      { isDivider: true },
+      ['Open sequence view', () => this.openSequenceView()],
+      ['Go to start', () => this.editor.interactiveScrollPosition = this.sequence.start]
+    ];
+  }
+
+  async promptName () {
+    const newName = await $world.prompt('Sequence name:', { input: this.sequence.name });
+    if (newName) {
+      this.sequence.name = newName;
+      this.caption = newName;
+    }
+  }
+
+  async promptDuration () {
+    const newDuration = Number(await $world.prompt('Duration:', { input: this.sequence.duration }));
+    if (this.sequence.isValidDuration(newDuration)) {
+      this.sequence.duration = newDuration;
+      this.width = this.timeline.getWidthFromDuration(newDuration);
+    } else {
+      $world.setStatusMessage('Duration not set', COLOR_SCHEME.ERROR);
+    }
+  }
+
+  async promptStart () {
+    const newStart = Number(await $world.prompt('Start:', { input: this.sequence.start }));
+    if (this.sequence.isValidStart(newStart)) {
+      this.sequence.start = newStart;
+      this.position = pt(this.timeline.getPositionFromScroll(newStart), CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+    } else {
+      $world.setStatusMessage('Start not set', COLOR_SCHEME.ERROR);
+    }
+  }
+
+  delete () {
+    this.remove();
+
+    const sequenceView = this.editor.getTabFor(this.sequence);
+    if (sequenceView) {
+      sequenceView.close();
+      // TODO: editor -> disbandTabConnections(tab)
+    }
+
+    // TODO: Remove other connections ?
+    this.editor.interactive.removeSequence(this.sequence);
   }
 }

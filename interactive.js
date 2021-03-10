@@ -1,6 +1,6 @@
 import { Morph, Image, Ellipse, Polygon } from 'lively.morphic';
 import { Color, pt } from 'lively.graphics';
-import { connect } from 'lively.bindings';
+import { connect, disconnect } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
 import { COLOR_SCHEME } from './colors.js';
 import { Keyframe, createAnimationForPropertyType, NumberAnimation, PointAnimation, ColorAnimation } from 'interactives-editor';
@@ -118,6 +118,21 @@ export class Interactive extends Morph {
     this.redraw();
   }
 
+  getSequencesInLayer (layer) {
+    return this.sequences.filter(sequence => sequence.layer === layer);
+  }
+
+  getSequencesInLayerBetween (layer, start, end) {
+    return this.getSequencesInLayer(layer).filter(sequence => sequence.start >= start || sequence.end <= end);
+  }
+
+  getSequenceAfter (sequence) {
+    const sequencesInLayer = this.getSequencesInLayer(sequence.layer);
+    sequencesInLayer.sort((a, b) => a.start - b.start); // Sort in ascending order
+    const sequenceIndex = sequencesInLayer.indexOf(sequence);
+    return sequencesInLayer[sequenceIndex + 1];
+  }
+
   addLayer (layer) {
     this.layers.push(layer);
     layer.interactive = this;
@@ -129,6 +144,13 @@ export class Interactive extends Morph {
     if (!sequence.layer || !this.layers.includes(sequence.layer)) {
       sequence.layer = this.layers[0];
     }
+    sequence.interactive = this;
+  }
+
+  removeSequence (sequence) {
+    disconnect(sequence, 'layer', this, 'sortSequences');
+    arr.remove(this.sequences, sequence);
+    sequence.remove();
   }
 
   showOnly (sequence) {
@@ -275,7 +297,8 @@ export class Sequence extends Morph {
       },
       animations: {
         defaultValue: []
-      }
+      },
+      interactive: {}
     };
   }
 
@@ -434,5 +457,21 @@ export class Sequence extends Morph {
 
   getAnimationsForMorph (morph) {
     return this.animations.filter(animation => animation.target === morph);
+  }
+
+  isValidStart (start) {
+    if (start == undefined || start == null) return false;
+    if (start < 0) return false;
+    return this.interactive.getSequencesInLayerBetween(this.layer, start, start + this.duration).filter(sequence => sequence != this).length === 0;
+  }
+
+  isValidDuration (duration) {
+    if (duration == undefined || duration == null) return false;
+    if (duration < 1) return false;
+    const nextSequence = this.interactive.getSequenceAfter(this);
+    if (nextSequence) {
+      return nextSequence.start >= this.start + duration;
+    }
+    return true;
   }
 }
