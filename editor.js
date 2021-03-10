@@ -14,7 +14,8 @@ const CONSTANTS = {
   PREVIEW_WIDTH: 400,
   SUBWINDOW_HEIGHT: 300,
   BORDER_WIDTH: 3,
-  MENU_BAR_HEIGHT: 35
+  MENU_BAR_HEIGHT: 35,
+  NEW_SEQUENCE_LENGTH: 125
 };
 CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
 
@@ -215,9 +216,14 @@ export class InteractivesEditor extends Morph {
   createNewSequence () {
     if (!this.interactive) return;
     const newSequence = new Sequence({ name: 'unnamed sequence' });
-    newSequence.initialize(500, 125);
+
+    // Assign a valid position to the new sequence
+    const lastSequenceInLayer = this.interactive.getLastSequenceInLayer(this.interactive.layers[0]);
+    const startingPosition = lastSequenceInLayer ? lastSequenceInLayer.end : 0;
+    newSequence.initialize(startingPosition, CONSTANTS.NEW_SEQUENCE_LENGTH);
     newSequence.layer = this.interactive.layers[0];
     this.interactive.addSequence(newSequence);
+
     this.globalTimeline.createTimelineSequenceInHand(newSequence);
   }
 
