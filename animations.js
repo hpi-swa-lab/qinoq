@@ -27,6 +27,7 @@ class Animation {
 
   removeKeyframe (keyframe) {
     arr.remove(this.keyframes, keyframe);
+    if (this.keyframes.length === 0) Sequence.getSequenceOfMorph(this.target).removeAnimation(this);
   }
 
   addKeyframes (keyframes) {

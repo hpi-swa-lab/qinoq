@@ -5,6 +5,7 @@ import { newUUID } from 'lively.lang/string.js';
 import { COLOR_SCHEME } from './colors.js';
 import { Keyframe, createAnimationForPropertyType, NumberAnimation, PointAnimation, ColorAnimation } from 'interactives-editor';
 import { LottieMorph } from './interactive-morphs/lottie-morph.js';
+import { arr } from 'lively.lang';
 
 export class Interactive extends Morph {
   static example () {
@@ -403,6 +404,10 @@ export class Sequence extends Morph {
 
   addAnimation (animation) {
     this.animations.push(animation);
+  }
+
+  removeAnimation (animation) {
+    arr.remove(this.animations, animation);
   }
 
   getAnimationForMorphProperty (morph, property) {
