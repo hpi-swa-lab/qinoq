@@ -182,6 +182,7 @@ export class TimelineSequence extends Morph {
       this.showWarningLeft(event.hand.position.x);
     } else {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+      this.hideWarningLeft();
     }
     this.checkDragSnapping(event);
 
