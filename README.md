@@ -5,23 +5,23 @@ The Interactives Editor allows editing of Interactives. Currently it is designed
 ## Editor Usage
 
 Before first usage of the editor within a world, you need to add the Interactives Editor package to the world.
-For the following examples to work, you need to import the respective classes from the Interactives Editor package.
+For the following examples to work, you need to import the respective classes from the Interactives Editor package. Do so by opening a browser via `Ctrl+b`, clicking the `+` button at the top, selecting `Load Existing Package` and exchange `lively.morphic` with `interactives-editor`. Click `OK`.
 
-### Opening an editor
+Use the `javascript workspace` to execute the following commands. You can open one via `Ctrl+k`.
 
-`const editor = new InteractivesEditor().initialize()  // opens an Interactives Editor in a window within the world`
-
-### Opening an Interactive in the world
+### Getting started with an Interactive
 
 ```js
+// open an Interactives Editor in a window within the world
+const editor = await new InteractivesEditor().initialize()
+
+// create an interactive
 const interactive = Interactive.example()  // creates an example interactive. Use new Interactive() to create an empty Interactive
-interactive.openInWorld()
+interactive.openInWorld()  // opens the interactive as morph in the world. Can be omitted if this is not wanted
+
+// load interactive into editor
+editor.interactive = interactive  // alternatively, you can grab-and-drop the opened interactive into the preview of the editor (via the "grab"-halo)
 ```
-
-### Loading the Interactive in the editor
-
-Either run `editor.loadInteractive(interactive)` or grab-and-drop the opened interactive into the
-preview of the editor (via the "grab"-halo).
 
 ## Interactive API
 
