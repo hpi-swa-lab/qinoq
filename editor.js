@@ -95,7 +95,7 @@ export class InteractivesEditor extends Morph {
 
   initializeInteractive (interactive) {
     if (!interactive) return;
-
+    this.interactiveScrollPosition = interactive.scrollPosition; // make sure the scrollPosition is up to date when loading content to preview and globalTimeline
     this.preview.loadContent(interactive);
     this.globalTimeline.loadContent(interactive);
 
@@ -119,7 +119,7 @@ export class InteractivesEditor extends Morph {
   disbandTabConnections (tab) {
     disconnectAll(tab);
     if (this.getTimelineFor(tab)) disconnectAll(this.getTimelineFor(tab));
-    if (this.getSequenceFor(tab)) disconnectAll(this.getSequenceFor(tab));
+    if (this.getSequenceFor(tab)) disconnect(this.getSequenceFor(tab), 'name', tab, 'caption');
   }
 
   clearInteractive () {

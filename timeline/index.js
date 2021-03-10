@@ -138,7 +138,7 @@ export class Timeline extends Morph {
     this.onScrollChange(this.editor.interactiveScrollPosition);
     connect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange', {
       updater: '($update, scrollPosition) => { if (target.isDisplayed) $update(scrollPosition); }'
-    });
+    }).update(this.editor.interactiveScrollPosition);
     connect(content, 'name', this, 'name', { converter: newName => `${newName.toLowerCase()} timeline` }).update(content.name);
     this._inInitialConstruction = false;
   }
