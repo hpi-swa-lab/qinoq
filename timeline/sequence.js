@@ -269,7 +269,6 @@ export class TimelineSequence extends Morph {
   updateGrabAppearance (hand) {
     const globalPositionCenter = pt(this.globalPosition.x + this.width / 2, this.globalPosition.y + this.height / 2);
     const morphBeneath = this.morphBeneath(globalPositionCenter);
-    debugger;
     if (!morphBeneath) {
       this.setOutsideEditorAppearance();
       return;
