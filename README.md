@@ -12,6 +12,9 @@ Use the `javascript workspace` to execute the following commands. You can open o
 ### Getting started with an Interactive
 
 ```js
+/* import necessary modules into workspace */
+import { InteractivesEditor, Interactive } from "interactives-editor";
+
 /* open an Interactives Editor in a window within the world */
 const editor = await new InteractivesEditor().initialize()
 
