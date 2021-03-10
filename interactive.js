@@ -279,7 +279,7 @@ export class Sequence extends Morph {
   }
 
   static getSequenceOfMorph (morph) {
-    return morph.ownerChain().find(m => m.isSequence);
+    return morph ? morph.ownerChain().find(m => m.isSequence) : undefined;
   }
 
   static backgroundNightExample () {
