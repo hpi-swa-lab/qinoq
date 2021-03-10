@@ -75,4 +75,15 @@ describe('Sequence object', () => {
     sequence.addKeyframeForMorph(newKeyframe, morph, 'rotation', 'number');
     expect(sequence.getAnimationsForMorph(morph)).to.have.length(2);
   });
+
+  it('removes an animation when the last keyframe is deleted', () => {
+    const morph = new Morph();
+    sequence.addMorph(morph);
+    const opacityAnimation = new NumberAnimation(morph, 'opacity');
+    const keyFrame = new Keyframe(0, 1);
+    opacityAnimation.addKeyframe(keyFrame);
+    sequence.addAnimation(opacityAnimation);
+    opacityAnimation.removeKeyframe(keyFrame);
+    expect(sequence.getAnimationsForMorph(morph)).to.have.length(0);
+  });
 });
