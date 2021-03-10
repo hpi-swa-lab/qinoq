@@ -15,7 +15,8 @@ const CONSTANTS = {
   SUBWINDOW_HEIGHT: 300,
   BORDER_WIDTH: 3,
   MENU_BAR_HEIGHT: 35,
-  NEW_SEQUENCE_LENGTH: 125
+  NEW_SEQUENCE_LENGTH: 125,
+  SPACING: 3
 };
 CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
 
@@ -218,8 +219,8 @@ export class InteractivesEditor extends Morph {
     const newSequence = new Sequence({ name: 'unnamed sequence' });
 
     // Assign a valid position to the new sequence
-    const lastSequenceInLayer = this.interactive.getLastSequenceInLayer(this.interactive.layers[0]);
-    const startingPosition = lastSequenceInLayer ? lastSequenceInLayer.end : 0;
+    const lastSequenceInFirstLayer = this.interactive.getLastSequenceInLayer(this.interactive.layers[0]);
+    const startingPosition = lastSequenceInFirstLayer ? lastSequenceInFirstLayer.end : 0;
     newSequence.initialize(startingPosition, CONSTANTS.NEW_SEQUENCE_LENGTH);
     newSequence.layer = this.interactive.layers[0];
     this.interactive.addSequence(newSequence);
@@ -387,11 +388,11 @@ class MenuBar extends Morph {
     this._editor = editor;
     this.ui.layoutContainer = new Morph({
       layout: new HorizontalLayout({
-        spacing: 3,
+        spacing: CONSTANTS.SPACING,
         autoResize: true
       }),
       extent: this.extent,
-      fill: Color.transparent,
+      fill: COLOR_SCHEME.TRANSPARENT,
       borderWidth: 0
     });
     this.addMorph(this.ui.layoutContainer);

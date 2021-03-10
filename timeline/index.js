@@ -178,7 +178,7 @@ export class GlobalTimeline extends Timeline {
 
   createTimelineSequenceInHand (sequence) {
     const newTimelineSequence = this.createTimelineSequence(sequence);
-    const hand = this.world().firstHand;
+    const hand = $world.firstHand;
     hand.grab(newTimelineSequence);
     newTimelineSequence.onGrabStart(hand);
     newTimelineSequence.center = pt(0, 0);

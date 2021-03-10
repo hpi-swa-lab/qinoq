@@ -269,10 +269,7 @@ export class TimelineSequence extends Morph {
   updateGrabAppearance (hand) {
     const globalPositionCenter = pt(this.globalPosition.x + this.width / 2, this.globalPosition.y + this.height / 2);
     const morphBeneath = this.morphBeneath(globalPositionCenter);
-    if (!morphBeneath) {
-      this.setOutsideEditorAppearance();
-      return;
-    }
+
     if (morphBeneath.isTimelineSequence || (morphBeneath.owner && morphBeneath.owner.isTimelineSequence)) {
       this.setOverlappingAppearance();
       return;
