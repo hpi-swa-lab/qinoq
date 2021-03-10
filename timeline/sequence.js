@@ -262,6 +262,22 @@ export class TimelineSequence extends Morph {
     this.updateSequenceAfterArrangement();
   }
 
+  onBeingDroppedOn (hand, recipient) {
+    if (recipient.isTimelineLayer) {
+      recipient.addMorph(this);
+
+      this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+      this.timelineLayer = this.owner;
+      if (this.isOverlappingOtherSequence()) {
+        $world.setStatusMessage('Find a free spot!', COLOR_SCHEME.ERROR);
+        hand.grab(this);
+      }
+    } else {
+      $world.setStatusMessage('Can not be dropped here!', COLOR_SCHEME.ERROR);
+      hand.grab(this);
+    }
+  }
+
   isTimelineSequence () {
     return true;
   }

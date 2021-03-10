@@ -176,6 +176,14 @@ export class GlobalTimeline extends Timeline {
     return seq;
   }
 
+  createTimelineSequenceInHand (sequence) {
+    const newTimelineSequence = this.createTimelineSequence(sequence);
+    const hand = this.world().firstHand;
+    hand.grab(newTimelineSequence);
+    // newTimelineSequence.position = pt(0, 0);
+    newTimelineSequence.center = pt(0, 0);
+  }
+
   getNewTimelineLayer () {
     return new GlobalTimelineLayer();
   }

@@ -1,12 +1,12 @@
 import { ProportionalLayout, HorizontalLayout, VerticalLayout, Icon, Label, Morph } from 'lively.morphic';
 import { connect, disconnectAll, disconnect } from 'lively.bindings';
 import { pt, Color } from 'lively.graphics';
-import { ProportionalLayout, Label, HorizontalLayout, Morph } from 'lively.morphic';
 import { COLOR_SCHEME } from './colors.js';
 import { InteractiveMorphInspector } from './inspector.js';
 import { resource } from 'lively.resources';
 import { arr } from 'lively.lang';
 import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
+import { Sequence } from 'interactives-editor';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 900,
@@ -14,7 +14,7 @@ const CONSTANTS = {
   PREVIEW_WIDTH: 400,
   SUBWINDOW_HEIGHT: 300,
   BORDER_WIDTH: 3,
-  MENU_BAR_HEIGHT: 50
+  MENU_BAR_HEIGHT: 35
 };
 CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
 
@@ -212,6 +212,15 @@ export class InteractivesEditor extends Morph {
     return this.getTimelineFor(tab).sequence;
   }
 
+  createNewSequence () {
+    if (!this.interactive) return;
+    const newSequence = new Sequence({ name: 'unnamed sequence' });
+    newSequence.initialize(500, 125);
+    newSequence.layer = this.interactive.layers[0];
+    this.interactive.addSequence(newSequence);
+    this.globalTimeline.createTimelineSequenceInHand(newSequence);
+  }
+
   get inputFieldClasses () {
     return ['ValueScrubber', 'ColorPropertyView'];
   }
@@ -360,12 +369,16 @@ class MenuBar extends Morph {
       ui: {
         defaultValue: {}
       },
-      editor: {}
+      _editor: {}
     };
   }
 
+  get editor () {
+    return this._editor;
+  }
+
   initialize (editor) {
-    this.editor = editor;
+    this._editor = editor;
     this.ui.layoutContainer = new Morph({
       layout: new HorizontalLayout({
         spacing: 3,
@@ -376,17 +389,19 @@ class MenuBar extends Morph {
       borderWidth: 0
     });
     this.addMorph(this.ui.layoutContainer);
-    this.addSequenceButton = new Morph({
-      master: 'styleguide://SystemUserUI/plain button',
+    this.addSequenceButton = new Label({
       position: pt(10, 10),
-      layout: new HorizontalLayout({
-        spacing: 5
-      })
+      extent: pt(64, 64),
+      fontSize: 30,
+      fontColor: COLOR_SCHEME.SECONDARY,
+      nativeCursor: 'pointer',
+      tooltip: 'Create a new sequence'
     });
-    this.addSequenceButton.addMorph(new Label({
-      textString: 'Add Sequence',
-      focusable: false
-    }));
+    this.addSequenceButton.onMouseUp = (evt) => {
+      super.onMouseUp(evt);
+      this.editor.createNewSequence();
+    };
+    Icon.setIcon(this.addSequenceButton, 'plus');
     this.ui.layoutContainer.addMorph(this.addSequenceButton);
   }
 }
