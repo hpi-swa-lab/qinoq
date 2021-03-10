@@ -17,7 +17,7 @@ const editor = await new InteractivesEditor().initialize()
 
 /* create an interactive */
 const interactive = Interactive.example()  // creates an example interactive
-                                           // Use new Interactive() to create an empty Interactive
+                                           // Use "new Interactive()" to create an empty Interactive
 interactive.openInWorld()  // optional: opens interactive as morph in the world
 
 /* load interactive into editor */
