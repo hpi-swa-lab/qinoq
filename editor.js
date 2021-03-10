@@ -1,6 +1,7 @@
-import { pt } from 'lively.graphics';
-import { ProportionalLayout, VerticalLayout, Icon, Label, Morph } from 'lively.morphic';
+import { ProportionalLayout, HorizontalLayout, VerticalLayout, Icon, Label, Morph } from 'lively.morphic';
 import { connect, disconnectAll, disconnect } from 'lively.bindings';
+import { pt, Color } from 'lively.graphics';
+import { ProportionalLayout, Label, HorizontalLayout, Morph } from 'lively.morphic';
 import { COLOR_SCHEME } from './colors.js';
 import { InteractiveMorphInspector } from './inspector.js';
 import { resource } from 'lively.resources';
@@ -9,10 +10,11 @@ import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 900,
-  EDITOR_HEIGHT: 500,
+  EDITOR_HEIGHT: 550,
   PREVIEW_WIDTH: 400,
   SUBWINDOW_HEIGHT: 300,
-  BORDER_WIDTH: 3
+  BORDER_WIDTH: 3,
+  MENU_BAR_HEIGHT: 50
 };
 CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
 
@@ -65,6 +67,10 @@ export class InteractivesEditor extends Morph {
     this.morphInspector.initialize(this);
     this.addMorph(this.morphInspector);
 
+    this.menuBar = new MenuBar({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT) });
+    this.menuBar.initialize(this);
+    this.addMorph(this.menuBar);
+
     this.globalTimeline = new GlobalTimeline({
       position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT),
       extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT)
@@ -73,7 +79,7 @@ export class InteractivesEditor extends Morph {
 
     this.tabContainer = await resource('part://tabs/tabs').read();
     Object.assign(this.tabContainer, {
-      position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT),
+      position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT + CONSTANTS.MENU_BAR_HEIGHT),
       extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT),
       showNewTabButton: false,
       tabHeight: 28,
@@ -330,6 +336,58 @@ class Preview extends Morph {
     });
 
     this.addMorph(container);
+  }
+}
+
+class MenuBar extends Morph {
+  static get properties () {
+    return {
+      name: {
+        defaultValue: 'menu bar'
+      },
+      extent: {
+        defaultValue: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.MENU_BAR_HEIGHT)
+      },
+      borderColor: {
+        defaultValue: COLOR_SCHEME.BACKGROUND_VARIANT
+      },
+      borderWidth: {
+        defaultValue: CONSTANTS.BORDER_WIDTH
+      },
+      layoutable: {
+        defaultValue: false
+      },
+      ui: {
+        defaultValue: {}
+      },
+      editor: {}
+    };
+  }
+
+  initialize (editor) {
+    this.editor = editor;
+    this.ui.layoutContainer = new Morph({
+      layout: new HorizontalLayout({
+        spacing: 3,
+        autoResize: true
+      }),
+      extent: this.extent,
+      fill: Color.transparent,
+      borderWidth: 0
+    });
+    this.addMorph(this.ui.layoutContainer);
+    this.addSequenceButton = new Morph({
+      master: 'styleguide://SystemUserUI/plain button',
+      position: pt(10, 10),
+      layout: new HorizontalLayout({
+        spacing: 5
+      })
+    });
+    this.addSequenceButton.addMorph(new Label({
+      textString: 'Add Sequence',
+      focusable: false
+    }));
+    this.ui.layoutContainer.addMorph(this.addSequenceButton);
   }
 }
 
