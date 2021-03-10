@@ -308,9 +308,9 @@ class Preview extends Morph {
 
     const text = new Label({
       fontSize: 15,
-      fontColor: placeholderColor
+      fontColor: placeholderColor,
+      textString: this.placeholderCaption
     });
-    text.textString = this.placeholderCaption;
 
     const container = new Morph({
       acceptsDrops: false,
