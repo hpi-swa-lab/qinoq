@@ -4,9 +4,9 @@ Closes [fill in your issues here]
 ### Sequences in GlobalTimeline:
 
 - [ ] the tree sequence is resizeable both left and right
-- [ ] the day sequence can't be dragged or resized onto the night sequence
+- [ ] the day sequence can't be dragged or resized onto the night sequence, instead it will snap to the night sequence
 - [ ] the night sequence can't be dragged or resized beyond the timeline bounds
-- [ ] double clicking on the sky sequence brings you to the sequence view
+- [ ] double clicking on the sky sequence brings you to a new tab with the sequence view
 
 ### TimelineLayer:
 
@@ -26,13 +26,13 @@ Closes [fill in your issues here]
 
 ### Sequence View:
 
-- [ ] there are two OverviewLayers (one per Morph in the sequence)
-- [ ] they hold four Keyframes each
+- [ ] there are three OverviewLayers (one per Morph in the sequence)
+- [ ] they hold four to six keyframes
 - [ ] right-clicking a keyframe shows a context menu
 - [ ] clicking on the triangle expands those into two new layers with two keyframes each
 - [ ] when expanding both morphs the cursor is still visible over all layers
 - [ ] creating a new keyframe (with the inspector) will update the layers accordingly
-- [ ] pressing ESC brings one back to the GlobalTimeline
+- [ ] pressing on the first tab brings you back to the global timeline
 
 ### Inspector:
 
@@ -42,3 +42,7 @@ Closes [fill in your issues here]
 - [ ] when scrolling in the scrollytelling, created keyframes are shown by a different icon in the inspector
 - [ ] a keyframe can be overwritten in the inspector by navigating to the same scroll position (most easily done at scroll position 0) and adding a new keyframe
 
+### Tabs
+- [ ] the first tab can be renamed to 'aScrollytelling', this will also rename the interactive
+- [ ] the second tab can be renamed to 'sunrise', this will also rename the sequence in the global timeline
+- [ ] the second tab can be closed with the 'X'
