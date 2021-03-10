@@ -5,6 +5,7 @@ Closes [fill in your issues here]
 
 - [ ] the tree sequence is resizeable both left and right
 - [ ] the day sequence can't be dragged or resized onto the night sequence, instead it will snap to the night sequence
+- [ ] the day sequence can be dragged to the middle layer, it will snap onto the tree sequence
 - [ ] the night sequence can't be dragged or resized beyond the timeline bounds
 - [ ] double clicking on the sky sequence brings you to a new tab with the sequence view
 
@@ -26,7 +27,7 @@ Closes [fill in your issues here]
 
 ### Sequence View:
 
-- [ ] there are three OverviewLayers (one per Morph in the sequence)
+- [ ] there are three OverviewLayers (one per Morph in the sky sequence)
 - [ ] they hold four to six keyframes
 - [ ] right-clicking a keyframe shows a context menu
 - [ ] clicking on the triangle expands those into two new layers with two keyframes each
