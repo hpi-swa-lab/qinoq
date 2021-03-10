@@ -203,7 +203,7 @@ export class InteractivesEditor extends Morph {
         name: 'move scrollposition forward',
         doc: 'Move the scrollPosition of the interactive forward by one unit',
         exec: () => {
-          if (this.interactive && !this.inputFieldFocused()) {
+          if (this.interactive && !this.inputFieldFocused() && this.interactive.scrollPosition < this.interactive.length) {
             this.interactive.scrollPosition++;
           }
         }
@@ -212,7 +212,7 @@ export class InteractivesEditor extends Morph {
         name: 'move scrollposition backwards',
         doc: 'Move the scrollPosition of the interactive back by one unit',
         exec: () => {
-          if (this.interactive && !this.inputFieldFocused()) {
+          if (this.interactive && !this.inputFieldFocused() && this.interactive.scrollPosition > 0) {
             this.interactive.scrollPosition--;
           }
         }
