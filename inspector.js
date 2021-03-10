@@ -195,7 +195,9 @@ export class InteractiveMorphInspector extends Morph {
 
   disbandConnections () {
     if (this.targetMorph) {
+      const sequenceOfOldTarget = Sequence.getSequenceOfMorph(this.targetMorph);
       this.displayedProperties.forEach(inspectedProperty => {
+        disconnect(sequenceOfOldTarget, 'updateProgress', this.propertyControls[inspectedProperty].keyframe, 'updateStyle');
         const propType = this.possibleProperties[inspectedProperty];
         disconnect(this.targetMorph, inspectedProperty, this, 'updateInInspector');
         switch (propType) {
@@ -354,8 +356,11 @@ class KeyframeButton extends Morph {
       _editor: {},
       sequence: {
         set (sequence) {
+          // FOR REVIEW: I do not think this has the indended effect ever,
+          // since the sequence never changes after the initial set
+          // Remove the following three lines?
           if (this.sequence) {
-            disconnect(sequence, 'updateProgress', this, 'updateStyle');
+            disconnect(this.sequence, 'updateProgress', this, 'updateStyle');
           }
           connect(sequence, 'updateProgress', this, 'updateStyle');
           this.setProperty('sequence', sequence);
