@@ -67,9 +67,14 @@ export class TimelineKeyframe extends Morph {
     return pt(x, y);
   }
 
+  async rename () {
+    const newName = await $world.prompt('Keyframe name:', { input: this.keyframe.name });
+    if (newName) this.name = newName;
+  }
+
   menuItems (evt) {
     return [
-      ['Rename Keyframe', async () => this.name = await $world.prompt('Keyframe name:', { input: this.keyframe.name })],
+      ['Rename Keyframe', async () => await this.rename()],
       ['Delete Keyframe', () => this.remove()],
       ['Edit Keyframe Position (0 to 1)', async () => { await this.promptUserForNewPosition(); }]
     ];
