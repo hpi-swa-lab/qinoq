@@ -12,15 +12,18 @@ Use the `javascript workspace` to execute the following commands. You can open o
 ### Getting started with an Interactive
 
 ```js
-// open an Interactives Editor in a window within the world
+/* open an Interactives Editor in a window within the world */
 const editor = await new InteractivesEditor().initialize()
 
-// create an interactive
-const interactive = Interactive.example()  // creates an example interactive. Use new Interactive() to create an empty Interactive
-interactive.openInWorld()  // opens the interactive as morph in the world. Can be omitted if this is not wanted
+/* create an interactive */
+const interactive = Interactive.example()  // creates an example interactive
+										   // Use new Interactive() to create an empty Interactive
+interactive.openInWorld()  // optional: opens interactive as morph in the world
 
-// load interactive into editor
-editor.interactive = interactive  // alternatively, you can grab-and-drop the opened interactive into the preview of the editor (via the "grab"-halo)
+/* load interactive into editor */
+editor.interactive = interactive  // alternatively, you can grab-and-drop
+								  // the opened interactive into the preview of the editor
+								  // (via the "grab"-halo)
 ```
 
 ## Interactive API
