@@ -169,7 +169,7 @@ export class InteractiveMorphInspector extends Morph {
       extent: pt(CONSTANTS.TARGET_PICKER_DIAMETER, CONSTANTS.TARGET_PICKER_DIAMETER)
     });
     this.ui.targetPicker.onMouseDown = async (evt) => {
-      this.targetMorph = await InteractiveMorphSelector.selectMorph($world, null, morph => morph._morphInInteractive);
+      this.targetMorph = await InteractiveMorphSelector.selectMorph($world, null, morph => morph._morphInInteractive && Sequence.getSequenceOfMorph(morph) && Sequence.getSequenceOfMorph(morph).focused);
     };
   }
 
