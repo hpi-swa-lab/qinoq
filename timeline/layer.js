@@ -89,11 +89,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
 export class GlobalTimelineLayer extends TimelineLayer {
   static get properties () {
     return {
-      grabbable: {
-        defaultValue: true
-      },
       draggable: {
-      // setting grabbable sets draggable to true but only via the setter and not with the default value, but we need draggable to be true as well
         defaultValue: true
       },
       nativeCursor: {
@@ -131,8 +127,15 @@ export class GlobalTimelineLayer extends TimelineLayer {
     this.timeline.deselectAllSequences();
   }
 
-  onBeingDroppedOn (hand, recipient) {
-    let index = (hand.position.y - this.container.globalPosition.y) / (this.extent.y + 2 * this.container.layout.spacing);
+  onDragStart (event) {
+    const undo = this.container.undoStart('overview-layer-drag');
+    undo.addTarget(this.timeline);
+    this.borderWidth = 3;
+    this.borderColor = COLOR_SCHEME.PRIMARY;
+  }
+
+  onDrag (event) {
+    let index = (event.hand.position.y - this.container.globalPosition.y) / (this.extent.y + 2 * this.container.layout.spacing);
     if (index < 0) {
       index = 0;
     }
@@ -142,6 +145,11 @@ export class GlobalTimelineLayer extends TimelineLayer {
     this.container.addMorphAt(this, Math.round(index));
     this.timeline.arrangeLayerInfos();
     this.timeline.updateZIndicesFromTimelineLayerPositions();
+  }
+
+  onDragEnd (event) {
+    this.container.undoStop('overview-layer-drag');
+    this.borderWidth = 0;
   }
 
   getAllSequencesIntersectingWith (rectangle) {
