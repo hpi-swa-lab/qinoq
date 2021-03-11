@@ -505,11 +505,10 @@ export class TimelineSequence extends Morph {
 
     const sequenceView = this.editor.getTabFor(this.sequence);
     if (sequenceView) {
+      this.editor.disbandTabConnections(sequenceView);
       sequenceView.close();
-      // TODO: editor -> disbandTabConnections(tab)
     }
 
-    // TODO: Remove other connections ?
     this.editor.interactive.removeSequence(this.sequence);
   }
 }
