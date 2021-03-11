@@ -10,6 +10,7 @@ Closes [fill in your issues here]
 - [ ] the day sequence can be dragged to the middle layer, it will snap onto the tree sequence
 - [ ] the night sequence can't be dragged or resized beyond the timeline bounds
 - [ ] double clicking on the sky sequence brings you to a new tab named 'sky sequence' containing with the sequence view
+- [ ] when clicking the "+" button a sequence is in the hand, which can only be dropped on a timelinelayer and changes color when you are not able to place the sequence
 
 ### TimelineLayer:
 
