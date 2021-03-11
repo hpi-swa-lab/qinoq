@@ -1,6 +1,6 @@
 import { Morph, Image, Ellipse, Polygon } from 'lively.morphic';
 import { Color, pt } from 'lively.graphics';
-import { connect, disconnect } from 'lively.bindings';
+import { connect, disconnectAll } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
 import { COLOR_SCHEME } from './colors.js';
 import { Keyframe, createAnimationForPropertyType, NumberAnimation, PointAnimation, ColorAnimation } from 'interactives-editor';
@@ -148,7 +148,7 @@ export class Interactive extends Morph {
   }
 
   removeSequence (sequence) {
-    disconnect(sequence, 'layer', this, 'sortSequences');
+    disconnectAll(sequence);
     arr.remove(this.sequences, sequence);
     sequence.remove();
   }
