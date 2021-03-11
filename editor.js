@@ -280,7 +280,7 @@ class Preview extends Morph {
     }
     const grabbedMorph = arr.first(evt.hand.grabbedMorphs);
     if (grabbedMorph.isInteractive) {
-      this.editor.loadInteractive(grabbedMorph);
+      this.editor.interactive = grabbedMorph;
     } else {
       $world.setStatusMessage('You have to drop an interactive here');
     }
