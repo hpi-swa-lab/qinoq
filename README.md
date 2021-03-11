@@ -16,15 +16,15 @@ Use the `javascript workspace` to execute the following commands. You can open o
 import { InteractivesEditor, Interactive } from "interactives-editor";
 
 /* open an Interactives Editor in a window within the world */
-const editor = await new InteractivesEditor().initialize()
+const editor = await new InteractivesEditor().initialize();
 
 /* create an interactive */
-const interactive = Interactive.example()  // creates an example interactive
+const interactive = Interactive.example();  // creates an example interactive
                                            // Use "new Interactive()" to create an empty Interactive
-interactive.openInWorld()  // optional: opens interactive as morph in the world
+interactive.openInWorld();  // optional: opens interactive as morph in the world
 
 /* load interactive into editor */
-editor.interactive = interactive  // alternatively, you can grab-and-drop
+editor.interactive = interactive;  // alternatively, you can grab-and-drop
                                   // the opened interactive into the preview of the editor
                                   // (via the "grab"-halo)
 ```
@@ -62,9 +62,20 @@ This code adds a Sequence to the Interactive that displays a rectangular Morph, 
 
 ```js
 const exampleSequence = new Sequence({name: 'example sequence'});
-exampleSequence.initialize(0, 500) //sequence starts at 0, runs until 500
+exampleSequence.initialize(0, 500); //sequence starts at 0, runs until 500
 const exampleMorph = new Morph({ fill: Color.rgbHex('272a7c'), extent: pt(400, 300) });
 exampleSequence.addMorph(exampleMorph);
-exampleSequence.layer = layer // we have to put the sequence on a layer in the interactive
-interactive.addSequence(exampleSequence)
+exampleSequence.layer = layer; // we have to put the sequence on a layer in the interactive
+interactive.addSequence(exampleSequence);
+```
+### Animations
+
+Animations are stored in sequences. Every animation affects one property in one morph (in that sequence). Animations are based on Keyframes that store specific property values at specific relative positions.  
+This code adds an animation to the morph "bird" in the "skySequence", which is composed of 3 Keyframes. The animation makes the bird move over the screen by changing the position property.
+
+```js
+const birdAnimation = new PointAnimation(bird, 'position');
+birdAnimation.addKeyframes([new Keyframe(0, pt(0, 200), 'start'), new Keyframe(0.5, pt(200, 300)), new Keyframe(1, pt(400, 0), 'end')]); // Keyframes are created; Naming the keyframe is optional
+
+skySequence.addAnimation(birdAnimation);
 ```
