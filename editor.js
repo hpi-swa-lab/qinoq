@@ -7,6 +7,7 @@ import { resource } from 'lively.resources';
 import { arr } from 'lively.lang';
 import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
 import { Sequence } from 'interactives-editor';
+import { NumberWidget } from 'lively.ide/value-widgets.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 900,
@@ -14,7 +15,7 @@ const CONSTANTS = {
   PREVIEW_WIDTH: 400,
   SUBWINDOW_HEIGHT: 300,
   BORDER_WIDTH: 3,
-  MENU_BAR_HEIGHT: 28,
+  MENU_BAR_HEIGHT: 32,
   NEW_SEQUENCE_LENGTH: 125,
   SPACING: 3
 };
@@ -399,30 +400,65 @@ class MenuBar extends Morph {
       borderWidth: 0
     });
     this.addMorph(this.ui.layoutContainer);
-    this.addSequenceButton = new Label({
-      position: pt(10, 10),
+    this.buildAddSequenceButton();
+    this.buildScrollPositionInput();
+  }
+
+  buildAddSequenceButton () {
+    this.ui.addSequenceButton = new Label({
       extent: pt(64, 64),
       fontSize: 20,
       fontColor: COLOR_SCHEME.SECONDARY,
       nativeCursor: 'pointer',
       tooltip: 'Create a new sequence'
     });
-    this.addSequenceButton.onMouseUp = (evt) => {
+    this.ui.addSequenceButton.onMouseUp = (evt) => {
       super.onMouseUp(evt);
       this.editor.createNewSequence();
     };
-    Icon.setIcon(this.addSequenceButton, 'plus');
-    this.ui.layoutContainer.addMorph(this.addSequenceButton);
+    Icon.setIcon(this.ui.addSequenceButton, 'plus');
+    this.ui.layoutContainer.addMorph(this.ui.addSequenceButton);
+  }
+
+  buildScrollPositionInput () {
+    this.ui.scrollPositionInput = new NumberWidget({
+      min: 0,
+      extent: pt(100, 25),
+      autofit: false,
+      dropShadow: false,
+      borderWidth: 2,
+      borderColor: COLOR_SCHEME.SECONDARY
+      // fontColor: COLOR_SCHEME.ON_SURFACE
+    });
+    connect(this.ui.scrollPositionInput, 'number', this, 'onScrollPositionInputChange');
+    connect(this.editor, 'interactiveScrollPosition', this, 'onInteractiveScrollPositionChange');
+    this.ui.layoutContainer.addMorph(this.ui.scrollPositionInput);
+  }
+
+  onScrollPositionInputChange (number) {
+    if (!this._updatingFromScroll) {
+      this._updatingFromInput = true;
+      this.editor.interactiveScrollPosition = number;
+      this._updatingFromInput = false;
+    }
+  }
+
+  onInteractiveScrollPositionChange (scrollPosition) {
+    if (!this._updatingFromInput) {
+      this._updatingFromScroll = true;
+      this.ui.scrollPositionInput.number = scrollPosition;
+      this._updatingFromScroll = false;
+    }
   }
 
   onGlobalTimelineTab () {
-    this.addSequenceButton.reactsToPointer = true;
-    this.addSequenceButton.fontColor = COLOR_SCHEME.SECONDARY;
+    this.ui.addSequenceButton.reactsToPointer = true;
+    this.ui.addSequenceButton.fontColor = COLOR_SCHEME.SECONDARY;
   }
 
   onSequenceView () {
-    this.addSequenceButton.reactsToPointer = false;
-    this.addSequenceButton.fontColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
+    this.ui.addSequenceButton.reactsToPointer = false;
+    this.ui.addSequenceButton.fontColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
   }
 }
 
