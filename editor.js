@@ -229,7 +229,7 @@ export class InteractivesEditor extends Morph {
   }
 
   get inputFieldClasses () {
-    return ['ValueScrubber', 'ColorPropertyView'];
+    return ['ValueScrubber', 'ColorPropertyView', 'TabCaption'];
   }
 
   inputFieldFocused () {
@@ -247,6 +247,7 @@ export class InteractivesEditor extends Morph {
         exec: () => {
           if (this.interactive && !this.inputFieldFocused() && this.interactive.scrollPosition < this.interactive.length) {
             this.interactive.scrollPosition++;
+            this.interactive.scrollOverlay.scroll = pt(0, this.interactive.scrollPosition);
           }
         }
       },
@@ -256,6 +257,7 @@ export class InteractivesEditor extends Morph {
         exec: () => {
           if (this.interactive && !this.inputFieldFocused() && this.interactive.scrollPosition > 0) {
             this.interactive.scrollPosition--;
+            this.interactive.scrollOverlay.scroll = pt(0, this.interactive.scrollPosition);
           }
         }
       }];
