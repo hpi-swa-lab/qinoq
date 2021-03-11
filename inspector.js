@@ -195,9 +195,9 @@ export class InteractiveMorphInspector extends Morph {
 
   disbandConnections () {
     if (this.targetMorph) {
-      const sequenceOfOldTarget = Sequence.getSequenceOfMorph(this.targetMorph);
+      const sequenceOfTarget = Sequence.getSequenceOfMorph(this.targetMorph);
       this.displayedProperties.forEach(inspectedProperty => {
-        disconnect(sequenceOfOldTarget, 'updateProgress', this.propertyControls[inspectedProperty].keyframe, 'updateStyle');
+        disconnect(sequenceOfTarget, 'updateProgress', this.propertyControls[inspectedProperty].keyframe, 'updateStyle');
         const propType = this.possibleProperties[inspectedProperty];
         disconnect(this.targetMorph, inspectedProperty, this, 'updateInInspector');
         switch (propType) {
