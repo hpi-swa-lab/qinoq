@@ -34,6 +34,7 @@ Closes [fill in your issues here]
 - [ ] when expanding both morphs the cursor is still visible over all layers
 - [ ] creating a new keyframe (with the inspector) will update the layers accordingly
 - [ ] clicking on the first tab brings you back to the global timeline
+- [ ] after scrolling in the global timeline, the cursor position in the already opened 'sky sequence' has updated as well, when changing to this tab and vice versa
 
 ### Inspector:
 
