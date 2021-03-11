@@ -133,13 +133,13 @@ export class Interactive extends Morph {
     return sequencesInLayer[sequenceIndex + 1];
   }
 
+  getLastSequenceInLayer (layer) {
+    return this.getSequencesInLayer(layer).sort((a, b) => b.end - a.end)[0];
+  }
+
   addLayer (layer) {
     this.layers.push(layer);
     layer.interactive = this;
-  }
-
-  getLastSequenceInLayer (layer) {
-    return arr.first(this.sequences.filter(sequence => sequence.layer === layer).sort((a, b) => b.end - a.end));
   }
 
   addSequence (sequence) {
@@ -456,10 +456,7 @@ export class Sequence extends Morph {
   getAnimationForMorphProperty (morph, property) {
     // Assumes only one animation per property/morph combination
     const possibleAnimations = this.animations.filter(animation => animation.target === morph && animation.property === property);
-    if (possibleAnimations.length > 0) {
-      return possibleAnimations[0];
-    }
-    return undefined;
+    return possibleAnimations[0];
   }
 
   // Generic interface to add a keyframe to a sequence
