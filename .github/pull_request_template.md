@@ -1,3 +1,5 @@
+**I have added additional features to the PR template**
+
 Closes [fill in your issues here]
 
 ## Features that still work:
@@ -7,7 +9,7 @@ Closes [fill in your issues here]
 - [ ] the day sequence can't be dragged or resized onto the night sequence, instead it will snap to the night sequence and the snap indicator is shown
 - [ ] the day sequence can be dragged to the middle layer, it will snap onto the tree sequence
 - [ ] the night sequence can't be dragged or resized beyond the timeline bounds
-- [ ] double clicking on the sky sequence brings you to a new tab named "sky sequence" containing with the sequence view
+- [ ] double clicking on the sky sequence brings you to a new tab named 'sky sequence' containing with the sequence view
 
 ### TimelineLayer:
 
