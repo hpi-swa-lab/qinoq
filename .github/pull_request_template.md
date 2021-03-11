@@ -4,10 +4,10 @@ Closes [fill in your issues here]
 ### Sequences in GlobalTimeline:
 
 - [ ] the tree sequence is resizeable both left and right
-- [ ] the day sequence can't be dragged or resized onto the night sequence, instead it will snap to the night sequence
+- [ ] the day sequence can't be dragged or resized onto the night sequence, instead it will snap to the night sequence and the snap indicator is shown
 - [ ] the day sequence can be dragged to the middle layer, it will snap onto the tree sequence
 - [ ] the night sequence can't be dragged or resized beyond the timeline bounds
-- [ ] double clicking on the sky sequence brings you to a new tab with the sequence view
+- [ ] double clicking on the sky sequence brings you to a new tab named "sky sequence" containing with the sequence view
 
 ### TimelineLayer:
 
@@ -28,12 +28,12 @@ Closes [fill in your issues here]
 ### Sequence View:
 
 - [ ] there are three OverviewLayers (one per Morph in the sky sequence)
-- [ ] they hold four to six keyframes
+- [ ] they hold four to six keyframes each
 - [ ] right-clicking a keyframe shows a context menu
 - [ ] clicking on the triangle expands those into two new layers with two keyframes each
 - [ ] when expanding both morphs the cursor is still visible over all layers
 - [ ] creating a new keyframe (with the inspector) will update the layers accordingly
-- [ ] pressing on the first tab brings you back to the global timeline
+- [ ] clicking on the first tab brings you back to the global timeline
 
 ### Inspector:
 
@@ -44,6 +44,6 @@ Closes [fill in your issues here]
 - [ ] a keyframe can be overwritten in the inspector by navigating to the same scroll position (most easily done at scroll position 0) and adding a new keyframe
 
 ### Tabs
-- [ ] the first tab can be renamed to 'aScrollytelling', this will also rename the interactive
-- [ ] the second tab can be renamed to 'sunrise', this will also rename the sequence in the global timeline
+- [ ] the first tab can be renamed to 'aScrollytelling', this will also rename the interactive to 'aScrollytelling'
+- [ ] the second tab can be renamed to 'sunrise', this will also rename the sequence in the global timeline to 'sunrise' and the respective timeline to 'sunrise timeline'
 - [ ] the second tab can be closed with the 'X'
