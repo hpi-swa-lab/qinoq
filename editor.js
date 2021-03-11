@@ -113,6 +113,7 @@ export class InteractivesEditor extends Morph {
     connect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
     connect(this.interactive, 'name', this.globalTab, 'caption').update(this.interactive.name);
     connect(this.globalTab, 'caption', this.interactive, 'name');
+    connect(this.globalTab, 'onSelectionChange', this.menuBar, 'onGlobalTimelineTab');
     connect(this.globalTab, 'onSelectionChange', this.interactive, 'showAllSequences', {
       updater: '($update, selected) => {if (selected) $update()}'
     });
@@ -138,6 +139,7 @@ export class InteractivesEditor extends Morph {
     disconnect(this.interactive, 'name', this.globalTab, 'caption');
 
     disconnect(this.globalTab, 'caption', this.interactive, 'name');
+    disconnect(this.globalTab, 'onSelectionChange', this.menuBar, 'onGlobalTimelineTab');
     disconnect(this.globalTab, 'onSelectionChange', this.interactive, 'showAllSequences');
     disconnect(this.globalTab, 'onSelectionChange', this.getTimelineFor(this.globalTab), 'onScrollChange');
 
@@ -173,6 +175,7 @@ export class InteractivesEditor extends Morph {
       }`,
       varMapping: { editor: this }
     }).update(tab.selected);
+    connect(tab, 'onSelectionChange', this.menuBar, 'onSequenceView');
     connect(tab, 'onClose', tab, 'disbandTabConnections', { converter: '() => source' });
   }
 
@@ -325,7 +328,7 @@ class Preview extends Morph {
       if (submorph !== this) submorph.remove();
     });
 
-    const placeholderColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT_DARKER;
+    const placeholderColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
 
     const icon = new Label({
       fontSize: 120,
@@ -412,6 +415,16 @@ class MenuBar extends Morph {
     };
     Icon.setIcon(this.addSequenceButton, 'plus');
     this.ui.layoutContainer.addMorph(this.addSequenceButton);
+  }
+
+  onGlobalTimelineTab () {
+    this.addSequenceButton.reactsToPointer = true;
+    this.addSequenceButton.fontColor = COLOR_SCHEME.SECONDARY;
+  }
+
+  onSequenceView () {
+    this.addSequenceButton.reactsToPointer = false;
+    this.addSequenceButton.fontColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
   }
 }
 
