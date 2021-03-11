@@ -126,7 +126,7 @@ export class Interactive extends Morph {
     return this.getSequencesInLayer(layer).filter(sequence => sequence.start >= start || sequence.end <= end);
   }
 
-  getSequenceAfter (sequence) {
+  getSequenceInLayerAfter (sequence) {
     const sequencesInLayer = this.getSequencesInLayer(sequence.layer);
     sequencesInLayer.sort((a, b) => a.start - b.start); // Sort in ascending order
     const sequenceIndex = sequencesInLayer.indexOf(sequence);
@@ -460,15 +460,15 @@ export class Sequence extends Morph {
   }
 
   isValidStart (start) {
-    if (start == undefined || start == null) return false;
+    if (start == undefined || start == null || isNaN(start)) return false;
     if (start < 0) return false;
     return this.interactive.getSequencesInLayerBetween(this.layer, start, start + this.duration).filter(sequence => sequence != this).length === 0;
   }
 
   isValidDuration (duration) {
-    if (duration == undefined || duration == null) return false;
+    if (duration == undefined || duration == null || isNaN(duration)) return false;
     if (duration < 1) return false;
-    const nextSequence = this.interactive.getSequenceAfter(this);
+    const nextSequence = this.interactive.getSequenceInLayerAfter(this);
     if (nextSequence) {
       return nextSequence.start >= this.start + duration;
     }
