@@ -14,7 +14,7 @@ const CONSTANTS = {
   PREVIEW_WIDTH: 400,
   SUBWINDOW_HEIGHT: 300,
   BORDER_WIDTH: 3,
-  MENU_BAR_HEIGHT: 35,
+  MENU_BAR_HEIGHT: 28,
   NEW_SEQUENCE_LENGTH: 125,
   SPACING: 3
 };
@@ -399,7 +399,7 @@ class MenuBar extends Morph {
     this.addSequenceButton = new Label({
       position: pt(10, 10),
       extent: pt(64, 64),
-      fontSize: 30,
+      fontSize: 20,
       fontColor: COLOR_SCHEME.SECONDARY,
       nativeCursor: 'pointer',
       tooltip: 'Create a new sequence'
