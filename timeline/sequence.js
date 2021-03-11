@@ -510,16 +510,10 @@ export class TimelineSequence extends Morph {
     return overlappingSequences.filter(sequence => sequence != this);
   }
 
-  remove () {
-    if (this.rightResizer) disconnectAll(this.rightResizer);
-    if (this.leftResizer) disconnectAll(this.leftResizer);
-    super.remove();
-  }
-
   menuItems (evt) {
     return [
       ['Rename Sequence', async () => await this.promptName()],
-      ['Delete Sequence', () => this.delete()],
+      ['Delete Sequence', () => this.abandon()],
       ['Edit duration', async () => await this.promptDuration()],
       ['Edit start position', async () => await this.promptStart()],
       { isDivider: true },
@@ -555,8 +549,11 @@ export class TimelineSequence extends Morph {
     }
   }
 
-  delete () {
+  abandon () {
     this.remove();
+
+    if (this.rightResizer) disconnectAll(this.rightResizer);
+    if (this.leftResizer) disconnectAll(this.leftResizer);
 
     const sequenceTab = this.editor.getTabFor(this.sequence);
     if (sequenceTab) {
