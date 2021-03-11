@@ -423,12 +423,13 @@ class MenuBar extends Morph {
     this.buildIconButton({
       tooltip: 'Go to previous sequence',
       action: () => {
-        const nextPosition = this.editor.currentSequence ? 0 : this.editor.interactive.getPrevSequenceStart(this.editor.interactiveScrollPosition);
-        if (nextPosition == undefined) return;
+        const sequence = this.editor.currentSequence;
+        const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getPrevKeyframePosition(sequence.progress)) : this.editor.interactive.getPrevSequenceStart(this.editor.interactiveScrollPosition);
+        if (nextPosition == undefined || isNaN(nextPosition)) return;
         this.editor.interactiveScrollPosition = nextPosition;
       },
       icon: 'step-backward',
-      name: 'gotoPreviousButton'
+      name: 'gotoPrevButton'
     });
 
     this.buildScrollPositionInput();
@@ -436,8 +437,9 @@ class MenuBar extends Morph {
     this.buildIconButton({
       tooltip: 'Go to next sequence',
       action: () => {
-        const nextPosition = this.editor.currentSequence ? 0 : this.editor.interactive.getNextSequenceStart(this.editor.interactiveScrollPosition);
-        if (nextPosition == undefined) return;
+        const sequence = this.editor.currentSequence;
+        const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getNextKeyframePosition(sequence.progress)) : this.editor.interactive.getNextSequenceStart(this.editor.interactiveScrollPosition);
+        if (nextPosition == undefined || isNaN(nextPosition)) return;
         this.editor.interactiveScrollPosition = nextPosition;
       },
       icon: 'step-forward',

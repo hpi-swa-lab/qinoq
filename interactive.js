@@ -453,6 +453,10 @@ export class Sequence extends Morph {
     this.animations.forEach(animation => animation.progress = this._progress);
   }
 
+  getAbsolutePosition (progress) {
+    return (this.duration * progress) + this.start;
+  }
+
   addAnimation (animation) {
     this.animations.push(animation);
   }
@@ -482,5 +486,17 @@ export class Sequence extends Morph {
 
   getAnimationsForMorph (morph) {
     return this.animations.filter(animation => animation.target === morph);
+  }
+
+  getAllKeyframes () {
+    return this.animations.map(animation => animation.keyframes).flat().sort((a, b) => a.position - b.position);
+  }
+
+  getNextKeyframePosition (position) {
+    return this.getAllKeyframes().map(keyframe => keyframe.position).find(keyframePosition => keyframePosition > position);
+  }
+
+  getPrevKeyframePosition (position) {
+    return this.getAllKeyframes().map(keyframe => keyframe.position).reverse().find(keyframePosition => keyframePosition < position);
   }
 }
