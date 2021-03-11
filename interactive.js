@@ -123,7 +123,7 @@ export class Interactive extends Morph {
   }
 
   getSequencesInLayerBetween (layer, start, end) {
-    return this.getSequencesInLayer(layer).filter(sequence => sequence.start >= start || sequence.end <= end);
+    return this.getSequencesInLayer(layer).filter(sequence => (sequence.end >= start && sequence.end <= end) || (sequence.start <= end && sequence.start >= start));
   }
 
   getSequenceInLayerAfter (sequence) {
