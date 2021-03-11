@@ -275,10 +275,25 @@ export class TimelineSequence extends Morph {
       return;
     }
     if (morphBeneath.name === 'active area') {
-      this.setDefaultAppearance();
+      const timelineLayer = morphBeneath.owner;
+      const layer = timelineLayer.layer;
+
+      // Check if it would be a valid position
+      const newStart = this.getStartScrollOnGrab();
+      if (this.editor.interactive.sequenceWouldBeValidInLayer(this.sequence, newStart, this.sequence.duration, layer)) {
+        this.setDefaultAppearance();
+      } else {
+        this.setOverlappingAppearance();
+      }
       return;
     }
     this.setOutsideEditorAppearance();
+  }
+
+  getStartScrollOnGrab () {
+    const start = this.globalPosition.x;
+    const positionInTimeline = start - this.timelineLayer.globalPosition.x;
+    return this.timeline.getScrollFromPosition(positionInTimeline);
   }
 
   onBeingDroppedOn (hand, recipient) {
@@ -294,7 +309,7 @@ export class TimelineSequence extends Morph {
         disconnect(hand, 'position', this, 'updateGrabAppearance');
       }
     } else {
-      $world.setStatusMessage('Can not be dropped here!', COLOR_SCHEME.ERROR);
+      $world.setStatusMessage('Drop it in the timeline!', COLOR_SCHEME.ERROR);
       hand.grab(this);
     }
   }
