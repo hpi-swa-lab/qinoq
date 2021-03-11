@@ -9,7 +9,7 @@ Closes [fill in your issues here]
 ## Features that still work:
 ### Sequences in GlobalTimeline:
 
-- [ ] the tree sequence is resizeable both left and right
+- [ ] the tree sequence is resizeable both left and right, this can be reversed
 - [ ] the day sequence can't be dragged or resized onto the night sequence, instead it will snap to the night sequence and the snap indicator is shown
 - [ ] the day sequence can be dragged to the middle layer, it will snap onto the tree sequence
 - [ ] the night sequence can't be dragged or resized beyond the timeline bounds
