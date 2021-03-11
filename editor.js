@@ -425,6 +425,9 @@ class MenuBar extends Morph {
     this.buildIconButton({
       tooltip: 'Go to previous sequence',
       action: () => {
+        const nextPosition = this.editor.currentSequence ? 0 : this.editor.interactive.getPrevSequenceStart(this.editor.interactiveScrollPosition);
+        if (nextPosition == undefined) return;
+        this.editor.interactiveScrollPosition = nextPosition;
       },
       icon: 'step-backward',
       name: 'gotoPreviousButton'
@@ -435,6 +438,9 @@ class MenuBar extends Morph {
     this.buildIconButton({
       tooltip: 'Go to next sequence',
       action: () => {
+        const nextPosition = this.editor.currentSequence ? 0 : this.editor.interactive.getNextSequenceStart(this.editor.interactiveScrollPosition);
+        if (nextPosition == undefined) return;
+        this.editor.interactiveScrollPosition = nextPosition;
       },
       icon: 'step-forward',
       name: 'gotoNextButton'
@@ -499,11 +505,15 @@ class MenuBar extends Morph {
   onGlobalTimelineTab () {
     this.ui.addSequenceButton.reactsToPointer = true;
     this.ui.addSequenceButton.fontColor = COLOR_SCHEME.SECONDARY;
+    this.ui.gotoNextButton.tooltip = 'Go to next sequence';
+    this.ui.gotoPrevButton.tooltip = 'Go to previous sequence';
   }
 
   onSequenceView () {
     this.ui.addSequenceButton.reactsToPointer = false;
     this.ui.addSequenceButton.fontColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
+    this.ui.gotoNextButton.tooltip = 'Go to next keyframe';
+    this.ui.gotoPrevButton.tooltip = 'Go to previous keyframe';
   }
 }
 
