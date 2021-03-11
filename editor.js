@@ -218,6 +218,10 @@ export class InteractivesEditor extends Morph {
     return this.getTimelineFor(tab).sequence;
   }
 
+  get currentSequence () {
+    return this.getSequenceFor(this.tabContainer.selectedTab);
+  }
+
   createNewSequence () {
     if (!this.interactive) return;
     const newSequence = new Sequence({ name: 'unnamed sequence' });
@@ -411,16 +415,32 @@ class MenuBar extends Morph {
     this.buildIconButton({
       tooltip: 'Go to start',
       action: () => {
-        this.editor.interactiveScrollPosition = 0;
+        this.editor.interactiveScrollPosition = this.editor.currentSequence ? this.editor.currentSequence.start : 0;
       },
       icon: 'fast-backward',
       name: 'gotoStartButton'
     });
+    this.buildIconButton({
+      tooltip: 'Go to previous sequence',
+      action: () => {
+      },
+      icon: 'step-backward',
+      name: 'gotoPreviousButton'
+    });
+
     this.buildScrollPositionInput();
+
+    this.buildIconButton({
+      tooltip: 'Go to next sequence',
+      action: () => {
+      },
+      icon: 'step-forward',
+      name: 'gotoNextButton'
+    });
     this.buildIconButton({
       tooltip: 'Go to end',
       action: () => {
-        this.editor.interactiveScrollPosition = this.editor.interactive.length;
+        this.editor.interactiveScrollPosition = this.editor.currentSequence ? this.editor.currentSequence.end : this.editor.interactive.length;
       },
       icon: 'fast-forward',
       name: 'gotoEndButton'
