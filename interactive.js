@@ -394,15 +394,6 @@ export class Sequence extends Morph {
     this.animations.forEach(animation => animation.progress = this._progress);
   }
 
-  addMorph (morph) {
-    super.addMorph(morph);
-    morph._morphInInteractive = true;
-  }
-
-  onLoad () {
-    this.withAllSubmorphsDo(morph => morph._morphInInteractive = true);
-  }
-
   addAnimation (animation) {
     this.animations.push(animation);
   }
