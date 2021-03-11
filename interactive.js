@@ -157,6 +157,10 @@ export class Interactive extends Morph {
     sequence.remove();
   }
 
+  sequenceWouldBeValidInLayer (sequence, start, duration, layer) {
+    return this.getSequencesInLayerBetween(layer, start, start + duration).filter(s => s != sequence).length === 0;
+  }
+
   validSequenceStart (sequence, start) {
     if (start == undefined || start == null || isNaN(start)) return false;
     if (start < 0) return false;
