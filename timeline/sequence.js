@@ -266,7 +266,7 @@ export class TimelineSequence extends Morph {
     connect(hand, 'position', this, 'updateGrabAppearance');
   }
 
-  updateGrabAppearance (hand) {
+  updateGrabAppearance () {
     const globalPositionCenter = pt(this.globalPosition.x + this.width / 2, this.globalPosition.y + this.height / 2);
     const morphBeneath = this.morphBeneath(globalPositionCenter);
 

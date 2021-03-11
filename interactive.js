@@ -139,7 +139,7 @@ export class Interactive extends Morph {
   }
 
   getLastSequenceInLayer (layer) {
-    return this.sequences.filter(sequence => sequence.layer === layer).sort((a, b) => b.end - a.end)[0];
+    return arr.first(this.sequences.filter(sequence => sequence.layer === layer).sort((a, b) => b.end - a.end));
   }
 
   addSequence (sequence) {
