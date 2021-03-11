@@ -467,7 +467,7 @@ export class TimelineSequence extends Morph {
       ['Edit duration', async () => await this.promptDuration()],
       ['Edit start position', async () => await this.promptStart()],
       { isDivider: true },
-      ['Open sequence view', () => this.openSequenceView()],
+      ['View sequence', () => this.openSequenceView()],
       ['Go to start', () => this.editor.interactiveScrollPosition = this.sequence.start]
     ];
   }
@@ -476,13 +476,12 @@ export class TimelineSequence extends Morph {
     const newName = await $world.prompt('Sequence name:', { input: this.sequence.name });
     if (newName) {
       this.sequence.name = newName;
-      this.caption = newName;
     }
   }
 
   async promptDuration () {
     const newDuration = Number(await $world.prompt('Duration:', { input: this.sequence.duration }));
-    if (this.sequence.isValidDuration(newDuration)) {
+    if (this.editor.interactive.validSequenceDuration(this.sequence, newDuration)) {
       this.sequence.duration = newDuration;
       this.width = this.timeline.getWidthFromDuration(newDuration);
     } else {
@@ -492,7 +491,7 @@ export class TimelineSequence extends Morph {
 
   async promptStart () {
     const newStart = Number(await $world.prompt('Start:', { input: this.sequence.start }));
-    if (this.sequence.isValidStart(newStart)) {
+    if (this.editor.interactive.validSequenceStart(this.sequence, newStart)) {
       this.sequence.start = newStart;
       this.position = pt(this.timeline.getPositionFromScroll(newStart), CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     } else {
@@ -503,10 +502,10 @@ export class TimelineSequence extends Morph {
   delete () {
     this.remove();
 
-    const sequenceView = this.editor.getTabFor(this.sequence);
-    if (sequenceView) {
-      this.editor.disbandTabConnections(sequenceView);
-      sequenceView.close();
+    const sequenceTab = this.editor.getTabFor(this.sequence);
+    if (sequenceTab) {
+      this.editor.disbandTabConnections(sequenceTab);
+      sequenceTab.close();
     }
 
     this.editor.interactive.removeSequence(this.sequence);

@@ -123,7 +123,7 @@ export class Interactive extends Morph {
   }
 
   getSequencesInLayerBetween (layer, start, end) {
-    return this.getSequencesInLayer(layer).filter(sequence => (sequence.end >= start && sequence.end <= end) || (sequence.start <= end && sequence.start >= start));
+    return this.getSequencesInLayer(layer).filter(sequence => (sequence.end >= start && sequence.end <= end) || (sequence.start >= start && sequence.start <= end));
   }
 
   getSequenceInLayerAfter (sequence) {
@@ -151,6 +151,22 @@ export class Interactive extends Morph {
     disconnectAll(sequence);
     arr.remove(this.sequences, sequence);
     sequence.remove();
+  }
+
+  validSequenceStart (sequence, start) {
+    if (start == undefined || start == null || isNaN(start)) return false;
+    if (start < 0) return false;
+    return this.getSequencesInLayerBetween(sequence.layer, start, start + sequence.duration).filter(s => s != sequence).length === 0;
+  }
+
+  validSequenceDuration (sequence, duration) {
+    if (duration == undefined || duration == null || isNaN(duration)) return false;
+    if (duration < 1) return false;
+    const nextSequence = this.getSequenceInLayerAfter(sequence);
+    if (nextSequence) {
+      return nextSequence.start >= sequence.start + duration;
+    }
+    return true;
   }
 
   showOnly (sequence) {
@@ -457,21 +473,5 @@ export class Sequence extends Morph {
 
   getAnimationsForMorph (morph) {
     return this.animations.filter(animation => animation.target === morph);
-  }
-
-  isValidStart (start) {
-    if (start == undefined || start == null || isNaN(start)) return false;
-    if (start < 0) return false;
-    return this.interactive.getSequencesInLayerBetween(this.layer, start, start + this.duration).filter(sequence => sequence != this).length === 0;
-  }
-
-  isValidDuration (duration) {
-    if (duration == undefined || duration == null || isNaN(duration)) return false;
-    if (duration < 1) return false;
-    const nextSequence = this.interactive.getSequenceInLayerAfter(this);
-    if (nextSequence) {
-      return nextSequence.start >= this.start + duration;
-    }
-    return true;
   }
 }

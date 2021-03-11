@@ -125,17 +125,17 @@ describe('Sequence object', () => {
     });
 
     it('can determine valid starts', () => {
-      expect(sequence.isValidStart(undefined)).to.not.be.ok;
-      expect(sequence.isValidStart(0)).to.be.ok;
-      expect(sequence.isValidStart(45)).to.not.be.ok; // Would intersect with anotherSequence
-      expect(sequence.isValidStart(-1)).to.not.be.ok;
+      expect(interactive.validSequenceStart(sequence, undefined)).to.not.be.ok;
+      expect(interactive.validSequenceStart(sequence, 0)).to.be.ok;
+      expect(interactive.validSequenceStart(sequence, 45)).to.not.be.ok; // Would intersect with anotherSequence
+      expect(interactive.validSequenceStart(sequence, -1)).to.not.be.ok;
     });
 
     it('can determine valid durations', () => {
-      expect(sequence.isValidDuration(NaN)).to.not.be.ok;
-      expect(sequence.isValidDuration(10)).to.be.ok;
-      expect(sequence.isValidDuration(70)).to.not.be.ok; // Would intersect with anotherSequence
-      expect(sequence.isValidDuration(-1)).to.not.be.ok;
+      expect(interactive.validSequenceDuration(sequence, NaN)).to.not.be.ok;
+      expect(interactive.validSequenceDuration(sequence, 10)).to.be.ok;
+      expect(interactive.validSequenceDuration(sequence, 70)).to.not.be.ok; // Would intersect with anotherSequence
+      expect(interactive.validSequenceDuration(sequence, -1)).to.not.be.ok;
     });
   });
 });
