@@ -17,7 +17,8 @@ const CONSTANTS = {
   BORDER_WIDTH: 3,
   MENU_BAR_HEIGHT: 32,
   NEW_SEQUENCE_LENGTH: 125,
-  SPACING: 3
+  SPACING: 3,
+  SCROLL_POSITION_TOOLBAR_X_OFFSET: 360
 };
 CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
 
@@ -399,11 +400,22 @@ class MenuBar extends Morph {
         spacing: CONSTANTS.SPACING,
         autoResize: true
       }),
+      fill: COLOR_SCHEME.TRANSPARENT,
+      borderWidth: 0
+    });
+    this.ui.scrollPositionToolbar = new Morph({
+      layout: new HorizontalLayout({
+        spacing: CONSTANTS.SPACING,
+        autoResize: true
+      }),
+      name: 'scroll position toolbar',
+      position: pt(CONSTANTS.SCROLL_POSITION_TOOLBAR_X_OFFSET, 0),
       extent: this.extent,
       fill: COLOR_SCHEME.TRANSPARENT,
       borderWidth: 0
     });
     this.addMorph(this.ui.layoutContainer);
+    this.addMorph(this.ui.scrollPositionToolbar);
     this.buildIconButton({
       tooltip: 'Create a new sequence',
       action: () => {
@@ -418,7 +430,8 @@ class MenuBar extends Morph {
         this.editor.interactiveScrollPosition = this.editor.currentSequence ? this.editor.currentSequence.start : 0;
       },
       icon: 'fast-backward',
-      name: 'gotoStartButton'
+      name: 'gotoStartButton',
+      container: 'scrollPositionToolbar'
     });
     this.buildIconButton({
       tooltip: 'Go to previous sequence',
@@ -429,7 +442,8 @@ class MenuBar extends Morph {
         this.editor.interactiveScrollPosition = nextPosition;
       },
       icon: 'step-backward',
-      name: 'gotoPrevButton'
+      name: 'gotoPrevButton',
+      container: 'scrollPositionToolbar'
     });
 
     this.buildScrollPositionInput();
@@ -443,7 +457,8 @@ class MenuBar extends Morph {
         this.editor.interactiveScrollPosition = nextPosition;
       },
       icon: 'step-forward',
-      name: 'gotoNextButton'
+      name: 'gotoNextButton',
+      container: 'scrollPositionToolbar'
     });
     this.buildIconButton({
       tooltip: 'Go to end',
@@ -451,7 +466,8 @@ class MenuBar extends Morph {
         this.editor.interactiveScrollPosition = this.editor.currentSequence ? this.editor.currentSequence.end : this.editor.interactive.length;
       },
       icon: 'fast-forward',
-      name: 'gotoEndButton'
+      name: 'gotoEndButton',
+      container: 'scrollPositionToolbar'
     });
   }
 
@@ -468,11 +484,11 @@ class MenuBar extends Morph {
     });
     connect(this.ui.scrollPositionInput, 'number', this, 'onScrollPositionInputChange');
     connect(this.editor, 'interactiveScrollPosition', this, 'onInteractiveScrollPositionChange');
-    this.ui.layoutContainer.addMorph(this.ui.scrollPositionInput);
+    this.ui.scrollPositionToolbar.addMorph(this.ui.scrollPositionInput);
   }
 
   buildIconButton (options = {}) {
-    const { action, tooltip, name, morphName = 'aButton', icon } = options;
+    const { action, tooltip, name, morphName = 'aButton', icon, container = 'layoutContainer' } = options;
     this.ui[name] = new Label({
       extent: pt(64, 64),
       fontSize: 20,
@@ -483,7 +499,7 @@ class MenuBar extends Morph {
     });
     this.ui[name].onMouseUp = action;
     Icon.setIcon(this.ui[name], icon);
-    this.ui.layoutContainer.addMorph(this.ui[name]);
+    this.ui[container].addMorph(this.ui[name]);
   }
 
   onScrollPositionInputChange (number) {
