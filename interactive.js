@@ -137,6 +137,18 @@ export class Interactive extends Morph {
     return this.getSequencesInLayer(layer).sort((a, b) => b.end - a.end)[0];
   }
 
+  getSequenceStarts () {
+    return this.sequences.map(sequence => sequence.start).sort((a, b) => a - b);
+  }
+
+  getNextSequenceStart (scrollPosition) {
+    return this.getSequenceStarts().find(sequenceStart => sequenceStart > scrollPosition);
+  }
+
+  getPrevSequenceStart (scrollPosition) {
+    return this.getSequenceStarts().reverse().find(sequenceStart => sequenceStart < scrollPosition);
+  }
+
   addLayer (layer) {
     this.layers.push(layer);
     layer.interactive = this;
