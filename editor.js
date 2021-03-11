@@ -402,30 +402,38 @@ class MenuBar extends Morph {
       borderWidth: 0
     });
     this.addMorph(this.ui.layoutContainer);
-    this.buildAddSequenceButton();
-    this.buildScrollPositionInput();
-  }
-
-  buildAddSequenceButton () {
-    this.ui.addSequenceButton = new Label({
-      extent: pt(64, 64),
-      fontSize: 20,
-      fontColor: COLOR_SCHEME.SECONDARY,
-      nativeCursor: 'pointer',
-      tooltip: 'Create a new sequence'
+    this.buildIconButton({
+      tooltip: 'Create a new sequence',
+      action: () => {
+        this.editor.createNewSequence();
+      },
+      icon: 'plus',
+      name: 'addSequenceButton'
     });
-    this.ui.addSequenceButton.onMouseUp = (evt) => {
-      super.onMouseUp(evt);
-      this.editor.createNewSequence();
-    };
-    Icon.setIcon(this.ui.addSequenceButton, 'plus');
-    this.ui.layoutContainer.addMorph(this.ui.addSequenceButton);
+    this.buildIconButton({
+      tooltip: 'Go to start',
+      action: () => {
+        this.editor.interactiveScrollPosition = 0;
+      },
+      icon: 'fast-backward',
+      name: 'gotoStartButton'
+    });
+    this.buildScrollPositionInput();
+    this.buildIconButton({
+      tooltip: 'Go to end',
+      action: () => {
+        this.editor.interactiveScrollPosition = this.editor.interactive.length;
+      },
+      icon: 'fast-forward',
+      name: 'gotoEndButton'
+    });
   }
 
   buildScrollPositionInput () {
     this.ui.scrollPositionInput = new NumberWidget({
       min: 0,
       extent: pt(100, 25),
+      tooltip: 'Set scroll position',
       autofit: false,
       dropShadow: false,
       borderWidth: 2,
@@ -435,6 +443,21 @@ class MenuBar extends Morph {
     connect(this.ui.scrollPositionInput, 'number', this, 'onScrollPositionInputChange');
     connect(this.editor, 'interactiveScrollPosition', this, 'onInteractiveScrollPositionChange');
     this.ui.layoutContainer.addMorph(this.ui.scrollPositionInput);
+  }
+
+  buildIconButton (options = {}) {
+    const { action, tooltip, name, morphName = 'aButton', icon } = options;
+    this.ui[name] = new Label({
+      extent: pt(64, 64),
+      fontSize: 20,
+      fontColor: COLOR_SCHEME.SECONDARY,
+      nativeCursor: 'pointer',
+      name: morphName,
+      tooltip
+    });
+    this.ui[name].onMouseUp = action;
+    Icon.setIcon(this.ui[name], icon);
+    this.ui.layoutContainer.addMorph(this.ui[name]);
   }
 
   onScrollPositionInputChange (number) {
