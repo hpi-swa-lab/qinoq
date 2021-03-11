@@ -356,12 +356,6 @@ class KeyframeButton extends Morph {
       _editor: {},
       sequence: {
         set (sequence) {
-          // FOR REVIEW: I do not think this has the indended effect ever,
-          // since the sequence never changes after the initial set
-          // Remove the following three lines?
-          if (this.sequence) {
-            disconnect(this.sequence, 'updateProgress', this, 'updateStyle');
-          }
           connect(sequence, 'updateProgress', this, 'updateStyle');
           this.setProperty('sequence', sequence);
         }
