@@ -428,6 +428,7 @@ export class Sequence extends Morph {
   }
 
   applyUnfocusedEffect () {
+    this.submorphs.forEach(submorph => submorph.halosEnabled = this.focused);
     // stop opacity and grayscale setters from overwriting saved effects
     this._lockEffect = true;
     this.opacity = this.focused ? this._originalOpacity : 0.2;
