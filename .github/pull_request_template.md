@@ -1,6 +1,8 @@
-**I have added additional features to the PR template**
 
 Closes [fill in your issues here]
+
+- [ ] I have added additional features that should now be part of the PR template. I made the necessary changes to the template.
+- [ ] I have fixed a bug/the added functionality should not be part of the PR template.
 
 ## Features that still work:
 ### Sequences in GlobalTimeline:
@@ -11,6 +13,7 @@ Closes [fill in your issues here]
 - [ ] the night sequence can't be dragged or resized beyond the timeline bounds
 - [ ] double clicking on the sky sequence brings you to a new tab named 'sky sequence' containing with the sequence view
 - [ ] when clicking the "+" button a sequence is in the hand, which can only be dropped on a timelinelayer and changes color when you are not able to place the sequence
+- [ ] right clicking on a sequence brings up a context menu
 
 ### TimelineLayer:
 
@@ -36,12 +39,14 @@ Closes [fill in your issues here]
 - [ ] clicking on the triangle expands those into two new layers with two keyframes each
 - [ ] when expanding both morphs the cursor is still visible over all layers
 - [ ] creating a new keyframe (with the inspector) will update the layers accordingly
+- [ ] clicking on a layer will select the corresponding morph in the inspector
 - [ ] clicking on the first tab brings you back to the global timeline
 - [ ] after scrolling in the global timeline, the cursor position in the already opened 'sky sequence' has updated as well, when changing to this tab and vice versa
 
 ### Inspector:
 
 - [ ] the tree leaves can be selected to inspect with the target selector
+- [ ] in the sequence view, a morph that is not part of the currently open sequence cannot be selected with the target picker
 - [ ] correct values for position, extent and opacity are shown
 - [ ] when setting two keyframes for different position values at different scroll positions, an animation is created and can be viewed
 - [ ] when scrolling in the scrollytelling, created keyframes are shown by a different icon in the inspector
