@@ -525,4 +525,12 @@ export class Sequence extends Morph {
   getPrevKeyframePosition (position) {
     return this.getAllKeyframes().map(keyframe => keyframe.position).reverse().find(keyframePosition => keyframePosition < position);
   }
+
+  getAbsolutePositionFor (keyframe) {
+    return this.start + this.duration * keyframe.position;
+  }
+
+  getRelativePositionFor (scrollPosition) {
+    return (scrollPosition - this.start) / this.duration;
+  }
 }

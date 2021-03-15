@@ -22,8 +22,11 @@ export class Timeline extends Morph {
       },
       zoomFactor: {
         defaultValue: 1,
+        type: 'Number',
         isFloat: true,
+        min: 0,
         set (zoomFactor) {
+          if (zoomFactor <= 0) return;
           this.setProperty('zoomFactor', zoomFactor);
           this.redraw();
         }
@@ -300,7 +303,16 @@ export class SequenceTimeline extends Timeline {
 
   addKeyframesForAnimation (animation, timelineLayer) {
     animation.keyframes.forEach(keyframe => {
-      timelineLayer.addMorph(new TimelineKeyframe().initialize(this.editor, keyframe, animation));
+      const timelineKeyframe = timelineLayer.addMorph(new TimelineKeyframe().initialize(this.editor, keyframe, animation));
+      timelineKeyframe.updatePosition();
+    });
+  }
+
+  redraw () {
+    this.keyframes.forEach(keyframe => {
+      keyframe._lockModelUpdate = true;
+      keyframe.position = pt(this.getPositionFromKeyframe(keyframe), keyframe.position.y);
+      keyframe._lockModelUpdate = false;
     });
   }
 
@@ -354,11 +366,19 @@ export class SequenceTimeline extends Timeline {
     if (scrollPosition >= this.sequence.end) {
       return CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
     }
-    return (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.sequence.progress) + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+    return (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.sequence.getRelativePositionFor(scrollPosition) * this.zoomFactor) + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
   }
 
   getScrollFromPosition (position) {
-    return (position.x - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) / CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH;
+    return (position.x - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) / (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor);
+  }
+
+  getScrollFromKeyframe (timelineKeyframe) {
+    return this.sequence.getAbsolutePositionFor(timelineKeyframe.keyframe);
+  }
+
+  getPositionFromKeyframe (timelineKeyframe) {
+    return this.getPositionFromScroll(this.getScrollFromKeyframe(timelineKeyframe));
   }
 
   getDisplayValueFromScroll (scrollPosition) {

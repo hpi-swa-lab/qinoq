@@ -14,11 +14,10 @@ export class TimelineKeyframe extends Morph {
       rotation: {
         defaultValue: Math.PI / 4
       },
-      keyframe: {
+      _keyframe: {
         set (keyframe) {
-          this.setProperty('keyframe', keyframe);
+          this.setProperty('_keyframe', keyframe);
           this.name = keyframe.name;
-          this.position = this.getPositionFromProgress(this.keyframe.position);
         }
       },
       animation: {},
@@ -33,36 +32,50 @@ export class TimelineKeyframe extends Morph {
       position: {
         set (point) {
           this.setProperty('position', point);
+          if (this._lockModelUpdate) return;
           if (this.layer) this.keyframe.position = this.layer.timeline.getScrollFromPosition(this.position);
         }
       },
       draggable: {
         defaultValue: true
       },
-      _editor: {}
+      _editor: {},
+      _lockModelUpdate: {
+        defaultValue: true
+      }
     };
+  }
+
+  get keyframe () {
+    return this._keyframe;
   }
 
   get editor () {
     return this._editor;
   }
 
+  get timelineKeyframeY () {
+    return (CONSTANTS.LAYER_HEIGHT / 2) - (Math.sqrt(2) * CONSTANTS.KEYFRAME_EXTENT.x / 2);
+  }
+
   initialize (editor, keyframe, animation) {
+    this._lockModelUpdate = true;
     this._editor = editor;
     this.animation = animation;
-    this.keyframe = keyframe;
+    this._keyframe = keyframe;
     this.draggable = true;
+    this._lockModelUpdate = false;
     return this;
+  }
+
+  updatePosition () {
+    this._lockModelUpdate = true;
+    if (this.layer) this.position = pt(this.layer.timeline.getPositionFromKeyframe(this), this.timelineKeyframeY);
+    this._lockModelUpdate = false;
   }
 
   get layer () {
     return this.owner;
-  }
-
-  getPositionFromProgress (progress) {
-    const x = (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * progress) + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
-    const y = (CONSTANTS.LAYER_HEIGHT / 2) - (Math.sqrt(2) * CONSTANTS.KEYFRAME_EXTENT.x / 2);
-    return pt(x, y);
   }
 
   async promptRename () {
