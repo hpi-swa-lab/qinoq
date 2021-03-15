@@ -300,7 +300,13 @@ export class Sequence extends Morph {
   static get properties () {
     return {
       start: {},
-      duration: {},
+      duration: {
+        defaultValue: 0,
+        isFloat: false,
+        set (duration) {
+          this.setProperty('duration', duration);
+        }
+      },
       _progress: {
         defaultValue: 0,
         isFloat: true

@@ -22,6 +22,14 @@ export class Timeline extends Morph {
       },
       clipMode: {
         defaultValue: 'auto'
+      },
+      zoomFactor: {
+        defaultValue: 1,
+        isFloat: true,
+        set (zoomFactor) {
+          this.setProperty('zoomFactor', zoomFactor);
+          this.redraw();
+        }
       }
     };
   }
@@ -199,24 +207,38 @@ export class GlobalTimeline extends Timeline {
     this.updateLayerPositions();
   }
 
+  redraw () {
+    this.timelineSequences.forEach(timelineSequence => {
+      timelineSequence._lockModelUpdate = true;
+      timelineSequence.width = this.getWidthFromDuration(timelineSequence.sequence.duration);
+      timelineSequence.position = pt(this.getPositionFromScroll(timelineSequence.sequence.start), timelineSequence.position.y);
+      timelineSequence._lockModelUpdate = false;
+    });
+    this.editor.triggerInteractiveScrollPositionConnections();
+  }
+
+  get timelineSequences () {
+    return this.timelineLayers.reduce((timelineSequences, timelineLayer) => timelineSequences.concat(timelineLayer.timelineSequences), []);
+  }
+
   getDisplayValueFromScroll (scrollPosition) {
     return Math.round(scrollPosition);
   }
 
   getPositionFromScroll (scrollPosition) {
-    return scrollPosition + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+    return (scrollPosition * this.zoomFactor) + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
   }
 
   getScrollFromPosition (position) {
-    return position - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+    return (position - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) / this.zoomFactor;
   }
 
   getWidthFromDuration (duration) {
-    return duration;
+    return duration * this.zoomFactor;
   }
 
   getDurationFromWidth (width) {
-    return width;
+    return width / this.zoomFactor;
   }
 
   updateZIndicesFromTimelineLayerPositions () {

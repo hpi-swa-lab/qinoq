@@ -39,7 +39,10 @@ export class TimelineSequence extends Morph {
           this.tooltip = sequence.name;
         }
       },
-      _isInitializing: {
+      _lockModelUpdate: {
+        // Needs to be true since otherwise the morph creation will trigger unwanted
+        // calls to updateSequenceAfterArrangement.
+        // Will be set to false after initialization.
         defaultValue: true
       },
       height: {
@@ -48,7 +51,7 @@ export class TimelineSequence extends Morph {
       timelineLayer: {
         set (timelineLayer) {
           this.setProperty('timelineLayer', timelineLayer);
-          if (!this._isInitializing) {
+          if (!this._lockModelUpdate) {
             this.onTimelineLayerChange(timelineLayer);
           }
         }
@@ -56,13 +59,13 @@ export class TimelineSequence extends Morph {
       extent: {
         set (extent) {
           this.setProperty('extent', extent);
-          if (!this._isInitializing) { this.updateSequenceAfterArrangement(); }
+          if (!this._lockModelUpdate) { this.updateSequenceAfterArrangement(); }
         }
       },
       position: {
         set (position) {
           this.setProperty('position', position);
-          if (!this._isInitializing) { this.updateSequenceAfterArrangement(); }
+          if (!this._lockModelUpdate) { this.updateSequenceAfterArrangement(); }
         }
       },
       selected: {
@@ -82,7 +85,7 @@ export class TimelineSequence extends Morph {
   }
 
   initialize (editor, sequence, timelineLayer) {
-    this._isInitializing = true;
+    this._lockModelUpdate = true;
     this._editor = editor;
     this.sequence = sequence;
     this.timelineLayer = timelineLayer;
@@ -98,7 +101,7 @@ export class TimelineSequence extends Morph {
     timelineLayer.addMorph(this);
     this.caption = sequence.name;
     this.initializeResizers();
-    this._isInitializing = false;
+    this._lockModelUpdate = false;
   }
 
   initializeResizers () {
