@@ -91,9 +91,11 @@ export class InteractiveMorphInspector extends Morph {
   }
 
   get propertiesToDisplay () {
-    const defaultProperties = Object.entries(this.defaultProperties);
-    const defaultPropertiesInMorph = defaultProperties.filter(propertyAndType => propertyAndType[0] in this.targetMorph);
-    const additionalProperties = Object.entries(this.targetMorph.propertiesAndPropertySettings().properties).filter(propertyAndSettings => 'animateAs' in propertyAndSettings[1]).map(propertyAndSettings => [propertyAndSettings[0], propertyAndSettings[1].animateAs]);
+    const defaultPropertiesInMorph = Object.entries(this.defaultProperties)
+      .filter(propertyAndType => propertyAndType[0] in this.targetMorph);
+    const additionalProperties = Object.entries(this.targetMorph.propertiesAndPropertySettings().properties)
+      .filter(propertyAndSettings => 'animateAs' in propertyAndSettings[1])
+      .map(propertyAndSettings => [propertyAndSettings[0], propertyAndSettings[1].animateAs]);
     const propertyList = defaultPropertiesInMorph.concat(additionalProperties);
     return Object.fromEntries(propertyList);
   }
