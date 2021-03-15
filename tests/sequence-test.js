@@ -43,23 +43,23 @@ describe('Sequence object', () => {
   });
 
   describe('Animations', () => {
-    it('return an animation for a morph for a property', () => {
-      const morph = new Morph();
+    let morph, opacityAnimation, keyframe;
+
+    beforeEach(() => {
+      morph = new Morph();
       sequence.addMorph(morph);
-      const opacityAnimation = new NumberAnimation(morph, 'opacity');
-      const keyFrame = new Keyframe(0, 1);
-      opacityAnimation.addKeyframe(keyFrame);
+      opacityAnimation = new NumberAnimation(morph, 'opacity');
+      keyframe = new Keyframe(0, 1);
+      opacityAnimation.addKeyframe(keyframe);
+    });
+
+    it('return an animation for a morph for a property', () => {
       expect(sequence.getAnimationForMorphProperty(morph, 'opacity')).to.be.undefined;
       sequence.addAnimation(opacityAnimation);
       expect(sequence.getAnimationForMorphProperty(morph, 'opacity')).to.deep.equal(opacityAnimation);
     });
 
     it('adds a new keyframe to an existing animation', () => {
-      const morph = new Morph();
-      sequence.addMorph(morph);
-      const opacityAnimation = new NumberAnimation(morph, 'opacity');
-      const keyFrame = new Keyframe(0, 1);
-      opacityAnimation.addKeyframe(keyFrame);
       sequence.addAnimation(opacityAnimation);
       const newKeyframe = new Keyframe(0.8, 0.8);
       sequence.addKeyframeForMorph(newKeyframe, morph, 'opacity', 'number');
@@ -67,11 +67,6 @@ describe('Sequence object', () => {
     });
 
     it('adds a new keyframe to a new animation', () => {
-      const morph = new Morph();
-      sequence.addMorph(morph);
-      const opacityAnimation = new NumberAnimation(morph, 'opacity');
-      const keyFrame = new Keyframe(0, 1);
-      opacityAnimation.addKeyframe(keyFrame);
       sequence.addAnimation(opacityAnimation);
       const newKeyframe = new Keyframe(0.8, 0.8);
       sequence.addKeyframeForMorph(newKeyframe, morph, 'rotation', 'number');
@@ -79,14 +74,24 @@ describe('Sequence object', () => {
     });
 
     it('removes an animation when the last keyframe is deleted', () => {
-      const morph = new Morph();
-      sequence.addMorph(morph);
-      const opacityAnimation = new NumberAnimation(morph, 'opacity');
-      const keyFrame = new Keyframe(0, 1);
-      opacityAnimation.addKeyframe(keyFrame);
       sequence.addAnimation(opacityAnimation);
-      opacityAnimation.removeKeyframe(keyFrame);
+      opacityAnimation.removeKeyframe(keyframe);
       expect(sequence.getAnimationsForMorph(morph)).to.have.length(0);
+    });
+
+    it('can get keyframe positions across animations', () => {
+      opacityAnimation.addKeyframes([new Keyframe(0.5, 0.8), new Keyframe(0.8, 0.5)]);
+      sequence.addAnimation(opacityAnimation);
+      const morph2 = new Morph();
+      sequence.addMorph(morph);
+      const grayscaleAnimation = new NumberAnimation(morph2, 'grayscale');
+      grayscaleAnimation.addKeyframes([new Keyframe(0.1, 1), new Keyframe(0.7, 0.3)]);
+      sequence.addAnimation(grayscaleAnimation);
+
+      expect(sequence.getNextKeyframePosition(1.5)).to.be.undefined;
+      expect(sequence.getNextKeyframePosition(0.75)).to.equal(0.8);
+      expect(sequence.getNextKeyframePosition(0.5)).to.be.equal(0.7);
+      expect(sequence.getPrevKeyframePosition(0.5)).to.be.equal(0.1);
     });
   });
 
