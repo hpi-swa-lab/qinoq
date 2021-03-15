@@ -136,6 +136,10 @@ export class InteractivesEditor extends Morph {
     if (this.getSequenceFor(tab)) disconnect(this.getSequenceFor(tab), 'name', tab, 'caption');
   }
 
+  triggerInteractiveScrollPositionConnections () {
+    this.interactiveScrollPosition = this.interactiveScrollPosition;
+  }
+
   clearInteractive () {
     if (!this.interactive) return;
     disconnect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
