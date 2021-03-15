@@ -127,11 +127,15 @@ export class GlobalTimelineLayer extends TimelineLayer {
     this.timeline.deselectAllSequences();
   }
 
+  changeBorderAppearance () {
+    this.borderWidth = 3;
+    this.borderColor = COLOR_SCHEME.PRIMARY;
+  }
+
   onDragStart (event) {
     const undo = this.container.undoStart('overview-layer-drag');
     undo.addTarget(this.timeline);
-    this.borderWidth = 3;
-    this.borderColor = COLOR_SCHEME.PRIMARY;
+    this.changeBorderAppearance();
   }
 
   onDrag (event) {
