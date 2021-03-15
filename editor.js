@@ -40,6 +40,8 @@ export class InteractivesEditor extends Morph {
       },
       globalTimeline: {
       },
+      inspector: {
+      },
       interactiveScrollPosition: {
         defaultValue: 0
       }
@@ -63,13 +65,13 @@ export class InteractivesEditor extends Morph {
     this.preview.initialize(this);
     this.addMorph(this.preview);
 
-    this.morphInspector = new InteractiveMorphInspector({
+    this.inspector = new InteractiveMorphInspector({
       position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0),
       extent: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT),
       borderWidth: CONSTANTS.BORDER_WIDTH
     });
-    this.morphInspector.initialize(this);
-    this.addMorph(this.morphInspector);
+    this.inspector.initialize(this);
+    this.addMorph(this.inspector);
 
     this.menuBar = new MenuBar({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT) });
     this.menuBar.initialize(this);
