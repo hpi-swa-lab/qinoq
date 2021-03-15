@@ -27,9 +27,7 @@ export class TimelineKeyframe extends Morph {
         set (name) {
           this.setProperty('name', name);
           this.tooltip = this.name;
-          if (this.keyframe) {
-            this.keyframe.name = this.name;
-          }
+          if (this.keyframe) this.keyframe.name = this.name;
         }
       },
       position: {
@@ -69,7 +67,11 @@ export class TimelineKeyframe extends Morph {
 
   async promptRename () {
     const newName = await $world.prompt('Keyframe name:', { input: this.keyframe.name });
-    if (newName) this.name = newName;
+    if (newName) {
+      this.undoStart('rename keyframe');
+      this.name = newName;
+      this.undoStop('rename keyframe');
+    }
   }
 
   menuItems (evt) {
@@ -84,9 +86,11 @@ export class TimelineKeyframe extends Morph {
     const newPosition = await $world.prompt('Keyframe position:', { input: `${this.keyframe.position}` });
     if (newPosition) {
       if (newPosition >= 0 && newPosition <= 1) {
+        this.undoStart('change keyframe position');
         this.keyframe.position = newPosition;
         this.position = this.getPositionFromProgress(this.keyframe.position);
         this.editor.interactive.redraw();
+        this.undoStop('change keyframe position');
       } else {
         await $world.inform('Enter a value between 0 and 1.');
         await this.promptUserForNewPosition();
