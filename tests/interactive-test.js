@@ -63,4 +63,9 @@ describe('Interactive object', () => {
     interactive.scrollPosition = 8;
     expect(interactive.submorphs.length).equals(2);
   });
+
+  it('can get sequence starts', () => {
+    expect(interactive.getNextSequenceStart(5)).to.equal(8);
+    expect(interactive.getPrevSequenceStart(5)).to.equal(0);
+  });
 });
