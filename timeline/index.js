@@ -290,6 +290,9 @@ export class SequenceTimeline extends Timeline {
     return {
       _sequence: {
         defaultValue: {}
+      },
+      selectedTimelineKeyframes: {
+        defaultValue: []
       }
     };
   }
@@ -305,6 +308,15 @@ export class SequenceTimeline extends Timeline {
   createOverviewTimelineLayer (morph) {
     const timelineLayer = super.createTimelineLayer(morph);
     timelineLayer.layerInfo.addCollapseToggle();
+    return timelineLayer;
+  }
+
+  createTimelineLayer (morph) {
+    const timelineLayer = super.createTimelineLayer(morph);
+    this.ui.layerInfoContainer.submorphs[timelineLayer.index].onMouseUp = () => {
+      morph.show();
+      this.editor.morphInspector.targetMorph = morph;
+    };
     return timelineLayer;
   }
 
@@ -407,5 +419,16 @@ export class SequenceTimeline extends Timeline {
 
   getDisplayValueFromScroll (scrollPosition) {
     return this.sequence.progress.toFixed(2);
+  }
+
+  addSelectedKeyframe (timelineKeyframe) {
+    this.selectedTimelineKeyframes.push(timelineKeyframe);
+    timelineKeyframe.toggleSelected();
+  }
+
+  setSelectedKeyframe (timelineKeyframe) {
+    this.selectedTimelineKeyframes.forEach(keyframe => keyframe.toggleSelected());
+    this.selectedTimelineKeyframes = [timelineKeyframe];
+    timelineKeyframe.toggleSelected();
   }
 }

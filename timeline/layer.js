@@ -53,7 +53,7 @@ export class TimelineLayer extends Morph {
 
   addAreaMorphs () {
     const activeArea = this.addMorph(new Morph({
-      extent: pt(0, CONSTANTS.LAYER_HEIGHT),
+      extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.LAYER_HEIGHT),
       position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0),
       fill: COLOR_SCHEME.SURFACE_VARIANT,
       reactsToPointer: false,

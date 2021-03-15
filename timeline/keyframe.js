@@ -45,6 +45,12 @@ export class TimelineKeyframe extends Morph {
       _editor: {},
       _lockModelUpdate: {
         defaultValue: true
+      },
+      isSelected: {
+        defaultValue: false
+      },
+      borderColor: {
+        defaultValue: COLOR_SCHEME.PRIMARY
       }
     };
   }
@@ -155,9 +161,23 @@ export class TimelineKeyframe extends Morph {
   }
 
   onMouseUp (evt) {
-    super.onMouseUp(evt);
+    // uncomment when check whether key exists in canonicalizeKeys is implemented
+    /* if (evt.leftMouseButtonPressed() && evt.keyCombo == 'Shift') {
+      this.layer.timeline.addSelectedKeyframe(this);
+    } else */
+    if (evt.leftMouseButtonPressed()) {
+      this.layer.timeline.setSelectedKeyframe(this);
+    }
+  }
+
+  onDoubleMouseDown (evt) {
     const scrollPosition = this.layer.timeline.getScrollFromKeyframe(this);
     this.editor.interactiveScrollPosition = scrollPosition;
+  }
+
+  toggleSelected () {
+    this.isSelected = !this.isSelected;
+    this.updateAppearance();
   }
 
   onDragStart (event) {
@@ -196,5 +216,9 @@ export class TimelineKeyframe extends Morph {
 
   get isTimelineKeyframe () {
     return true;
+  }
+
+  updateAppearance () {
+    this.borderWidth = this.isSelected ? 2 : 0;
   }
 }
