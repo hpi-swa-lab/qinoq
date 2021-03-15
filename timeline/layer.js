@@ -142,6 +142,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
     if (index > this.container.submorphs.length - 1) {
       index = this.container.submorphs.length - 1;
     }
+    this.remove();
     this.container.addMorphAt(this, Math.round(index));
     this.timeline.arrangeLayerInfos();
     this.timeline.updateZIndicesFromTimelineLayerPositions();
