@@ -84,6 +84,10 @@ export class SequenceTimelineLayer extends TimelineLayer {
     this.editor.inspector.targetMorph = this.morph;
     if (this.morph.world()) this.morph.show();
   }
+
+  get keyframes () {
+    return this.submorphs.filter(submorph => submorph.isTimelineKeyframe);
+  }
 }
 
 export class GlobalTimelineLayer extends TimelineLayer {
@@ -220,21 +224,11 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   }
 
   removeAllTimelineKeyframes () {
-    this.withAllSubmorphsDo(submorph => {
-      if (submorph.isTimelineKeyframe) {
-        submorph.removeMorph();
-      }
-    });
+    this.keyframes.forEach(keyframe => keyframe.removeMorph());
   }
 
   containsKeyframes () {
-    let containsKeyframes = false;
-    this.withAllSubmorphsDo(submorph => {
-      if (submorph.isTimelineKeyframe) {
-        containsKeyframes = true;
-      }
-    });
-    return containsKeyframes;
+    return !!this.keyframes;
   }
 
   updateTimelineKeyframes () {

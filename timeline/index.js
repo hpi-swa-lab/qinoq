@@ -17,9 +17,6 @@ export class Timeline extends Morph {
       },
       interactive: {},
       _editor: {},
-      _timelineLayerDict: {
-        defaultValue: {}
-      },
       clipMode: {
         defaultValue: 'auto'
       },
@@ -99,7 +96,6 @@ export class Timeline extends Morph {
     timelineLayer.layerInfo = layerInfo;
     layerInfo.addMorph(layerInfo.layerLabel);
     this.ui.layerInfoContainer.addMorphAt(layerInfo, index);
-    this._timelineLayerDict[layer.id] = timelineLayer;
     return timelineLayer;
   }
 
@@ -113,16 +109,8 @@ export class Timeline extends Morph {
     this.ui.layerInfoContainer.layout.apply();
   }
 
-  updateLayerPositions () {
-    this.interactive.layers.forEach(layer => {
-      const timelineLayer = this.getTimelineLayerFor(layer);
-      timelineLayer.position = pt(timelineLayer.position.x, -layer.zIndex);
-    });
-    this.arrangeLayerInfos();
-  }
-
-  getTimelineLayerFor (layer) {
-    return this._timelineLayerDict[layer.id];
+  redraw () {
+    throw new Error('Subclass resposibility');
   }
 
   relayout (availableWidth) {
@@ -132,7 +120,7 @@ export class Timeline extends Morph {
   }
 
   get timelineLayers () {
-    return Object.values(this._timelineLayerDict);
+    return this.withAllSubmorphsSelect(submorph => submorph.isTimelineLayer);
   }
 
   loadContent (content) {
@@ -215,6 +203,18 @@ export class GlobalTimeline extends Timeline {
       timelineSequence._lockModelUpdate = false;
     });
     this.editor.triggerInteractiveScrollPositionConnections();
+  }
+
+  updateLayerPositions () {
+    this.interactive.layers.forEach(layer => {
+      const timelineLayer = this.getTimelineLayerFor(layer);
+      timelineLayer.position = pt(timelineLayer.position.x, -layer.zIndex);
+    });
+    this.arrangeLayerInfos();
+  }
+
+  getTimelineLayerFor (layer) {
+    return this.timelineLayers.find(timelineLayer => timelineLayer.layer === layer);
   }
 
   get timelineSequences () {
@@ -302,6 +302,10 @@ export class SequenceTimeline extends Timeline {
     animation.keyframes.forEach(keyframe => {
       timelineLayer.addMorph(new TimelineKeyframe().initialize(this.editor, keyframe, animation));
     });
+  }
+
+  get keyframes () {
+    return this.timelineLayers.reduce((keyframes, timelineLayer) => keyframes.concat(timelineLayer.keyframes), []);
   }
 
   updateLayers () {
