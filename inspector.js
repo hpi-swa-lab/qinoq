@@ -60,7 +60,7 @@ export class InteractiveMorphInspector extends Morph {
     return this._editor;
   }
 
-  get possibleProperties () {
+  get defaultProperties () {
     return {
       extent: 'point',
       position: 'point',
@@ -91,8 +91,11 @@ export class InteractiveMorphInspector extends Morph {
   }
 
   get propertiesToDisplay () {
-    const possible = Object.keys(this.possibleProperties);
-    return possible.filter(prop => prop in this.targetMorph);
+    const defaultProperties = Object.entries(this.defaultProperties);
+    const defaultPropertiesInMorph = defaultProperties.filter(propertyAndType => propertyAndType[0] in this.targetMorph);
+    const additionalProperties = Object.entries(this.targetMorph.propertiesAndPropertySettings().properties).filter(propertyAndSettings => 'animateAs' in propertyAndSettings[1]).map(propertyAndSettings => [propertyAndSettings[0], propertyAndSettings[1].animateAs]);
+    const propertyList = defaultPropertiesInMorph.concat(additionalProperties);
+    return Object.fromEntries(propertyList);
   }
 
   buildPropertyControls () {
@@ -100,9 +103,9 @@ export class InteractiveMorphInspector extends Morph {
       return;
     }
     this.ui.propertyPane.submorphs.forEach(morph => morph.remove());
-    const props = this.propertiesToDisplay;
+    const props = Object.keys(this.propertiesToDisplay);
     props.forEach(propToInspect => {
-      const propType = this.possibleProperties[propToInspect];
+      const propType = this.propertiesToDisplay[propToInspect];
       this.buildPropertyControl(propToInspect, propType);
     });
   }
@@ -198,7 +201,7 @@ export class InteractiveMorphInspector extends Morph {
       const sequenceOfTarget = Sequence.getSequenceOfMorph(this.targetMorph);
       this.displayedProperties.forEach(inspectedProperty => {
         disconnect(sequenceOfTarget, 'updateProgress', this.propertyControls[inspectedProperty].keyframe, 'updateStyle');
-        const propType = this.possibleProperties[inspectedProperty];
+        const propType = this.propertiesToDisplay[inspectedProperty];
         disconnect(this.targetMorph, inspectedProperty, this, 'updateInInspector');
         switch (propType) {
           case 'point':
@@ -218,7 +221,7 @@ export class InteractiveMorphInspector extends Morph {
 
   createConnections () {
     this.displayedProperties.forEach(inspectedProperty => {
-      const propType = this.possibleProperties[inspectedProperty];
+      const propType = this.propertiesToDisplay[inspectedProperty];
       connect(this.targetMorph, inspectedProperty, this, 'updateInInspector', { converter: '() => {return {property, propType}}', varMapping: { property: inspectedProperty, propType } });
       switch (propType) {
         case 'point':
@@ -273,7 +276,7 @@ export class InteractiveMorphInspector extends Morph {
     }
     this._updatingInspector = true;
     this.displayedProperties.forEach(property => {
-      const propType = this.possibleProperties[property];
+      const propType = this.propertiesToDisplay[property];
       this.updatePropertyInInspector(property, propType);
     });
     this._updatingInspector = false;
@@ -285,7 +288,7 @@ export class InteractiveMorphInspector extends Morph {
     }
     this._updatingMorph = true;
     this.displayedProperties.forEach(property => {
-      const propType = this.possibleProperties[property];
+      const propType = this.propertiesToDisplay[property];
       switch (propType) {
         case 'point':
           this.targetMorph[property] = pt(this.propertyControls[property].x.number, this.propertyControls[property].y.number);
