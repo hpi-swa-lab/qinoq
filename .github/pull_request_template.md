@@ -58,6 +58,7 @@ Closes [fill in your issues here]
 - [ ] clicking on a layer will select the corresponding morph in the inspector
 - [ ] clicking on the first tab brings you back to the global timeline
 - [ ] after scrolling in the global timeline, the cursor position in the already opened 'sky sequence' has updated as well, when changing to this tab and vice versa
+- [ ] when clicking on a single keyframe this one is highlighted with a blue border
 - [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the sequence and to the prev/next keyframe
 - [ ] When making the zoom factor higher/lower with the input field, the length of the active area adapt accordingly as well as the position of the keyframes and the cursor updates its position
 
