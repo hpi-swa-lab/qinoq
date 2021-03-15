@@ -14,6 +14,7 @@ Closes [fill in your issues here]
 - [ ] double clicking on the sky sequence brings you to a new tab named 'sky sequence' containing with the sequence view
 - [ ] when clicking the "+" button a sequence is in the hand, which can only be dropped on a timelinelayer and changes color when you are not able to place the sequence
 - [ ] right clicking on a sequence brings up a context menu
+- [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the interactive/beginning of the next/previous sequence
 
 ### TimelineLayer:
 
@@ -24,6 +25,7 @@ Closes [fill in your issues here]
 
 - [ ] scrolls when scrolling in the interactive
 - [ ] with open interactive, scroll position (and cursor position) may be changed with arrow keys
+- [ ] the number in the menubar is consistent with the cursorposition
 
 ### Interactive:
 
@@ -42,6 +44,7 @@ Closes [fill in your issues here]
 - [ ] clicking on a layer will select the corresponding morph in the inspector
 - [ ] clicking on the first tab brings you back to the global timeline
 - [ ] after scrolling in the global timeline, the cursor position in the already opened 'sky sequence' has updated as well, when changing to this tab and vice versa
+- [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the sequence and to the prev/next keyframe
 
 ### Inspector:
 
