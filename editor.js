@@ -51,10 +51,11 @@ export class InteractivesEditor extends Morph {
   async initialize () {
     this.initializeLayout();
     await this.initializePanels();
-    this.openInWindow({
+    this.window = this.openInWindow({
       title: 'Interactives Editor',
       name: 'window for interactives editor'
     });
+    connect(this.window, 'close', this, 'clearInteractive');
     return this;
   }
 
@@ -140,6 +141,7 @@ export class InteractivesEditor extends Morph {
     disconnect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
     disconnect(this.interactive, 'name', this.globalTimeline, 'name');
     disconnect(this.interactive, 'scrollPosition', this.globalTimeline, 'interactiveScrollPosition');
+    disconnect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
     disconnect(this.interactive, 'name', this.globalTab, 'caption');
 
     disconnect(this.globalTab, 'caption', this.interactive, 'name');
