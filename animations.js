@@ -2,11 +2,11 @@ import { pt } from 'lively.graphics';
 import { arr } from 'lively.lang';
 import { Sequence } from 'interactives-editor';
 class Animation {
-  constructor (targetMorph, property, absoluteValues = true) {
+  constructor (targetMorph, property, relativeValues = false) {
     this.target = targetMorph;
     this.property = property;
     this.keyframes = [];
-    this.absoluteValues = absoluteValues;
+    this.relativeValues = relativeValues;
   }
 
   // TODO: Maybe use some epsilon to accept keyframes within an interval
@@ -76,7 +76,7 @@ class Animation {
   }
 
   transformValue (value) {
-    if (this.absoluteValues) { return value; }
+    if (!this.relativeValues) { return value; }
     return this.transformRelativeValue(value);
   }
 
@@ -96,8 +96,7 @@ export function createAnimationForPropertyType (propType, targetMorph, property)
   switch (propType) {
     case 'point':
       // extent and position need to be scalable with the interactive thus we use relative values
-      const relative = !['extent', 'position'].includes(property);
-      return new PointAnimation(targetMorph, property, relative);
+      return new PointAnimation(targetMorph, property, ['extent', 'position'].includes(property));
     case 'color':
       return new ColorAnimation(targetMorph, property);
     case 'number':

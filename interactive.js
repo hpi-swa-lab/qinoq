@@ -315,6 +315,9 @@ export class Sequence extends Morph {
       reactsToPointer: {
         defaultValue: false
       },
+      halosEnabled: {
+        defaultValue: false
+      },
       extent: {
         defaultValue: pt(0, 0)
       },
@@ -412,7 +415,7 @@ export class Sequence extends Morph {
     const sun = new Ellipse({ name: 'sun', extent: pt(70, 70), fill: Color.rgb(250, 250, 20), position: pt(0, 350) });
     skySequence.addMorph(sun);
 
-    const sunPositionAnimation = new PointAnimation(sun, 'position', false);
+    const sunPositionAnimation = new PointAnimation(sun, 'position', true);
     sunPositionAnimation.addKeyframes([new Keyframe(0, pt(0, 1.2), 'start'), new Keyframe(0.5, pt(0.1, 0.27), 'middle'), new Keyframe(1, pt(0.45, 0.05), 'end')]);
     skySequence.addAnimation(sunPositionAnimation);
 
@@ -423,7 +426,7 @@ export class Sequence extends Morph {
     const cloud = new Image({ name: 'cloud', extent: pt(100, 50), imageUrl: 'https://cdn.pixabay.com/photo/2017/06/20/04/42/cloud-2421760_960_720.png' });
     skySequence.addMorph(cloud);
 
-    const cloudPositionAnimation = new PointAnimation(cloud, 'position', false);
+    const cloudPositionAnimation = new PointAnimation(cloud, 'position', true);
     cloudPositionAnimation.addKeyframes([new Keyframe(0, pt(0.25, 0.17), 'start'), new Keyframe(1, pt(0.5, 0.17), 'end')]);
     skySequence.addAnimation(cloudPositionAnimation);
 
