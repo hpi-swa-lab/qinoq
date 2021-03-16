@@ -2,8 +2,7 @@
 Closes [fill in your issues here]
 
 - [ ] I have added additional features that should now be part of the PR template. I made the necessary changes to the template.
-- [ ] I have fixed a bug/the added functionality should not be part of the PR template.  
-
+- [ ] I have fixed a bug/the added functionality should not be part of the PR template.
 - [ ] I have run all our tests and they still work
 
 ## Features that still work:
@@ -13,7 +12,7 @@ Closes [fill in your issues here]
 - [ ] the day sequence can't be dragged or resized onto the night sequence, instead it will snap to the night sequence and the snap indicator is shown
 - [ ] the day sequence can be dragged to the middle layer, it will snap onto the tree sequence
 - [ ] the night sequence can't be dragged or resized beyond the timeline bounds
-- [ ] double clicking on the sky sequence brings you to a new tab named 'sky sequence' containing with the sequence view
+- [ ] double clicking on the sky sequence brings you to a new tab named 'sky sequence' containing the sequence view
 - [ ] when clicking the "+" button a sequence is in the hand, which can only be dropped on a timelinelayer and changes color when you are not able to place the sequence
 - [ ] right clicking on a sequence brings up a context menu
 - [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the interactive/beginning of the next/previous sequence
@@ -34,6 +33,7 @@ Closes [fill in your issues here]
 - [ ] can be opened
 - [ ] is scrollable
 - [ ] can be loaded in the editor via drag and drop
+- [ ] after resizing to have a bigger interactive the sun is bigger and still moves to about half of the interactive width
 
 ### Sequence View:
 
