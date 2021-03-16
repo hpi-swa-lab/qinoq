@@ -95,7 +95,9 @@ class Animation {
 export function createAnimationForPropertyType (propType, targetMorph, property) {
   switch (propType) {
     case 'point':
-      return new PointAnimation(targetMorph, property);
+      // extent and position need to be scalable with the interactive thus we use relative values
+      const relative = !['extent', 'position'].includes(property);
+      return new PointAnimation(targetMorph, property, relative);
     case 'color':
       return new ColorAnimation(targetMorph, property);
     case 'number':
