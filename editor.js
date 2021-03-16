@@ -10,9 +10,9 @@ import { Sequence } from 'interactives-editor';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
 
 const CONSTANTS = {
-  EDITOR_WIDTH: 900,
+  EDITOR_WIDTH: 1000,
   EDITOR_HEIGHT: 550,
-  PREVIEW_WIDTH: 400,
+  PREVIEW_WIDTH: 533,
   SUBWINDOW_HEIGHT: 300,
   BORDER_WIDTH: 3,
   MENU_BAR_HEIGHT: 32,
@@ -150,7 +150,7 @@ export class InteractivesEditor extends Morph {
     this.tabs.forEach(tab => { if (tab !== this.globalTab) tab.close(); });
 
     this.interactive.remove();
-    this.morphInspector.deselect();
+    this.inspector.deselect();
     this.preview.showEmptyPreviewPlaceholder();
   }
 

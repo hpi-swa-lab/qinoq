@@ -82,7 +82,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
   onMouseUp (evt) {
     super.onMouseUp(evt);
     this.editor.inspector.targetMorph = this.morph;
-    this.morph.show();
+    if (this.morph.world()) this.morph.show();
   }
 }
 
