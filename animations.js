@@ -2,10 +2,11 @@ import { pt } from 'lively.graphics';
 import { arr } from 'lively.lang';
 import { Sequence } from 'interactives-editor';
 class Animation {
-  constructor (targetMorph, property) {
+  constructor (targetMorph, property, absoluteValues = true) {
     this.target = targetMorph;
     this.property = property;
     this.keyframes = [];
+    this.absoluteValues = absoluteValues;
   }
 
   // TODO: Maybe use some epsilon to accept keyframes within an interval
@@ -54,19 +55,29 @@ class Animation {
     return { start: this.keyframes[this.keyframes.length - 1] };
   }
 
+  get sequence () {
+    if (!this._sequence) { this._sequence = Sequence.getSequenceOfMorph(this.target); }
+    return this._sequence;
+  }
+
   // Linear Interpolation
   set progress (progress) {
     const { start, end } = this.getClosestKeyframes(progress);
     if (!!start && !!end) {
-      this.target[this.property] = this.interpolate(progress, start, end);
+      this.target[this.property] = this.transformValue(this.interpolate(progress, start, end));
       return;
     }
     if (start) {
-      this.target[this.property] = start.value;
+      this.target[this.property] = this.transformValue(start.value);
     }
     if (end) {
-      this.target[this.property] = end.value;
+      this.target[this.property] = this.transformValue(end.value);
     }
+  }
+
+  transformValue (value) {
+    if (this.absoluteValues) { return value; }
+    return this.transformRelativeValue(value);
   }
 
   // Linear Interpolation helper
@@ -132,6 +143,10 @@ export class PointAnimation extends Animation {
     const factor = this.lerp(start, end, progress);
     return pt(start.value.x + (end.value.x - start.value.x) * factor,
       start.value.y + (end.value.y - start.value.y) * factor);
+  }
+
+  transformRelativeValue (value) {
+    return pt(value.x * this.sequence.width, value.y * this.sequence.height);
   }
 
   get type () {
