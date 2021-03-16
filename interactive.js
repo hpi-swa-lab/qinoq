@@ -1,6 +1,6 @@
-import { Morph, Image, Ellipse, Polygon } from 'lively.morphic';
+import { Morph, ProportionalLayout, Image, Ellipse, Polygon } from 'lively.morphic';
 import { Color, pt } from 'lively.graphics';
-import { connect, disconnectAll } from 'lively.bindings';
+import { connect, disconnect, disconnectAll } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
 import { COLOR_SCHEME } from './colors.js';
 import { Keyframe, createAnimationForPropertyType, NumberAnimation, PointAnimation, ColorAnimation } from 'interactives-editor';
@@ -10,7 +10,7 @@ import { arr } from 'lively.lang';
 export class Interactive extends Morph {
   static example () {
     const interactive = new Interactive();
-    interactive.initialize(pt(400, 300), 500);
+    interactive.initialize();
 
     const foregroundLayer = Layer.exampleForegroundLayer();
     const middleLayer = Layer.exampleMiddleLayer();
@@ -64,7 +64,7 @@ export class Interactive extends Morph {
     };
   }
 
-  initialize (extent = pt(400, 300), length = 500) {
+  initialize (extent = pt(533, 300), length = 500) {
     this.length = length;
     this.extent = extent;
     this.initScrollOverlay();
@@ -79,11 +79,19 @@ export class Interactive extends Morph {
     this.scrollOverlay.initialize(this);
     const scrollLengthContainer = new Morph({
       name: 'scrollable content',
-      extent: pt(this.width, this.length >= this.height ? 2 * this.length : this.height + this.length),
+      extent: pt(this.width, this.height + this.length),
       halosEnabled: false
     });
     this.scrollOverlay.addMorph(scrollLengthContainer);
     connect(this, 'position', this.scrollOverlay, 'position');
+    connect(this, 'extent', this.scrollOverlay, 'extent');
+    connect(this, 'extent', scrollLengthContainer, 'extent', {
+      converter: '(extent) => pt(extent.x, extent.y + length)',
+      varMapping: {
+        length: this.length,
+        pt
+      }
+    });
   }
 
   openInWorld () {
@@ -161,10 +169,12 @@ export class Interactive extends Morph {
       sequence.layer = this.layers[0];
     }
     sequence.interactive = this;
+    connect(this, 'extent', sequence, 'extent');
   }
 
   removeSequence (sequence) {
     disconnectAll(sequence);
+    disconnect(this, 'extent', sequence, 'extent');
     arr.remove(this.sequences, sequence);
     sequence.remove();
   }
@@ -334,7 +344,13 @@ export class Sequence extends Morph {
       animations: {
         defaultValue: []
       },
-      interactive: {}
+      interactive: {
+        set (interactive) {
+          this.setProperty('interactive', interactive);
+          this.extent = interactive.extent;
+          this.layout = new ProportionalLayout({ lastExtent: this.extent });
+        }
+      }
     };
   }
 
@@ -345,7 +361,7 @@ export class Sequence extends Morph {
   static backgroundNightExample () {
     const backgroundSequence = new Sequence({ name: 'night background' });
     backgroundSequence.initialize(0, 250);
-    const backgroundMorph = new Morph({ fill: Color.rgbHex('272a7c'), extent: pt(400, 300), name: 'night background' });
+    const backgroundMorph = new Morph({ fill: Color.rgbHex('272a7c'), extent: pt(533, 300), name: 'night background' });
     backgroundSequence.addMorph(backgroundMorph);
     return backgroundSequence;
   }
@@ -353,7 +369,7 @@ export class Sequence extends Morph {
   static backgroundDayExample () {
     const backgroundSequence = new Sequence({ name: 'day background' });
     backgroundSequence.initialize(250, 250);
-    const backgroundMorph = new Morph({ fill: Color.rgbHex('60b2e5'), extent: pt(400, 300), name: 'day background' });
+    const backgroundMorph = new Morph({ fill: Color.rgbHex('60b2e5'), extent: pt(533, 300), name: 'day background' });
     backgroundSequence.addMorph(backgroundMorph);
 
     const sunrise = new Keyframe(0, Color.rgbHex('#ff4d00'));
