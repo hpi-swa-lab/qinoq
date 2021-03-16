@@ -314,8 +314,8 @@ export class SequenceTimeline extends Timeline {
   createTimelineLayer (morph) {
     const timelineLayer = super.createTimelineLayer(morph);
     this.ui.layerInfoContainer.submorphs[timelineLayer.index].onMouseUp = () => {
-      morph.show();
-      this.editor.morphInspector.targetMorph = morph;
+      if (morph.world())morph.show();
+      this.editor.inspector.targetMorph = morph;
     };
     return timelineLayer;
   }
