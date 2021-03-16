@@ -2,7 +2,9 @@
 Closes [fill in your issues here]
 
 - [ ] I have added additional features that should now be part of the PR template. I made the necessary changes to the template.
-- [ ] I have fixed a bug/the added functionality should not be part of the PR template.
+- [ ] I have fixed a bug/the added functionality should not be part of the PR template.  
+
+- [ ] I have run all our tests and they still work
 
 ## Features that still work:
 ### Sequences in GlobalTimeline:
