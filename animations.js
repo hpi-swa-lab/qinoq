@@ -110,12 +110,6 @@ export class Keyframe {
     this.value = value;
     this.name = name;
   }
-
-  calculatePositionInInteractive (animationTargetMorph) {
-    const sequence = Sequence.getSequenceOfMorph(animationTargetMorph);
-    const scrollPosition = sequence.start + (sequence.duration * this.position);
-    return scrollPosition;
-  }
 }
 
 export class NumberAnimation extends Animation {
