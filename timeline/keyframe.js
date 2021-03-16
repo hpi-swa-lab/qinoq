@@ -101,7 +101,7 @@ export class TimelineKeyframe extends Morph {
       if (newPosition >= 0 && newPosition <= 1) {
         this.undoStart('change keyframe position');
         this.keyframe.position = newPosition;
-        this.position = this.getPositionFromProgress(this.keyframe.position);
+        this.updatePosition();
         this.editor.interactive.redraw();
         this.undoStop('change keyframe position');
       } else {
@@ -121,7 +121,7 @@ export class TimelineKeyframe extends Morph {
   }
 
   onMouseUp (evt) {
-    const scrollPosition = this.keyframe.calculatePositionInInteractive(this.animation.target);
+    const scrollPosition = this.layer.timeline.getScrollFromKeyframe(this);
     this.editor.interactiveScrollPosition = scrollPosition;
   }
 
@@ -155,7 +155,7 @@ export class TimelineKeyframe extends Morph {
     super.onDrag(event);
     if (this.keyframe.position < 0) this.keyframe.position = 0;
     if (this.keyframe.position > 1) this.keyframe.position = 1;
-    this.position = this.getPositionFromProgress(this.keyframe.position);
+    this.updatePosition();
     this.editor.interactive.redraw();
   }
 
