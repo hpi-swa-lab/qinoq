@@ -421,7 +421,7 @@ export class SequenceTimeline extends Timeline {
     return this.sequence.progress.toFixed(2);
   }
 
-  addSelectedKeyframe (timelineKeyframe) {
+  addKeyframeToSelection (timelineKeyframe) {
     this.selectedTimelineKeyframes.push(timelineKeyframe);
     timelineKeyframe.toggleSelected();
   }
