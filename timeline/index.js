@@ -191,7 +191,7 @@ export class GlobalTimeline extends Timeline {
   onLoadContent (interactive) {
     this.interactive = interactive;
 
-    this.interactive.layers.forEach(layer => this.createTimelineLayer(layer));
+    this.interactive.layers.sort((a, b) => a.zIndex - b.zIndex).forEach(layer => this.createTimelineLayer(layer));
     this.interactive.sequences.forEach(sequence => {
       const timeline_seq = this.createTimelineSequence(sequence);
       connect(sequence, 'name', timeline_seq, 'caption');
