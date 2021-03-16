@@ -152,7 +152,7 @@ export class InteractivesEditor extends Morph {
     this.tabs.forEach(tab => { if (tab !== this.globalTab) tab.close(); });
 
     this.interactive.remove();
-    this.morphInspector.deselect();
+    this.inspector.deselect();
     this.preview.showEmptyPreviewPlaceholder();
   }
 
