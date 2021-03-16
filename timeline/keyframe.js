@@ -163,7 +163,7 @@ export class TimelineKeyframe extends Morph {
   onMouseUp (evt) {
     // uncomment when check whether key exists in canonicalizeKeys is implemented
     /* if (evt.leftMouseButtonPressed() && evt.keyCombo == 'Shift') {
-      this.layer.timeline.addSelectedKeyframe(this);
+      this.layer.timeline.addKeyframeToSelection(this);
     } else */
     if (evt.leftMouseButtonPressed()) {
       this.layer.timeline.setSelectedKeyframe(this);
