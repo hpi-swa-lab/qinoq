@@ -56,6 +56,9 @@ export class TimelineSequence extends Morph {
           }
         }
       },
+      snapIndicators: {
+        defaultValue: []
+      },
       extent: {
         set (extent) {
           this.setProperty('extent', extent);
@@ -177,7 +180,7 @@ export class TimelineSequence extends Morph {
         this.env.undoManager.removeLatestUndo();
       });
     }
-    this.removeSnapIndicator();
+    this.removeSnapIndicators();
     this.hideWarningLeft();
     this.hideWarningRight();
     delete event.hand.timelineSequenceStates;
@@ -192,20 +195,50 @@ export class TimelineSequence extends Morph {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       this.hideWarningLeft();
     }
-    this.checkDragSnapping(event);
+    this.checkDragSnapping();
 
     this.updateAppearance();
     this.updateSequenceAfterArrangement();
   }
 
-  removeSnapIndicator () {
-    if (this.snapIndicator) {
-      this.snapIndicator.remove();
-      this.snapIndicator = null;
+  removeSnapIndicators () {
+    this.snapIndicators.forEach(indicator => indicator.remove());
+    this.snapIndicators = [];
+  }
+
+  checkDragSnapping () {
+    this.removeSnapIndicators();
+    const sequenceToSnap = this.closestSequence;
+    if (sequenceToSnap) {
+      const distanceAndDirection = this.distanceBetweenSequences(this, sequenceToSnap);
+      if (distanceAndDirection[0] < CONSTANTS.SNAPPING_THRESHOLD) {
+        let ownSnapBase, otherSnapBase;
+        switch (distanceAndDirection[1]) {
+          case 'leftLeft':
+            ownSnapBase = 'position';
+            otherSnapBase = 'position';
+            break;
+          case 'leftRight':
+            ownSnapBase = 'position';
+            otherSnapBase = 'topRight';
+            break;
+          case 'rightLeft':
+            ownSnapBase = 'topRight';
+            otherSnapBase = 'position';
+            break;
+          case 'rightRight':
+            ownSnapBase = 'topRight';
+            otherSnapBase = 'topRight';
+            break;
+        }
+        this[ownSnapBase] = pt(sequenceToSnap[otherSnapBase].x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+        this.snapIndicators.push(this.owner.addMorph(this.buildSnapIndicator(pt(this[ownSnapBase].x - CONSTANTS.SNAP_INDICATOR_WIDTH / 2, this.position.y - CONSTANTS.SNAP_INDICATOR_SPACING))));
+        this.snapIndicators.push(sequenceToSnap.owner.addMorph(this.buildSnapIndicator(pt(sequenceToSnap[otherSnapBase].x - CONSTANTS.SNAP_INDICATOR_WIDTH / 2, sequenceToSnap.position.y - CONSTANTS.SNAP_INDICATOR_SPACING))));
+      }
     }
   }
 
-  checkDragSnapping (event) {
+  /* checkDragSnapping (event) {
     this.removeSnapIndicator();
     event.hand.timelineSequenceStates.forEach(sequenceState => {
       if (sequenceState.previousPosition.x < this.position.x) {
@@ -214,11 +247,11 @@ export class TimelineSequence extends Morph {
         this.checkDragSnappingLeft();
       }
     });
-  }
+  } */
 
   checkDragSnappingLeft () {
     if (this.isOverlappingOtherSequence()) {
-      const lastSequence = this.overlappingSequences.reduce((prev, curr) => { return (prev.topRight.x > curr.topRight.x) ? prev : curr; });
+      const lastSequence = this.overlappingSequencesForLayer(this.timelineLayer).reduce((prev, curr) => { return (prev.topRight.x > curr.topRight.x) ? prev : curr; });
       // if we are in the right quarter of the most right overlapping sequence
       if (Math.abs(lastSequence.topRight.x - this.position.x) < lastSequence.width * CONSTANTS.SNAPPING_THRESHOLD) {
         this.position = pt(lastSequence.topRight.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
@@ -236,7 +269,7 @@ export class TimelineSequence extends Morph {
 
   checkDragSnappingRight (overlappingSequences) {
     if (this.isOverlappingOtherSequence()) {
-      const firstSequence = this.overlappingSequences.reduce((prev, curr) => { return (prev.position.x < curr.position.x) ? prev : curr; });
+      const firstSequence = this.overlappingSequencesForLayer(this.timelineLayer).reduce((prev, curr) => { return (prev.position.x < curr.position.x) ? prev : curr; });
       const newPositionX = this.position.x;
       // if we are in the left quarter of the most left overlapping sequence
       if (Math.abs(firstSequence.position.x - this.topRight.x) < firstSequence.width * CONSTANTS.SNAPPING_THRESHOLD) {
@@ -356,7 +389,7 @@ export class TimelineSequence extends Morph {
 
   checkResizeSnappingRight () {
     if (this.isOverlappingOtherSequence()) {
-      const overlappingSequence = this.overlappingSequences[0];
+      const overlappingSequence = this.overlappingSequencesForLayer(this.timelineLayer)[0];
       this.extent = pt(overlappingSequence.position.x - this.position.x, this.height);
       this.rightResizer.position = pt(this.width - this.rightResizer.width, 0);
       this.snapIndicator = this.buildSnapIndicator(pt(this.position.x + this.width - CONSTANTS.SNAP_INDICATOR_WIDTH / 2, this.position.y - CONSTANTS.SNAP_INDICATOR_SPACING));
@@ -366,7 +399,7 @@ export class TimelineSequence extends Morph {
 
   checkResizeSnappingLeft (squenceState) {
     if (this.isOverlappingOtherSequence()) {
-      const overlappingSequence = this.overlappingSequences[0];
+      const overlappingSequence = this.overlappingSequencesForLayer(this.timelineLayer)[0];
       this.extent = pt(squenceState.previousTopRight.x - overlappingSequence.topRight.x, this.height);
       this.position = overlappingSequence.topRight;
       this.leftResizer.position = this.position;
@@ -530,6 +563,32 @@ export class TimelineSequence extends Morph {
     } else {
       this.setDefaultAppearance();
     }
+  }
+
+  get sequences () {
+    return this.timeline.timelineLayers.map(timelineLayer => timelineLayer.timelineSequences).flat();
+  }
+
+  distanceBetweenSequences (sequence, anotherSequence) {
+    const leftRight = [Math.abs(sequence.position.x - anotherSequence.topRight.x), 'leftRight'];
+    const rightLeft = [Math.abs(sequence.topRight.x - anotherSequence.position.x), 'rightLeft'];
+    const leftLeft = [Math.abs(sequence.position.x - anotherSequence.position.x), 'leftLeft'];
+    const rightRight = [Math.abs(sequence.topRight.x - anotherSequence.topRight.x), 'rightRight'];
+    return [leftRight, rightLeft, leftLeft, rightRight].sort((a, b) => a[0] - b[0])[0];
+  }
+
+  get closestSequence () {
+    const sequences = this.sequences.filter(sequence => sequence != this);
+    let curr = sequences[0];
+    let minCurr = this.distanceBetweenSequences(curr, this)[0];
+    sequences.filter(sequence => sequence != curr).forEach(sequence => {
+      const minSequence = this.distanceBetweenSequences(sequence, this)[0];
+      if (minSequence < minCurr) {
+        curr = sequence;
+        minCurr = minSequence;
+      }
+    });
+    return curr;
   }
 
   isOverlappingOtherSequence () {
