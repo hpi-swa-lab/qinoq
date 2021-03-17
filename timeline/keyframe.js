@@ -121,6 +121,7 @@ export class TimelineKeyframe extends Morph {
   }
 
   onMouseUp (evt) {
+    super.onMouseUp(evt);
     const scrollPosition = this.layer.timeline.getScrollFromKeyframe(this);
     this.editor.interactiveScrollPosition = scrollPosition;
   }
