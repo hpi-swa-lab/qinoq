@@ -165,6 +165,7 @@ export class TimelineSequence extends Morph {
       previousPosition: this.position,
       previousTimelineLayer: this.timelineLayer
     }];
+    this._cachedTimelineSequences = this.allTimelineSequences.filter(sequence => sequence != this);
   }
 
   onDragEnd (event) {
@@ -207,9 +208,10 @@ export class TimelineSequence extends Morph {
   }
 
   checkSnapping (direction) {
-    const sequenceToSnap = this.closestSequence(direction);
     this.removeSnapIndicators();
-    if (!sequenceToSnap) return;
+    const sequencesToSnap = this.closestSequences(direction);
+    if (!sequencesToSnap) return;
+    const sequenceToSnap = sequencesToSnap[0];
     const distanceAndDirection = this.distanceBetweenSequences(this, sequenceToSnap, direction);
     if (distanceAndDirection[0] < CONSTANTS.SNAPPING_THRESHOLD) {
       let ownSnapBase, otherSnapBase;
@@ -244,8 +246,27 @@ export class TimelineSequence extends Morph {
           this.width = Math.abs(this.position.x - sequenceToSnap[otherSnapBase].x);
           break;
       }
-      this.snapIndicators.push(this.owner.addMorph(this.buildSnapIndicator(pt(this[ownSnapBase].x - CONSTANTS.SNAP_INDICATOR_WIDTH / 2, this.position.y - CONSTANTS.SNAP_INDICATOR_SPACING))));
-      this.snapIndicators.push(sequenceToSnap.owner.addMorph(this.buildSnapIndicator(pt(sequenceToSnap[otherSnapBase].x - CONSTANTS.SNAP_INDICATOR_WIDTH / 2, sequenceToSnap.position.y - CONSTANTS.SNAP_INDICATOR_SPACING))));
+      let buildRightIndicator, buildLeftIndicator;
+      sequencesToSnap.forEach(sequence => {
+        if (sequence.position.x == this.position.x && direction != 'right') {
+          buildLeftIndicator = true;
+          this.buildLeftSnapIndicator(sequence);
+        }
+        if (sequence.position.x == this.topRight.x && direction != 'right') {
+          buildRightIndicator = true;
+          this.buildLeftSnapIndicator(sequence);
+        }
+        if (sequence.topRight.x == this.topRight.x && direction != 'left') {
+          buildRightIndicator = true;
+          this.buildRightSnapIndicator(sequence);
+        }
+        if (sequence.topRight.x == this.position.x && direction != 'left') {
+          buildLeftIndicator = true;
+          this.buildRightSnapIndicator(sequence);
+        }
+      });
+      if (buildLeftIndicator) this.buildLeftSnapIndicator(this);
+      if (buildRightIndicator) this.buildRightSnapIndicator(this);
     }
   }
 
@@ -303,7 +324,7 @@ export class TimelineSequence extends Morph {
   }
 
   onResizeLeft (event) {
-    const sequenceState = event.hand.timelineResizeSequenceStates[0];
+    const sequenceState = event.hand.timelineSequenceResizeStates[0];
     const dragDelta = this.leftResizer.position.x;
     const newSequenceWidth = sequenceState.previousWidth - dragDelta;
     // stop resizing due to minimal width
@@ -337,6 +358,7 @@ export class TimelineSequence extends Morph {
       previousWidth: this.width,
       previousTopRight: this.topRight
     }];
+    this._cachedTimelineSequences = this.allTimelineSequences.filter(sequence => sequence != this);
   }
 
   onResizeEnd (event) {
@@ -345,6 +367,14 @@ export class TimelineSequence extends Morph {
     this.hideWarningRight();
     this.removeSnapIndicators();
     delete event.hand.timelineSequenceResizeStates;
+  }
+
+  buildLeftSnapIndicator (sequence) {
+    this.snapIndicators.push(sequence.owner.addMorph(this.buildSnapIndicator(pt(sequence.position.x - CONSTANTS.SNAP_INDICATOR_WIDTH / 2, sequence.position.y - CONSTANTS.SNAP_INDICATOR_SPACING))));
+  }
+
+  buildRightSnapIndicator (sequence) {
+    this.snapIndicators.push(sequence.owner.addMorph(this.buildSnapIndicator(pt(sequence.topRight.x - CONSTANTS.SNAP_INDICATOR_WIDTH / 2, sequence.position.y - CONSTANTS.SNAP_INDICATOR_SPACING))));
   }
 
   buildSnapIndicator (position) {
@@ -557,14 +587,17 @@ export class TimelineSequence extends Morph {
     return directions.sort((a, b) => a[0] - b[0])[0];
   }
 
-  closestSequence (direction) {
-    const sequences = this.allTimelineSequences.filter(sequence => sequence != this);
-    let curr = sequences[0];
-    let minCurr = this.distanceBetweenSequences(this, curr, direction)[0];
-    sequences.filter(sequence => sequence != curr).forEach(sequence => {
+  closestSequences (direction) {
+    const sequences = this._cachedTimelineSequences;
+    let curr = [sequences[0]];
+    let minCurr = this.distanceBetweenSequences(this, curr[0], direction)[0];
+    sequences.filter(sequence => sequence != curr[0]).forEach(sequence => {
       const minSequence = this.distanceBetweenSequences(this, sequence, direction)[0];
+      if (minSequence == minCurr) {
+        curr.push(sequence);
+      }
       if (minSequence < minCurr) {
-        curr = sequence;
+        curr = [sequence];
         minCurr = minSequence;
       }
     });
