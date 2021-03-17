@@ -58,12 +58,14 @@ export class TimelineLayer extends Morph {
       fill: COLOR_SCHEME.SURFACE_VARIANT,
       reactsToPointer: false,
       name: 'active area',
+      borderStyle: { bottom: 'solid', left: 'none', right: 'none', top: 'solid' },
       acceptsDrops: false
     }));
     const inactiveArea = this.addMorph(new Morph({
       extent: pt(CONSTANTS.INACTIVE_AREA_WIDTH, CONSTANTS.LAYER_HEIGHT),
       fill: COLOR_SCHEME.BACKGROUND_VARIANT,
-      name: 'inactive area'
+      name: 'inactive area',
+      borderStyle: { bottom: 'solid', left: 'none', right: 'none', top: 'solid' }
     }));
     connect(activeArea, 'extent', inactiveArea, 'position', { converter: '() => source.topRight' });
   }
@@ -139,8 +141,17 @@ export class GlobalTimelineLayer extends TimelineLayer {
   }
 
   changeBorderAppearance () {
-    this.borderWidth = 3;
-    this.borderColor = COLOR_SCHEME.PRIMARY;
+    [this, this.getSubmorphNamed('active area'), this.getSubmorphNamed('inactive area')].forEach(morph => {
+      morph.borderWidth = 3;
+      morph.borderColor = COLOR_SCHEME.PRIMARY;
+    });
+  }
+
+  resetBorderAppearance () {
+    [this, this.getSubmorphNamed('active area'), this.getSubmorphNamed('inactive area')].forEach(morph => {
+      morph.borderWidth = 0;
+      morph.borderColor = COLOR_SCHEME.PRIMARY;
+    });
   }
 
   onDragStart (event) {
@@ -165,7 +176,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
 
   onDragEnd (event) {
     this.container.undoStop('overview-layer-drag');
-    this.borderWidth = 0;
+    this.resetBorderAppearance();
   }
 
   getAllSequencesIntersectingWith (rectangle) {
