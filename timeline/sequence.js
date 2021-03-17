@@ -303,7 +303,7 @@ export class TimelineSequence extends Morph {
   }
 
   onResizeLeft (event) {
-    const sequenceState = event.hand.timelineSequenceStates[0];
+    const sequenceState = event.hand.timelineResizeSequenceStates[0];
     const dragDelta = this.leftResizer.position.x;
     const newSequenceWidth = sequenceState.previousWidth - dragDelta;
     // stop resizing due to minimal width
@@ -331,7 +331,7 @@ export class TimelineSequence extends Morph {
   onResizeStart (event) {
     this.env.undoManager.removeLatestUndo();
     this.undoStart('timeline-sequence-resize');
-    event.hand.timelineSequenceStates = [{
+    event.hand.timelineSequenceResizeStates = [{
       timelineSequence: this,
       previousPosition: this.position,
       previousWidth: this.width,
@@ -344,7 +344,7 @@ export class TimelineSequence extends Morph {
     this.hideWarningLeft();
     this.hideWarningRight();
     this.removeSnapIndicators();
-    delete event.hand.timelineSequenceStates;
+    delete event.hand.timelineSequenceResizeStates;
   }
 
   buildSnapIndicator (position) {
