@@ -290,11 +290,13 @@ export class SequenceTimeline extends Timeline {
     return {
       _sequence: {
         defaultValue: {}
-      },
-      selectedTimelineKeyframes: {
-        defaultValue: []
       }
     };
+  }
+
+  get selectedTimelineKeyframes () {
+    const sequenceTimelineLayer = this.ui.layerContainer.submorphs.filter(submorph => submorph.isTimelineLayer);
+    return sequenceTimelineLayer.map(layer => layer.submorphs.filter(submorph => submorph.isTimelineKeyframe && submorph.isSelected)).flat();
   }
 
   get sequence () {
@@ -421,14 +423,8 @@ export class SequenceTimeline extends Timeline {
     return this.sequence.progress.toFixed(2);
   }
 
-  addKeyframeToSelection (timelineKeyframe) {
-    this.selectedTimelineKeyframes.push(timelineKeyframe);
-    timelineKeyframe.toggleSelected();
-  }
-
   setSelectedKeyframe (timelineKeyframe) {
-    this.selectedTimelineKeyframes.forEach(keyframe => keyframe.toggleSelected());
-    this.selectedTimelineKeyframes = [timelineKeyframe];
-    timelineKeyframe.toggleSelected();
+    this.selectedTimelineKeyframes.forEach(keyframe => keyframe.toggleSelection());
+    timelineKeyframe.toggleSelection();
   }
 }
