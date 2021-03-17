@@ -236,11 +236,12 @@ export class TimelineSequence extends Morph {
         case 'both':
           this[ownSnapBase] = pt(sequenceToSnap[otherSnapBase].x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
           break;
-        case 'left':
+        case 'left': {
           const right = this.topRight.x;
           this.position = pt(sequenceToSnap[otherSnapBase].x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
           this.width = right - this.position.x;
           break;
+        }
         case 'right':
           this.width = Math.abs(this.position.x - sequenceToSnap[otherSnapBase].x);
           break;
