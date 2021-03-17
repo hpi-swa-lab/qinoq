@@ -246,6 +246,7 @@ export class TimelineSequence extends Morph {
           this.width = Math.abs(this.position.x - sequenceToSnap[otherSnapBase].x);
           break;
       }
+
       let buildRightIndicator, buildLeftIndicator;
       sequencesToSnap.forEach(sequence => {
         if (sequence.position.x == this.position.x && direction != 'right') {
@@ -269,44 +270,6 @@ export class TimelineSequence extends Morph {
       if (buildRightIndicator) this.buildRightSnapIndicator(this);
     }
   }
-
-  /*
-  checkDragSnappingLeft () {
-    if (this.isOverlappingOtherSequence()) {
-      const lastSequence = this.overlappingSequencesForLayer(this.timelineLayer).reduce((prev, curr) => { return (prev.topRight.x > curr.topRight.x) ? prev : curr; });
-      // if we are in the right quarter of the most right overlapping sequence
-      if (Math.abs(lastSequence.topRight.x - this.position.x) < lastSequence.width * CONSTANTS.SNAPPING_THRESHOLD) {
-        this.position = pt(lastSequence.topRight.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-        this.snapIndicator = this.buildSnapIndicator(pt(this.position.x - CONSTANTS.SNAP_INDICATOR_WIDTH / 2, this.position.y - CONSTANTS.SNAP_INDICATOR_SPACING));
-      } else
-      // if sequence can fit to the left side of the current overlapping sequence
-      if (lastSequence.position.x - this.width >= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
-        this.position = pt(lastSequence.position.x - this.width, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-        this.snapIndicator = this.buildSnapIndicator(pt(this.position.x + this.width - CONSTANTS.SNAP_INDICATOR_WIDTH / 2, this.position.y - CONSTANTS.SNAP_INDICATOR_SPACING));
-        this.checkDragSnappingLeft();
-      }
-      if (this.snapIndicator) { this.owner.addMorph(this.snapIndicator); }
-    }
-  }
-
-  checkDragSnappingRight (overlappingSequences) {
-    if (this.isOverlappingOtherSequence()) {
-      const firstSequence = this.overlappingSequencesForLayer(this.timelineLayer).reduce((prev, curr) => { return (prev.position.x < curr.position.x) ? prev : curr; });
-      const newPositionX = this.position.x;
-      // if we are in the left quarter of the most left overlapping sequence
-      if (Math.abs(firstSequence.position.x - this.topRight.x) < firstSequence.width * CONSTANTS.SNAPPING_THRESHOLD) {
-        this.position = pt(firstSequence.position.x - this.width, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-        this.snapIndicator = this.buildSnapIndicator(pt(this.position.x + this.width - CONSTANTS.SNAP_INDICATOR_WIDTH / 2, this.position.y - CONSTANTS.SNAP_INDICATOR_SPACING));
-      }
-      // search most right sequence we can snap to
-      else {
-        this.position = pt(firstSequence.topRight.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-        this.snapIndicator = this.buildSnapIndicator(pt(this.position.x - CONSTANTS.SNAP_INDICATOR_WIDTH / 2, this.position.y - CONSTANTS.SNAP_INDICATOR_SPACING));
-        this.checkDragSnappingRight();
-      }
-      this.owner.addMorph(this.snapIndicator);
-    }
-  } */
 
   onResizeRight (event) {
     const newSequenceWidth = this.rightResizer.topRight.x;
