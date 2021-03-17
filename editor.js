@@ -335,6 +335,8 @@ class Preview extends Morph {
     this.addMorph(interactive.scrollOverlay);
     interactive.position = pt(0, 0);
     this.extent = interactive.extent;
+    // trigger correct bounds on scrollable content of interactive
+    interactive.updateInteractiveLength();
   }
 
   showEmptyPreviewPlaceholder () {

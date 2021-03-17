@@ -27,8 +27,18 @@ export class Timeline extends Morph {
         min: 0,
         set (zoomFactor) {
           if (zoomFactor <= 0) return;
+          this._activeAreaWidth = this._activeAreaWidth / this.zoomFactor * zoomFactor;
           this.setProperty('zoomFactor', zoomFactor);
           this.redraw();
+        }
+      },
+      _activeAreaWidth: {
+        defaultValue: 0,
+        set (width) {
+          this.setProperty('_activeAreaWidth', width);
+          this.timelineLayers.forEach(timelineLayer => {
+            const activeArea = timelineLayer.getSubmorphNamed('active area').width = width;
+          });
         }
       }
     };
@@ -56,6 +66,7 @@ export class Timeline extends Morph {
   initializeLayerContainer () {
     this.ui.layerContainer = new Morph({
       name: 'layer container',
+      clipMode: 'auto',
       position: pt(CONSTANTS.LAYER_INFO_WIDTH, 0),
       extent: pt(this.width - CONSTANTS.LAYER_INFO_WIDTH, this.height),
       layout: new VerticalLayout({
@@ -72,7 +83,7 @@ export class Timeline extends Morph {
     this.ui.layerInfoContainer = new Morph({
       name: 'layer info container',
       position: pt(0, 0),
-      extent: pt(this.height, CONSTANTS.LAYER_INFO_WIDTH),
+      extent: pt(CONSTANTS.LAYER_INFO_WIDTH, this.height),
       layout: new VerticalLayout({
         spacing: 2,
         resizeSubmorphs: true,
@@ -107,9 +118,12 @@ export class Timeline extends Morph {
     const layerInfos = new Array(this.timelineLayers.length);
     this.timelineLayers.forEach(timelineLayer => {
       layerInfos[timelineLayer.index] = timelineLayer.layerInfo;
+      layerInfos[timelineLayer.index].height = CONSTANTS.LAYER_HEIGHT;
     });
     this.ui.layerInfoContainer.submorphs = layerInfos;
     this.ui.layerInfoContainer.layout.apply();
+    // TODO
+    this.ui.layerInfoContainer.submorphs[this.ui.layerInfoContainer.submorphs.length - 1].height = 100;
   }
 
   redraw () {
@@ -188,10 +202,9 @@ export class GlobalTimeline extends Timeline {
   }
 
   onLoadContent (interactive) {
-    this.interactive = interactive;
-
     this.interactive.layers.sort((a, b) => a.zIndex - b.zIndex).forEach(layer => this.createTimelineLayer(layer));
-    this.interactive.sequences.forEach(sequence => {
+    connect(this.editor.interactive, 'onLengthChange', this, '_activeAreaWidth').update(this.editor.interactive.length);
+    this.editor.interactive.sequences.forEach(sequence => {
       const timeline_seq = this.createTimelineSequence(sequence);
       connect(sequence, 'name', timeline_seq, 'caption');
     });
@@ -209,7 +222,7 @@ export class GlobalTimeline extends Timeline {
   }
 
   updateLayerPositions () {
-    this.interactive.layers.forEach(layer => {
+    this.editor.interactive.layers.forEach(layer => {
       const timelineLayer = this.getTimelineLayerFor(layer);
       timelineLayer.position = pt(timelineLayer.position.x, -layer.zIndex);
     });
@@ -254,7 +267,7 @@ export class GlobalTimeline extends Timeline {
     layerPositions.forEach((layerPositionObject, index) => {
       layerPositionObject.layer.zIndex = index * 10;
     });
-    this.interactive.redraw();
+    this.editor.interactive.redraw();
   }
 
   deselectAllSequences () {

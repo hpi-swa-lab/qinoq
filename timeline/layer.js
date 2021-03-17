@@ -2,6 +2,7 @@ import { Morph, Icon, Label } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
 import { pt } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';
+import { connect } from 'lively.bindings';
 export class TimelineLayer extends Morph {
   static get properties () {
     return {
@@ -51,14 +52,20 @@ export class TimelineLayer extends Morph {
   }
 
   addActiveAreaMorph () {
-    this.addMorph(new Morph({
-      extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.LAYER_HEIGHT),
+    const activeArea = this.addMorph(new Morph({
+      extent: pt(0, CONSTANTS.LAYER_HEIGHT),
       position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0),
       fill: COLOR_SCHEME.SURFACE_VARIANT,
       reactsToPointer: false,
       name: 'active area',
       acceptsDrops: false
     }));
+    const inactiveArea = this.addMorph(new Morph({
+      extent: pt(CONSTANTS.INACTIVE_AREA_WIDTH, CONSTANTS.LAYER_HEIGHT),
+      fill: COLOR_SCHEME.BACKGROUND_VARIANT,
+      name: 'inactive area'
+    }));
+    connect(activeArea, 'extent', inactiveArea, 'position', { converter: '() => source.topRight' });
   }
 }
 

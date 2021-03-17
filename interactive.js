@@ -1,6 +1,6 @@
 import { Morph, ProportionalLayout, Image, Ellipse, Polygon } from 'lively.morphic';
 import { Color, pt } from 'lively.graphics';
-import { connect, disconnect, disconnectAll } from 'lively.bindings';
+import { connect, signal, disconnectAll } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
 import { COLOR_SCHEME } from './colors.js';
 import { Keyframe, createAnimationForPropertyType, NumberAnimation, PointAnimation, ColorAnimation } from 'interactives-editor';
@@ -37,10 +37,14 @@ export class Interactive extends Morph {
 
   static get properties () {
     return {
-      length: {
+      _length: {
         type: 'Number',
         isFloat: false,
-        min: 0
+        min: 0,
+        set (_length) {
+          this.setProperty('_length', _length);
+          signal(this, 'onLengthChange', _length);
+        }
       },
       scrollPosition: {
         type: 'Number',
@@ -65,7 +69,6 @@ export class Interactive extends Morph {
   }
 
   initialize (extent = pt(533, 300), length = 500) {
-    this.length = length;
     this.extent = extent;
     this.initScrollOverlay();
     // VDOM seems to hold older nodes and mistakes them for the new ScrollHolder
@@ -79,11 +82,13 @@ export class Interactive extends Morph {
     this.scrollOverlay.initialize(this);
     const scrollLengthContainer = new Morph({
       name: 'scrollable content',
-      extent: pt(this.width, this.height + this.length),
       halosEnabled: false
     });
     this.scrollOverlay.addMorph(scrollLengthContainer);
     connect(this, 'position', this.scrollOverlay, 'position');
+    // the width of the scrollable content needs to be smaller then that of the scroll container including scrollBar(s)
+    // otherwise sometimes one can scroll further than intended
+    connect(this, 'onLengthChange', scrollLengthContainer, 'extent', { converter: '(length) => pt(source.extent.x/2, length + source.extent.y)', varMapping: { pt: pt } });
     connect(this, 'extent', this.scrollOverlay, 'extent');
     connect(this, 'extent', scrollLengthContainer, 'extent', {
       converter: '(extent) => pt(extent.x, extent.y + length)',
@@ -92,6 +97,14 @@ export class Interactive extends Morph {
         pt
       }
     });
+  }
+
+  updateInteractiveLength () {
+    let length = 0; length;
+    this.sequences.forEach(sequence => {
+      if (sequence.end > length) length = sequence.end;
+    });
+    this._length = length;
   }
 
   openInWorld () {
@@ -213,6 +226,10 @@ export class Interactive extends Morph {
       seq.focused = true;
     });
     this.redraw();
+  }
+
+  get length () {
+    return this._length;
   }
 }
 
