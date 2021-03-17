@@ -33,7 +33,7 @@ export class Timeline extends Morph {
         }
       },
       _activeAreaWidth: {
-        defaultValue: 0,
+        defaultValue: CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH,
         set (width) {
           this.setProperty('_activeAreaWidth', width);
           this.timelineLayers.forEach(timelineLayer => {
@@ -306,6 +306,7 @@ export class SequenceTimeline extends Timeline {
       const timelineLayer = this.createOverviewTimelineLayer(morph);
       this.addTimelineKeyframesForLayer(timelineLayer);
     });
+    this._activeAreaWidth = this._activeAreaWidth;
   }
 
   addTimelineKeyframesForLayer (timelineLayer) {
@@ -377,7 +378,7 @@ export class SequenceTimeline extends Timeline {
       return CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
     }
     if (scrollPosition >= this.sequence.end) {
-      return CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+      return this._activeAreaWidth + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
     }
     return (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.sequence.getRelativePositionFor(scrollPosition) * this.zoomFactor) + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
   }
