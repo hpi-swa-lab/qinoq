@@ -425,7 +425,8 @@ export class TimelineSequence extends Morph {
   updateSequenceAfterArrangement () {
     this.sequence.duration = this.timeline.getDurationFromWidth(this.width);
     this.sequence.start = this.timeline.getScrollFromPosition(this.position.x);
-    this.timeline.interactive.redraw();
+    this.editor.interactive.updateInteractiveLength();
+    this.editor.interactive.redraw();
   }
 
   createWarningMorph (morphSuffix, morphPosition, gradientVector) {
