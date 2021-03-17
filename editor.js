@@ -118,9 +118,14 @@ export class InteractivesEditor extends Morph {
     connect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
     connect(this.interactive, 'name', this.globalTab, 'caption').update(this.interactive.name);
     connect(this.globalTab, 'caption', this.interactive, 'name');
+    connect(this.globalTab, 'onSelectionChange', this, 'onDisplayedTimelineChange',
+      { updater: '($update, selected) => {if (selected) $update(source.content)}' });
     connect(this.globalTab, 'onSelectionChange', this.menuBar, 'onGlobalTimelineTab');
     connect(this.globalTab, 'onSelectionChange', this.interactive, 'showAllSequences', {
       updater: '($update, selected) => {if (selected) $update()}'
+    });
+    connect(this.globalTab, 'onSelectionChange', this, 'onZoomChangeFromModel', {
+      updater: '($update, selected) => {if (selected) $update(selected.zoomFactor * 100)}'
     });
     connect(this.globalTab, 'onSelectionChange', this.getTimelineFor(this.globalTab), 'onScrollChange', {
       updater: `($update, selected) => {
@@ -149,6 +154,7 @@ export class InteractivesEditor extends Morph {
     disconnect(this.interactive, 'name', this.globalTab, 'caption');
 
     disconnect(this.globalTab, 'caption', this.interactive, 'name');
+    disconnect(this.globalTab, 'onSelectionChange', this, 'onDisplayedTimelineChange');
     disconnect(this.globalTab, 'onSelectionChange', this.menuBar, 'onGlobalTimelineTab');
     disconnect(this.globalTab, 'onSelectionChange', this.interactive, 'showAllSequences');
     disconnect(this.globalTab, 'onSelectionChange', this.getTimelineFor(this.globalTab), 'onScrollChange');
@@ -173,6 +179,8 @@ export class InteractivesEditor extends Morph {
     const tab = await this.tabContainer.addTab(sequence.name, timeline);
     connect(sequence, 'name', tab, 'caption');
     connect(tab, 'caption', sequence, 'name');
+    connect(tab, 'onSelectionChange', this, 'onDisplayedTimelineChange',
+      { updater: '($update, selected) => {if (selected) $update(source.content)}' });
     connect(tab, 'onSelectionChange', this.interactive, 'showOnly', {
       updater: `($update, selected) => {
         if (selected) $update(sequence);
@@ -187,6 +195,9 @@ export class InteractivesEditor extends Morph {
     }).update(tab.selected);
     connect(tab, 'onSelectionChange', this.menuBar, 'onSequenceView');
     connect(tab, 'onClose', tab, 'disbandTabConnections', { converter: '() => source' });
+    connect(tab, 'onSelectionChange', this, 'onZoomChangeFromModel', {
+      updater: '($update, selected) => {if (selected) $update(selected.zoomFactor * 100)}'
+    });
   }
 
   initializeSequenceTimeline (sequence) {
@@ -220,6 +231,9 @@ export class InteractivesEditor extends Morph {
   }
 
   getTimelineFor (tab) {
+    if (!tab) {
+      debugger;
+    }
     return tab.content;
   }
 
@@ -254,6 +268,25 @@ export class InteractivesEditor extends Morph {
     if (!focusedMorph) return false;
     const className = focusedMorph.constructor.name;
     return this.inputFieldClasses.includes(className);
+  }
+
+  onZoomChangeFromInput (zoom) {
+    if (this._updatingZoomFromModel) return;
+    this._updatingZoomFromInput = true;
+    this.displayedTimeline.zoomFactor = zoom;
+    this._updatingZoomFromInput = false;
+  }
+
+  onZoomChangeFromModel (zoom) {
+    if (this._updatingZoomFromInput) return;
+    this._updatingZoomFromModel = true;
+    this.ui.zoomInput.number = zoom;
+    this._updatingZoomFromModel = false;
+  }
+
+  onDisplayedTimelineChange (newTimeline) {
+    // Hook for listening to changes of the displayed timeline
+    return newTimeline;
   }
 
   get commands () {
@@ -415,6 +448,7 @@ class MenuBar extends Morph {
       fill: COLOR_SCHEME.TRANSPARENT,
       borderWidth: 0
     });
+
     this.ui.scrollPositionToolbar = new Morph({
       layout: new HorizontalLayout({
         spacing: CONSTANTS.SPACING,
@@ -426,8 +460,10 @@ class MenuBar extends Morph {
       fill: COLOR_SCHEME.TRANSPARENT,
       borderWidth: 0
     });
+
     this.addMorph(this.ui.layoutContainer);
     this.addMorph(this.ui.scrollPositionToolbar);
+
     this.buildIconButton({
       tooltip: 'Create a new sequence',
       action: () => {
@@ -436,6 +472,7 @@ class MenuBar extends Morph {
       icon: 'plus',
       name: 'addSequenceButton'
     });
+
     this.buildIconButton({
       tooltip: 'Go to start',
       action: () => {
@@ -445,6 +482,7 @@ class MenuBar extends Morph {
       name: 'gotoStartButton',
       container: 'scrollPositionToolbar'
     });
+
     this.buildIconButton({
       tooltip: 'Go to previous sequence',
       action: () => {
@@ -472,6 +510,7 @@ class MenuBar extends Morph {
       name: 'gotoNextButton',
       container: 'scrollPositionToolbar'
     });
+
     this.buildIconButton({
       tooltip: 'Go to end',
       action: () => {
@@ -481,6 +520,25 @@ class MenuBar extends Morph {
       name: 'gotoEndButton',
       container: 'scrollPositionToolbar'
     });
+
+    this.buildZoomInput();
+  }
+
+  buildZoomInput () {
+    this.ui.zoomInput = new NumberWidget({
+      min: 1,
+      number: 100,
+      tooltip: 'Set zoom factor',
+      autofit: false,
+      dropShadow: false,
+      borderWidth: 2,
+      unit: '%',
+      borderColor: COLOR_SCHEME.SECONDARY
+      // fontColor: COLOR_SCHEME.ON_SURFACE
+    });
+    connect(this.ui.zoomInput, 'number', this.editor, 'onZoomChangeFromInput', { converter: '(percent) => percent/100' });
+    connect(this.editor, 'onDisplayedTimelineChange', this.ui.zoomInput, 'number', { converter: '(timeline) => timeline.zoomFactor * 100' });
+    this.ui.scrollPositionToolbar.addMorph(this.ui.zoomInput);
   }
 
   buildScrollPositionInput () {
