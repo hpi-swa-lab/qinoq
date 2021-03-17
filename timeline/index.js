@@ -202,7 +202,7 @@ export class GlobalTimeline extends Timeline {
   }
 
   onLoadContent (interactive) {
-    this.interactive.layers.sort((a, b) => a.zIndex - b.zIndex).forEach(layer => this.createTimelineLayer(layer));
+    this.editor.interactive.layers.sort((a, b) => a.zIndex - b.zIndex).forEach(layer => this.createTimelineLayer(layer));
     connect(this.editor.interactive, 'onLengthChange', this, '_activeAreaWidth').update(this.editor.interactive.length);
     this.editor.interactive.sequences.forEach(sequence => {
       const timeline_seq = this.createTimelineSequence(sequence);
