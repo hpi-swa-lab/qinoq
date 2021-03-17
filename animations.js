@@ -2,11 +2,11 @@ import { pt } from 'lively.graphics';
 import { arr } from 'lively.lang';
 import { Sequence } from 'interactives-editor';
 class Animation {
-  constructor (targetMorph, property, relativeValues = false) {
+  constructor (targetMorph, property, useRelativeValues = false) {
     this.target = targetMorph;
     this.property = property;
     this.keyframes = [];
-    this.relativeValues = relativeValues;
+    this.useRelativeValues = useRelativeValues;
   }
 
   // TODO: Maybe use some epsilon to accept keyframes within an interval
@@ -76,7 +76,7 @@ class Animation {
   }
 
   transformValue (value) {
-    if (!this.relativeValues) { return value; }
+    if (!this.useRelativeValues) { return value; }
     return this.transformRelativeValue(value);
   }
 
