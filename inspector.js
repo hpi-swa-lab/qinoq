@@ -397,7 +397,7 @@ class KeyframeButton extends Morph {
     this.mode = 'activated';
     const newKeyframe = new Keyframe(this.sequence.progress, this.currentValue);
     this.animation = this.sequence.addKeyframeForMorph(newKeyframe, this.target, this.property, this.propType);
-    if (this.animation.relativeValues && this.propType == 'point') {
+    if (this.animation.useRelativeValues && this.propType == 'point') {
       newKeyframe.value = pt(this.currentValue.x / this.sequence.width, this.currentValue.y / this.sequence.height);
     }
     this.editor.sequenceTimelines.forEach(sequenceTimeline => sequenceTimeline.updateLayers());
