@@ -35,6 +35,18 @@ export class Interactive extends Morph {
     return interactive;
   }
 
+  static base () {
+    const interactive = new Interactive();
+    const foregroundLayer = Layer.exampleForegroundLayer();
+    const middleLayer = Layer.exampleMiddleLayer();
+    const backgroundLayer = Layer.exampleBackgroundLayer();
+    interactive.addLayer(backgroundLayer);
+    interactive.addLayer(middleLayer);
+    interactive.addLayer(foregroundLayer);
+    interactive.initialize();
+    return interactive;
+  }
+
   static get properties () {
     return {
       _length: {
