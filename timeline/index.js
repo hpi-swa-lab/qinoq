@@ -1,7 +1,7 @@
 import { pt } from 'lively.graphics';
 import { Morph, Label, VerticalLayout, ProportionalLayout } from 'lively.morphic';
 import { TimelineCursor } from './cursor.js';
-import { connect } from 'lively.bindings';
+import { connect, disconnect } from 'lively.bindings';
 import { TimelineSequence } from './sequence.js';
 import { GlobalTimelineLayer, OverviewSequenceTimelineLayer, SequenceTimelineLayer } from './layer.js';
 import { TimelineKeyframe } from './keyframe.js';
@@ -127,7 +127,7 @@ export class Timeline extends Morph {
   }
 
   redraw () {
-    throw new Error('Subclass resposibility');
+    this.editor.triggerInteractiveScrollPositionConnections();
   }
 
   relayout (availableWidth) {
@@ -180,6 +180,11 @@ export class Timeline extends Morph {
   getScrollFromPosition (positionPosition) {
     throw new Error('Subclass resposibility');
   }
+
+  abandon () {
+    disconnect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange');
+    disconnect(this.editor.interactive, 'name', this, 'name');
+  }
 }
 
 export class GlobalTimeline extends Timeline {
@@ -212,13 +217,13 @@ export class GlobalTimeline extends Timeline {
   }
 
   redraw () {
+    super.redraw();
     this.timelineSequences.forEach(timelineSequence => {
       timelineSequence._lockModelUpdate = true;
       timelineSequence.width = this.getWidthFromDuration(timelineSequence.sequence.duration);
       timelineSequence.position = pt(this.getPositionFromScroll(timelineSequence.sequence.start), timelineSequence.position.y);
       timelineSequence._lockModelUpdate = false;
     });
-    this.editor.triggerInteractiveScrollPositionConnections();
   }
 
   updateLayerPositions () {
@@ -323,6 +328,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   redraw () {
+    super.redraw();
     this.keyframes.forEach(keyframe => {
       keyframe._lockModelUpdate = true;
       keyframe.position = pt(this.getPositionFromKeyframe(keyframe), keyframe.position.y);
