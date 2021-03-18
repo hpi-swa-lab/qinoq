@@ -267,6 +267,20 @@ export class TimelineSequence extends Morph {
 
   onGrabStart (hand) {
     connect(hand, 'position', this, 'updateGrabAppearance');
+    connect(hand, 'cancelGrab', this, 'onGrabAbort');
+    this._grabbingHand = hand;
+  }
+
+  onGrabAbort () {
+    disconnect(this._grabbingHand, 'position', this, 'updateGrabAppearance');
+    disconnect(this._grabbingHand, 'cancelGrab', this, 'onGrabAbort');
+    this.abandon();
+  }
+
+  onGrabEnd () {
+    this.setDefaultAppearance();
+    disconnect(this._grabbingHand, 'position', this, 'updateGrabAppearance');
+    disconnect(this._grabbingHand, 'cancelGrab', this, 'onGrabAbort');
   }
 
   updateGrabAppearance () {
@@ -309,7 +323,7 @@ export class TimelineSequence extends Morph {
         $world.setStatusMessage('Find a free spot!', COLOR_SCHEME.ERROR);
         hand.grab(this);
       } else {
-        disconnect(hand, 'position', this, 'updateGrabAppearance');
+        this.onGrabEnd(hand);
       }
     } else {
       $world.setStatusMessage('Drop it in the timeline!', COLOR_SCHEME.ERROR);
