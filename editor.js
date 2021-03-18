@@ -103,7 +103,11 @@ export class InteractivesEditor extends Morph {
       visible: false
     });
     connect(this.tabContainer, 'onSelectedTabChange', this, 'onDisplayedTimelineChange', {
-      converter: '(selectedTab) => selectedTab.content'
+      updater: `($update, selectedAndPreviousTab) => {
+        selectedAndPreviousTab.prev ? 
+          $update(selectedAndPreviousTab.curr.content,selectedAndPreviousTab.prev.content) :
+          $update(selectedAndPreviousTab.curr.content)
+      }`
     });
     connect(this.tabContainer, 'onTabClose', this, 'onTabClose');
 
@@ -250,8 +254,8 @@ export class InteractivesEditor extends Morph {
     return this.inputFieldClasses.includes(className);
   }
 
-  onDisplayedTimelineChange (displayedTimeline) {
-    // hook for listening to changes of the displayed timeline
+  onDisplayedTimelineChange (displayedTimeline, previouslyDisplayedTimeline) {
+    debugger;
     if (this.interactive === undefined) return displayedTimeline;
 
     if (displayedTimeline === this.globalTimeline) {
@@ -259,6 +263,10 @@ export class InteractivesEditor extends Morph {
     } else {
       this.interactive.showOnly(this.currentSequence);
     }
+    if (previouslyDisplayedTimeline) {
+      disconnect(previouslyDisplayedTimeline, 'zoomFactor', this.menuBar.ui.zoomInput, 'number');
+    }
+    connect(displayedTimeline, 'zoomFactor', this.menuBar.ui.zoomInput, 'number', { converter: '(zoomFactor) => zoomFactor * 100' });
 
     displayedTimeline.onScrollChange(this.interactiveScrollPosition);
 
