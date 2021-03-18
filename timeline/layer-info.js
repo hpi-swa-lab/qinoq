@@ -12,7 +12,7 @@ export class TimelineLayerInfo extends Morph {
         }
       },
       ui: {
-        after: ['timelineLayer'],
+        after: ['timelineLayer', 'name'],
         initialize () {
           this.initialize();
         }
@@ -42,7 +42,7 @@ export class TimelineLayerInfo extends Morph {
 
   initialize () {
     this.ui = {};
-    this.name = this.global ? this.layer.name : this.morph.name;
+    this.name = this.name || (this.global ? this.layer.name : this.morph.name);
     this.ui.label = new Label({
       textString: this.name
     });
@@ -56,7 +56,7 @@ export class TimelineLayerInfo extends Morph {
       this.addMorph(this.ui.hideButton);
     }
 
-    this.layout = new VerticalLayout({ spacing: 4 });
+    this.layout = new VerticalLayout({ spacing: 4, autoResize: false });
   }
 
   toggleLayerVisibility () {
