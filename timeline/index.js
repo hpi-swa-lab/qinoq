@@ -6,6 +6,7 @@ import { TimelineSequence } from './sequence.js';
 import { GlobalTimelineLayer, OverviewSequenceTimelineLayer, SequenceTimelineLayer } from './layer.js';
 import { TimelineKeyframe } from './keyframe.js';
 import { CONSTANTS } from './constants.js';
+import { GlobalTimelineLayerInfo } from './layer-info.js';
 
 export class Timeline extends Morph {
   static get properties () {
@@ -100,13 +101,8 @@ export class Timeline extends Morph {
     const timelineLayer = this.getNewTimelineLayer();
     timelineLayer.initialize(this.editor, this.ui.layerContainer, layer);
     this.ui.layerContainer.addMorphAt(timelineLayer, index);
-    const layerInfo = new Morph();
-    layerInfo.height = CONSTANTS.LAYER_HEIGHT;
-    layerInfo.layerLabel = (new Label({
-      textString: name || layer.name
-    }));
+    const layerInfo = new GlobalTimelineLayerInfo({ timelineLayer: timelineLayer });
     timelineLayer.layerInfo = layerInfo;
-    layerInfo.addMorph(layerInfo.layerLabel);
     this.ui.layerInfoContainer.addMorphAt(layerInfo, index);
     return timelineLayer;
   }
