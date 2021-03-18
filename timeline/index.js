@@ -156,8 +156,12 @@ export class Timeline extends Morph {
 
   onActiveAreaWidthChange () {
     this.timelineLayers.forEach(timelineLayer => {
-      const activeArea = timelineLayer.getSubmorphNamed('active area').width = this._activeAreaWidth;
+      timelineLayer.activeArea.width = this._activeAreaWidth;
     });
+  }
+
+  get activeArea () {
+    return this.getSubmorphNamed('active area');
   }
 
   get isDisplayed () {

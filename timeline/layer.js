@@ -70,6 +70,14 @@ export class TimelineLayer extends Morph {
     }));
     connect(activeArea, 'extent', inactiveArea, 'position', { converter: '() => source.topRight' });
   }
+
+  get inactiveArea () {
+    return this.getSubmorphNamed('inactive area');
+  }
+
+  get activeArea () {
+    return this.getSubmorphNamed('active area');
+  }
 }
 
 export class SequenceTimelineLayer extends TimelineLayer {
@@ -143,14 +151,14 @@ export class GlobalTimelineLayer extends TimelineLayer {
   }
 
   changeBorderAppearance () {
-    [this, this.getSubmorphNamed('active area'), this.getSubmorphNamed('inactive area')].forEach(morph => {
+    [this, this.activeArea, this.inactiveArea].forEach(morph => {
       morph.borderWidth = 3;
       morph.borderColor = COLOR_SCHEME.PRIMARY;
     });
   }
 
   resetBorderAppearance () {
-    [this, this.getSubmorphNamed('active area'), this.getSubmorphNamed('inactive area')].forEach(morph => {
+    [this, this.activeArea, this.inactiveArea].forEach(morph => {
       morph.borderWidth = 0;
       morph.borderColor = COLOR_SCHEME.PRIMARY;
     });
