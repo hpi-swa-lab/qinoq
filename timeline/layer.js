@@ -65,6 +65,7 @@ export class TimelineLayer extends Morph {
       extent: pt(CONSTANTS.INACTIVE_AREA_WIDTH, CONSTANTS.LAYER_HEIGHT),
       fill: COLOR_SCHEME.BACKGROUND_VARIANT,
       name: 'inactive area',
+      reactsToPointer: false,
       borderStyle: { bottom: 'solid', left: 'none', right: 'none', top: 'solid' }
     }));
     connect(activeArea, 'extent', inactiveArea, 'position', { converter: '() => source.topRight' });
