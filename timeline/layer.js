@@ -51,6 +51,10 @@ export class TimelineLayer extends Morph {
     return this.container.submorphs.indexOf(this);
   }
 
+  get activeArea () {
+    return this.getSubmorphNamed('active area');
+  }
+
   addActiveAreaMorph () {
     const activeArea = this.addMorph(new Morph({
       extent: pt(0, CONSTANTS.LAYER_HEIGHT),
@@ -197,6 +201,11 @@ export class GlobalTimelineLayer extends TimelineLayer {
     this.timelineSequences.forEach(timelineSequence => {
       timelineSequence.selected = false;
     });
+  }
+
+  toggleHiddenStyle () {
+    this.timelineSequences.forEach(timelineSequence => timelineSequence.toggleHiddenLayerStyle());
+    this.activeArea.fill = this.layer.hidden ? COLOR_SCHEME.BACKGROUND_VARIANT : COLOR_SCHEME.SURFACE_VARIANT;
   }
 }
 

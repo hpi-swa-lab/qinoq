@@ -523,6 +523,10 @@ export class TimelineSequence extends Morph {
     }
   }
 
+  toggleHiddenLayerStyle () {
+    this.fill = this.sequence.layer.hidden ? COLOR_SCHEME.BACKGROUND_VARIANT : COLOR_SCHEME.SURFACE;
+  }
+
   isOverlappingOtherSequence () {
     return this.overlappingSequences.length > 0;
   }
