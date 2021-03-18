@@ -53,6 +53,19 @@ describe('Sequence object', () => {
       opacityAnimation.addKeyframe(keyframe);
     });
 
+    it('can calculate the absolute position for a keyframe', () => {
+      expect(sequence.getAbsolutePositionFor(keyframe)).to.equal(0);
+    });
+
+    it('can calculate the relative position for a scrollPosition', () => {
+      expect(sequence.getRelativePositionFor(0)).to.equal(0);
+      expect(sequence.getRelativePositionFor(5)).to.equal(0.5);
+      expect(sequence.getRelativePositionFor(10)).to.equal(1);
+      expect(sequence.getRelativePositionFor(20)).to.equal(2);
+      sequence.start = 5;
+      expect(sequence.getRelativePositionFor(0)).to.equal(-0.5);
+    });
+
     it('return an animation for a morph for a property', () => {
       expect(sequence.getAnimationForMorphProperty(morph, 'opacity')).to.be.undefined;
       sequence.addAnimation(opacityAnimation);
