@@ -1,7 +1,7 @@
 import { pt } from 'lively.graphics';
 import { Morph, Label, VerticalLayout, ProportionalLayout } from 'lively.morphic';
 import { TimelineCursor } from './cursor.js';
-import { connect, disconnect } from 'lively.bindings';
+import { connect, signal, disconnect } from 'lively.bindings';
 import { TimelineSequence } from './sequence.js';
 import { GlobalTimelineLayer, OverviewSequenceTimelineLayer, SequenceTimelineLayer } from './layer.js';
 import { TimelineKeyframe } from './keyframe.js';
@@ -36,9 +36,7 @@ export class Timeline extends Morph {
         defaultValue: CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH,
         set (width) {
           this.setProperty('_activeAreaWidth', width);
-          this.timelineLayers.forEach(timelineLayer => {
-            const activeArea = timelineLayer.getSubmorphNamed('active area').width = width;
-          });
+          this.onActiveAreaWidthChange();
         }
       }
     };
@@ -155,6 +153,12 @@ export class Timeline extends Morph {
 
   onLoadContent (content) {
     throw new Error('Subclass resposibility');
+  }
+
+  onActiveAreaWidthChange () {
+    this.timelineLayers.forEach(timelineLayer => {
+      const activeArea = timelineLayer.getSubmorphNamed('active area').width = this._activeAreaWidth;
+    });
   }
 
   get isDisplayed () {
@@ -309,7 +313,7 @@ export class SequenceTimeline extends Timeline {
       const timelineLayer = this.createOverviewTimelineLayer(morph);
       this.addTimelineKeyframesForLayer(timelineLayer);
     });
-    this._activeAreaWidth = this._activeAreaWidth;
+    signal(this, 'onActiveAreaWidthChange');
   }
 
   addTimelineKeyframesForLayer (timelineLayer) {

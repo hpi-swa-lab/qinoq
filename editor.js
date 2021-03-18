@@ -1,5 +1,5 @@
 import { ProportionalLayout, HorizontalLayout, VerticalLayout, Icon, Label, Morph } from 'lively.morphic';
-import { connect, disconnectAll, disconnect } from 'lively.bindings';
+import { connect, signal, disconnectAll, disconnect } from 'lively.bindings';
 import { pt, Color } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
 import { InteractiveMorphInspector } from './inspector.js';
@@ -152,7 +152,7 @@ export class InteractivesEditor extends Morph {
   }
 
   triggerInteractiveScrollPositionConnections () {
-    this.interactiveScrollPosition = this.interactiveScrollPosition;
+    signal(this, 'onInteractiveScrollPositionChange');
   }
 
   clearInteractive () {
@@ -255,7 +255,6 @@ export class InteractivesEditor extends Morph {
   }
 
   onDisplayedTimelineChange (displayedTimeline, previouslyDisplayedTimeline) {
-    debugger;
     if (this.interactive === undefined) return displayedTimeline;
 
     if (displayedTimeline === this.globalTimeline) {
