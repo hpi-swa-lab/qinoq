@@ -143,7 +143,6 @@ export class Timeline extends Morph {
     this._inInitialConstruction = true;
     this.onLoadContent(content);
     this.initializeCursor();
-    this.onScrollChange(this.editor.interactiveScrollPosition);
     connect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange', {
       updater: '($update, scrollPosition) => { if (target.isDisplayed) $update(scrollPosition); }'
     }).update(this.editor.interactiveScrollPosition);
