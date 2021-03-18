@@ -334,6 +334,7 @@ export class SequenceTimeline extends Timeline {
       keyframe.position = pt(this.getPositionFromKeyframe(keyframe), keyframe.position.y);
       keyframe._lockModelUpdate = false;
     });
+    this._activeAreaWidth = CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor;
   }
 
   get keyframes () {
