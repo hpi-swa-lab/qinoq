@@ -207,7 +207,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
         defaultValue: false,
         set (isExpanded) {
           this.setProperty('isExpanded', isExpanded);
-          if (this.layerInfo && this.layerInfo.getSubmorphNamed('collapseButton')) {
+          if (this.layerInfo && this.layerInfo.ui.collapseButton) {
             isExpanded ? this.expand() : this.collapse();
           }
         }
@@ -218,17 +218,8 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     };
   }
 
-  addCollapseToggle () {
-    const arrowLabel = new Label({ name: 'collapseButton', position: pt(10, 10), fontSize: 15 });
-    Icon.setIcon(arrowLabel, 'caret-right');
-    arrowLabel.nativeCursor = 'pointer';
-    this.layerInfo.addMorph(arrowLabel);
-    arrowLabel.onMouseUp = () => { this.isExpanded = !this.isExpanded; };
-  }
-
   collapse () {
-    const arrowLabel = this.layerInfo.getSubmorphNamed('collapseButton');
-    Icon.setIcon(arrowLabel, 'caret-right');
+    this.layerInfo.restyleCollapseToggle();
     this.opacity = 1;
     this.tooltip = this.morph.name;
     this.reactsToPointer = true;
@@ -242,8 +233,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
       $world.inform('Expanding is only available for morphs with keyframes.');
       return;
     }
-    const arrowLabel = this.layerInfo.getSubmorphNamed('collapseButton');
-    Icon.setIcon(arrowLabel, 'caret-down');
+    this.layerInfo.restyleCollapseToggle();
     this.opacity = 0;
     this.tooltip = '';
     this.reactsToPointer = false;
