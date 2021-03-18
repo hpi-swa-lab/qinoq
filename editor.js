@@ -251,7 +251,7 @@ export class InteractivesEditor extends Morph {
   }
 
   onDisplayedTimelineChange (displayedTimeline, previouslyDisplayedTimeline) {
-    if (this.interactive === undefined) return displayedTimeline;
+    if (!this.interactive) return displayedTimeline;
 
     if (displayedTimeline === this.globalTimeline) {
       this.interactive.showAllSequences();
