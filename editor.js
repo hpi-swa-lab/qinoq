@@ -1,6 +1,6 @@
 import { ProportionalLayout, HorizontalLayout, VerticalLayout, Icon, Label, Morph } from 'lively.morphic';
 import { connect, signal, disconnectAll, disconnect } from 'lively.bindings';
-import { pt, Color } from 'lively.graphics';
+import { pt } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
 import { InteractiveMorphInspector } from './inspector.js';
 import { resource } from 'lively.resources';
@@ -8,6 +8,8 @@ import { arr } from 'lively.lang';
 import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
 import { Sequence } from 'interactives-editor';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
+import { Interactive } from 'interactives-editor';
+import StripeButton from 'StripeButton';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -122,6 +124,10 @@ export class InteractivesEditor extends Morph {
       lastExtent: this.extent
     });
     this.extent = pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT);
+  }
+
+  createInteractive () {
+    this.interactive = Interactive.base();
   }
 
   initializeInteractive (interactive) {
@@ -324,7 +330,7 @@ class Preview extends Morph {
         defaultValue: pt(CONSTANTS.SIDEBAR_WIDTH, 0)
       },
       placeholderCaption: {
-        defaultValue: 'Open an Interactive by grab-and-dropping it here.'
+        defaultValue: 'Open an Interactive by grab-and-dropping it here, or...'
       },
       _editor: {}
     };
@@ -382,6 +388,12 @@ class Preview extends Morph {
       textString: this.placeholderCaption
     });
 
+    const newInteractiveButton = new StripeButton({
+      label: 'Create a new interactive',
+      master: 'styleguide://SystemUserUI/blue button'
+    });
+    newInteractiveButton.onMouseUp = () => this.editor.createInteractive();
+
     const container = new Morph({
       acceptsDrops: false,
       extent: pt(this.width, this.height),
@@ -393,7 +405,7 @@ class Preview extends Morph {
         direction: 'centered',
         spacing: 6
       }),
-      submorphs: [icon, text]
+      submorphs: [icon, text, newInteractiveButton]
     });
 
     this.addMorph(container);
