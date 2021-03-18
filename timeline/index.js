@@ -27,7 +27,6 @@ export class Timeline extends Morph {
         min: 0,
         set (zoomFactor) {
           if (zoomFactor <= 0) return;
-          this._activeAreaWidth = this._activeAreaWidth / this.zoomFactor * zoomFactor;
           this.setProperty('zoomFactor', zoomFactor);
           this.redraw();
         }
@@ -208,7 +207,7 @@ export class GlobalTimeline extends Timeline {
 
   onLoadContent (interactive) {
     this.editor.interactive.layers.sort((a, b) => a.zIndex - b.zIndex).forEach(layer => this.createTimelineLayer(layer));
-    connect(this.editor.interactive, 'onLengthChange', this, '_activeAreaWidth').update(this.editor.interactive.length);
+    connect(this.editor.interactive, 'onLengthChange', this, '_activeAreaWidth', { converter: '(length) => target.getWidthFromDuration(length)' }).update(this.editor.interactive.length);
     this.editor.interactive.sequences.forEach(sequence => {
       const timeline_seq = this.createTimelineSequence(sequence);
       connect(sequence, 'name', timeline_seq, 'caption');
@@ -220,10 +219,11 @@ export class GlobalTimeline extends Timeline {
     super.redraw();
     this.timelineSequences.forEach(timelineSequence => {
       timelineSequence._lockModelUpdate = true;
-      timelineSequence.width = this.getWidthFromDuration(timelineSequence.sequence.duration);
+      timelineSequence.setWidthAndUpdateResizers(this.getWidthFromDuration(timelineSequence.sequence.duration));
       timelineSequence.position = pt(this.getPositionFromScroll(timelineSequence.sequence.start), timelineSequence.position.y);
       timelineSequence._lockModelUpdate = false;
     });
+    this._activeAreaWidth = this.getWidthFromDuration(this.editor.interactive.length);
   }
 
   updateLayerPositions () {

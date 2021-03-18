@@ -422,6 +422,11 @@ export class TimelineSequence extends Morph {
     delete event.hand.timelineSequenceStates;
   }
 
+  setWidthAndUpdateResizers (width) {
+    this.width = width;
+    this.rightResizer.position = pt(this.width - this.rightResizer.width, 0);
+  }
+
   updateSequenceAfterArrangement () {
     this.sequence.duration = this.timeline.getDurationFromWidth(this.width);
     this.sequence.start = this.timeline.getScrollFromPosition(this.position.x);
