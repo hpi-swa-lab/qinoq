@@ -135,6 +135,8 @@ export class InteractivesEditor extends Morph {
     connect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
     connect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
     connect(this.interactive, 'name', this.globalTab, 'caption').update(this.interactive.name);
+    connect(this.preview, 'extent', this.interactive, 'extent');
+
     connect(this.globalTab, 'caption', this.interactive, 'name');
 
     // trigger update of timeline dependents
@@ -157,6 +159,8 @@ export class InteractivesEditor extends Morph {
     disconnect(this.interactive, 'name', this.globalTimeline, 'name');
     disconnect(this.interactive, 'scrollPosition', this.globalTimeline, 'interactiveScrollPosition');
     disconnect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
+    disconnect(this.preview, 'extent', this.interactive, 'extent');
+
     disconnect(this.interactive, 'name', this.globalTab, 'caption');
 
     disconnect(this.globalTab, 'caption', this.interactive, 'name');
