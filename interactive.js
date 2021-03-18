@@ -1,6 +1,6 @@
 import { Morph, ProportionalLayout, Image, Ellipse, Polygon } from 'lively.morphic';
 import { Color, pt } from 'lively.graphics';
-import { connect, signal, disconnectAll } from 'lively.bindings';
+import { connect, disconnect, signal, disconnectAll } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
 import { COLOR_SCHEME } from './colors.js';
 import { Keyframe, createAnimationForPropertyType, NumberAnimation, PointAnimation, ColorAnimation } from 'interactives-editor';
@@ -68,7 +68,7 @@ export class Interactive extends Morph {
     };
   }
 
-  initialize (extent = pt(533, 300), length = 500) {
+  initialize (extent = pt(533, 300)) {
     this.extent = extent;
     this.initScrollOverlay();
     // VDOM seems to hold older nodes and mistakes them for the new ScrollHolder
@@ -89,14 +89,13 @@ export class Interactive extends Morph {
     // the width of the scrollable content needs to be smaller then that of the scroll container including scrollBar(s)
     // otherwise sometimes one can scroll further than intended
     connect(this, 'onLengthChange', scrollLengthContainer, 'extent', { converter: '(length) => pt(source.extent.x/2, length + source.extent.y)', varMapping: { pt } });
-    connect(this, 'extent', this.scrollOverlay, 'extent');
-    connect(this, 'extent', scrollLengthContainer, 'extent', {
-      converter: '(extent) => pt(extent.x, extent.y + length)',
-      varMapping: {
-        length: this.length,
-        pt
-      }
-    });
+    connect(this, 'extent', this, 'updateScrollContainerExtents');
+  }
+
+  updateScrollContainerExtents () {
+    this.scrollOverlay.extent = this.extent;
+    const scrollableContent = this.scrollOverlay.submorphs[0];
+    scrollableContent.extent = pt(this.extent.x / 2, this.extent.y + this._length);
   }
 
   updateInteractiveLength () {
@@ -108,6 +107,7 @@ export class Interactive extends Morph {
   }
 
   openInWorld () {
+    this.updateInteractiveLength();
     super.openInWorld();
     this.scrollOverlay.openInWorld();
     this.scrollOverlay.position = this.position;
