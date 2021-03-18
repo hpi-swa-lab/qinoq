@@ -118,12 +118,9 @@ export class Timeline extends Morph {
     const layerInfos = new Array(this.timelineLayers.length);
     this.timelineLayers.forEach(timelineLayer => {
       layerInfos[timelineLayer.index] = timelineLayer.layerInfo;
-      layerInfos[timelineLayer.index].height = CONSTANTS.LAYER_HEIGHT;
     });
     this.ui.layerInfoContainer.submorphs = layerInfos;
     this.ui.layerInfoContainer.layout.apply();
-    // TODO
-    this.ui.layerInfoContainer.submorphs[this.ui.layerInfoContainer.submorphs.length - 1].height = 100;
   }
 
   redraw () {

@@ -88,7 +88,7 @@ export class Interactive extends Morph {
     connect(this, 'position', this.scrollOverlay, 'position');
     // the width of the scrollable content needs to be smaller then that of the scroll container including scrollBar(s)
     // otherwise sometimes one can scroll further than intended
-    connect(this, 'onLengthChange', scrollLengthContainer, 'extent', { converter: '(length) => pt(source.extent.x/2, length + source.extent.y)', varMapping: { pt: pt } });
+    connect(this, 'onLengthChange', scrollLengthContainer, 'extent', { converter: '(length) => pt(source.extent.x/2, length + source.extent.y)', varMapping: { pt } });
     connect(this, 'extent', this.scrollOverlay, 'extent');
     connect(this, 'extent', scrollLengthContainer, 'extent', {
       converter: '(extent) => pt(extent.x, extent.y + length)',
@@ -100,7 +100,7 @@ export class Interactive extends Morph {
   }
 
   updateInteractiveLength () {
-    let length = 0; length;
+    let length = 0;
     this.sequences.forEach(sequence => {
       if (sequence.end > length) length = sequence.end;
     });
@@ -319,10 +319,7 @@ export class Sequence extends Morph {
       start: {},
       duration: {
         defaultValue: 0,
-        isFloat: false,
-        set (duration) {
-          this.setProperty('duration', duration);
-        }
+        isFloat: false
       },
       _progress: {
         defaultValue: 0,
