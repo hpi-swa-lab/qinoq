@@ -104,7 +104,7 @@ export class InteractiveMorphInspector extends Morph {
     if (!this.targetMorph) {
       return;
     }
-    this.ui.propertyPane.submorphs.forEach(morph => morph.remove());
+    this.ui.propertyPane.submorphs.forEach(morph => morph.withAllSubmorphsDo(submorph => submorph.remove()));
     const props = Object.keys(this.propertiesToDisplay);
     props.forEach(propToInspect => {
       const propType = this.propertiesToDisplay[propToInspect];
@@ -358,13 +358,13 @@ class KeyframeButton extends Morph {
       },
       inspector: { },
       animation: { },
-      _editor: {},
-      sequence: {
-        set (sequence) {
-          connect(sequence, 'updateProgress', this, 'updateStyle');
-          this.setProperty('sequence', sequence);
+      _editor: {
+        set (_editor) {
+          connect(_editor, 'interactiveScrollPosition', this, 'updateStyle');
+          this.setProperty('_editor', _editor);
         }
       },
+      sequence: {},
       property: {
         set (prop) {
           this.setProperty('property', prop);
@@ -460,5 +460,10 @@ class KeyframeButton extends Morph {
       this.setDefaultStyle();
     }
     this._updatingStyle = false;
+  }
+
+  remove () {
+    if (this.editor) disconnect(this.editor, 'interactiveScrollPosition', this, 'updateStyle');
+    super.remove();
   }
 }
