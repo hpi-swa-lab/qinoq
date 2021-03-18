@@ -14,6 +14,7 @@ Closes [fill in your issues here]
 - [ ] the night sequence can't be dragged or resized beyond the left timeline bounds
 - [ ] double clicking on the sky sequence brings you to a new tab named 'sky sequence' containing the sequence view
 - [ ] when clicking the "+" button a sequence is in the hand, which can only be dropped on a timelinelayer and changes color when you are not able to place the sequence
+- [ ] when creating a sequence via the "+" button, the creation can be cancelled with the escape button
 - [ ] right clicking on a sequence brings up a context menu
 - [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the interactive/beginning of the next/previous sequence
 - [ ] moving a sequence to the right will make the active area (light grey) larger

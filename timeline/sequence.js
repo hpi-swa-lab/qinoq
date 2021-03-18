@@ -323,7 +323,7 @@ export class TimelineSequence extends Morph {
         $world.setStatusMessage('Find a free spot!', COLOR_SCHEME.ERROR);
         hand.grab(this);
       } else {
-        this.onGrabEnd(hand);
+        this.onGrabEnd();
       }
     } else {
       $world.setStatusMessage('Drop it in the timeline!', COLOR_SCHEME.ERROR);
