@@ -77,6 +77,16 @@ export class InteractivesEditor extends Morph {
     this.menuBar = new MenuBar({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT) });
     this.menuBar.initialize(this);
     this.addMorph(this.menuBar);
+    connect(this, 'onDisplayedTimelineChange', this.menuBar, 'onGlobalTimelineTab', {
+      updater: `($update, displayedTimeline) => { 
+        if (displayedTimeline == source.globalTimeline) $update();
+      }`
+    });
+    connect(this, 'onDisplayedTimelineChange', this.menuBar, 'onSequenceView', {
+      updater: `($update, displayedTimeline) => { 
+        if (displayedTimeline !== source.globalTimeline) $update();
+      }`
+    });
 
     this.globalTimeline = new GlobalTimeline({
       position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT),
@@ -92,6 +102,10 @@ export class InteractivesEditor extends Morph {
       tabHeight: 28,
       visible: false
     });
+    connect(this.tabContainer, 'onSelectedTabChange', this, 'onDisplayedTimelineChange', {
+      converter: '(selectedTab) => selectedTab.content'
+    });
+    connect(this.tabContainer, 'onTabClose', this, 'onTabClose');
 
     this.globalTab = await this.tabContainer.addTab('[no interactive loaded]', this.globalTimeline);
     this.globalTab.closeable = false;
@@ -118,26 +132,18 @@ export class InteractivesEditor extends Morph {
     connect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
     connect(this.interactive, 'name', this.globalTab, 'caption').update(this.interactive.name);
     connect(this.globalTab, 'caption', this.interactive, 'name');
-    connect(this.globalTab, 'onSelectionChange', this, 'onDisplayedTimelineChange',
-      { updater: '($update, selected) => {if (selected) $update(source.content)}' });
-    connect(this.globalTab, 'onSelectionChange', this.menuBar, 'onGlobalTimelineTab');
-    connect(this.globalTab, 'onSelectionChange', this.interactive, 'showAllSequences', {
-      updater: '($update, selected) => {if (selected) $update()}'
-    });
-    connect(this.globalTab, 'onSelectionChange', this, 'onZoomChangeFromModel', {
-      updater: '($update, selected) => {if (selected) $update(selected.zoomFactor * 100)}'
-    });
-    connect(this.globalTab, 'onSelectionChange', this.getTimelineFor(this.globalTab), 'onScrollChange', {
-      updater: `($update, selected) => {
-        if (selected) $update(editor.interactiveScrollPosition);
-      }`,
-      varMapping: { editor: this }
-    }).update(this.globalTab.selected);
+
+    // trigger update of timeline dependents
+    this.onDisplayedTimelineChange(this.globalTimeline);
   }
 
-  disbandTabConnections (tab) {
+  onTabClose (tab) {
     disconnectAll(tab);
-    if (this.getTimelineFor(tab)) disconnectAll(this.getTimelineFor(tab));
+    const timeline = this.getTimelineFor(tab);
+    if (timeline) {
+      disconnectAll(timeline);
+      timeline.abandon();
+    }
     if (this.getSequenceFor(tab)) disconnect(this.getSequenceFor(tab), 'name', tab, 'caption');
   }
 
@@ -154,10 +160,6 @@ export class InteractivesEditor extends Morph {
     disconnect(this.interactive, 'name', this.globalTab, 'caption');
 
     disconnect(this.globalTab, 'caption', this.interactive, 'name');
-    disconnect(this.globalTab, 'onSelectionChange', this, 'onDisplayedTimelineChange');
-    disconnect(this.globalTab, 'onSelectionChange', this.menuBar, 'onGlobalTimelineTab');
-    disconnect(this.globalTab, 'onSelectionChange', this.interactive, 'showAllSequences');
-    disconnect(this.globalTab, 'onSelectionChange', this.getTimelineFor(this.globalTab), 'onScrollChange');
 
     this.tabs.forEach(tab => { if (tab !== this.globalTab) tab.close(); });
 
@@ -179,25 +181,6 @@ export class InteractivesEditor extends Morph {
     const tab = await this.tabContainer.addTab(sequence.name, timeline);
     connect(sequence, 'name', tab, 'caption');
     connect(tab, 'caption', sequence, 'name');
-    connect(tab, 'onSelectionChange', this, 'onDisplayedTimelineChange',
-      { updater: '($update, selected) => {if (selected) $update(source.content)}' });
-    connect(tab, 'onSelectionChange', this.interactive, 'showOnly', {
-      updater: `($update, selected) => {
-        if (selected) $update(sequence);
-      }`,
-      varMapping: { sequence: this.getSequenceFor(tab) }
-    }).update(tab.selected);
-    connect(tab, 'onSelectionChange', this.getTimelineFor(tab), 'onScrollChange', {
-      updater: `($update, selected) => {
-        if (selected) $update(editor.interactiveScrollPosition);
-      }`,
-      varMapping: { editor: this }
-    }).update(tab.selected);
-    connect(tab, 'onSelectionChange', this.menuBar, 'onSequenceView');
-    connect(tab, 'onClose', tab, 'disbandTabConnections', { converter: '() => source' });
-    connect(tab, 'onSelectionChange', this, 'onZoomChangeFromModel', {
-      updater: '($update, selected) => {if (selected) $update(selected.zoomFactor * 100)}'
-    });
   }
 
   initializeSequenceTimeline (sequence) {
@@ -231,9 +214,6 @@ export class InteractivesEditor extends Morph {
   }
 
   getTimelineFor (tab) {
-    if (!tab) {
-      debugger;
-    }
     return tab.content;
   }
 
@@ -270,23 +250,23 @@ export class InteractivesEditor extends Morph {
     return this.inputFieldClasses.includes(className);
   }
 
-  onZoomChangeFromInput (zoom) {
-    if (this._updatingZoomFromModel) return;
-    this._updatingZoomFromInput = true;
-    this.displayedTimeline.zoomFactor = zoom;
-    this._updatingZoomFromInput = false;
+  onDisplayedTimelineChange (displayedTimeline) {
+    // hook for listening to changes of the displayed timeline
+    if (this.interactive === undefined) return displayedTimeline;
+
+    if (displayedTimeline === this.globalTimeline) {
+      this.interactive.showAllSequences();
+    } else {
+      this.interactive.showOnly(this.currentSequence);
+    }
+
+    displayedTimeline.onScrollChange(this.interactiveScrollPosition);
+
+    return displayedTimeline;
   }
 
-  onZoomChangeFromModel (zoom) {
-    if (this._updatingZoomFromInput) return;
-    this._updatingZoomFromModel = true;
-    this.ui.zoomInput.number = zoom;
-    this._updatingZoomFromModel = false;
-  }
-
-  onDisplayedTimelineChange (newTimeline) {
-    // Hook for listening to changes of the displayed timeline
-    return newTimeline;
+  onZoomChange (newZoom) {
+    this.displayedTimeline.zoomFactor = newZoom;
   }
 
   get commands () {
@@ -536,7 +516,7 @@ class MenuBar extends Morph {
       borderColor: COLOR_SCHEME.SECONDARY
       // fontColor: COLOR_SCHEME.ON_SURFACE
     });
-    connect(this.ui.zoomInput, 'number', this.editor, 'onZoomChangeFromInput', { converter: '(percent) => percent/100' });
+    connect(this.ui.zoomInput, 'number', this.editor, 'onZoomChange', { converter: '(percent) => percent/100' });
     connect(this.editor, 'onDisplayedTimelineChange', this.ui.zoomInput, 'number', { converter: '(timeline) => timeline.zoomFactor * 100' });
     this.ui.scrollPositionToolbar.addMorph(this.ui.zoomInput);
   }
