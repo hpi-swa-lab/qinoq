@@ -56,6 +56,17 @@ export class Interactive extends Morph {
           this.redraw();
         }
       },
+      fixedAspectRatio: {
+        defaultValue: 16 / 9
+      },
+      extent: {
+        set (extent) {
+          if (this.fixedAspectRatio) {
+            extent.x = extent.y * this.fixedAspectRatio;
+          }
+          this.setProperty('extent', extent);
+        }
+      },
       sequences: {
         defaultValue: []
       },
