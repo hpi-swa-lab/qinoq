@@ -28,7 +28,7 @@ export class TimelineLayer extends Morph {
   initialize (editor, container) {
     this._editor = editor;
     this.container = container;
-    this.addActiveAreaMorph();
+    this.addAreaMorphs();
   }
 
   get isTimelineLayer () {
@@ -51,7 +51,7 @@ export class TimelineLayer extends Morph {
     return this.container.submorphs.indexOf(this);
   }
 
-  addActiveAreaMorph () {
+  addAreaMorphs () {
     const activeArea = this.addMorph(new Morph({
       extent: pt(0, CONSTANTS.LAYER_HEIGHT),
       position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0),
@@ -62,13 +62,22 @@ export class TimelineLayer extends Morph {
       acceptsDrops: false
     }));
     const inactiveArea = this.addMorph(new Morph({
+      draggable: true,
       extent: pt(CONSTANTS.INACTIVE_AREA_WIDTH, CONSTANTS.LAYER_HEIGHT),
       fill: COLOR_SCHEME.BACKGROUND_VARIANT,
       name: 'inactive area',
-      reactsToPointer: false,
       borderStyle: { bottom: 'solid', left: 'none', right: 'none', top: 'solid' },
       acceptsDrops: false
     }));
+    inactiveArea.onDragStart = (evt) => {
+      this.onDragStart(evt);
+    };
+    inactiveArea.onDrag = (evt) => {
+      this.onDrag(evt);
+    };
+    inactiveArea.onDragEnd = (evt) => {
+      this.onDragEnd(evt);
+    };
     connect(activeArea, 'extent', inactiveArea, 'position', { converter: '() => source.topRight' });
   }
 
