@@ -313,6 +313,13 @@ export class InteractiveMorphInspector extends Morph {
   async initialize (editor) {
     this._editor = editor;
     this.build();
+    connect($world, 'showHaloFor', this, 'selectMorphThroughHalo');
+  }
+
+  selectMorphThroughHalo (morph) {
+    if (Sequence.getSequenceOfMorph(morph)) {
+      this.targetMorph = morph;
+    }
   }
 
   deselect () {
@@ -324,6 +331,11 @@ export class InteractiveMorphInspector extends Morph {
     });
     this.targetMorph = undefined;
     this.build();
+  }
+
+  abandon () {
+    disconnect($world, 'showHaloFor', this, 'selectMorphThroughHalo');
+    super.abandon();
   }
 }
 
