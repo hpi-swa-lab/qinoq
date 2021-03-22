@@ -8,6 +8,8 @@ import { arr } from 'lively.lang';
 import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
 import { Sequence, Interactive } from 'qinoq';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
+import { CONSTANTS as TIMELINE_CONSTANTS } from './timeline/constants.js';
+import { Interactive } from 'interactives-editor';
 import StripeButton from 'StripeButton';
 
 const CONSTANTS = {
@@ -142,7 +144,6 @@ export class InteractivesEditor extends Morph {
     connect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
     connect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
     connect(this.interactive, 'name', this.globalTab, 'caption').update(this.interactive.name);
-    connect(this.interactive, 'remove', this, 'reset');
     connect(this.preview, 'extent', this.interactive, 'extent');
 
     connect(this.globalTab, 'caption', this.interactive, 'name');
@@ -165,28 +166,19 @@ export class InteractivesEditor extends Morph {
     if (!this.interactive) return;
     disconnect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
     disconnect(this.interactive, 'name', this.globalTimeline, 'name');
-    disconnect(this.interactive, 'remove', this, 'reset');
     disconnect(this.interactive, 'scrollPosition', this.globalTimeline, 'interactiveScrollPosition');
     disconnect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
     disconnect(this.preview, 'extent', this.interactive, 'extent');
 
     disconnect(this.interactive, 'name', this.globalTab, 'caption');
-    disconnect(this.interactive, 'onLengthChange', this.globalTimeline, '_activeAreaWidth');
 
     disconnect(this.globalTab, 'caption', this.interactive, 'name');
-    this.globalTimeline.clear();
 
     this.tabs.forEach(tab => { if (tab !== this.globalTab) tab.close(); });
 
     this.interactive.remove();
     this.inspector.deselect();
     this.preview.showEmptyPreviewPlaceholder();
-    this.setProperty('interactive', undefined);
-  }
-
-  reset () {
-    this.clearInteractive();
-    this.tabContainer.visible = false;
   }
 
   async initializeSequenceView (sequence) {
@@ -305,7 +297,15 @@ export class InteractivesEditor extends Morph {
         name: 'move scrollposition forward',
         doc: 'Move the scrollPosition of the interactive forward by one unit',
         exec: () => {
-          if (this.interactive && !this.inputFieldFocused() && this.interactive.scrollPosition < this.interactive.length) {
+          if (!this.interactive) return;
+          if (this.displayedTimeline.isGlobalTimeline() && this.displayedTimeline.selectedSequences.length > 0) {
+            this.displayedTimeline.selectedSequences.forEach(timelineSequence => {
+              timelineSequence.position = pt(timelineSequence.position.x + 1, timelineSequence.position.y);
+              timelineSequence.updateSequenceAfterArrangement();
+            });
+            return;
+          }
+          if (!this.inputFieldFocused() && this.interactive.scrollPosition < this.interactive.length) {
             this.interactive.scrollPosition++;
           }
         }
@@ -314,7 +314,18 @@ export class InteractivesEditor extends Morph {
         name: 'move scrollposition backwards',
         doc: 'Move the scrollPosition of the interactive back by one unit',
         exec: () => {
-          if (this.interactive && !this.inputFieldFocused() && this.interactive.scrollPosition > 0) {
+          if (!this.interactive) return;
+          if (this.displayedTimeline.isGlobalTimeline() && this.displayedTimeline.selectedSequences.length > 0) {
+            const timelineSequences = this.displayedTimeline.selectedSequences;
+            if (timelineSequences.sort((a, b) => a.position.x - b.position.x).filter((seq, index, sequences) => seq.position.x === sequences[0].position.x)[0].position.x <= TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) return;
+
+            timelineSequences.forEach(timelineSequence => {
+              timelineSequence.position = pt(timelineSequence.position.x - 1, timelineSequence.position.y);
+              timelineSequence.updateSequenceAfterArrangement();
+            });
+            return;
+          }
+          if (!this.inputFieldFocused() && this.interactive.scrollPosition > 0) {
             this.interactive.scrollPosition--;
           }
         }
