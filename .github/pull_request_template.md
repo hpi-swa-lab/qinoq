@@ -62,6 +62,7 @@ Closes [fill in your issues here]
 
 - [ ] the tree leaves can be selected to inspect with the target selector
 - [ ] in the sequence view, a morph that is not part of the currently open sequence cannot be selected with the target picker
+- [ ] when selecting a morph in the sequence via halo, that morph is shown in the inspector
 - [ ] correct values for position, extent and opacity are shown
 - [ ] when setting two keyframes for different position values at different scroll positions, an animation is created and can be viewed
 - [ ] when scrolling in the scrollytelling, created keyframes are shown by a different icon in the inspector
