@@ -23,6 +23,7 @@ const CONSTANTS = {
   SCROLL_POSITION_TOOLBAR_X_OFFSET: 360
 };
 CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
+CONSTANTS.TIMELINE_HEIGHT = CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT - CONSTANTS.MENU_BAR_HEIGHT;
 
 export class InteractivesEditor extends Morph {
   static get properties () {
@@ -92,14 +93,14 @@ export class InteractivesEditor extends Morph {
 
     this.globalTimeline = new GlobalTimeline({
       position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT),
-      extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT)
+      extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.TIMELINE_HEIGHT)
     });
     this.globalTimeline.initialize(this);
 
     this.tabContainer = await resource('part://tabs/tabs').read();
     Object.assign(this.tabContainer, {
       position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT + CONSTANTS.MENU_BAR_HEIGHT),
-      extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT),
+      extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.TIMELINE_HEIGHT),
       showNewTabButton: false,
       tabHeight: 28,
       visible: false
@@ -194,7 +195,7 @@ export class InteractivesEditor extends Morph {
   }
 
   initializeSequenceTimeline (sequence) {
-    const sequenceTimeline = new SequenceTimeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT) });
+    const sequenceTimeline = new SequenceTimeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.TIMELINE_HEIGHT) });
     sequenceTimeline.initialize(this);
     sequenceTimeline.loadContent(sequence);
     return sequenceTimeline;
