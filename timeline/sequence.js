@@ -272,8 +272,7 @@ export class TimelineSequence extends Morph {
   }
 
   onGrabAbort () {
-    disconnect(this._grabbingHand, 'position', this, 'updateGrabAppearance');
-    disconnect(this._grabbingHand, 'cancelGrab', this, 'onGrabAbort');
+    this.onGrabEnd();
     this.abandon();
   }
 
@@ -585,5 +584,6 @@ export class TimelineSequence extends Morph {
     }
     this.editor.interactive.removeSequence(this.sequence);
     this.updateSequenceAfterArrangement();
+    super.abandon();
   }
 }
