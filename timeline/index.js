@@ -316,7 +316,6 @@ export class SequenceTimeline extends Timeline {
       const timelineLayer = this.createOverviewTimelineLayer(morph);
       this.addTimelineKeyframesForLayer(timelineLayer);
     });
-    signal(this, 'onActiveAreaWidthChange');
   }
 
   addTimelineKeyframesForLayer (timelineLayer) {
@@ -369,6 +368,7 @@ export class SequenceTimeline extends Timeline {
       const animationLayer = super.createTimelineLayer(morph, indexInLayerContainer + 1, animation.property);
       this.addKeyframesForAnimation(animation, animationLayer);
     });
+    this.onActiveAreaWidthChange();
   }
 
   removePropertyLayers (timelineLayer) {
