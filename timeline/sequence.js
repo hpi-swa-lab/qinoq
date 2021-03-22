@@ -165,7 +165,7 @@ export class TimelineSequence extends Morph {
       previousPosition: this.position,
       previousTimelineLayer: this.timelineLayer
     }];
-    this._cachedTimelineSequences = this.allTimelineSequences.filter(sequence => sequence != this);
+    this._timelineSequences = this.allTimelineSequences.filter(sequence => sequence != this);
   }
 
   onDragEnd (event) {
@@ -196,7 +196,7 @@ export class TimelineSequence extends Morph {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       this.hideWarningLeft();
     }
-    this.checkDragSnapping();
+    this.checkSnapping('both');
 
     this.updateAppearance();
     this.updateSequenceAfterArrangement();
@@ -254,7 +254,7 @@ export class TimelineSequence extends Morph {
           buildLeftIndicator = true;
           this.buildLeftSnapIndicator(sequence);
         }
-        if (sequence.position.x == this.topRight.x && direction != 'right') {
+        if (sequence.position.x == this.topRight.x && direction != 'left') {
           buildRightIndicator = true;
           this.buildLeftSnapIndicator(sequence);
         }
@@ -262,7 +262,7 @@ export class TimelineSequence extends Morph {
           buildRightIndicator = true;
           this.buildRightSnapIndicator(sequence);
         }
-        if (sequence.topRight.x == this.position.x && direction != 'left') {
+        if (sequence.topRight.x == this.position.x && direction != 'right') {
           buildLeftIndicator = true;
           this.buildRightSnapIndicator(sequence);
         }
@@ -322,7 +322,7 @@ export class TimelineSequence extends Morph {
       previousWidth: this.width,
       previousTopRight: this.topRight
     }];
-    this._cachedTimelineSequences = this.allTimelineSequences.filter(sequence => sequence != this);
+    this._timelineSequences = this.allTimelineSequences.filter(sequence => sequence != this);
   }
 
   onResizeEnd (event) {
@@ -552,7 +552,7 @@ export class TimelineSequence extends Morph {
   }
 
   closestSequences (direction) {
-    const sequences = this._cachedTimelineSequences;
+    const sequences = this._timelineSequences;
     let curr = [sequences[0]];
     let minCurr = this.distanceBetweenSequences(this, curr[0], direction)[0];
     sequences.filter(sequence => sequence != curr[0]).forEach(sequence => {
