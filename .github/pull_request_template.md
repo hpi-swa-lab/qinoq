@@ -11,11 +11,13 @@ Closes [fill in your issues here]
 - [ ] the tree sequence is resizeable both left and right, this can be reversed
 - [ ] the day sequence can't be dragged or resized onto the night sequence, instead it will snap to the night sequence and the snap indicator is shown
 - [ ] the day sequence can be dragged to the middle layer, it will snap onto the tree sequence
-- [ ] the night sequence can't be dragged or resized beyond the timeline bounds
+- [ ] the night sequence can't be dragged or resized beyond the left timeline bounds
 - [ ] double clicking on the sky sequence brings you to a new tab named 'sky sequence' containing the sequence view
 - [ ] when clicking the "+" button a sequence is in the hand, which can only be dropped on a timelinelayer and changes color when you are not able to place the sequence
 - [ ] right clicking on a sequence brings up a context menu
 - [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the interactive/beginning of the next/previous sequence
+- [ ] moving a sequence to the right will make the active area (light grey) larger
+- [ ] When making the zoom factor higher/lower with the input field, the length of the sequences adapt accordingly, the cursor updates its position and the whole scrollytelling can still be scrolled through
 
 ### TimelineLayer:
 
@@ -47,6 +49,7 @@ Closes [fill in your issues here]
 - [ ] clicking on the first tab brings you back to the global timeline
 - [ ] after scrolling in the global timeline, the cursor position in the already opened 'sky sequence' has updated as well, when changing to this tab and vice versa
 - [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the sequence and to the prev/next keyframe
+- [ ] When making the zoom factor higher/lower with the input field, the length of the active area adapt accordingly as well as the position of the keyframes and the cursor updates its position
 
 ### Inspector:
 
@@ -61,3 +64,4 @@ Closes [fill in your issues here]
 - [ ] the first tab can be renamed to 'aScrollytelling', this will also rename the interactive to 'aScrollytelling'
 - [ ] the second tab can be renamed to 'sunrise', this will also rename the sequence in the global timeline to 'sunrise' and the respective timeline to 'sunrise timeline'
 - [ ] the second tab can be closed with the 'X'
+- [ ] opening two tabs and setting them to different zoom factors works as expected, even when changing between them and scrolling in both (the cursor is always at the correct position, both have independent zoom factors)
