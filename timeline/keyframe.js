@@ -165,6 +165,7 @@ export class TimelineKeyframe extends Morph {
   }
 
   onMouseDown (evt) {
+    super.onMouseDown(evt);
     if (evt.leftMouseButtonPressed() && evt.keyCombo == 'Shift') {
       this.toggleSelection();
     } else
