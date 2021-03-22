@@ -291,8 +291,8 @@ export class TimelineSequence extends Morph {
       this.setOverlappingAppearance();
       return;
     }
-    if (morphBeneath.name === 'active area') {
-      const timelineLayer = morphBeneath.owner;
+    if (morphBeneath.name === 'active area' || morphBeneath.name === 'inactive area' || morphBeneath.isTimelineLayer) {
+      const timelineLayer = morphBeneath.isTimelineLayer ? morphBeneath : morphBeneath.owner;
       const layer = timelineLayer.layer;
 
       // Check if it would be a valid position
