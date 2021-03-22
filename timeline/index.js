@@ -76,6 +76,7 @@ export class Timeline extends Morph {
       })
     });
     this.addMorph(this.ui.layerContainer);
+    connect(this.ui.layerContainer, 'scroll', this.ui.layerInfoContainer, 'position', { converter: '(scrollValue) => target.position = pt(target.position.x, -scrollValue.y)', varMapping: { pt } });
   }
 
   initializeLayerInfoContainer () {
