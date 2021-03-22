@@ -66,6 +66,7 @@ export class TimelineLayerInfo extends Morph {
   }
 
   restyleAfterHideToggle () {
+    if (!this.layer) return;
     Icon.setIcon(this.ui.hideButton, this.layer.hidden ? 'eye-slash' : 'eye');
     this.ui.hideButton.tooltip = this.layer.hidden ? 'Show layer in interactive' : 'Hide layer in interactive';
     this.interactive.redraw();
