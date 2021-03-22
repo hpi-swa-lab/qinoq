@@ -51,10 +51,6 @@ export class TimelineLayer extends Morph {
     return this.container.submorphs.indexOf(this);
   }
 
-  get activeArea () {
-    return this.getSubmorphNamed('active area');
-  }
-
   addActiveAreaMorph () {
     const activeArea = this.addMorph(new Morph({
       extent: pt(0, CONSTANTS.LAYER_HEIGHT),
