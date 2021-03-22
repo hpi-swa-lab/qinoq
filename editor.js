@@ -1,6 +1,6 @@
 import { ProportionalLayout, HorizontalLayout, VerticalLayout, Icon, Label, Morph } from 'lively.morphic';
 import { connect, signal, disconnectAll, disconnect } from 'lively.bindings';
-import { pt } from 'lively.graphics';
+import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
 import { InteractiveMorphInspector } from './inspector.js';
 import { resource } from 'lively.resources';
@@ -387,10 +387,13 @@ class Preview extends Morph {
       fontColor: placeholderColor,
       textString: this.placeholderCaption
     });
+    text.height = 30;
 
     const newInteractiveButton = new StripeButton({
       label: 'Create a new interactive',
-      master: 'styleguide://SystemUserUI/blue button'
+      master: 'styleguide://SystemUserUI/blue button',
+      acceptsDrops: false,
+      padding: rect(8, 5, 0, -2)
     });
     newInteractiveButton.onMouseUp = () => this.editor.createInteractive();
 
