@@ -34,7 +34,12 @@ Closes [fill in your issues here]
 
 - [ ] can be opened
 - [ ] is scrollable
+
+### Interactive and editor:
+
 - [ ] can be loaded in the editor via drag and drop
+- [ ] a new scrollytelling can be created with a button
+- [ ] resizing the interactive resizes the interactive (by a fixed aspect ratio)
 - [ ] after resizing to have a bigger interactive the sun is bigger and still moves to about half of the interactive width
 
 ### Sequence View:
