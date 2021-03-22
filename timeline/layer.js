@@ -204,7 +204,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
   }
 
   toggleHiddenStyle () {
-    this.timelineSequences.forEach(timelineSequence => timelineSequence.toggleHiddenLayerStyle());
+    this.timelineSequences.forEach(timelineSequence => timelineSequence.setDefaultAppearance());
     this.activeArea.fill = this.layer.hidden ? COLOR_SCHEME.BACKGROUND_VARIANT : COLOR_SCHEME.SURFACE_VARIANT;
   }
 }

@@ -102,6 +102,7 @@ export class TimelineSequence extends Morph {
     this.caption = sequence.name;
     this.initializeResizers();
     this._lockModelUpdate = false;
+    this.setDefaultAppearance();
   }
 
   initializeResizers () {
@@ -511,7 +512,7 @@ export class TimelineSequence extends Morph {
   }
 
   setDefaultAppearance () {
-    this.fill = COLOR_SCHEME.SURFACE;
+    this.fill = this.sequence.layer.hidden ? COLOR_SCHEME.BACKGROUND_VARIANT : COLOR_SCHEME.SURFACE;
     this.borderColor = COLOR_SCHEME.ON_BACKGROUND;
   }
 
@@ -521,10 +522,6 @@ export class TimelineSequence extends Morph {
     } else {
       this.setDefaultAppearance();
     }
-  }
-
-  toggleHiddenLayerStyle () {
-    this.fill = this.sequence.layer.hidden ? COLOR_SCHEME.BACKGROUND_VARIANT : COLOR_SCHEME.SURFACE;
   }
 
   isOverlappingOtherSequence () {

@@ -32,7 +32,7 @@ export class TimelineLayerInfo extends Morph {
     return this.timelineLayer.morph;
   }
 
-  get global () {
+  get isInGlobalTimeline () {
     return !!this.layer;
   }
 
@@ -42,13 +42,13 @@ export class TimelineLayerInfo extends Morph {
 
   initialize () {
     this.ui = {};
-    this.name = this.name || (this.global ? this.layer.name : this.morph.name);
+    this.name = this.name || (this.isInGlobalTimeline ? this.layer.name : this.morph.name);
     this.ui.label = new Label({
       textString: this.name
     });
     this.addMorph(this.ui.label);
 
-    if (this.global) {
+    if (this.isInGlobalTimeline) {
       this.ui.hideButton = new Label({ name: 'hide button', tooltip: 'Hide layer in interactive', nativeCursor: 'pointer', reactsToPointer: true });
       this.ui.hideButton.onMouseUp = () => this.toggleLayerVisibility();
       Icon.setIcon(this.ui.hideButton, 'eye');
@@ -57,10 +57,15 @@ export class TimelineLayerInfo extends Morph {
     }
 
     this.layout = new VerticalLayout({ spacing: 4, autoResize: false });
+    this.restyleAfterHideToggle();
   }
 
   toggleLayerVisibility () {
     this.layer.hidden = !this.layer.hidden;
+    this.restyleAfterHideToggle();
+  }
+
+  restyleAfterHideToggle () {
     Icon.setIcon(this.ui.hideButton, this.layer.hidden ? 'eye-slash' : 'eye');
     this.ui.hideButton.tooltip = this.layer.hidden ? 'Show layer in interactive' : 'Hide layer in interactive';
     this.interactive.redraw();
