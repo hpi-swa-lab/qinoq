@@ -118,6 +118,10 @@ export class Keyframe {
   setEasing (easing = 'linear') {
     this.easing = stringToEasing(easings[easing]);
   }
+
+  static possibleEasings () {
+    return Object.keys(easings);
+  }
 }
 
 export class NumberAnimation extends Animation {
