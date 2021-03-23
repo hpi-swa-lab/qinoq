@@ -64,7 +64,6 @@ class Animation {
 
   // Linear Interpolation
   set progress (progress) {
-    // console.log('Setting progress for animation concerning ' + this.target.name + ' in prop ' + this.property);
     const { start, end } = this.getClosestKeyframes(progress);
     if (!!start && !!end) {
       const easedProgress = end.easing(progress);

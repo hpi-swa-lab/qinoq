@@ -61,6 +61,7 @@ export class Interactive extends Morph {
         isFloat: false,
         defaultValue: 0,
         set (scrollPosition) {
+          if (scrollPosition === this.scrollPosition) return; // redraw may be costly! If you want to redraw use redraw explicitly
           this.setProperty('scrollPosition', scrollPosition);
           this.scrollOverlay.scroll.y = scrollPosition;
           this.redraw();
@@ -457,7 +458,7 @@ export class Sequence extends Morph {
     skySequence.addMorph(sun);
 
     const sunPositionAnimation = new PointAnimation(sun, 'position', true);
-    sunPositionAnimation.addKeyframes([new Keyframe(0, pt(0, 1.2), { name: 'start' }), new Keyframe(0.5, pt(0.1, 0.27), { name: 'middle', easing: 'inOutExpo' }), new Keyframe(1, pt(0.45, 0.05), { name: 'end' })]);
+    sunPositionAnimation.addKeyframes([new Keyframe(0, pt(0, 1.2), { name: 'start' }), new Keyframe(0.5, pt(0.1, 0.27), { name: 'middle', easing: 'inOutQuad' }), new Keyframe(1, pt(0.45, 0.05), { name: 'end', easing: 'outCirc' })]);
     skySequence.addAnimation(sunPositionAnimation);
 
     const sunScaleAnimation = new NumberAnimation(sun, 'scale');
@@ -510,7 +511,6 @@ export class Sequence extends Morph {
 
   updateProgress (scrollPosition) {
     this._progress = (scrollPosition - this.start) / this.duration;
-    console.log('UPDATING PROGRESS FOR SEQUENCE ' + this.name);
     this.animations.forEach(animation => animation.progress = this._progress);
   }
 
