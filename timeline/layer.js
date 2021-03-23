@@ -240,7 +240,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   }
 
   expand () {
-    if (!this.containsKeyframes()) {
+    if (!this.containsKeyframes) {
       this.isExpanded = false;
       $world.inform('Expanding is only available for morphs with keyframes.');
       return;
@@ -257,8 +257,8 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     this.keyframes.forEach(keyframe => keyframe.removeMorph());
   }
 
-  containsKeyframes () {
-    return !!this.keyframes;
+  get containsKeyframes () {
+    return this.keyframes.length > 0;
   }
 
   updateTimelineKeyframes () {
