@@ -95,7 +95,7 @@ export class Timeline extends Morph {
     this.ui.cursor.initialize(0);
     this.ui.layerContainer.addMorph(this.ui.cursor);
     this.ui.cursor.location = this.getPositionFromScroll(0);
-    this.ui.cursor.height = this.height;
+    this.ui.cursor.height = this.ui.layerContainer.height;
   }
 
   initializeLayerContainer () {
