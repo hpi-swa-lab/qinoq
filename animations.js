@@ -116,10 +116,11 @@ export class Keyframe {
   }
 
   setEasing (easing = 'linear') {
+    this.easingName = easing;
     this.easing = stringToEasing(easings[easing]);
   }
 
-  static possibleEasings () {
+  static get possibleEasings () {
     return Object.keys(easings);
   }
 }
