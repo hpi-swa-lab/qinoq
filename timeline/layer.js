@@ -41,7 +41,7 @@ export class TimelineLayer extends Morph {
   }
 
   get timeline () {
-    return this.owner.owner;
+    return this.owner.owner.owner;
   }
 
   updateLayerPosition () {

@@ -7,6 +7,7 @@ import { GlobalTimelineLayer, OverviewSequenceTimelineLayer, SequenceTimelineLay
 import { TimelineKeyframe } from './keyframe.js';
 import { CONSTANTS } from './constants.js';
 import { TimelineLayerInfo } from './layer-info.js';
+import { COLOR_SCHEME } from '../colors.js';
 
 export class Timeline extends Morph {
   static get properties () {
@@ -19,7 +20,7 @@ export class Timeline extends Morph {
       interactive: {},
       _editor: {},
       clipMode: {
-        defaultValue: 'auto'
+        defaultValue: 'hidden'
       },
       zoomFactor: {
         defaultValue: 1,
@@ -49,9 +50,44 @@ export class Timeline extends Morph {
 
   initialize (editor) {
     this._editor = editor;
-    this.layout = new ProportionalLayout({ lastExtent: this.extent });
+    this.ui.scrollableContainer = new Morph(
+      {
+        name: 'scrollable container',
+        extent: pt(this.extent.x, this.extent.y - CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT),
+        clipMode: 'auto'
+      });
+    this.addMorph(this.ui.scrollableContainer);
     this.initializeLayerInfoContainer();
     this.initializeLayerContainer();
+    this.initializeScrollBar();
+  }
+
+  relayout (newWindowExtent) {
+    this.ui.scrollableContainer.extent = pt(newWindowExtent.x, this.owner.extent.y - CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT);
+    this.ui.layerContainer.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - CONSTANTS.LAYER_INFO_WIDTH, this.owner.extent.y - CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT);
+    this.ui.scrollBar.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - CONSTANTS.LAYER_INFO_WIDTH, this.ui.scrollBar.extent.y);
+    this.ui.scrollBar.position = this.ui.layerContainer.bottomLeft;
+  }
+
+  initializeScrollBar () {
+    this.ui.scrollBar = new Morph({
+      name: 'scrollbar',
+      position: pt(CONSTANTS.LAYER_INFO_WIDTH, this.height - CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT),
+      extent: pt(this.width - CONSTANTS.LAYER_INFO_WIDTH - this.scrollbarOffset.x, CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT),
+      fill: COLOR_SCHEME.PRIMARY
+    });
+    this.addScrollIndicator();
+    this.addMorph(this.ui.scrollBar);
+  }
+
+  addScrollIndicator () {
+    this.ui.scrollBar.addMorph(new Morph({
+      name: 'scroller',
+      draggable: true,
+      fill: COLOR_SCHEME.ON_SURFACE,
+      position: pt(1, 1),
+      extent: pt(20, 13)
+    }));
   }
 
   initializeCursor () {
@@ -65,9 +101,9 @@ export class Timeline extends Morph {
   initializeLayerContainer () {
     this.ui.layerContainer = new Morph({
       name: 'layer container',
-      clipMode: 'auto',
+      clipMode: 'hidden',
       position: pt(CONSTANTS.LAYER_INFO_WIDTH, 0),
-      extent: pt(this.width - CONSTANTS.LAYER_INFO_WIDTH, this.height),
+      extent: pt(this.width - CONSTANTS.LAYER_INFO_WIDTH - this.scrollbarOffset.x, this.height - CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT),
       layout: new VerticalLayout({
         spacing: 2,
         resizeSubmorphs: true,
@@ -75,15 +111,14 @@ export class Timeline extends Morph {
         orderByIndex: true
       })
     });
-    this.addMorph(this.ui.layerContainer);
-    connect(this.ui.layerContainer, 'scroll', this.ui.layerInfoContainer, 'position', { converter: '(scrollValue) => target.position = pt(target.position.x, -scrollValue.y)', varMapping: { pt } });
+    this.ui.scrollableContainer.addMorph(this.ui.layerContainer);
   }
 
   initializeLayerInfoContainer () {
     this.ui.layerInfoContainer = new Morph({
       name: 'layer info container',
       position: pt(0, 0),
-      extent: pt(CONSTANTS.LAYER_INFO_WIDTH, this.height),
+      extent: pt(CONSTANTS.LAYER_INFO_WIDTH, this.height - CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT),
       layout: new VerticalLayout({
         spacing: 2,
         resizeSubmorphs: true,
@@ -91,7 +126,7 @@ export class Timeline extends Morph {
         orderByIndex: true
       })
     });
-    this.addMorph(this.ui.layerInfoContainer);
+    this.ui.scrollableContainer.addMorph(this.ui.layerInfoContainer);
   }
 
   getNewTimelineLayer () {
@@ -121,12 +156,6 @@ export class Timeline extends Morph {
 
   redraw () {
     this.editor.triggerInteractiveScrollPositionConnections();
-  }
-
-  relayout (availableWidth) {
-    this.ui.layerInfoContainer.position = pt(0, 0); // Align the container to the left of the layers
-    this.ui.layerInfoContainer.width = CONSTANTS.LAYER_INFO_WIDTH;
-    this.ui.layerContainer.width = availableWidth - this.ui.layerInfoContainer.width - this.layout.spacing;
   }
 
   get timelineLayers () {

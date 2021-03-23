@@ -124,7 +124,7 @@ export class TimelineCursor extends Morph {
   }
 
   get timeline () {
-    return this.owner.owner;
+    return this.owner.owner.owner;
   }
 
   remove () {

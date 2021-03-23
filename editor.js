@@ -53,11 +53,11 @@ export class InteractivesEditor extends Morph {
 
   async initialize () {
     this.initializeLayout();
-    await this.initializePanels();
     this.window = this.openInWindow({
       title: 'Interactives Editor',
       name: 'window for interactives editor'
     });
+    await this.initializePanels();
     connect(this.window, 'close', this, 'abandon');
     return this;
   }
@@ -92,7 +92,7 @@ export class InteractivesEditor extends Morph {
     });
 
     this.globalTimeline = new GlobalTimeline({
-      position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT),
+      position: pt(0, 0),
       extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.TIMELINE_HEIGHT)
     });
     this.globalTimeline.initialize(this);
@@ -196,7 +196,7 @@ export class InteractivesEditor extends Morph {
   }
 
   initializeSequenceTimeline (sequence) {
-    const sequenceTimeline = new SequenceTimeline({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.TIMELINE_HEIGHT) });
+    const sequenceTimeline = new SequenceTimeline({ position: pt(0, 0), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.TIMELINE_HEIGHT) });
     sequenceTimeline.initialize(this);
     sequenceTimeline.loadContent(sequence);
     return sequenceTimeline;
@@ -271,10 +271,11 @@ export class InteractivesEditor extends Morph {
       this.interactive.showOnly(this.currentSequence);
     }
     if (previouslyDisplayedTimeline) {
+      disconnect(this.window, 'extent', previouslyDisplayedTimeline, 'relayout');
       disconnect(previouslyDisplayedTimeline, 'zoomFactor', this.menuBar.ui.zoomInput, 'number');
     }
     connect(displayedTimeline, 'zoomFactor', this.menuBar.ui.zoomInput, 'number', { converter: '(zoomFactor) => zoomFactor * 100' }).update(displayedTimeline.zoomFactor);
-
+    connect(this.window, 'extent', displayedTimeline, 'relayout').update(this.window.extent);
     displayedTimeline.onScrollChange(this.interactiveScrollPosition);
 
     return displayedTimeline;
