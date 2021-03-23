@@ -115,8 +115,8 @@ export class TimelineCursor extends Morph {
       if (this.previousOwner) { disconnect(this.previousOwner, 'extent', this, 'height'); }
       connect(newOwner, 'extent', this, 'height', {
         updater: `($update, extent) => { 
-        if (extent.y >= target.timeline.height) $update(extent.y);
-        else $update(target.timeline.height)
+        if (extent.y >= target.timeline.ui.layerContainer.height) $update(extent.y);
+        else $update(target.timeline.ui.layerContainer.height)
       }`
       });
       this.previousOwner = newOwner;
