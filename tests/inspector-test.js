@@ -42,7 +42,26 @@ describe('Inspector', () => {
     expect('testProp2' in inspector.propertiesToDisplay).to.not.be.ok;
   });
 
+  it('targets a morph in the interactive when a halo is shown', async () => {
+    const anotherMorph = new Morph({ name: 'morph in interactive' });
+    interactive.sequences[0].addMorph(anotherMorph);
+    $world.showHaloFor(anotherMorph);
+
+    expect(inspector.targetMorph).to.equal(anotherMorph);
+
+    anotherMorph.abandon();
+  });
+
+  it('does not target a morph outside the interactive when a halo is shown', () => {
+    const anotherMorph = new Morph();
+    $world.showHaloFor(anotherMorph);
+
+    expect(inspector.targetMorph).to.not.be.equal(anotherMorph);
+
+    anotherMorph.abandon();
+  });
+
   after(() => {
-    editor.owner.remove();
+    editor.owner.close();
   });
 });
