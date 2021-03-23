@@ -300,17 +300,26 @@ export class TimelineSequence extends Morph {
       return;
     }
 
-    if (mode == 'drag') {
-      const snapTarget = startIsCloserThanEnd ? 'position' : 'topRight';
-      this[snapTarget] = pt(snapPosition, this.position.y);
-    } else if (mode == 'resizeLeft') {
-      if (!startIsCloserThanEnd) return;
-      const newWidth = this.topRight.x - snapPosition;
-      this.position = pt(snapPosition, this.position.y);
-      this.width = newWidth;
-    } else if (mode == 'resizeRight') {
-      if (startIsCloserThanEnd) return;
-      this.width = Math.abs(this.position.x - snapPosition);
+    switch (mode) {
+      case 'drag': {
+        const snapTarget = startIsCloserThanEnd ? 'position' : 'topRight';
+        this[snapTarget] = pt(snapPosition, this.position.y);
+        break;
+      }
+
+      case 'resizeLeft': {
+        if (!startIsCloserThanEnd) return;
+        const newWidth = this.topRight.x - snapPosition;
+        this.position = pt(snapPosition, this.position.y);
+        this.width = newWidth;
+        break;
+      }
+
+      case 'resizeRight': {
+        if (startIsCloserThanEnd) return;
+        this.width = Math.abs(this.position.x - snapPosition);
+        break;
+      }
     }
   }
 
