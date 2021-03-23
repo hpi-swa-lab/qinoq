@@ -120,7 +120,7 @@ export class TimelineKeyframe extends Morph {
         this.changeKeyframePosition(newRelativePosition);
       } else {
         await $world.inform('Enter a valid scroll position inside this sequence.');
-        await this.promptUserForNewPosition();
+        await this.promptUserForNewAbsolutePosition();
       }
     }
   }
@@ -132,7 +132,7 @@ export class TimelineKeyframe extends Morph {
         this.changeKeyframePosition(newPosition);
       } else {
         await $world.inform('Enter a value between 0 and 1.');
-        await this.promptUserForNewPosition();
+        await this.promptUserForNewRelativePosition();
       }
     }
   }
