@@ -3,6 +3,7 @@ import { COLOR_SCHEME } from '../colors.js';
 import { pt, LinearGradient, rect } from 'lively.graphics';
 import { connect, disconnect, disconnectAll } from 'lively.bindings';
 import { CONSTANTS } from './constants.js';
+import { arr } from 'lively.lang';
 export class TimelineSequence extends Morph {
   static get properties () {
     return {
@@ -164,7 +165,7 @@ export class TimelineSequence extends Morph {
       previousPosition: this.position,
       previousTimelineLayer: this.timelineLayer
     }];
-    this._timelineSequencesOnDrag = this.allTimelineSequences.filter(sequence => sequence != this);
+    this.prepareSnappingData();
   }
 
   onDragEnd (event) {
@@ -180,11 +181,11 @@ export class TimelineSequence extends Morph {
         this.env.undoManager.removeLatestUndo();
       });
     }
-    this.removeSnapIndicators();
     this.hideWarningLeft();
     this.hideWarningRight();
+    this.removeSnapIndicators();
+    this.clearSnappingData();
     delete event.hand.timelineSequenceStates;
-    delete this._timelineSequencesOnDrag;
   }
 
   onDrag (event) {
@@ -196,7 +197,7 @@ export class TimelineSequence extends Morph {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       this.hideWarningLeft();
     }
-    this.checkSnapping('drag');
+    this.handleSnapping('drag');
 
     this.updateAppearance();
     this.updateSequenceAfterArrangement();
@@ -207,72 +208,141 @@ export class TimelineSequence extends Morph {
     this._snapIndicators = [];
   }
 
-  checkSnapping (mode) {
+  prepareSnappingData () {
+    const otherTimelineSequences = this.allTimelineSequences.filter(sequence => sequence != this);
+    this._otherTimelineSequencesSortedByStart = otherTimelineSequences.sort((a, b) => a.sequence.start - b.sequence.start);
+    this._otherTimelineSequencesSortedByEnd = otherTimelineSequences.sort((a, b) => a.sequence.end - b.sequence.end);
+  }
+
+  clearSnappingData () {
+    delete this._otherTimelineSequencesSortedByStart;
+    delete this._otherTimelineSequencesSortedByEnd;
+  }
+
+  handleSnapping (mode) {
     this.removeSnapIndicators();
-    let snapPositions = [];
+
+    let positionsOfSnapTargets = [];
     switch (mode) {
-      case 'drag': snapPositions = [this.sequence.start, this.sequence.end];
+      case 'drag': positionsOfSnapTargets = [this.sequence.start, this.sequence.end];
         break;
-      case 'resizeLeft': snapPositions = [this.sequence.start];
+      case 'resizeLeft': positionsOfSnapTargets = [this.sequence.start];
         break;
-      case 'resizeRight': snapPositions = [this.sequence.end];
+      case 'resizeRight': positionsOfSnapTargets = [this.sequence.end];
         break;
     }
-    const snapCandidates = this.getSequencesWithinSnapThreshold(snapPositions);
-    const sortedSnapCandidates = snapCandidates.sort((a, b) => Math.min(a.startDistance, a.endDistance - Math.min(b.startDistance, b.endDistance)));
-    this.snapTo(sortedSnapCandidates[0], mode);
+
+    const snapPosition = this.timeline.getPositionFromScroll(
+      this.getSnappingPosition(positionsOfSnapTargets)
+    );
+
+    this.snapTo(snapPosition, mode);
+
     this.buildSnapIndicators();
+  }
+
+  getSnappingPosition (positionsOfSnapTargets) {
+    const sequencesSortedByStart = this._otherTimelineSequencesSortedByStart;
+    const sequencesSortedByEnd = this._otherTimelineSequencesSortedByEnd;
+
+    if (!sequencesSortedByStart || !sequencesSortedByEnd) {
+      // both arrays should have the same number of elements,
+      //   so it is already something wrong if only one is undefined
+      return undefined;
+    }
+
+    let closestSequenceByStart;
+    let closestSequenceByEnd;
+    let diffByStart = -1;
+    let diffByEnd = -1;
+
+    positionsOfSnapTargets.forEach(snapTargetPosition => {
+      const candidateByStart = arr.binarySearchFor(
+        sequencesSortedByStart,
+        snapTargetPosition,
+        (elm) => elm.sequence.start,
+        true
+      );
+      const candidateByEnd = arr.binarySearchFor(
+        sequencesSortedByEnd,
+        snapTargetPosition,
+        (elm) => elm.sequence.end,
+        true
+      );
+
+      const diffOfCandidateByStart = Math.abs(candidateByStart.sequence.start - snapTargetPosition);
+      const diffOfCandidateByEnd = Math.abs(candidateByEnd.sequence.end - snapTargetPosition);
+
+      if (!closestSequenceByStart || diffOfCandidateByStart < diffByStart) {
+        closestSequenceByStart = candidateByStart;
+        diffByStart = diffOfCandidateByStart;
+      }
+
+      if (!closestSequenceByEnd || diffOfCandidateByEnd < diffByEnd) {
+        closestSequenceByEnd = candidateByEnd;
+        diffByEnd = diffOfCandidateByEnd;
+      }
+    });
+
+    return diffByEnd > diffByStart
+      ? closestSequenceByStart.sequence.start
+      : closestSequenceByEnd.sequence.end;
+  }
+
+  snapTo (snapPosition, mode) {
+    if (!snapPosition) return;
+
+    const diffToStart = Math.abs(this.position.x - snapPosition);
+    const diffToEnd = Math.abs(this.topRight.x - snapPosition);
+    const startIsCloserThanEnd = diffToStart < diffToEnd;
+
+    if (CONSTANTS.SNAPPING_THRESHOLD < (startIsCloserThanEnd ? diffToStart : diffToEnd)) {
+      return;
+    }
+
+    switch (mode) {
+      case 'drag':
+        const snapTarget = startIsCloserThanEnd ? 'position' : 'topRight';
+        this[snapTarget] = pt(snapPosition, this.position.y);
+        break;
+
+      case 'resizeLeft':
+        if (!startIsCloserThanEnd) return;
+        const newWidth = this.topRight.x - snapPosition;
+        this.position = pt(snapPosition, this.position.y);
+        this.width = newWidth;
+        break;
+
+      case 'resizeRight':
+        if (startIsCloserThanEnd) return;
+        this.width = Math.abs(this.position.x - snapPosition);
+        break;
+    }
   }
 
   buildSnapIndicators () {
     let buildRightIndicator, buildLeftIndicator;
-    this._timelineSequencesOnDrag.forEach(sequence => {
-      if (sequence.position.x == this.position.x) {
+    this._otherTimelineSequencesSortedByStart.forEach(timelineSequence => {
+      const sequence = timelineSequence.sequence;
+      if (sequence.start == this.sequence.start) {
         buildLeftIndicator = true;
-        this._snapIndicators.push(sequence.buildLeftSnapIndicator());
+        this._snapIndicators.push(timelineSequence.buildLeftSnapIndicator());
       }
-      if (sequence.position.x == this.topRight.x) {
+      if (sequence.start == this.sequence.end) {
         buildRightIndicator = true;
-        this._snapIndicators.push(sequence.buildLeftSnapIndicator());
+        this._snapIndicators.push(timelineSequence.buildLeftSnapIndicator());
       }
-      if (sequence.topRight.x == this.topRight.x) {
+      if (sequence.end == this.sequence.end) {
         buildRightIndicator = true;
-        this._snapIndicators.push(sequence.buildRightSnapIndicator());
+        this._snapIndicators.push(timelineSequence.buildRightSnapIndicator());
       }
-      if (sequence.topRight.x == this.position.x) {
+      if (sequence.end == this.sequence.start) {
         buildLeftIndicator = true;
-        this._snapIndicators.push(sequence.buildRightSnapIndicator());
+        this._snapIndicators.push(timelineSequence.buildRightSnapIndicator());
       }
     });
     if (buildLeftIndicator) this._snapIndicators.push(this.buildLeftSnapIndicator());
     if (buildRightIndicator) this._snapIndicators.push(this.buildRightSnapIndicator());
-  }
-
-  snapTo (snapCandidate, mode) {
-    if (!snapCandidate) return;
-    switch (mode) {
-      case 'drag':
-        if (snapCandidate.startDistance < snapCandidate.endDistance) {
-          const snapCandidateStart = snapCandidate.sequence.sequence.start;
-          if (Math.abs(this.sequence.start - snapCandidateStart) < Math.abs(this.sequence.end - snapCandidateStart)) { this.position = pt(snapCandidate.sequence.position.x, this.position.y); } else { this.topRight = pt(snapCandidate.sequence.position.x, this.position.y); }
-        } else {
-          const snapCandidateEnd = snapCandidate.sequence.sequence.end;
-          if (Math.abs(this.sequence.start - snapCandidateEnd) < Math.abs(this.sequence.end - snapCandidateEnd)) { this.position = pt(snapCandidate.sequence.topRight.x, this.position.y); } else { this.topRight = pt(snapCandidate.sequence.topRight.x, this.position.y); }
-        }
-        break;
-    }
-  }
-
-  getSequencesWithinSnapThreshold (snapPositions) {
-    const sequences = this._timelineSequencesOnDrag;
-    const sequencesWithDistances = sequences.map(sequence => {
-      return {
-        sequence: sequence,
-        startDistance: Math.min(Math.abs(sequence.sequence.start - this.sequence.start), Math.abs(sequence.sequence.start - this.sequence.end)),
-        endDistance: Math.min(Math.abs(sequence.sequence.end - this.sequence.start), Math.abs(sequence.sequence.end - this.sequence.end))
-      };
-    });
-    return sequencesWithDistances.filter(sequenceWithDistance => sequenceWithDistance.startDistance <= CONSTANTS.SNAPPING_THRESHOLD || sequenceWithDistance.endDistance <= CONSTANTS.SNAPPING_THRESHOLD);
   }
 
   onResizeRight (event) {
@@ -284,7 +354,7 @@ export class TimelineSequence extends Morph {
       this.updateSequenceAfterArrangement();
     } else {
       this.width = newSequenceWidth;
-      this.checkSnapping('resizeRight');
+      this.handleSnapping('resizeRight');
       this.rightResizer.position = pt(this.width - this.rightResizer.width, 0);
       this.updateSequenceAfterArrangement();
     }
@@ -310,7 +380,7 @@ export class TimelineSequence extends Morph {
       this.extent = pt(newSequenceWidth, this.height);
       this.hideWarningLeft();
     }
-    this.checkSnapping('resizeLeft');
+    this.handleSnapping('resizeLeft');
     this.leftResizer.position = pt(0, 0);
     this.rightResizer.position = pt(this.width - this.rightResizer.width, 0);
     this.updateSequenceAfterArrangement();
@@ -325,7 +395,7 @@ export class TimelineSequence extends Morph {
       previousWidth: this.width,
       previousTopRight: this.topRight
     }];
-    this._timelineSequences = this.allTimelineSequences.filter(sequence => sequence != this);
+    this.prepareSnappingData();
   }
 
   onResizeEnd (event) {
@@ -333,6 +403,7 @@ export class TimelineSequence extends Morph {
     this.hideWarningLeft();
     this.hideWarningRight();
     this.removeSnapIndicators();
+    this.clearSnappingData();
     delete event.hand.timelineSequenceResizeStates;
   }
 
