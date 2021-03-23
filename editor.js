@@ -1,4 +1,4 @@
-import { ProportionalLayout, HorizontalLayout, VerticalLayout, Icon, Label, Morph } from 'lively.morphic';
+import { ProportionalLayout, CustomLayout, TilingLayout, HorizontalLayout, VerticalLayout, Icon, Label, Morph } from 'lively.morphic';
 import { connect, signal, disconnectAll, disconnect } from 'lively.bindings';
 import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
@@ -490,29 +490,69 @@ class MenuBar extends Morph {
 
   initialize (editor) {
     this._editor = editor;
-    this.ui.layoutContainer = new Morph({
+    this.ui.leftContainer = new Morph({
       layout: new HorizontalLayout({
         spacing: CONSTANTS.SPACING,
-        autoResize: true
+        autoResize: false
+
       }),
+      name: 'left container',
       fill: COLOR_SCHEME.TRANSPARENT,
-      borderWidth: 0
+      borderWidth: 0,
+      extent: pt(200, CONSTANTS.MENU_BAR_HEIGHT)
     });
 
     this.ui.scrollPositionToolbar = new Morph({
       layout: new HorizontalLayout({
         spacing: CONSTANTS.SPACING,
-        autoResize: true
+        autoResize: false,
+        direction: 'centered'
       }),
       name: 'scroll position toolbar',
       position: pt(CONSTANTS.SCROLL_POSITION_TOOLBAR_X_OFFSET, 0),
-      extent: this.extent,
       fill: COLOR_SCHEME.TRANSPARENT,
       borderWidth: 0
     });
 
-    this.addMorph(this.ui.layoutContainer);
+    this.ui.rightContainer = new Morph({
+      layout: new HorizontalLayout({
+        spacing: CONSTANTS.SPACING,
+        autoResize: false,
+        direction: 'rightToLeft'
+      }),
+      name: 'right container',
+      position: pt(CONSTANTS.SCROLL_POSITION_TOOLBAR_X_OFFSET, 0),
+      fill: COLOR_SCHEME.TRANSPARENT,
+      borderWidth: 0
+    });
+
+    this.addMorph(this.ui.leftContainer);
     this.addMorph(this.ui.scrollPositionToolbar);
+    this.addMorph(this.ui.rightContainer);
+
+    // TODO: Change this as soon as the GridLayout works
+    this.layout = new CustomLayout({
+      autoResize: true,
+      relayout: (container) => {
+        const third = container.width / 3;
+        const left = container.getSubmorphNamed('left container');
+        const center = container.getSubmorphNamed('scroll position toolbar');
+        const right = container.getSubmorphNamed('right container');
+        left.extent = pt(third, container.height);
+        left.position = pt(0, 0);
+        center.extent = pt(third, container.height);
+        center.position = pt(third, 0);
+        right.extent = pt(third, container.height);
+        right.position = pt(third * 2, 0);
+        left.layout.apply();
+        center.layout.apply();
+        right.layout.apply();
+      },
+      varMapping: {
+        pt
+      }
+    });
+    connect(this, 'extent', () => this.layout.apply);
 
     this.buildIconButton({
       tooltip: 'Create a new sequence',
@@ -520,7 +560,8 @@ class MenuBar extends Morph {
         this.editor.createNewSequence();
       },
       icon: 'plus',
-      name: 'addSequenceButton'
+      name: 'addSequenceButton',
+      container: 'leftContainer'
     });
 
     this.buildIconButton({
@@ -584,10 +625,11 @@ class MenuBar extends Morph {
       borderWidth: 2,
       unit: '%',
       borderColor: COLOR_SCHEME.SECONDARY
-      // fontColor: COLOR_SCHEME.ON_SURFACE
     });
+    this.ui.zoomInput.getSubmorphNamed('value').fontColor = COLOR_SCHEME.ON_SURFACE;
     connect(this.ui.zoomInput, 'number', this.editor, 'onZoomChange', { converter: '(percent) => percent/100' });
-    this.ui.scrollPositionToolbar.addMorph(this.ui.zoomInput);
+    connect(this.editor, 'onDisplayedTimelineChange', this.ui.zoomInput, 'number', { converter: '(timeline) => timeline.zoomFactor * 100' });
+    this.ui.rightContainer.addMorph(this.ui.zoomInput);
   }
 
   buildScrollPositionInput () {
@@ -599,15 +641,15 @@ class MenuBar extends Morph {
       dropShadow: false,
       borderWidth: 2,
       borderColor: COLOR_SCHEME.SECONDARY
-      // fontColor: COLOR_SCHEME.ON_SURFACE
     });
+    this.ui.scrollPositionInput.getSubmorphNamed('value').fontColor = COLOR_SCHEME.ON_SURFACE;
     connect(this.ui.scrollPositionInput, 'number', this, 'onScrollPositionInputChange');
     connect(this.editor, 'interactiveScrollPosition', this, 'onInteractiveScrollPositionChange');
     this.ui.scrollPositionToolbar.addMorph(this.ui.scrollPositionInput);
   }
 
   buildIconButton (options = {}) {
-    const { action, tooltip, name, morphName = 'aButton', icon, container = 'layoutContainer' } = options;
+    const { action, tooltip, name, morphName = 'aButton', icon, container } = options;
     this.ui[name] = new Label({
       extent: pt(64, 64),
       fontSize: 20,
