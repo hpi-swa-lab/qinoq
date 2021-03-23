@@ -23,7 +23,8 @@ export class Interactive extends Morph {
     tree.layer = middleLayer;
     const sky = Sequence.skyExample();
     sky.layer = foregroundLayer;
-
+    // const testlayer = Layer.exampleBackgroundLayer();
+    // interactive.addLayer(testlayer);
     interactive.addLayer(backgroundLayer);
     interactive.addLayer(middleLayer);
     interactive.addLayer(foregroundLayer);

@@ -54,8 +54,48 @@ export class Timeline extends Morph {
       {
         name: 'scrollable container',
         extent: pt(this.extent.x, this.extent.y - CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT),
-        clipMode: 'auto'
+        clipMode: 'auto',
+        scroll: pt(0, 1)
       });
+    this.ui.scrollableContainer._scrollTop = 1;
+    this.ui.scrollableContainer.onScroll = (evt) => {
+      const mousePos = evt.hand.position;
+      const scrollableContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.scrollableContainer);
+      // scrolled above the layer info container
+      if (this.morphsContainingPoint(mousePos).includes(this.ui.layerInfoContainer)) {
+        const scrollableContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.scrollableContainer);
+        // real scrolling takes place in the container
+        if (scrollableContainerNode.scrollHeight !== this.ui.scrollableContainer.height + 2) {
+          // reached bottom of the container - we have to preserve one pixel at the bottom and at the top
+          if (scrollableContainerNode.scrollTop + this.ui.scrollableContainer.height === scrollableContainerNode.scrollHeight) {
+            scrollableContainerNode.scrollTop = scrollableContainerNode.scrollTop - 1;
+            this.ui.scrollableContainer._scrollTop = scrollableContainerNode.scrollTop - 1;
+          } else if (scrollableContainerNode.scrollTop === 0) {
+            scrollableContainerNode.scrollTop = 1;
+            this.ui.scrollableContainer._scrollTop = 1;
+          } else this.ui.scrollableContainer._scrollTop = scrollableContainerNode.scrollTop;
+        } else {
+          this.ui.scrollableContainer._scrollTop = 1;
+          scrollableContainerNode.scrollTop = 1;
+        }
+      }
+
+      // scrolled above the timeline layers
+      else {
+        const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
+        const scrollDelta = scrollableContainerNode.scrollTop - this.ui.scrollableContainer._scrollTop;
+        scrollableContainerNode.scrollTop = this.ui.scrollableContainer._scrollTop;
+        // we cannot scroll sideways
+        if (layerContainerNode.scrollWidth === this.ui.layerContainer.width) return;
+        // we cannot decide if we scroll leftwards or rightwards. very sad!
+        if (scrollDelta === 0) return;
+        // because we have to use the morph property here a very significant lag is introduced
+        // I tried setting the dom property directly, but this lead to resets of the scrollposition whenever the mouse leaves the morph
+        scrollDelta > 0 ? this.ui.layerContainer.scrollRight(30) : this.ui.layerContainer.scrollLeft(30);
+        // layerContainerNode.scrollLeft = scrollDelta > 0 ? layerContainerNode.scrollLeft + 30 : layerContainerNode.scrollLeft - 30;
+      }
+    };
+
     this.addMorph(this.ui.scrollableContainer);
     this.initializeLayerInfoContainer();
     this.initializeLayerContainer();
