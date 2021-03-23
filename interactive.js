@@ -458,7 +458,7 @@ export class Sequence extends Morph {
     skySequence.addMorph(sun);
 
     const sunPositionAnimation = new PointAnimation(sun, 'position', true);
-    sunPositionAnimation.addKeyframes([new Keyframe(0, pt(0, 1.2), { name: 'start' }), new Keyframe(0.5, pt(0.1, 0.27), { name: 'middle', easing: 'inOutQuad' }), new Keyframe(1, pt(0.45, 0.05), { name: 'end', easing: 'outCirc' })]);
+    sunPositionAnimation.addKeyframes([new Keyframe(0, pt(0, 1.2), { name: 'start' }), new Keyframe(0.5, pt(0.1, 0.27), { name: 'middle', easing: 'inQuad' }), new Keyframe(1, pt(0.45, 0.05), { name: 'end', easing: 'outCubic' })]);
     skySequence.addAnimation(sunPositionAnimation);
 
     const sunScaleAnimation = new NumberAnimation(sun, 'scale');

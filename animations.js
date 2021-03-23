@@ -66,8 +66,7 @@ class Animation {
   set progress (progress) {
     const { start, end } = this.getClosestKeyframes(progress);
     if (!!start && !!end) {
-      const easedProgress = end.easing(progress);
-      this.target[this.property] = this.transformValue(this.interpolate(easedProgress, start, end));
+      this.target[this.property] = this.transformValue(this.interpolate(progress, start, end));
       return;
     }
     if (start) {
@@ -122,8 +121,8 @@ export class Keyframe {
 }
 
 export class NumberAnimation extends Animation {
-  interpolate (progress, end, start) {
-    const factor = this.lerp(start, end, progress);
+  interpolate (progress, start, end) {
+    const factor = end.easing(this.lerp(start, end, progress));
     return start.value + (end.value - start.value) * factor;
   }
 
@@ -143,8 +142,8 @@ export class PointAnimation extends Animation {
     return animation;
   }
 
-  interpolate (progress, end, start) {
-    const factor = this.lerp(start, end, progress);
+  interpolate (progress, start, end) {
+    const factor = end.easing(this.lerp(start, end, progress));
     return pt(start.value.x + (end.value.x - start.value.x) * factor,
       start.value.y + (end.value.y - start.value.y) * factor);
   }
@@ -159,8 +158,8 @@ export class PointAnimation extends Animation {
 }
 
 export class ColorAnimation extends Animation {
-  interpolate (progress, end, start) {
-    const factor = this.lerp(start, end, progress);
+  interpolate (progress, start, end) {
+    const factor = end.easing(this.lerp(start, end, progress));
     return start.value.interpolate(factor, end.value);
   }
 
@@ -169,4 +168,4 @@ export class ColorAnimation extends Animation {
   }
 }
 
-// To add String, Number
+// TODO: Add String, Number
