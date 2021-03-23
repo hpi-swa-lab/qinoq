@@ -60,7 +60,7 @@ export class Timeline extends Morph {
     this.initializeLayerInfoContainer();
     this.initializeLayerContainer();
     // force the scrollable container to always be scrollable
-    connect(this.ui.layerContainer, 'extent', this.ui.scrollableContainer, 'height', { converter: ' (extent) => extent.y - 1 ' }).update(this.ui.layerContainer.extent);
+    connect(this.ui.layerContainer, 'extent', this.ui.scrollableContainer, 'height', { converter: ' (extent) => extent.y > timeline.height - scrollbarHeight ? timeline.height - scrollbarHeight : extent.y - 2', varMapping: { timeline: this, scrollbarHeight: CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT } }).update(this.ui.layerContainer.extent);
     this.initializeScrollBar();
   }
 
