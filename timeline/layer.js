@@ -3,6 +3,7 @@ import { COLOR_SCHEME } from '../colors.js';
 import { pt } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';
 import { connect } from 'lively.bindings';
+import { Canvas } from 'lively.components/canvas.js';
 export class TimelineLayer extends Morph {
   static get properties () {
     return {
@@ -52,7 +53,7 @@ export class TimelineLayer extends Morph {
   }
 
   addAreaMorphs () {
-    const activeArea = this.addMorph(new Morph({
+    const activeArea = this.addMorph(new Canvas({
       extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.LAYER_HEIGHT),
       position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0),
       fill: COLOR_SCHEME.SURFACE_VARIANT,
@@ -90,13 +91,18 @@ export class TimelineLayer extends Morph {
 export class SequenceTimelineLayer extends TimelineLayer {
   static get properties () {
     return {
-      morph: {}
+      morph: {},
+      animation: {
+        set (animation) {
+          this.setProperty('animation', animation);
+          this.tooltip = `${this.morph.name}:${this.animation.property}`;
+        }
+      }
     };
   }
 
   initialize (editor, container, morph) {
     super.initialize(editor, container);
-    this.tooltip = morph.name;
     this.morph = morph;
   }
 
@@ -120,6 +126,10 @@ export class SequenceTimelineLayer extends TimelineLayer {
 
   get keyframes () {
     return this.submorphs.filter(submorph => submorph.isTimelineKeyframe);
+  }
+
+  redrawActiveArea () {
+    this.activeArea.line(pt(0, CONSTANTS.LAYER_HEIGHT / 2), pt(this.activeArea.width, CONSTANTS.LAYER_HEIGHT / 2));
   }
 }
 

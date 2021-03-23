@@ -378,6 +378,7 @@ export class SequenceTimeline extends Timeline {
     this.sequence.getAnimationsForMorph(morph).forEach(animation => {
       // we assume that each sequence only holds one animation per morph per property
       const animationLayer = super.createTimelineLayer(morph, indexInLayerContainer + 1, animation.property);
+      animationLayer.animation = animation;
       this.addKeyframesForAnimation(animation, animationLayer);
     });
     this.onActiveAreaWidthChange();
