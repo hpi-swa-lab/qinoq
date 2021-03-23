@@ -273,7 +273,7 @@ export class InteractivesEditor extends Morph {
     if (previouslyDisplayedTimeline) {
       disconnect(previouslyDisplayedTimeline, 'zoomFactor', this.menuBar.ui.zoomInput, 'number');
     }
-    connect(displayedTimeline, 'zoomFactor', this.menuBar.ui.zoomInput, 'number', { converter: '(zoomFactor) => zoomFactor * 100' });
+    connect(displayedTimeline, 'zoomFactor', this.menuBar.ui.zoomInput, 'number', { converter: '(zoomFactor) => zoomFactor * 100' }).update(displayedTimeline.zoomFactor);
 
     displayedTimeline.onScrollChange(this.interactiveScrollPosition);
 
@@ -548,7 +548,6 @@ class MenuBar extends Morph {
       // fontColor: COLOR_SCHEME.ON_SURFACE
     });
     connect(this.ui.zoomInput, 'number', this.editor, 'onZoomChange', { converter: '(percent) => percent/100' });
-    connect(this.editor, 'onDisplayedTimelineChange', this.ui.zoomInput, 'number', { converter: '(timeline) => timeline.zoomFactor * 100' });
     this.ui.scrollPositionToolbar.addMorph(this.ui.zoomInput);
   }
 
