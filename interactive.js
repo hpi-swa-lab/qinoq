@@ -446,33 +446,33 @@ export class Sequence extends Morph {
     skySequence.addMorph(stars);
 
     const starsOpacityAnimation = new NumberAnimation(stars, 'opacity');
-    starsOpacityAnimation.addKeyframes([new Keyframe(0, 1, 'fully visible'), new Keyframe(0.1, 0, 'faded out')]);
+    starsOpacityAnimation.addKeyframes([new Keyframe(0, 1, { name: 'fully visible' }), new Keyframe(0.1, 0, { name: 'faded out' })]);
     skySequence.addAnimation(starsOpacityAnimation);
 
     const starProgressAnimation = new NumberAnimation(stars, 'progress');
-    starProgressAnimation.addKeyframes([new Keyframe(0, 0, 'start of the animation'), new Keyframe(0.1, 1, 'animation done')]);
+    starProgressAnimation.addKeyframes([new Keyframe(0, 0, { name: 'start of the animation' }), new Keyframe(0.1, 1, { name: 'animation done' })]);
     skySequence.addAnimation(starProgressAnimation);
 
     const sun = new Ellipse({ name: 'sun', extent: pt(70, 70), fill: Color.rgb(250, 250, 20), position: pt(0, 350) });
     skySequence.addMorph(sun);
 
     const sunPositionAnimation = new PointAnimation(sun, 'position', true);
-    sunPositionAnimation.addKeyframes([new Keyframe(0, pt(0, 1.2), 'start'), new Keyframe(0.5, pt(0.1, 0.27), 'middle'), new Keyframe(1, pt(0.45, 0.05), 'end')]);
+    sunPositionAnimation.addKeyframes([new Keyframe(0, pt(0, 1.2), { name: 'start' }), new Keyframe(0.5, pt(0.1, 0.27), { name: 'middle', easing: 'inOutExpo' }), new Keyframe(1, pt(0.45, 0.05), { name: 'end' })]);
     skySequence.addAnimation(sunPositionAnimation);
 
     const sunScaleAnimation = new NumberAnimation(sun, 'scale');
-    sunScaleAnimation.addKeyframes([new Keyframe(0, 0.6, 'start'), new Keyframe(0.6, 1, 'end')]);
+    sunScaleAnimation.addKeyframes([new Keyframe(0, 0.6, { name: 'start' }), new Keyframe(0.6, 1, { name: 'end' })]);
     skySequence.addAnimation(sunScaleAnimation);
 
     const cloud = new Image({ name: 'cloud', extent: pt(100, 50), imageUrl: 'https://cdn.pixabay.com/photo/2017/06/20/04/42/cloud-2421760_960_720.png' });
     skySequence.addMorph(cloud);
 
     const cloudPositionAnimation = new PointAnimation(cloud, 'position', true);
-    cloudPositionAnimation.addKeyframes([new Keyframe(0, pt(0.25, 0.17), 'start'), new Keyframe(1, pt(0.5, 0.17), 'end')]);
+    cloudPositionAnimation.addKeyframes([new Keyframe(0, pt(0.25, 0.17), { name: 'start' }), new Keyframe(1, pt(0.5, 0.17), { name: 'end' })]);
     skySequence.addAnimation(cloudPositionAnimation);
 
     const cloudOpacityAnimation = new NumberAnimation(cloud, 'opacity');
-    cloudOpacityAnimation.addKeyframes([new Keyframe(0.1, 0, 'start'), new Keyframe(0.4, 1, 'fully visible')]);
+    cloudOpacityAnimation.addKeyframes([new Keyframe(0.1, 0, { name: 'start' }), new Keyframe(0.4, 1, { name: 'fully visible' })]);
     skySequence.addAnimation(cloudOpacityAnimation);
 
     return skySequence;
@@ -510,6 +510,7 @@ export class Sequence extends Morph {
 
   updateProgress (scrollPosition) {
     this._progress = (scrollPosition - this.start) / this.duration;
+    console.log('UPDATING PROGRESS FOR SEQUENCE ' + this.name);
     this.animations.forEach(animation => animation.progress = this._progress);
   }
 
