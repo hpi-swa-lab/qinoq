@@ -129,7 +129,11 @@ export class SequenceTimelineLayer extends TimelineLayer {
   }
 
   redrawActiveArea () {
-    this.activeArea.line(pt(0, CONSTANTS.LAYER_HEIGHT / 2), pt(this.activeArea.width, CONSTANTS.LAYER_HEIGHT / 2));
+    if (this.animation.type == 'number') {
+      const minValue = this.animation.min;
+      const maxValue = this.animation.max;
+    }
+    // this.activeArea.line(pt(0, CONSTANTS.LAYER_HEIGHT / 2), pt(this.activeArea.width, CONSTANTS.LAYER_HEIGHT / 2));
   }
 }
 

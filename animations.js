@@ -134,6 +134,14 @@ export class NumberAnimation extends Animation {
   get type () {
     return 'number';
   }
+
+  get max () {
+    return Math.max(...this.keyframes.map(keyframe => keyframe.value));
+  }
+
+  get min () {
+    return Math.min(...this.keyframes.map(keyframe => keyframe.value));
+  }
 }
 
 export class PointAnimation extends Animation {
