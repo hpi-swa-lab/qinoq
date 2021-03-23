@@ -57,7 +57,7 @@ export class InteractivesEditor extends Morph {
       title: 'Interactives Editor',
       name: 'window for interactives editor'
     });
-    connect(this.window, 'close', this, 'onClose');
+    connect(this.window, 'close', this, 'abandon');
     return this;
   }
 
@@ -312,9 +312,9 @@ export class InteractivesEditor extends Morph {
       }];
   }
 
-  onClose () {
+  abandon () {
     this.clearInteractive();
-    this.abandon();
+    super.abandon();
   }
 }
 
