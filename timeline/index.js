@@ -59,6 +59,8 @@ export class Timeline extends Morph {
     this.addMorph(this.ui.scrollableContainer);
     this.initializeLayerInfoContainer();
     this.initializeLayerContainer();
+    // force the scrollable container to always be scrollable
+    connect(this.ui.layerContainer, 'extent', this.ui.scrollableContainer, 'height', { converter: ' (extent) => extent.y - 1 ' }).update(this.ui.layerContainer.extent);
     this.initializeScrollBar();
   }
 
@@ -122,7 +124,7 @@ export class Timeline extends Morph {
       layout: new VerticalLayout({
         spacing: 2,
         resizeSubmorphs: true,
-        autoResize: false,
+        autoResize: true,
         orderByIndex: true
       })
     });
@@ -151,7 +153,6 @@ export class Timeline extends Morph {
       layerInfos[timelineLayer.index] = timelineLayer.layerInfo;
     });
     this.ui.layerInfoContainer.submorphs = layerInfos;
-    this.ui.layerInfoContainer.layout.apply();
   }
 
   redraw () {
