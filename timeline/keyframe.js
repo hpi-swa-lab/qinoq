@@ -4,7 +4,7 @@ import { pt } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';
 import { Keyframe } from 'interactives-editor';
 import { ListPrompt } from 'lively.components/prompts.js';
-
+import { Sequence } from 'interactives-editor';
 export class TimelineKeyframe extends Morph {
   static get properties () {
     return {
@@ -105,25 +105,44 @@ export class TimelineKeyframe extends Morph {
     return [
       ['Rename Keyframe', async () => await this.promptRename()],
       ['Delete Keyframe', () => this.remove()],
-      ['Edit Keyframe Position (0 to 1)', async () => { await this.promptUserForNewPosition(); }],
+      ['Edit Relative Keyframe Position (0 to 1)', async () => { await this.promptUserForNewRelativePosition(); }],
+      ['Edit Absolute Keyframe Position', async () => { await this.promptUserForNewAbsolutePosition(); }],
       ['Set Easing', () => this.promptEasing()]
     ];
   }
 
-  async promptUserForNewPosition () {
+  async promptUserForNewAbsolutePosition (type) {
+    const sequence = Sequence.getSequenceOfMorph(this.animation.target);
+    const newPosition = await $world.prompt('Keyframe position:', { input: `${sequence.getAbsolutePositionFor(this.keyframe)}` });
+    if (newPosition) {
+      const newRelativePosition = sequence.getRelativePositionFor(newPosition);
+      if (newPosition >= 0 && newPosition <= this.editor.interactive.length && newRelativePosition >= 0 && newRelativePosition <= 1) {
+        this.changeKeyframePosition(newRelativePosition);
+      } else {
+        await $world.inform('Enter a valid scroll position inside this sequence.');
+        await this.promptUserForNewPosition();
+      }
+    }
+  }
+
+  async promptUserForNewRelativePosition (type) {
     const newPosition = await $world.prompt('Keyframe position:', { input: `${this.keyframe.position}` });
     if (newPosition) {
       if (newPosition >= 0 && newPosition <= 1) {
-        this.undoStart('change keyframe position');
-        this.keyframe.position = newPosition;
-        this.updatePosition();
-        this.editor.interactive.redraw();
-        this.undoStop('change keyframe position');
+        this.changeKeyframePosition(newPosition);
       } else {
         await $world.inform('Enter a value between 0 and 1.');
         await this.promptUserForNewPosition();
       }
     }
+  }
+
+  changeKeyframePosition (newPosition) {
+    this.undoStart('change keyframe position');
+    this.keyframe.position = newPosition;
+    this.updatePosition();
+    this.editor.interactive.redraw();
+    this.undoStop('change keyframe position');
   }
 
   remove () {
