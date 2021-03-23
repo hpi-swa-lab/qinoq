@@ -1,6 +1,8 @@
 import { pt } from 'lively.graphics';
 import { arr } from 'lively.lang';
 import { Sequence } from 'interactives-editor';
+import { easings, stringToEasing } from 'lively.morphic';
+
 class Animation {
   constructor (targetMorph, property, useRelativeValues = false) {
     this.target = targetMorph;
@@ -62,9 +64,11 @@ class Animation {
 
   // Linear Interpolation
   set progress (progress) {
+    // console.log('Setting progress for animation concerning ' + this.target.name + ' in prop ' + this.property);
     const { start, end } = this.getClosestKeyframes(progress);
     if (!!start && !!end) {
-      this.target[this.property] = this.transformValue(this.interpolate(progress, start, end));
+      const easedProgress = end.easing(progress);
+      this.target[this.property] = this.transformValue(this.interpolate(easedProgress, start, end));
       return;
     }
     if (start) {
@@ -105,10 +109,16 @@ export function createAnimationForPropertyType (propType, targetMorph, property)
   $world.setStatusMessage('Could not match property type');
 }
 export class Keyframe {
-  constructor (position, value, name = 'aKeyframe') {
+  constructor (position, value, spec = { name: 'aKeyframe', easing: 'linear' }) {
+    const { name, easing } = spec;
     this.position = position;
     this.value = value;
     this.name = name;
+    this.setEasing(easing);
+  }
+
+  setEasing (easing = 'linear') {
+    this.easing = stringToEasing(easings[easing]);
   }
 }
 
