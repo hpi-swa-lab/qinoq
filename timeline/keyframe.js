@@ -2,6 +2,9 @@ import { Morph } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
 import { pt } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';
+import { Keyframe } from 'interactives-editor';
+import { ListPrompt } from 'lively.components/prompts.js';
+
 export class TimelineKeyframe extends Morph {
   static get properties () {
     return {
@@ -87,11 +90,23 @@ export class TimelineKeyframe extends Morph {
     }
   }
 
+  async promptEasing () {
+    const possibleEasings = Keyframe.possibleEasings;
+    const preselectIndex = possibleEasings.indexOf(this.keyframe.easingName);
+    const listPrompt = new ListPrompt({ label: 'Set Easing', items: possibleEasings });
+    listPrompt.preselect = preselectIndex; // TODO: Make this work consistently (fails sometimes because building listprompt is not done yet (whenRendered is no option, this takes a few seconds))
+    const result = await $world.openPrompt(listPrompt);
+    if (result.selected.length > 0) {
+      this.keyframe.setEasing(result.selected[0]);
+    }
+  }
+
   menuItems (evt) {
     return [
       ['Rename Keyframe', async () => await this.promptRename()],
       ['Delete Keyframe', () => this.remove()],
-      ['Edit Keyframe Position (0 to 1)', async () => { await this.promptUserForNewPosition(); }]
+      ['Edit Keyframe Position (0 to 1)', async () => { await this.promptUserForNewPosition(); }],
+      ['Set Easing', () => this.promptEasing()]
     ];
   }
 
