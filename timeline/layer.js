@@ -139,8 +139,8 @@ export class GlobalTimelineLayer extends TimelineLayer {
   onHoverIn (event) {
     super.onHoverIn(event);
     if (event.hand.timelineSequenceStates) {
-      event.hand.timelineSequenceStates.forEach(dragState => {
-        dragState.timelineSequence.timelineLayer = this;
+      event.hand.timelineSequenceStates.forEach(timelineSequenceState => {
+        if (timelineSequenceState.isDragState) timelineSequenceState.timelineSequence.timelineLayer = this;
       });
     }
   }
