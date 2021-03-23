@@ -108,13 +108,14 @@ export class InteractivesEditor extends Morph {
     connect(this.tabContainer, 'onSelectedTabChange', this, 'onDisplayedTimelineChange', {
       updater: `($update, selectedAndPreviousTab) => {
         selectedAndPreviousTab.prev ? 
-          $update(selectedAndPreviousTab.curr.content,selectedAndPreviousTab.prev.content) :
-          $update(selectedAndPreviousTab.curr.content)
+          $update(selectedAndPreviousTab.curr._timeline,selectedAndPreviousTab.prev._timeline) :
+          $update(selectedAndPreviousTab.curr._timeline)
       }`
     });
     connect(this.tabContainer, 'onTabClose', this, 'onTabClose');
 
     this.globalTab = await this.tabContainer.addTab('[no interactive loaded]', this.globalTimeline);
+    this.globalTab._timeline = this.globalTimeline;
     this.globalTab.closeable = false;
 
     this.addMorph(this.tabContainer);
@@ -190,6 +191,7 @@ export class InteractivesEditor extends Morph {
 
     const timeline = this.initializeSequenceTimeline(sequence);
     const tab = await this.tabContainer.addTab(sequence.name, timeline);
+    tab._timeline = timeline;
     connect(sequence, 'name', tab, 'caption');
     connect(tab, 'caption', sequence, 'name');
   }
@@ -213,7 +215,7 @@ export class InteractivesEditor extends Morph {
   }
 
   get sequenceTimelines () {
-    return this.tabs.filter(tab => tab !== this.globalTab).map(tab => tab.content);
+    return this.tabs.filter(tab => tab !== this.globalTab).map(tab => tab._timeline);
   }
 
   get tabs () {
@@ -221,11 +223,11 @@ export class InteractivesEditor extends Morph {
   }
 
   getTabFor (sequence) {
-    return this.tabs.find(tab => tab.content.isSequenceTimeline && tab.content.sequence === sequence);
+    return this.tabs.find(tab => tab._timeline.isSequenceTimeline && tab._timeline.sequence === sequence);
   }
 
   getTimelineFor (tab) {
-    return tab.content;
+    return tab._timeline;
   }
 
   getSequenceFor (tab) {
