@@ -603,7 +603,8 @@ export class TimelineSequence extends Morph {
   }
 
   get allTimelineSequences () {
-    return this.timeline.timelineLayers.map(timelineLayer => timelineLayer.timelineSequences).flat();
+    return this.timeline.timelineLayers.reduce(
+      (timelineSequences, timelineLayer) => timelineSequences.concat(timelineLayer.timelineSequences), []);
   }
 
   isOverlappingOtherSequence () {
