@@ -69,15 +69,9 @@ export class TimelineLayer extends Morph {
       borderStyle: { bottom: 'solid', left: 'none', right: 'none', top: 'solid' },
       acceptsDrops: false
     }));
-    inactiveArea.onDragStart = (evt) => {
-      this.onDragStart(evt);
-    };
-    inactiveArea.onDrag = (evt) => {
-      this.onDrag(evt);
-    };
-    inactiveArea.onDragEnd = (evt) => {
-      this.onDragEnd(evt);
-    };
+    inactiveArea.onDragStart = event => this.onDragStart(event);
+    inactiveArea.onDrag = event => this.onDrag(event);
+    inactiveArea.onDragEnd = event => this.onDragEnd(event);
     connect(activeArea, 'extent', inactiveArea, 'position', { converter: '() => source.topRight' });
   }
 
