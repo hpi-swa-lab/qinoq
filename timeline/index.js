@@ -1,7 +1,7 @@
 import { pt } from 'lively.graphics';
-import { Morph, Label, VerticalLayout, ProportionalLayout } from 'lively.morphic';
+import { Morph, VerticalLayout } from 'lively.morphic';
 import { TimelineCursor } from './cursor.js';
-import { connect, signal, disconnect } from 'lively.bindings';
+import { connect, disconnect } from 'lively.bindings';
 import { TimelineSequence } from './sequence.js';
 import { GlobalTimelineLayer, OverviewSequenceTimelineLayer, SequenceTimelineLayer } from './layer.js';
 import { TimelineKeyframe } from './keyframe.js';
