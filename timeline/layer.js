@@ -129,11 +129,25 @@ export class SequenceTimelineLayer extends TimelineLayer {
   }
 
   redrawActiveArea () {
+    this.activeArea.clear(COLOR_SCHEME.SURFACE_VARIANT);
     if (this.animation.type == 'number') {
       const minValue = this.animation.min;
       const maxValue = this.animation.max;
+
+      const valueToDrawPosition = y => (y - maxValue) / (minValue - maxValue) * this.activeArea.height;
+
+      let currentPosition = 0;
+      let keyframePosition;
+      let currentValue = valueToDrawPosition(this.animation.keyframes[0].value);
+      for (let i = 0; i < this.animation.keyframes.length; i++) {
+        const nextValue = valueToDrawPosition(this.animation.keyframes[i].value);
+        keyframePosition = this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePositionFor(this.animation.keyframes[i])) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+        this.activeArea.line(pt(currentPosition, currentValue), pt(keyframePosition, nextValue));
+        currentValue = nextValue;
+        currentPosition = keyframePosition;
+      }
+      this.activeArea.line(pt(keyframePosition, currentValue), pt(this.activeArea.width, currentValue));
     }
-    // this.activeArea.line(pt(0, CONSTANTS.LAYER_HEIGHT / 2), pt(this.activeArea.width, CONSTANTS.LAYER_HEIGHT / 2));
   }
 }
 
