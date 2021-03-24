@@ -115,7 +115,7 @@ export class Keyframe {
     this.setEasing(easing);
   }
 
-  setEasing (easing = 'linear') {
+  setEasing (easing = 'inOutSine') {
     this.easingName = easing;
     this.easing = stringToEasing(easings[easing]);
   }
