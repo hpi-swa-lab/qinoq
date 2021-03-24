@@ -182,6 +182,41 @@ export class SequenceTimelineLayer extends TimelineLayer {
 
       return true;
     }
+    if (this.animation.type == 'point') {
+      const xStyle = { color: COLOR_SCHEME.PRIMARY };
+      const yStyle = { color: COLOR_SCHEME.PRIMARY_VARIANT };
+
+      const minXValue = this.animation.getMin('x');
+      const minYValue = this.animation.getMin('y');
+      const maxXValue = this.animation.getMax('x');
+      const maxYValue = this.animation.getMax('y');
+
+      const XvalueToDrawPosition = y => (y - maxXValue) / (minXValue - maxXValue) * this.activeArea.height;
+      const YvalueToDrawPosition = y => (y - maxYValue) / (minYValue - maxYValue) * this.activeArea.height;
+
+      const values = Object.entries(this.animation.getValues());
+
+      let previousPosition = 0;
+      let previousXValue = XvalueToDrawPosition(this.animation.keyframes[0].value.x);
+      let previousYValue = YvalueToDrawPosition(this.animation.keyframes[0].value.y);
+
+      values.forEach(positionValuePair => {
+        const position = keyframePositionToActiveAreaPosition(positionValuePair[0]);
+        const Xvalue = XvalueToDrawPosition(positionValuePair[1].x);
+        const Yvalue = YvalueToDrawPosition(positionValuePair[1].y);
+        this.activeArea.line(pt(previousPosition, previousXValue), pt(position, Xvalue), xStyle);
+        this.activeArea.line(pt(previousPosition, previousYValue), pt(position, Yvalue), yStyle);
+        previousPosition = position;
+        previousXValue = Xvalue;
+        previousYValue = Yvalue;
+      });
+
+      // final lines
+      this.activeArea.line(pt(previousPosition, previousXValue), pt(this.activeArea.width, previousXValue), xStyle);
+      this.activeArea.line(pt(previousPosition, previousYValue), pt(this.activeArea.width, previousYValue), yStyle);
+
+      return true;
+    }
   }
 }
 

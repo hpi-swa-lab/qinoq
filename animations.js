@@ -83,23 +83,24 @@ class Animation {
     throw new Error('Subclass responsibility');
   }
 
-  getValueForProgress (progress) {
+  getValueForProgress (progress, transformValue = true) {
     const { start, end } = this.getClosestKeyframes(progress);
+    let value;
     if (!!start && !!end) {
-      return this.transformValue(this.interpolate(progress, start, end));
+      value = this.interpolate(progress, start, end);
+    } else if (start) {
+      value = start.value;
+    } else if (end) {
+      value = end.value;
     }
-    if (start) {
-      return this.transformValue(start.value);
-    }
-    if (end) {
-      return this.transformValue(end.value);
-    }
+
+    return transformValue ? this.transformValue(value) : value;
   }
 
   getValues (sampling = 0.01) {
     const values = {};
     for (let progress = 0; progress <= 1; progress += sampling) {
-      values[progress] = this.getValueForProgress(progress);
+      values[progress] = this.getValueForProgress(progress, false);
     }
     return values;
   }
@@ -174,6 +175,14 @@ export class PointAnimation extends Animation {
 
   transformRelativeValue (value) {
     return pt(value.x * this.sequence.width, value.y * this.sequence.height);
+  }
+
+  getMax (attribute = 'x') {
+    return Math.max(...this.keyframes.map(keyframe => keyframe.value[attribute]));
+  }
+
+  getMin (attribute = 'x') {
+    return Math.min(...this.keyframes.map(keyframe => keyframe.value[attribute]));
   }
 
   get type () {

@@ -1,6 +1,7 @@
 import { Color } from 'lively.graphics';
 export const COLOR_SCHEME = {
   PRIMARY: Color.rgb(0, 176, 255),
+  PRIMARY_VARIANT: Color.rgb(0, 72, 255),
   SECONDARY: Color.rgb(240, 100, 0),
   SECONDARY_VARIANT: Color.rgb(255, 160, 92),
   ON_SECONDARY: Color.white,
