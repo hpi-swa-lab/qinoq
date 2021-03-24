@@ -410,7 +410,7 @@ export class SequenceTimeline extends Timeline {
     return (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.sequence.getRelativePositionFor(scrollPosition) * this.zoomFactor) + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
   }
 
-  getScrollWidthFromDistance (distance) {
+  getScrollDeltaFromDistance (distance) {
     return (this.sequence.duration * distance) * this.zoomFactor;
   }
 

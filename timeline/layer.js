@@ -155,12 +155,13 @@ export class SequenceTimelineLayer extends TimelineLayer {
   }
 
   drawNumberCurve () {
-    const keyframePositionToActiveAreaPosition = x => this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+    const keyframePositionToActiveAreaPosition = x => { return this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET; };
     const style = { color: COLOR_SCHEME.PRIMARY };
+
     const minValue = this.animation.min;
     const maxValue = this.animation.max;
 
-    const valueToDrawPosition = y => (y - maxValue) / (minValue - maxValue) * this.activeArea.height;
+    const valueToDrawPosition = y => { return (y - maxValue) / (minValue - maxValue) * this.activeArea.height; };
 
     const values = Object.entries(this.animation.getValues());
 
@@ -180,12 +181,12 @@ export class SequenceTimelineLayer extends TimelineLayer {
   }
 
   drawColorVisualization () {
-    const keyframePositionToActiveAreaPosition = x => this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+    const keyframePositionToActiveAreaPosition = x => { return this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET; };
 
     const sampling = 0.01;
     const values = Object.entries(this.animation.getValues(sampling));
 
-    const samplingWidth = this.timeline.getScrollWidthFromDistance(sampling);
+    const samplingWidth = this.timeline.getScrollDeltaFromDistance(sampling);
 
     const rectStartY = (this.activeArea.height / 5) * 2;
     const rectHeight = this.activeArea.height / 5;
@@ -200,15 +201,15 @@ export class SequenceTimelineLayer extends TimelineLayer {
     const xStyle = { color: COLOR_SCHEME.PRIMARY };
     const yStyle = { color: COLOR_SCHEME.PRIMARY_VARIANT };
 
-    const keyframePositionToActiveAreaPosition = x => this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+    const keyframePositionToActiveAreaPosition = x => { return this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET; };
 
     const minXValue = this.animation.getMin('x');
     const minYValue = this.animation.getMin('y');
     const maxXValue = this.animation.getMax('x');
     const maxYValue = this.animation.getMax('y');
 
-    const XvalueToDrawPosition = y => (y - maxXValue) / (minXValue - maxXValue) * this.activeArea.height;
-    const YvalueToDrawPosition = y => (y - maxYValue) / (minYValue - maxYValue) * this.activeArea.height;
+    const XvalueToDrawPosition = y => { return (y - maxXValue) / (minXValue - maxXValue) * this.activeArea.height; };
+    const YvalueToDrawPosition = y => { return (y - maxYValue) / (minYValue - maxYValue) * this.activeArea.height; };
 
     const values = Object.entries(this.animation.getValues());
 
