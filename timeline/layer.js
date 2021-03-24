@@ -129,7 +129,8 @@ export class SequenceTimelineLayer extends TimelineLayer {
     return this.submorphs.filter(submorph => submorph.isTimelineKeyframe);
   }
 
-  redraw () {
+  async redraw () {
+    await this.activeArea.whenRendered();
     this.redrawActiveArea();
   }
 
