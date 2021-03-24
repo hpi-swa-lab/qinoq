@@ -53,8 +53,11 @@ export class TimelineKeyframe extends Morph {
           this.updateAppearance();
         }
       },
+      borderWidth: {
+        defaultValue: 2
+      },
       borderColor: {
-        defaultValue: COLOR_SCHEME.PRIMARY
+        defaultValue: COLOR_SCHEME.TRANSPARENT
       }
     };
   }
@@ -170,7 +173,7 @@ export class TimelineKeyframe extends Morph {
       this.toggleSelection();
     } else
     if (evt.leftMouseButtonPressed()) {
-      this.layer.timeline.setSelectedKeyframe(this);
+      this.layer.timeline.deselectAllTimelineKeyframesExcept(this);
     }
   }
 
@@ -222,6 +225,6 @@ export class TimelineKeyframe extends Morph {
   }
 
   updateAppearance () {
-    this.borderWidth = this.isSelected ? 2 : 0;
+    this.borderColor = this.isSelected ? COLOR_SCHEME.PRIMARY : COLOR_SCHEME.TRANSPARENT;
   }
 }

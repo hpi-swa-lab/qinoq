@@ -296,7 +296,7 @@ export class SequenceTimeline extends Timeline {
 
   get selectedTimelineKeyframes () {
     const sequenceTimelineLayer = this.ui.layerContainer.submorphs.filter(submorph => submorph.isTimelineLayer);
-    return sequenceTimelineLayer.map(layer => layer.submorphs.filter(submorph => submorph.isTimelineKeyframe && submorph.isSelected)).flat();
+    return sequenceTimelineLayer.reduce((timelineKeyframes, layer) => timelineKeyframes.concat(layer.submorphs.filter(submorph => submorph.isTimelineKeyframe && submorph.isSelected)), []);
   }
 
   get sequence () {
@@ -316,7 +316,7 @@ export class SequenceTimeline extends Timeline {
   createTimelineLayer (morph) {
     const timelineLayer = super.createTimelineLayer(morph);
     this.ui.layerInfoContainer.submorphs[timelineLayer.index].onMouseUp = () => {
-      if (morph.world())morph.show();
+      if (morph.world()) morph.show();
       this.editor.inspector.targetMorph = morph;
     };
     return timelineLayer;
@@ -423,8 +423,8 @@ export class SequenceTimeline extends Timeline {
     return this.sequence.progress.toFixed(2);
   }
 
-  setSelectedKeyframe (timelineKeyframe) {
-    this.selectedTimelineKeyframes.forEach(keyframe => keyframe.toggleSelection());
-    timelineKeyframe.toggleSelection();
+  deselectAllTimelineKeyframesExcept (timelineKeyframe) {
+    this.selectedTimelineKeyframes.forEach(keyframe => keyframe.isSelected = false);
+    timelineKeyframe.isSelected = true;
   }
 }
