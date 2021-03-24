@@ -63,10 +63,8 @@ export class Interactive extends Morph {
         set (scrollPosition) {
           this.setProperty('scrollPosition', scrollPosition);
           const scrollOverlayNode = this.scrollOverlay.env.renderer.getNodeForMorph(this.scrollOverlay);
-          if (scrollOverlayNode) {
-            scrollOverlayNode.scrollTop = scrollPosition;
-            this.redraw();
-          }
+          if (scrollOverlayNode) scrollOverlayNode.scrollTop = scrollPosition;
+          this.redraw();
         }
       },
       fixedAspectRatio: {
