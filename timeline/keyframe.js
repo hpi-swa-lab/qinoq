@@ -93,7 +93,7 @@ export class TimelineKeyframe extends Morph {
   async promptEasing () {
     const possibleEasings = Keyframe.possibleEasings;
     const preselectIndex = possibleEasings.indexOf(this.keyframe.easingName);
-    const listPrompt = new ListPrompt({ label: 'Set Easing', items: possibleEasings });
+    const listPrompt = new ListPrompt({ label: 'Set Easing', items: possibleEasings, filterable: true });
     listPrompt.preselect = preselectIndex; // TODO: Make this work consistently (fails sometimes because building listprompt is not done yet (whenRendered is no option, this takes a few seconds))
     const result = await $world.openPrompt(listPrompt);
     if (result.selected.length > 0) {
