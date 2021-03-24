@@ -115,12 +115,16 @@ export class Timeline extends Morph {
     });
 
     this.ui.layerContainer.onMouseWheel = (evt) => {
-      // this event is thrown more often than we need, e.g., it will acompany any scroll event
-      if (!evt.domEvt.altKey) return;
-      const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
-      layerContainerNode.scrollLeft = layerContainerNode.scrollLeft + evt.domEvt.deltaY;
-      this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
-      evt.stop();
+      if (evt.domEvt.metaKey) {
+        this.zoomFactor = evt.domEvt.deltaY > 0 ? this.zoomFactor + 0.1 : this.zoomFactor - 0.1;
+        evt.stop();
+      }
+      if (evt.domEvt.altKey) {
+        const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
+        layerContainerNode.scrollLeft = layerContainerNode.scrollLeft + evt.domEvt.deltaY;
+        this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
+        evt.stop();
+      }
     };
 
     this.ui.scrollableContainer.addMorph(this.ui.layerContainer);
