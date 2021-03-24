@@ -96,6 +96,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
         set (animation) {
           this.setProperty('animation', animation);
           this.tooltip = `${this.morph.name}:${this.animation.property}`;
+          this.redraw();
         }
       }
     };
@@ -128,9 +129,15 @@ export class SequenceTimelineLayer extends TimelineLayer {
     return this.submorphs.filter(submorph => submorph.isTimelineKeyframe);
   }
 
+  redraw () {
+    this.redrawActiveArea();
+  }
+
   redrawActiveArea () {
     this.activeArea.clear(COLOR_SCHEME.SURFACE_VARIANT);
     const style = { color: COLOR_SCHEME.PRIMARY };
+    if (!this.animation) return;
+    if (!this.activeArea.context) return;
     if (this.animation.type == 'number') {
       const minValue = this.animation.min;
       const maxValue = this.animation.max;

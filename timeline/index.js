@@ -334,6 +334,7 @@ export class SequenceTimeline extends Timeline {
     this.sequence.getAnimationsForMorph(timelineLayer.morph).forEach(animation => {
       this.addKeyframesForAnimation(animation, timelineLayer);
     });
+    timelineLayer.redraw();
   }
 
   addKeyframesForAnimation (animation, timelineLayer) {
@@ -351,6 +352,7 @@ export class SequenceTimeline extends Timeline {
       keyframe._lockModelUpdate = false;
     });
     this._activeAreaWidth = CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor;
+    this.timelineLayers.forEach(timelineLayer => timelineLayer.redraw());
   }
 
   get keyframes () {

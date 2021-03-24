@@ -108,6 +108,7 @@ export class TimelineKeyframe extends Morph {
     const result = await $world.openPrompt(listPrompt);
     if (result.selected.length > 0) {
       this.keyframe.setEasing(result.selected[0]);
+      this.layer.redraw();
     }
   }
 
@@ -158,6 +159,7 @@ export class TimelineKeyframe extends Morph {
   remove () {
     this.animation.removeKeyframe(this.keyframe);
     this.removeMorph();
+    this.layer.redraw();
   }
 
   removeMorph () {
@@ -194,6 +196,7 @@ export class TimelineKeyframe extends Morph {
   onDragEnd (event) {
     this.undoStop('keyframe-move');
     this.editor.interactive.redraw();
+    this.layer.redraw();
     delete event.hand.dragKeyframeStates;
   }
 
