@@ -83,12 +83,12 @@ export class Timeline extends Morph {
   }
 
   addScrollIndicator () {
-    this.ui.scrollBar.addMorph(new Morph({
+    this.ui.scroller = this.ui.scrollBar.addMorph(new Morph({
       name: 'scroller',
       draggable: true,
-      fill: COLOR_SCHEME.ON_SURFACE,
-      position: pt(1, 1),
-      extent: pt(20, 13)
+      fill: COLOR_SCHEME.BACKGROUND_VARIANT,
+      position: pt(2, 2),
+      extent: pt(20, 11)
     }));
   }
 
@@ -200,6 +200,11 @@ export class Timeline extends Morph {
     this.timelineLayers.forEach(timelineLayer => {
       timelineLayer.activeArea.width = this._activeAreaWidth;
     });
+
+    const scrollbarWidth = this.ui.scrollBar.extent.x;
+    const visiblePortion = scrollbarWidth / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.scrollbarOffset.x);
+    // keep 2px margin at both left and right end of the scrollbar
+    this.ui.scroller.extent = pt((visiblePortion * scrollbarWidth) - 4, this.ui.scroller.extent.y);
   }
 
   get activeArea () {
