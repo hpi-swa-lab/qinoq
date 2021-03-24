@@ -92,6 +92,24 @@ class Animation {
     // Each animation type implements an interpolate method that interpolates the corresponding type
     throw new Error('Subclass responsibility');
   }
+
+  getValues (sampling = 0.01) {
+    const values = {};
+    for (let progress = 0; progress <= 1; progress += 0.01) {
+      const { start, end } = this.getClosestKeyframes(progress);
+      if (!!start && !!end) {
+        values[progress] = this.transformValue(this.interpolate(progress, start, end));
+        continue;
+      }
+      if (start) {
+        values[progress] = this.transformValue(start.value);
+      }
+      if (end) {
+        values[progress] = this.transformValue(end.value);
+      }
+    }
+    return values;
+  }
 }
 
 export function createAnimationForPropertyType (propType, targetMorph, property) {

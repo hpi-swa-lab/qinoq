@@ -130,23 +130,29 @@ export class SequenceTimelineLayer extends TimelineLayer {
 
   redrawActiveArea () {
     this.activeArea.clear(COLOR_SCHEME.SURFACE_VARIANT);
+    const style = { color: COLOR_SCHEME.PRIMARY };
     if (this.animation.type == 'number') {
       const minValue = this.animation.min;
       const maxValue = this.animation.max;
 
       const valueToDrawPosition = y => (y - maxValue) / (minValue - maxValue) * this.activeArea.height;
+      const keyframePositionToActiveAreaPosition = x => this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
 
-      let currentPosition = 0;
-      let keyframePosition;
-      let currentValue = valueToDrawPosition(this.animation.keyframes[0].value);
-      for (let i = 0; i < this.animation.keyframes.length; i++) {
-        const nextValue = valueToDrawPosition(this.animation.keyframes[i].value);
-        keyframePosition = this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePositionFor(this.animation.keyframes[i])) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
-        this.activeArea.line(pt(currentPosition, currentValue), pt(keyframePosition, nextValue));
-        currentValue = nextValue;
-        currentPosition = keyframePosition;
-      }
-      this.activeArea.line(pt(keyframePosition, currentValue), pt(this.activeArea.width, currentValue));
+      const values = Object.entries(this.animation.getValues());
+
+      let previousPosition = 0;
+      let previousValue = valueToDrawPosition(this.animation.keyframes[0].value);
+
+      values.forEach(positionValuePair => {
+        const position = keyframePositionToActiveAreaPosition(positionValuePair[0]);
+        const value = valueToDrawPosition(positionValuePair[1]);
+        this.activeArea.line(pt(previousPosition, previousValue), pt(position, value), style);
+        previousPosition = position;
+        previousValue = value;
+      });
+
+      // final line
+      this.activeArea.line(pt(previousPosition, previousValue), pt(this.activeArea.width, previousValue), style);
     }
   }
 }
