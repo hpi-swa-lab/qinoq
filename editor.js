@@ -273,8 +273,6 @@ export class InteractivesEditor extends Morph {
     }
     connect(displayedTimeline, 'zoomFactor', this.menuBar.ui.zoomInput, 'number', { converter: '(zoomFactor) => zoomFactor * 100' });
 
-    this.interactive.scrollOverlay.scroll = pt(0, this.interactive.scrollPosition);
-
     displayedTimeline.onScrollChange(this.interactiveScrollPosition);
 
     return displayedTimeline;
