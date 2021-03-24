@@ -64,17 +64,7 @@ class Animation {
 
   // Linear Interpolation
   set progress (progress) {
-    const { start, end } = this.getClosestKeyframes(progress);
-    if (!!start && !!end) {
-      this.target[this.property] = this.transformValue(this.interpolate(progress, start, end));
-      return;
-    }
-    if (start) {
-      this.target[this.property] = this.transformValue(start.value);
-    }
-    if (end) {
-      this.target[this.property] = this.transformValue(end.value);
-    }
+    this.target[this.property] = this.getValueForProgress(progress);
   }
 
   transformValue (value) {
@@ -93,20 +83,23 @@ class Animation {
     throw new Error('Subclass responsibility');
   }
 
+  getValueForProgress (progress) {
+    const { start, end } = this.getClosestKeyframes(progress);
+    if (!!start && !!end) {
+      return this.transformValue(this.interpolate(progress, start, end));
+    }
+    if (start) {
+      return this.transformValue(start.value);
+    }
+    if (end) {
+      return this.transformValue(end.value);
+    }
+  }
+
   getValues (sampling = 0.01) {
     const values = {};
-    for (let progress = 0; progress <= 1; progress += 0.01) {
-      const { start, end } = this.getClosestKeyframes(progress);
-      if (!!start && !!end) {
-        values[progress] = this.transformValue(this.interpolate(progress, start, end));
-        continue;
-      }
-      if (start) {
-        values[progress] = this.transformValue(start.value);
-      }
-      if (end) {
-        values[progress] = this.transformValue(end.value);
-      }
+    for (let progress = 0; progress <= 1; progress += sampling) {
+      values[progress] = this.getValueForProgress(progress);
     }
     return values;
   }
