@@ -242,7 +242,7 @@ export class GlobalTimeline extends Timeline {
   }
 
   get timelineSequences () {
-    return this.timelineLayers.reduce((timelineSequences, timelineLayer) => timelineSequences.concat(timelineLayer.timelineSequences), []);
+    return this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences);
   }
 
   getDisplayValueFromScroll (scrollPosition) {
@@ -340,7 +340,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   get keyframes () {
-    return this.timelineLayers.reduce((keyframes, timelineLayer) => keyframes.concat(timelineLayer.keyframes), []);
+    return this.timelineLayers.flatMap(timelineLayer => timelineLayer.keyframes);
   }
 
   updateLayers () {
