@@ -38,7 +38,7 @@ export class InteractiveMorphInspector extends Morph {
       },
       targetMorph: {
         set (morph) {
-          if (morph) {
+          if (morph && morph != this.targetMorph) {
             this.disbandConnections();
             this.setProperty('targetMorph', morph);
             this.ui.headline.textString = `Inspecting ${morph.toString()}`;
