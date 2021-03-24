@@ -291,6 +291,23 @@ export class InteractivesEditor extends Morph {
     signal(this, 'interactiveScrollPosition', this.interactiveScrollPosition);
   }
 
+  /*
+handleOverlappingOtherSequence (timelineSequenceStates) {
+    if (this.isOverlappingOtherSequence()) {
+      const sequenceStates = timelineSequenceStates;
+      sequenceStates.forEach(sequenceState => {
+        const sequence = sequenceState.timelineSequence;
+        sequence.position = sequenceState.previousPosition;
+        sequence.width = sequenceState.previousWidth;
+        sequence.remove();
+        sequence.timelineLayer = sequenceState.previousTimelineLayer;
+        sequence.updateAppearance();
+        this.env.undoManager.removeLatestUndo();
+      });
+    }
+  }
+*/
+
   get commands () {
     return [
       {
@@ -299,10 +316,22 @@ export class InteractivesEditor extends Morph {
         exec: () => {
           if (!this.interactive) return;
           if (this.displayedTimeline.isGlobalTimeline() && this.displayedTimeline.selectedSequences.length > 0) {
+            const timelineSequenceStates = [];
+            let overlappingSequence;
             this.displayedTimeline.selectedSequences.forEach(timelineSequence => {
+              timelineSequenceStates.push({
+                sequence: timelineSequence,
+                position: timelineSequence.position,
+                width: timelineSequence.width,
+                timelineLayer: timelineSequence.timelineLayer
+              });
+              if (timelineSequence.isOverlappingOtherSequence) overlappingSequence = timelineSequence;
               timelineSequence.position = pt(timelineSequence.position.x + 1, timelineSequence.position.y);
               timelineSequence.updateSequenceAfterArrangement();
             });
+
+            if (overlappingSequence) overlappingSequence.handleOverlappingOtherSequence(timelineSequenceStates);
+
             return;
           }
           if (!this.inputFieldFocused() && this.interactive.scrollPosition < this.interactive.length) {
