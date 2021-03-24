@@ -135,88 +135,100 @@ export class SequenceTimelineLayer extends TimelineLayer {
 
   redrawActiveArea () {
     this.activeArea.clear(COLOR_SCHEME.SURFACE_VARIANT);
-    const style = { color: COLOR_SCHEME.PRIMARY };
+
     if (!this.animation) return false;
     if (!this.activeArea.context) return false;
 
-    const keyframePositionToActiveAreaPosition = x => this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
-
     if (this.animation.type == 'number') {
-      const minValue = this.animation.min;
-      const maxValue = this.animation.max;
-
-      const valueToDrawPosition = y => (y - maxValue) / (minValue - maxValue) * this.activeArea.height;
-
-      const values = Object.entries(this.animation.getValues());
-
-      let previousPosition = 0;
-      let previousValue = valueToDrawPosition(this.animation.keyframes[0].value);
-
-      values.forEach(positionValuePair => {
-        const position = keyframePositionToActiveAreaPosition(positionValuePair[0]);
-        const value = valueToDrawPosition(positionValuePair[1]);
-        this.activeArea.line(pt(previousPosition, previousValue), pt(position, value), style);
-        previousPosition = position;
-        previousValue = value;
-      });
-
-      // final line
-      this.activeArea.line(pt(previousPosition, previousValue), pt(this.activeArea.width, previousValue), style);
-
+      this.drawNumberCurve();
       return true;
     }
-
     if (this.animation.type == 'color') {
-      const sampling = 0.01;
-      const values = Object.entries(this.animation.getValues(sampling));
-
-      const samplingWidth = this.timeline.getScrollWidthFromDistance(sampling);
-
-      const rectStartY = (this.activeArea.height / 5) * 2;
-      const rectHeight = this.activeArea.height / 5;
-
-      values.forEach(positionValuePair => {
-        const position = keyframePositionToActiveAreaPosition(positionValuePair[0]);
-        this.activeArea.rect(pt(position, rectStartY), pt(samplingWidth * 2, rectHeight), { fill: true, fillColor: positionValuePair[1], color: COLOR_SCHEME.TRANSPARENT });
-      });
-
+      this.drawColorVisualization();
       return true;
     }
     if (this.animation.type == 'point') {
-      const xStyle = { color: COLOR_SCHEME.PRIMARY };
-      const yStyle = { color: COLOR_SCHEME.PRIMARY_VARIANT };
-
-      const minXValue = this.animation.getMin('x');
-      const minYValue = this.animation.getMin('y');
-      const maxXValue = this.animation.getMax('x');
-      const maxYValue = this.animation.getMax('y');
-
-      const XvalueToDrawPosition = y => (y - maxXValue) / (minXValue - maxXValue) * this.activeArea.height;
-      const YvalueToDrawPosition = y => (y - maxYValue) / (minYValue - maxYValue) * this.activeArea.height;
-
-      const values = Object.entries(this.animation.getValues());
-
-      let previousPosition = 0;
-      let previousXValue = XvalueToDrawPosition(this.animation.keyframes[0].value.x);
-      let previousYValue = YvalueToDrawPosition(this.animation.keyframes[0].value.y);
-
-      values.forEach(positionValuePair => {
-        const position = keyframePositionToActiveAreaPosition(positionValuePair[0]);
-        const Xvalue = XvalueToDrawPosition(positionValuePair[1].x);
-        const Yvalue = YvalueToDrawPosition(positionValuePair[1].y);
-        this.activeArea.line(pt(previousPosition, previousXValue), pt(position, Xvalue), xStyle);
-        this.activeArea.line(pt(previousPosition, previousYValue), pt(position, Yvalue), yStyle);
-        previousPosition = position;
-        previousXValue = Xvalue;
-        previousYValue = Yvalue;
-      });
-
-      // final lines
-      this.activeArea.line(pt(previousPosition, previousXValue), pt(this.activeArea.width, previousXValue), xStyle);
-      this.activeArea.line(pt(previousPosition, previousYValue), pt(this.activeArea.width, previousYValue), yStyle);
-
+      this.drawPointCurves();
       return true;
     }
+  }
+
+  drawNumberCurve () {
+    const keyframePositionToActiveAreaPosition = x => this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+    const style = { color: COLOR_SCHEME.PRIMARY };
+    const minValue = this.animation.min;
+    const maxValue = this.animation.max;
+
+    const valueToDrawPosition = y => (y - maxValue) / (minValue - maxValue) * this.activeArea.height;
+
+    const values = Object.entries(this.animation.getValues());
+
+    let previousPosition = 0;
+    let previousValue = valueToDrawPosition(this.animation.keyframes[0].value);
+
+    values.forEach(positionValuePair => {
+      const position = keyframePositionToActiveAreaPosition(positionValuePair[0]);
+      const value = valueToDrawPosition(positionValuePair[1]);
+      this.activeArea.line(pt(previousPosition, previousValue), pt(position, value), style);
+      previousPosition = position;
+      previousValue = value;
+    });
+
+    // final line
+    this.activeArea.line(pt(previousPosition, previousValue), pt(this.activeArea.width, previousValue), style);
+  }
+
+  drawColorVisualization () {
+    const keyframePositionToActiveAreaPosition = x => this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+
+    const sampling = 0.01;
+    const values = Object.entries(this.animation.getValues(sampling));
+
+    const samplingWidth = this.timeline.getScrollWidthFromDistance(sampling);
+
+    const rectStartY = (this.activeArea.height / 5) * 2;
+    const rectHeight = this.activeArea.height / 5;
+
+    values.forEach(positionValuePair => {
+      const position = keyframePositionToActiveAreaPosition(positionValuePair[0]);
+      this.activeArea.rect(pt(position, rectStartY), pt(samplingWidth * 2, rectHeight), { fill: true, fillColor: positionValuePair[1], color: COLOR_SCHEME.TRANSPARENT });
+    });
+  }
+
+  drawPointCurves () {
+    const xStyle = { color: COLOR_SCHEME.PRIMARY };
+    const yStyle = { color: COLOR_SCHEME.PRIMARY_VARIANT };
+
+    const keyframePositionToActiveAreaPosition = x => this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+
+    const minXValue = this.animation.getMin('x');
+    const minYValue = this.animation.getMin('y');
+    const maxXValue = this.animation.getMax('x');
+    const maxYValue = this.animation.getMax('y');
+
+    const XvalueToDrawPosition = y => (y - maxXValue) / (minXValue - maxXValue) * this.activeArea.height;
+    const YvalueToDrawPosition = y => (y - maxYValue) / (minYValue - maxYValue) * this.activeArea.height;
+
+    const values = Object.entries(this.animation.getValues());
+
+    let previousPosition = 0;
+    let previousXValue = XvalueToDrawPosition(this.animation.keyframes[0].value.x);
+    let previousYValue = YvalueToDrawPosition(this.animation.keyframes[0].value.y);
+
+    values.forEach(positionValuePair => {
+      const position = keyframePositionToActiveAreaPosition(positionValuePair[0]);
+      const Xvalue = XvalueToDrawPosition(positionValuePair[1].x);
+      const Yvalue = YvalueToDrawPosition(positionValuePair[1].y);
+      this.activeArea.line(pt(previousPosition, previousXValue), pt(position, Xvalue), xStyle);
+      this.activeArea.line(pt(previousPosition, previousYValue), pt(position, Yvalue), yStyle);
+      previousPosition = position;
+      previousXValue = Xvalue;
+      previousYValue = Yvalue;
+    });
+
+    // final lines
+    this.activeArea.line(pt(previousPosition, previousXValue), pt(this.activeArea.width, previousXValue), xStyle);
+    this.activeArea.line(pt(previousPosition, previousYValue), pt(this.activeArea.width, previousYValue), yStyle);
   }
 }
 
