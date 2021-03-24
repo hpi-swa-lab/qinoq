@@ -91,8 +91,8 @@ export class Timeline extends Morph {
         if (scrollDelta === 0) return;
         // because we have to use the morph property here a very significant lag is introduced
         // I tried setting the dom property directly, but this lead to resets of the scrollposition whenever the mouse leaves the morph
-        scrollDelta > 0 ? this.ui.layerContainer.scrollRight(30) : this.ui.layerContainer.scrollLeft(30);
-        // layerContainerNode.scrollLeft = scrollDelta > 0 ? layerContainerNode.scrollLeft + 30 : layerContainerNode.scrollLeft - 30;
+        layerContainerNode.scrollLeft = scrollDelta > 0 ? layerContainerNode.scrollLeft + 30 : layerContainerNode.scrollLeft - 30;
+        this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
       }
     };
 
