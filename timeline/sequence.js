@@ -203,8 +203,8 @@ export class TimelineSequence extends Morph {
 
   prepareSnappingData () {
     const otherTimelineSequences = this.allTimelineSequences.filter(sequence => sequence != this);
-    this._otherTimelineSequencesSortedByStart = otherTimelineSequences.sort((a, b) => a.sequence.start - b.sequence.start);
-    this._otherTimelineSequencesSortedByEnd = otherTimelineSequences.sort((a, b) => a.sequence.end - b.sequence.end);
+    this._otherTimelineSequencesSortedByStart = [...otherTimelineSequences].sort((a, b) => a.sequence.start - b.sequence.start);
+    this._otherTimelineSequencesSortedByEnd = [...otherTimelineSequences].sort((a, b) => a.sequence.end - b.sequence.end);
   }
 
   clearSnappingData () {
@@ -214,7 +214,6 @@ export class TimelineSequence extends Morph {
 
   handleSnapping (mode) {
     this.removeSnapIndicators();
-
     let positionsOfSnapTargets = [];
     switch (mode) {
       case 'drag': positionsOfSnapTargets = [this.sequence.start, this.sequence.end];
@@ -230,7 +229,7 @@ export class TimelineSequence extends Morph {
     );
     if (snapPosition) this.snapTo(snapPosition, mode);
 
-    this.buildSnapIndicators();
+    this.buildSnapIndicators(mode);
   }
 
   getSnappingPosition (positionsOfSnapTargets) {
@@ -307,23 +306,23 @@ export class TimelineSequence extends Morph {
     }
   }
 
-  buildSnapIndicators () {
+  buildSnapIndicators (mode) {
     let buildRightIndicator, buildLeftIndicator;
     this._otherTimelineSequencesSortedByStart.forEach(timelineSequence => {
       const sequence = timelineSequence.sequence;
-      if (sequence.start == this.sequence.start) {
+      if (sequence.start == this.sequence.start && mode != 'resizeRight') {
         buildLeftIndicator = true;
         this._snapIndicators.push(timelineSequence.buildLeftSnapIndicator());
       }
-      if (sequence.start == this.sequence.end) {
+      if (sequence.start == this.sequence.end && mode != 'resizeLeft') {
         buildRightIndicator = true;
         this._snapIndicators.push(timelineSequence.buildLeftSnapIndicator());
       }
-      if (sequence.end == this.sequence.end) {
+      if (sequence.end == this.sequence.end && mode != 'resizeLeft') {
         buildRightIndicator = true;
         this._snapIndicators.push(timelineSequence.buildRightSnapIndicator());
       }
-      if (sequence.end == this.sequence.start) {
+      if (sequence.end == this.sequence.start && mode != 'resizeRight') {
         buildLeftIndicator = true;
         this._snapIndicators.push(timelineSequence.buildRightSnapIndicator());
       }
