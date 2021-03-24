@@ -58,6 +58,7 @@ export class TimelineLayer extends Morph {
       position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0),
       fill: COLOR_SCHEME.SURFACE_VARIANT,
       reactsToPointer: false,
+      preserveContents: false, // Default value of true results in errors when the width was 0 and is increased (happens in an empty interactive)
       name: 'active area',
       borderStyle: { bottom: 'solid', left: 'none', right: 'none', top: 'solid' },
       acceptsDrops: false
