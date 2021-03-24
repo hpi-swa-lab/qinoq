@@ -61,10 +61,12 @@ export class Interactive extends Morph {
         isFloat: false,
         defaultValue: 0,
         set (scrollPosition) {
-          if (Math.abs(scrollPosition - this.scrollPosition) < 0.5) return; // redraw may be costly! If you want to redraw use redraw explicitly
           this.setProperty('scrollPosition', scrollPosition);
-          this.scrollOverlay.scroll.y = scrollPosition;
-          this.redraw();
+          const scrollOverlayNode = this.scrollOverlay.env.renderer.getNodeForMorph(this.scrollOverlay);
+          if (scrollOverlayNode) {
+            scrollOverlayNode.scrollTop = scrollPosition;
+            this.redraw();
+          }
         }
       },
       fixedAspectRatio: {

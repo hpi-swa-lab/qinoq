@@ -296,7 +296,6 @@ export class InteractivesEditor extends Morph {
         exec: () => {
           if (this.interactive && !this.inputFieldFocused() && this.interactive.scrollPosition < this.interactive.length) {
             this.interactive.scrollPosition++;
-            this.interactive.scrollOverlay.scroll = pt(0, this.interactive.scrollPosition); // Should be done in the setter, but it is not shown in the interactive without this line
           }
         }
       },
@@ -306,7 +305,6 @@ export class InteractivesEditor extends Morph {
         exec: () => {
           if (this.interactive && !this.inputFieldFocused() && this.interactive.scrollPosition > 0) {
             this.interactive.scrollPosition--;
-            this.interactive.scrollOverlay.scroll = pt(0, this.interactive.scrollPosition);
           }
         }
       }];
