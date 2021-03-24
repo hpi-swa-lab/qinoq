@@ -78,18 +78,31 @@ export class Timeline extends Morph {
       extent: pt(this.width - CONSTANTS.LAYER_INFO_WIDTH - this.scrollbarOffset.x, CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT),
       fill: COLOR_SCHEME.PRIMARY
     });
-    this.addScrollIndicator();
+    this.addScrollbarSubmorphs();
     this.addMorph(this.ui.scrollBar);
   }
 
-  addScrollIndicator () {
+  addScrollbarSubmorphs () {
     this.ui.scroller = this.ui.scrollBar.addMorph(new Morph({
       name: 'scroller',
-      draggable: true,
       fill: COLOR_SCHEME.BACKGROUND_VARIANT,
       position: pt(2, 2),
       extent: pt(20, 11)
     }));
+
+    this.ui.scrollbarCursor = this.ui.scroller.addMorph(new Morph({
+      name: 'scrollbar cursor',
+      fill: COLOR_SCHEME.SECONDARY,
+      position: pt(0, 0),
+      extent: pt(10, 11)
+    }));
+    connect(this.editor, 'interactiveScrollPosition', this.ui.scrollbarCursor, 'position', {
+      converter: `(scrollPosition) => {
+      const relative = (target.owner.extent.x - target.extent.x) / source.interactive.length;
+      return pt((relative * scrollPosition), 0)
+    }`,
+      varMapping: { pt }
+    });
   }
 
   initializeCursor () {
@@ -123,6 +136,8 @@ export class Timeline extends Morph {
         const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
         layerContainerNode.scrollLeft = layerContainerNode.scrollLeft + evt.domEvt.deltaY;
         this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
+        const relative = (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x) / (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - 4);
+        this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative, 2);
         evt.stop();
       }
     };
