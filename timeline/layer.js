@@ -136,14 +136,16 @@ export class SequenceTimelineLayer extends TimelineLayer {
   redrawActiveArea () {
     this.activeArea.clear(COLOR_SCHEME.SURFACE_VARIANT);
     const style = { color: COLOR_SCHEME.PRIMARY };
-    if (!this.animation) return;
-    if (!this.activeArea.context) return;
+    if (!this.animation) return false;
+    if (!this.activeArea.context) return false;
+
+    const keyframePositionToActiveAreaPosition = x => this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+
     if (this.animation.type == 'number') {
       const minValue = this.animation.min;
       const maxValue = this.animation.max;
 
       const valueToDrawPosition = y => (y - maxValue) / (minValue - maxValue) * this.activeArea.height;
-      const keyframePositionToActiveAreaPosition = x => this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
 
       const values = Object.entries(this.animation.getValues());
 
@@ -160,6 +162,25 @@ export class SequenceTimelineLayer extends TimelineLayer {
 
       // final line
       this.activeArea.line(pt(previousPosition, previousValue), pt(this.activeArea.width, previousValue), style);
+
+      return true;
+    }
+
+    if (this.animation.type == 'color') {
+      const sampling = 0.01;
+      const values = Object.entries(this.animation.getValues(sampling));
+
+      const samplingWidth = this.timeline.getScrollWidthFromDistance(sampling);
+
+      const rectStartY = (this.activeArea.height / 5) * 2;
+      const rectHeight = this.activeArea.height / 5;
+
+      values.forEach(positionValuePair => {
+        const position = keyframePositionToActiveAreaPosition(positionValuePair[0]);
+        this.activeArea.rect(pt(position, rectStartY), pt(samplingWidth * 2, rectHeight), { fill: true, fillColor: positionValuePair[1], color: COLOR_SCHEME.TRANSPARENT });
+      });
+
+      return true;
     }
   }
 }
