@@ -53,20 +53,20 @@ export class Timeline extends Morph {
     this.ui.scrollableContainer = new Morph(
       {
         name: 'scrollable container',
-        extent: pt(this.extent.x, this.extent.y - CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT),
+        extent: pt(this.extent.x, this.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
         clipMode: 'auto'
       });
     this.addMorph(this.ui.scrollableContainer);
     this.initializeLayerInfoContainer();
 
     this.initializeLayerContainer();
-    connect(this.ui.layerContainer, 'extent', this.ui.scrollableContainer, 'height', { converter: ' (extent) => extent.y > timeline.height - scrollbarHeight ? timeline.height - scrollbarHeight : extent.y', varMapping: { timeline: this, scrollbarHeight: CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT } }).update(this.ui.layerContainer.extent);
+    connect(this.ui.layerContainer, 'extent', this.ui.scrollableContainer, 'height', { converter: ' (extent) => extent.y > timeline.height - scrollbarHeight ? timeline.height - scrollbarHeight : extent.y', varMapping: { timeline: this, scrollbarHeight: CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT } }).update(this.ui.layerContainer.extent);
     this.initializeScrollBar();
   }
 
   relayout (newWindowExtent) {
-    this.ui.scrollableContainer.extent = pt(newWindowExtent.x, this.owner.extent.y - CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT);
-    this.ui.layerContainer.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - CONSTANTS.LAYER_INFO_WIDTH, this.owner.extent.y - CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT);
+    this.ui.scrollableContainer.extent = pt(newWindowExtent.x, this.owner.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT);
+    this.ui.layerContainer.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - CONSTANTS.LAYER_INFO_WIDTH, this.owner.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT);
     this.ui.scrollBar.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - CONSTANTS.LAYER_INFO_WIDTH, this.ui.scrollBar.extent.y);
     this.ui.scrollBar.position = this.ui.layerContainer.bottomLeft;
   }
@@ -74,8 +74,8 @@ export class Timeline extends Morph {
   initializeScrollBar () {
     this.ui.scrollBar = new Morph({
       name: 'scrollbar',
-      position: pt(CONSTANTS.LAYER_INFO_WIDTH, this.height - CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT),
-      extent: pt(this.width - CONSTANTS.LAYER_INFO_WIDTH - this.scrollbarOffset.x, CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT),
+      position: pt(CONSTANTS.LAYER_INFO_WIDTH, this.height - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
+      extent: pt(this.width - CONSTANTS.LAYER_INFO_WIDTH - this.scrollbarOffset.x, CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
       fill: COLOR_SCHEME.PRIMARY
     });
     this.addScrollbarSubmorphs();
@@ -86,22 +86,22 @@ export class Timeline extends Morph {
     this.ui.scroller = this.ui.scrollBar.addMorph(new Morph({
       name: 'scroller',
       fill: COLOR_SCHEME.BACKGROUND_VARIANT,
-      position: pt(2, 2),
-      extent: pt(20, 11)
+      position: pt(CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN),
+      extent: pt(0, CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - (2 * CONSTANTS.SCROLLBAR_MARGIN))
     }));
 
     this.ui.scrollbarCursor = this.ui.scrollBar.addMorph(new Morph({
       name: 'scrollbar cursor',
       fill: COLOR_SCHEME.SECONDARY,
       position: pt(0, 0),
-      extent: pt(10, 11)
+      extent: pt(10, CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - (2 * CONSTANTS.SCROLLBAR_MARGIN))
     }));
     connect(this.editor, 'interactiveScrollPosition', this.ui.scrollbarCursor, 'position', {
       converter: `(scrollPosition) => {
       const relative = (scrollBar.extent.x - target.extent.x) / source.interactive.length;
-      return pt((relative * scrollPosition), 2)
+      return pt((relative * scrollPosition), scrollbarMargin)
     }`,
-      varMapping: { pt: pt, scrollBar: this.ui.scrollBar }
+      varMapping: { pt: pt, scrollBar: this.ui.scrollBar, scrollbarMargin: CONSTANTS.SCROLLBAR_MARGIN }
     });
   }
 
@@ -118,7 +118,7 @@ export class Timeline extends Morph {
       name: 'layer container',
       clipMode: 'hidden',
       position: pt(CONSTANTS.LAYER_INFO_WIDTH, 0),
-      extent: pt(this.width - CONSTANTS.LAYER_INFO_WIDTH - this.scrollbarOffset.x, this.height - CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT),
+      extent: pt(this.width - CONSTANTS.LAYER_INFO_WIDTH - this.scrollbarOffset.x, this.height - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
       layout: new VerticalLayout({
         spacing: 2,
         resizeSubmorphs: true,
@@ -136,8 +136,8 @@ export class Timeline extends Morph {
         const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
         layerContainerNode.scrollLeft = layerContainerNode.scrollLeft + evt.domEvt.deltaY;
         this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
-        const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - 4) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
-        this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + 2, 2);
+        const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
+        this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
         evt.stop();
       }
     };
@@ -149,7 +149,7 @@ export class Timeline extends Morph {
     this.ui.layerInfoContainer = new Morph({
       name: 'layer info container',
       position: pt(0, 0),
-      extent: pt(CONSTANTS.LAYER_INFO_WIDTH, this.height - CONSTANTS.CUSTOM_SCROLLBAR_HEIGHT),
+      extent: pt(CONSTANTS.LAYER_INFO_WIDTH, this.height - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
       layout: new VerticalLayout({
         spacing: 2,
         resizeSubmorphs: true,
@@ -218,8 +218,8 @@ export class Timeline extends Morph {
 
     const scrollbarWidth = this.ui.scrollBar.extent.x;
     const visiblePortion = scrollbarWidth / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.scrollbarOffset.x);
-    // keep 2px margin at both left and right end of the scrollbar
-    this.ui.scroller.extent = pt((visiblePortion * scrollbarWidth) - 4, this.ui.scroller.extent.y);
+    // keep margin at both left and right end of the scrollbar
+    this.ui.scroller.extent = pt((visiblePortion * scrollbarWidth) - (2 * CONSTANTS.SCROLLBAR_MARGIN), this.ui.scroller.extent.y);
   }
 
   get activeArea () {
