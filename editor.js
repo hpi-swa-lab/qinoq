@@ -143,6 +143,7 @@ export class InteractivesEditor extends Morph {
     connect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
     connect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
     connect(this.interactive, 'name', this.globalTab, 'caption').update(this.interactive.name);
+    connect(this.interactive, 'remove', this, 'reset');
     connect(this.preview, 'extent', this.interactive, 'extent');
 
     connect(this.globalTab, 'caption', this.interactive, 'name');
@@ -165,6 +166,7 @@ export class InteractivesEditor extends Morph {
     if (!this.interactive) return;
     disconnect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
     disconnect(this.interactive, 'name', this.globalTimeline, 'name');
+    disconnect(this.interactive, 'remove', this, 'reset');
     disconnect(this.interactive, 'scrollPosition', this.globalTimeline, 'interactiveScrollPosition');
     disconnect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
     disconnect(this.preview, 'extent', this.interactive, 'extent');
@@ -178,6 +180,12 @@ export class InteractivesEditor extends Morph {
     this.interactive.remove();
     this.inspector.deselect();
     this.preview.showEmptyPreviewPlaceholder();
+  }
+
+  reset () {
+    this.clearInteractive();
+    this.preview.showEmptyPreviewPlaceholder();
+    this.tabContainer.visible = false;
   }
 
   async initializeSequenceView (sequence) {
