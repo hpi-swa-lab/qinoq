@@ -206,6 +206,11 @@ export class Interactive extends Morph {
     layer.interactive = this;
   }
 
+  removeLayer (layer) {
+    arr.remove(this.layers, layer);
+    this.getSequencesInLayer(layer).forEach(sequence => this.removeSequence(sequence));
+  }
+
   addSequence (sequence) {
     connect(sequence, 'layer', this, 'sortSequences');
     this.sequences.push(sequence);

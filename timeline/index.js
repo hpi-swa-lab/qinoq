@@ -177,10 +177,15 @@ export class Timeline extends Morph {
     timelineLayer.initialize(this.editor, this.ui.layerContainer, layer);
     this.ui.layerContainer.addMorphAt(timelineLayer, index);
 
-    const layerInfo = new TimelineLayerInfo({ timelineLayer: timelineLayer, name });
+    const layerInfo = new TimelineLayerInfo({ timelineLayer, name });
     timelineLayer.layerInfo = layerInfo;
     this.ui.layerInfoContainer.addMorphAt(layerInfo, index);
     return timelineLayer;
+  }
+
+  abandonTimelineLayer (timelineLayer) {
+    timelineLayer.layerInfo.abandon();
+    timelineLayer.abandon();
   }
 
   arrangeLayerInfos () {

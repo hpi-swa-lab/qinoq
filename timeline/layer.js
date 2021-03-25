@@ -244,7 +244,13 @@ export class GlobalTimelineLayer extends TimelineLayer {
       nativeCursor: {
         defaultValue: 'grab'
       },
-      layer: {}
+      layer: {},
+      name: {
+        set (name) {
+          this.setProperty('name', name);
+          this.tooltip = name;
+        }
+      }
     };
   }
 
@@ -292,7 +298,16 @@ export class GlobalTimelineLayer extends TimelineLayer {
   }
 
   onDrag (event) {
-    let index = (event.hand.position.y - this.container.globalPosition.y) / (this.extent.y + 2 * this.container.layout.spacing);
+    const index = (event.hand.position.y - this.container.globalPosition.y) / (this.extent.y + 2 * this.container.layout.spacing);
+    this.moveLayerToIndex(index);
+  }
+
+  onDragEnd (event) {
+    this.container.undoStop('overview-layer-drag');
+    this.resetBorderAppearance();
+  }
+
+  moveLayerToIndex (index) {
     if (index < 0) {
       index = 0;
     }
@@ -305,9 +320,13 @@ export class GlobalTimelineLayer extends TimelineLayer {
     this.timeline.updateZIndicesFromTimelineLayerPositions();
   }
 
-  onDragEnd (event) {
-    this.container.undoStop('overview-layer-drag');
-    this.resetBorderAppearance();
+  moveLayerBy (number) {
+    const index = this.currentIndex + number;
+    this.moveLayerToIndex(index);
+  }
+
+  get currentIndex () {
+    return this.container.submorphs.indexOf(this);
   }
 
   getAllSequencesIntersectingWith (rectangle) {
@@ -354,7 +373,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   }
 
   expand () {
-    if (!this.containsKeyframes) {
+    if (!this.mayBeExpanded) {
       this.isExpanded = false;
       $world.inform('Expanding is only available for morphs with keyframes.');
       return;
@@ -369,6 +388,10 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
 
   removeAllTimelineKeyframes () {
     this.keyframes.forEach(keyframe => keyframe.removeMorph());
+  }
+
+  get mayBeExpanded () {
+    return this.containsKeyframes;
   }
 
   get containsKeyframes () {

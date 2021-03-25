@@ -28,6 +28,10 @@ export class TimelineLayerInfo extends Morph {
     return this.timelineLayer.layer;
   }
 
+  get timeline () {
+    return this.timelineLayer.timeline;
+  }
+
   get morph () {
     return this.timelineLayer.morph;
   }
@@ -36,8 +40,16 @@ export class TimelineLayerInfo extends Morph {
     return !!this.layer;
   }
 
+  get isInSequenceTimeline () {
+    return !this.isInGlobalTimeline;
+  }
+
   get interactive () {
-    return this._editor.interactive;
+    return this.editor.interactive;
+  }
+
+  get editor () {
+    return this._editor;
   }
 
   initialize () {
@@ -82,5 +94,56 @@ export class TimelineLayerInfo extends Morph {
 
   restyleCollapseToggle () {
     Icon.setIcon(this.ui.collapseButton, this.timelineLayer.isExpanded ? 'caret-down' : 'caret-right');
+  }
+
+  async promptLayerName () {
+    const newName = await $world.prompt('Layer name:', { input: this.layer.name });
+    if (newName) {
+      this.layer.name = newName;
+      this.timelineLayer.name = newName;
+      this.ui.label.textString = newName;
+    }
+  }
+
+  async removeLayer () {
+    const accept = await $world.confirm('Do you want to delete this layer?\nThis will remove all sequences in the layer.');
+    if (accept) {
+      this.interactive.removeLayer(this.layer);
+      this.timeline.abandonTimelineLayer(this.timelineLayer);
+    }
+  }
+
+  menuItems (evt) {
+    const menuOptions = [];
+    if (this.isInGlobalTimeline) {
+      menuOptions.push(['✏️ Rename Layer', async () => await this.promptLayerName()]);
+      if (this.layer.hidden) {
+        menuOptions.push(['👁 Show Layer', () => this.toggleLayerVisibility()]);
+      }
+      if (!this.layer.hidden) {
+        menuOptions.push(['👁 Hide Layer', () => this.toggleLayerVisibility()]);
+      }
+      if (this.timelineLayer.currentIndex > 0) {
+        menuOptions.push(['⬆️ Move layer up once', () => this.timelineLayer.moveLayerBy(-1)]);
+      }
+      if (this.timelineLayer.currentIndex < this.timelineLayer.container.submorphs.length - 2) {
+        menuOptions.push(['⬇️ Move layer down once', () => this.timelineLayer.moveLayerBy(1)]);
+      }
+      menuOptions.push(['❌ Remove layer', async () => await this.removeLayer()]);
+    }
+    if (this.isInSequenceTimeline) {
+      menuOptions.push(['🔍 Select morph', () => {
+        this.editor.inspector.targetMorph = this.morph;
+        if (this.morph.world()) this.morph.show();
+      }]);
+      if (this.timelineLayer.isOverviewLayer) {
+        if (!this.timelineLayer.isExpanded && this.timelineLayer.mayBeExpanded) {
+          menuOptions.push(['➕ Expand view', () => this.timelineLayer.isExpanded = true]);
+        } else if (this.timelineLayer.isExpanded) {
+          menuOptions.push(['➖ Collapse view', () => this.timelineLayer.isExpanded = false]);
+        }
+      }
+    }
+    return menuOptions;
   }
 }
