@@ -205,7 +205,8 @@ export class InteractivesEditor extends Morph {
   get keybindings () {
     return [
       { keys: 'Left', command: 'move scrollposition backwards' },
-      { keys: 'Right', command: 'move scrollposition forward' }
+      { keys: 'Right', command: 'move scrollposition forward' },
+      { keys: 'Ctrl-A', command: 'select all sequences' }
     ].concat(super.keybindings);
   }
 
@@ -306,6 +307,14 @@ export class InteractivesEditor extends Morph {
         exec: () => {
           if (this.interactive && !this.inputFieldFocused() && this.interactive.scrollPosition > 0) {
             this.interactive.scrollPosition--;
+          }
+        }
+      },
+      {
+        name: 'select all sequences',
+        exec: () => {
+          if (this.displayedTimeline.isGlobalTimeline) {
+            this.displayedTimeline.selectAllSequences();
           }
         }
       }];

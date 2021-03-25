@@ -150,8 +150,13 @@ export class TimelineSequence extends Morph {
 
   onMouseDown (event) {
     super.onMouseDown(event);
-    this.timeline.deselectAllSequences();
-    this.selected = true;
+    if (event.leftMouseButtonPressed()) {
+      const wasSelected = this.selected;
+      if (!event.isShiftDown()) {
+        this.timeline.deselectAllSequences();
+      }
+      this.selected = !wasSelected;
+    }
     this.bringToFront();
   }
 

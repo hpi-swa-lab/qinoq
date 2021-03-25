@@ -273,7 +273,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
 
   onMouseDown (event) {
     super.onMouseDown(event);
-    this.timeline.deselectAllSequences();
+    // this.timeline.deselectAllSequences();
   }
 
   changeBorderAppearance () {

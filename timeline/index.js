@@ -8,6 +8,7 @@ import { TimelineKeyframe } from './keyframe.js';
 import { CONSTANTS } from './constants.js';
 import { TimelineLayerInfo } from './layer-info.js';
 import { COLOR_SCHEME } from '../colors.js';
+import { arr } from 'lively.lang';
 
 export class Timeline extends Morph {
   static get properties () {
@@ -353,6 +354,30 @@ export class GlobalTimeline extends Timeline {
     this.timelineLayers.forEach(timelineLayer => {
       timelineLayer.deselectAllSequences();
     });
+  }
+
+  getSelectedSequences (filter) {
+    const selectedSequences = this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences).filter(sequence => sequence.selected);
+    if (filter) {
+      return selectedSequences.filter(filter);
+    }
+    return selectedSequences;
+  }
+
+  selectAllSequences (filter, deselectIfAllAreSelected = true) {
+    let allSequences = this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences);
+    if (filter) {
+      allSequences = allSequences.filter(filter);
+    }
+    if (deselectIfAllAreSelected && arr.equals(allSequences, this.getSelectedSequences(filter))) {
+      allSequences.forEach(sequence => sequence.selected = false);
+    } else {
+      allSequences.forEach(sequence => sequence.selected = true);
+    }
+  }
+
+  get isGlobalTimeline () {
+    return true;
   }
 }
 
