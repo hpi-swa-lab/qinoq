@@ -98,10 +98,10 @@ export class Timeline extends Morph {
     }));
     connect(this.editor, 'interactiveScrollPosition', this.ui.scrollbarCursor, 'position', {
       converter: `(scrollPosition) => {
-      const relative = (target.owner.extent.x - target.extent.x) / source.interactive.length;
+      const relative = (scrollBar.extent.x - target.extent.x) / source.interactive.length;
       return pt((relative * scrollPosition), 0)
     }`,
-      varMapping: { pt }
+      varMapping: { pt: pt, scrollBar: this.ui.scrollBar }
     });
   }
 
