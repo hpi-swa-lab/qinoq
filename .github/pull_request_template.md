@@ -77,3 +77,10 @@ Closes [fill in your issues here]
 - [ ] the second tab can be renamed to 'sunrise', this will also rename the sequence in the global timeline to 'sunrise' and the respective timeline to 'sunrise timeline'
 - [ ] the second tab can be closed with the 'X'
 - [ ] opening two tabs and setting them to different zoom factors works as expected, even when changing between them and scrolling in both (the cursor is always at the correct position, both have independent zoom factors)
+
+### Timeline
+
+- [ ] when scrolling in the interactive, the cursor indicator in the scrollbar of the timeline moves accordingly
+- [ ] when the zoomfactor of a timeline is changed, the scroller in the scrollbar changes its width accordingly
+- [ ] moving in the scrolled timeline with alt+wheel changes the scroller position
+- [ ] in a scrollable timeline normal scrolling will always move the layers and their information and nothing else
