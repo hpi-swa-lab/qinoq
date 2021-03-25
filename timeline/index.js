@@ -136,8 +136,9 @@ export class Timeline extends Morph {
         const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
         layerContainerNode.scrollLeft = layerContainerNode.scrollLeft + evt.domEvt.deltaY;
         this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
-        const relative = (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x) / (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - 4);
-        this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative, 2);
+        debugger;
+        const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - 4) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
+        this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + 2, 2);
         evt.stop();
       }
     };
