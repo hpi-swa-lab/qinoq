@@ -279,6 +279,11 @@ export class InteractivesEditor extends Morph {
   }
 
   onZoomChange (newZoom) {
+    if (newZoom < this.displayedTimeline.minZoomFactor) {
+      this.menuBar.ui.zoomInput.number = this.displayedTimeline.minZoomFactor * 100;
+      this.displayedTimeline.zoomFactor = this.displayedTimeline.minZoomFactor;
+      return;
+    }
     this.displayedTimeline.zoomFactor = newZoom;
   }
 

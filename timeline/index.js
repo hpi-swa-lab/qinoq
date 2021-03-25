@@ -27,7 +27,7 @@ export class Timeline extends Morph {
         isFloat: true,
         min: 0,
         set (zoomFactor) {
-          if (zoomFactor <= 0) return;
+          if (zoomFactor < this.minZoomFactor) return;
           this.setProperty('zoomFactor', zoomFactor);
           if (!this.editor.interactive) return;
           this.redraw();
@@ -183,6 +183,10 @@ export class Timeline extends Morph {
     throw new Error('Subclass resposibility');
   }
 
+  get minZoomFactor () {
+    return 0.01;
+  }
+
   abandon () {
     disconnect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange');
     disconnect(this.editor.interactive, 'name', this, 'name');
@@ -282,6 +286,11 @@ export class GlobalTimeline extends Timeline {
     this.timelineLayers.forEach(timelineLayer => {
       timelineLayer.deselectAllSequences();
     });
+  }
+
+  get minZoomFactor () {
+    const minSequenceDuration = Math.min(...this._editor.interactive.sequences.map(sequence => sequence.duration));
+    return Math.max(super.minZoomFactor, CONSTANTS.MINIMAL_SEQUENCE_WIDTH / minSequenceDuration);
   }
 }
 
