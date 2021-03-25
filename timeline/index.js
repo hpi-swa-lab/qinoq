@@ -29,7 +29,9 @@ export class Timeline extends Morph {
         min: 0,
         set (zoomFactor) {
           if (zoomFactor <= 0) return;
+          this.undoStart('interactive-editor-change-zoom');
           this.setProperty('zoomFactor', zoomFactor);
+          this.undoStart('interactive-editor-change-zoom');
           if (!this.editor.interactive) return;
           this.redraw();
         }
