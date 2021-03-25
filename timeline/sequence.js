@@ -686,6 +686,10 @@ export class TimelineSequence extends Morph {
     }
   }
 
+  disbandInteractiveConnections () {
+    disconnect(this.sequence, 'name', this, 'caption');
+  }
+
   abandon () {
     this.remove();
 
@@ -697,7 +701,7 @@ export class TimelineSequence extends Morph {
       this.editor.disbandTabConnections(sequenceTab);
       sequenceTab.close();
     }
-
+    this.disbandInteractiveConnections();
     this.editor.interactive.removeSequence(this.sequence);
     this.updateSequenceAfterArrangement();
     super.abandon();

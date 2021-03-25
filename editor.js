@@ -175,6 +175,7 @@ export class InteractivesEditor extends Morph {
     disconnect(this.interactive, 'onLengthChange', this.globalTimeline, '_activeAreaWidth');
 
     disconnect(this.globalTab, 'caption', this.interactive, 'name');
+    this.globalTimeline.clear();
 
     this.tabs.forEach(tab => { if (tab !== this.globalTab) tab.close(); });
 

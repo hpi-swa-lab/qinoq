@@ -388,6 +388,10 @@ export class GlobalTimeline extends Timeline {
   get isGlobalTimeline () {
     return true;
   }
+
+  clear () {
+    this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences).forEach(timelineSequence => timelineSequence.disbandInteractiveConnections());
+  }
 }
 
 export class SequenceTimeline extends Timeline {
