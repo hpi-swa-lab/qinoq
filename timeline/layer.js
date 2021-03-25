@@ -111,6 +111,13 @@ export class SequenceTimelineLayer extends TimelineLayer {
     if (this.morph.world()) this.morph.show();
   }
 
+  onMouseDown (evt) {
+    // we get the event before the keyframes
+    // if the click is on a keyframe we do not need to handle it
+    if (this.morphsContainingPoint(evt.hand.position).filter(morph => morph.isTimelineKeyframe).length > 0) return;
+    this.timeline.deselectAllTimelineKeyframes();
+  }
+
   get keyframes () {
     return this.submorphs.filter(submorph => submorph.isTimelineKeyframe);
   }

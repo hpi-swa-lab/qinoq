@@ -427,4 +427,8 @@ export class SequenceTimeline extends Timeline {
     this.selectedTimelineKeyframes.forEach(keyframe => keyframe.isSelected = false);
     timelineKeyframe.isSelected = true;
   }
+
+  deselectAllTimelineKeyframes () {
+    this.selectedTimelineKeyframes.forEach(keyframe => keyframe.isSelected = false);
+  }
 }
