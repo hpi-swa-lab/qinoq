@@ -168,8 +168,7 @@ export class TimelineKeyframe extends Morph {
     super.onMouseDown(evt);
     if (evt.leftMouseButtonPressed() && evt.keyCombo == 'Shift') {
       this.toggleSelection();
-    } else
-    if (evt.leftMouseButtonPressed()) {
+    } else if (evt.leftMouseButtonPressed()) {
       this.layer.timeline.deselectAllTimelineKeyframesExcept(this);
     }
   }
