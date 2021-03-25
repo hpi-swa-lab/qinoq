@@ -350,10 +350,12 @@ export class GlobalTimeline extends Timeline {
     this.editor.interactive.redraw();
   }
 
-  deselectAllSequences () {
-    this.timelineLayers.forEach(timelineLayer => {
-      timelineLayer.deselectAllSequences();
-    });
+  deselectAllSequences (filter) {
+    let allSequences = this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences);
+    if (filter) {
+      allSequences = allSequences.filter(filter);
+    }
+    allSequences.forEach(sequence => sequence.selected = false);
   }
 
   getSelectedSequences (filter) {

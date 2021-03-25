@@ -148,13 +148,32 @@ export class TimelineSequence extends Morph {
     this.editor.initializeSequenceView(this.sequence);
   }
 
+  get rectangularSelectionFilter () {
+    return sequence => {
+      const minX = Math.min(this.timeline._lastSelectedTimelineSequence.globalPosition.x, this.globalPosition.x);
+      const maxX = Math.max(this.timeline._lastSelectedTimelineSequence.worldPoint(pt(this.timeline._lastSelectedTimelineSequence.width, 0)).x, this.worldPoint(pt(this.width, 0)).x);
+      const minY = Math.min(this.timeline._lastSelectedTimelineSequence.globalPosition.y, this.globalPosition.y);
+      const maxY = Math.max(this.timeline._lastSelectedTimelineSequence.globalPosition.y, this.globalPosition.y);
+      return ((sequence.globalPosition.x >= minX && sequence.globalPosition.x <= maxX) ||
+            (sequence.worldPoint(pt(sequence.width, 0)).x >= minX && sequence.worldPoint(pt(sequence.width, 0)).x <= maxX)) &&
+        (sequence.globalPosition.y >= minY && sequence.globalPosition.y <= maxY);
+    };
+  }
+
   onMouseDown (event) {
     super.onMouseDown(event);
     if (event.leftMouseButtonPressed()) {
       const wasSelected = this.selected;
-      if (!event.isShiftDown()) {
+      if (!event.isShiftDown() && !event.isAltDown()) {
         this.timeline.deselectAllSequences();
       }
+      if (event.isAltDown() && !this.selected && this.timeline._lastSelectedTimelineSequence && this.timeline.getSelectedSequences().length > 0) {
+        this.timeline.selectAllSequences(this.rectangularSelectionFilter);
+      } else if (event.isAltDown() && this.selected && this.timeline._lastSelectedTimelineSequence) {
+        this.timeline.deselectAllSequences(this.rectangularSelectionFilter);
+      }
+      this.timeline._lastSelectedTimelineSequence = this;
+
       this.selected = !wasSelected;
     }
     this.bringToFront();
