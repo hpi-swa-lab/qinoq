@@ -193,12 +193,15 @@ export class TimelineKeyframe extends Morph {
   }
 
   onDragStart (event) {
+    this.isSelected = true;
     this.undoStart('keyframe-move');
-    event.hand.dragKeyframeStates = [{
-      timelineKeyframe: this,
-      keyframe: this.keyframe,
-      previousPosition: this.keyframe.position
-    }];
+    const states = [];
+    this.timeline.selectedTimelineKeyframes.forEach(timelinekeyframe => states.push({
+      timelineKeyframe: timelinekeyframe,
+      keyframe: timelinekeyframe.keyframe,
+      previousPosition: timelinekeyframe.keyframe.position
+    }));
+    event.hand.dragKeyframeStates = states;
   }
 
   onDragEnd (event) {
@@ -221,9 +224,17 @@ export class TimelineKeyframe extends Morph {
 
   onDrag (event) {
     super.onDrag(event);
-    if (this.keyframe.position < 0) this.keyframe.position = 0;
-    if (this.keyframe.position > 1) this.keyframe.position = 1;
-    this.updatePosition();
+    const dragState = event.hand.dragKeyframeStates.filter(dragState => dragState.timelineKeyframe == this)[0];
+    const prevPosition = dragState.previousPosition;
+    const dragDelta = prevPosition - this.keyframe.position;
+
+    event.hand.dragKeyframeStates.forEach(dragState => { if (dragState.timelineKeyframe != this) dragState.keyframe.position = dragState.previousPosition - dragDelta; });
+    if (!this.checkForValidDrag(event.hand.dragKeyframeStates)) {
+      event.hand.dragKeyframeStates.forEach(stateForKeyframe => {
+        stateForKeyframe.keyframe.position = stateForKeyframe.previousPosition;
+      });
+    }
+    this.timeline.selectedTimelineKeyframes.forEach(keyframe => keyframe.updatePosition());
     this.editor.interactive.redraw();
   }
 
