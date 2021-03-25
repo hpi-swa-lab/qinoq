@@ -66,6 +66,10 @@ export class TimelineKeyframe extends Morph {
     return this._editor;
   }
 
+  get timeline () {
+    return this.editor.displayedTimeline;
+  }
+
   get timelineKeyframeY () {
     return (CONSTANTS.LAYER_HEIGHT / 2) - (Math.sqrt(2) * CONSTANTS.KEYFRAME_EXTENT.x / 2);
   }
@@ -119,7 +123,7 @@ export class TimelineKeyframe extends Morph {
   menuItems (evt) {
     return [
       ['Rename Keyframe', async () => await this.promptRename()],
-      ['Delete Keyframe', () => this.remove()],
+      ['Delete Keyframe', () => this.timeline.deleteSelection()],
       ['Edit Relative Keyframe Position (0 to 1)', async () => { await this.promptUserForNewRelativePosition(); }],
       ['Edit Absolute Keyframe Position', async () => { await this.promptUserForNewAbsolutePosition(); }],
       ['Set Easing', () => this.promptEasing()]
@@ -162,8 +166,8 @@ export class TimelineKeyframe extends Morph {
 
   remove () {
     this.animation.removeKeyframe(this.keyframe);
-    this.removeMorph();
     this.layer.redraw();
+    this.removeMorph();
   }
 
   removeMorph () {
