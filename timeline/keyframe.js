@@ -53,11 +53,8 @@ export class TimelineKeyframe extends Morph {
           this.updateAppearance();
         }
       },
-      borderWidth: {
-        defaultValue: 2
-      },
       borderColor: {
-        defaultValue: COLOR_SCHEME.TRANSPARENT
+        defaultValue: COLOR_SCHEME.PRIMARY
       }
     };
   }
@@ -225,6 +222,6 @@ export class TimelineKeyframe extends Morph {
   }
 
   updateAppearance () {
-    this.borderColor = this.isSelected ? COLOR_SCHEME.PRIMARY : COLOR_SCHEME.TRANSPARENT;
+    this.borderWidth = this.isSelected ? 2 : 0;
   }
 }
