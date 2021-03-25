@@ -631,7 +631,7 @@ export class TimelineSequence extends Morph {
     if (this.isOverlappingOtherSequence()) {
       const sequenceStates = timelineSequenceStates;
       sequenceStates.forEach(sequenceState => {
-        const sequence = sequenceState.timelineSequence;
+        const sequence = sequenceState.sequence;
         sequence.position = sequenceState.previousPosition;
         sequence.width = sequenceState.previousWidth;
         sequence.remove();

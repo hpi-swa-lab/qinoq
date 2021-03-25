@@ -321,9 +321,10 @@ handleOverlappingOtherSequence (timelineSequenceStates) {
             this.displayedTimeline.selectedSequences.forEach(timelineSequence => {
               timelineSequenceStates.push({
                 sequence: timelineSequence,
-                position: timelineSequence.position,
-                width: timelineSequence.width,
-                timelineLayer: timelineSequence.timelineLayer
+                previousPosition: timelineSequence.position,
+                previousWidth: timelineSequence.width,
+                previousTimelineLayer: timelineSequence.timelineLayer,
+                isDrag: true
               });
               if (timelineSequence.isOverlappingOtherSequence) overlappingSequence = timelineSequence;
               timelineSequence.position = pt(timelineSequence.position.x + 1, timelineSequence.position.y);
