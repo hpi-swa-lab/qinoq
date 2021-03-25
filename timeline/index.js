@@ -76,7 +76,10 @@ export class Timeline extends Morph {
       name: 'scrollbar',
       position: pt(CONSTANTS.LAYER_INFO_WIDTH, this.height - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
       extent: pt(this.width - CONSTANTS.LAYER_INFO_WIDTH - this.scrollbarOffset.x, CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
-      fill: COLOR_SCHEME.PRIMARY
+      fill: COLOR_SCHEME.TRANSPARENT,
+      borderColor: COLOR_SCHEME.BACKGROUND_VARIANT,
+      borderWidth: 1,
+      borderRadius: 10
     });
     this.addScrollbarSubmorphs();
     this.addMorph(this.ui.scrollBar);
@@ -87,14 +90,16 @@ export class Timeline extends Morph {
       name: 'scroller',
       fill: COLOR_SCHEME.BACKGROUND_VARIANT,
       position: pt(CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN),
-      extent: pt(0, CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - (2 * CONSTANTS.SCROLLBAR_MARGIN))
+      extent: pt(0, CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - (2 * CONSTANTS.SCROLLBAR_MARGIN)),
+      borderRadius: 10
     }));
 
     this.ui.scrollbarCursor = this.ui.scrollBar.addMorph(new Morph({
       name: 'scrollbar cursor',
       fill: COLOR_SCHEME.SECONDARY,
       position: pt(0, 0),
-      extent: pt(10, CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - (2 * CONSTANTS.SCROLLBAR_MARGIN))
+      extent: pt(10, CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - (2 * CONSTANTS.SCROLLBAR_MARGIN)),
+      borderRadius: 10
     }));
     connect(this.editor, 'interactiveScrollPosition', this.ui.scrollbarCursor, 'position', {
       converter: `(scrollPosition) => {
