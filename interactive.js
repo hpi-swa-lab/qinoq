@@ -63,7 +63,7 @@ export class Interactive extends Morph {
           if (Math.abs(scrollPosition - this.scrollPosition) < 0.5) return; // redraw may be costly! If you want to redraw use redraw explicitly
           this.setProperty('scrollPosition', scrollPosition);
           const scrollOverlayNode = this.scrollOverlay.env.renderer.getNodeForMorph(this.scrollOverlay);
-          if (scrollOverlayNode){
+          if (scrollOverlayNode) {
             scrollOverlayNode.scrollTop = scrollPosition;
             this.scrollOverlay.setProperty('scroll', pt(scrollOverlayNode.scrollLeft, scrollOverlayNode.scrollTop));
           }
@@ -141,6 +141,12 @@ export class Interactive extends Morph {
   remove () {
     this.scrollOverlay.remove();
     super.remove();
+  }
+
+  onOwnerChanged (newOwner) {
+    if (newOwner) {
+      newOwner.addMorph(this.scrollOverlay);
+    }
   }
 
   get isInteractive () {

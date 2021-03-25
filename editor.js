@@ -184,7 +184,6 @@ export class InteractivesEditor extends Morph {
 
   reset () {
     this.clearInteractive();
-    this.preview.showEmptyPreviewPlaceholder();
     this.tabContainer.visible = false;
   }
 
