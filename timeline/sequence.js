@@ -164,12 +164,12 @@ export class TimelineSequence extends Morph {
     super.onMouseDown(event);
     if (event.leftMouseButtonPressed()) {
       const wasSelected = this.selected;
-      if (!event.isShiftDown() && !event.isAltDown()) {
+      if (!event.isAltDown() && !event.isShiftDown()) {
         this.timeline.deselectAllSequences();
       }
-      if (event.isAltDown() && !this.selected && this.timeline._lastSelectedTimelineSequence && this.timeline.getSelectedSequences().length > 0) {
+      if (event.isShiftDown() && !this.selected && this.timeline._lastSelectedTimelineSequence && this.timeline.getSelectedSequences().length > 0) {
         this.timeline.selectAllSequences(this.rectangularSelectionFilter);
-      } else if (event.isAltDown() && this.selected && this.timeline._lastSelectedTimelineSequence) {
+      } else if (event.isShiftDown() && this.selected && this.timeline._lastSelectedTimelineSequence) {
         this.timeline.deselectAllSequences(this.rectangularSelectionFilter);
       }
       this.timeline._lastSelectedTimelineSequence = this;
