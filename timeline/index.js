@@ -90,7 +90,7 @@ export class Timeline extends Morph {
       extent: pt(20, 11)
     }));
 
-    this.ui.scrollbarCursor = this.ui.scroller.addMorph(new Morph({
+    this.ui.scrollbarCursor = this.ui.scrollBar.addMorph(new Morph({
       name: 'scrollbar cursor',
       fill: COLOR_SCHEME.SECONDARY,
       position: pt(0, 0),
@@ -99,7 +99,7 @@ export class Timeline extends Morph {
     connect(this.editor, 'interactiveScrollPosition', this.ui.scrollbarCursor, 'position', {
       converter: `(scrollPosition) => {
       const relative = (scrollBar.extent.x - target.extent.x) / source.interactive.length;
-      return pt((relative * scrollPosition), 0)
+      return pt((relative * scrollPosition), 2)
     }`,
       varMapping: { pt: pt, scrollBar: this.ui.scrollBar }
     });
@@ -136,7 +136,6 @@ export class Timeline extends Morph {
         const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
         layerContainerNode.scrollLeft = layerContainerNode.scrollLeft + evt.domEvt.deltaY;
         this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
-        debugger;
         const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - 4) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
         this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + 2, 2);
         evt.stop();
