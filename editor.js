@@ -172,6 +172,7 @@ export class InteractivesEditor extends Morph {
     disconnect(this.preview, 'extent', this.interactive, 'extent');
 
     disconnect(this.interactive, 'name', this.globalTab, 'caption');
+    disconnect(this.interactive, 'onLengthChange', this.globalTimeline, '_activeAreaWidth');
 
     disconnect(this.globalTab, 'caption', this.interactive, 'name');
 
