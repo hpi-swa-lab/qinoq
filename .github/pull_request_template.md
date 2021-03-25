@@ -54,6 +54,7 @@ Closes [fill in your issues here]
 - [ ] a new scrollytelling can be created with a button
 - [ ] resizing the interactive resizes the interactive (by a fixed aspect ratio)
 - [ ] after resizing to have a bigger interactive the sun is bigger and still moves to about half of the interactive width
+- [ ] a interactive can be grabbed out of the editor and placed in the world with both the editor and ineractive still working
 
 ### Sequence View
 
