@@ -182,6 +182,7 @@ export class InteractivesEditor extends Morph {
     this.interactive.remove();
     this.inspector.deselect();
     this.preview.showEmptyPreviewPlaceholder();
+    this.setProperty('interactive', undefined);
   }
 
   reset () {
