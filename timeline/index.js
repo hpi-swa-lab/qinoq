@@ -620,10 +620,16 @@ export class SequenceTimeline extends Timeline {
   }
 
   setEasingForSelection (easing) {
+    this.undoStart('keyframe-easing');
+    const undo = this.undoStop('keyframe-easing');
     this.selectedTimelineKeyframes.forEach(timelineKeyframe => {
+      timelineKeyframe.undoStart('set-keyframe-easing');
+      timelineKeyframe.easing = easing;
       timelineKeyframe.keyframe.setEasing(easing);
       timelineKeyframe.layer.redraw();
+      timelineKeyframe.undoStop('set-keyframe-easing');
     });
+    this.env.undoManager.group(undo);
   }
 
   async promptRenameForSelection (multipleKeyframesSelected) {
@@ -634,14 +640,19 @@ export class SequenceTimeline extends Timeline {
       newName = await $world.prompt(`Name for the selected ${this.selectedTimelineKeyframes.length} Keyframes:`);
     }
     if (newName) {
-      this.undoStart('rename keyframe');
       this.renameSelection(newName);
-      this.undoStop('rename keyframe');
     }
   }
 
   renameSelection (newName) {
-    this.selectedTimelineKeyframes.forEach(timelineKeyframe => timelineKeyframe.name = newName);
+    this.undoStart('rename-keyframe');
+    const undo = this.undoStop('rename-keyframe');
+    this.selectedTimelineKeyframes.forEach(timelineKeyframe => {
+      timelineKeyframe.undoStart('rename-keyframe');
+      timelineKeyframe.name = newName;
+      timelineKeyframe.undoStop('rename-keyframe');
+    });
+    this.env.undoManager.group(undo);
   }
 
   async promptUserForNewRelativePositionForSelection (multipleKeyframesSelected) {
@@ -662,8 +673,11 @@ export class SequenceTimeline extends Timeline {
   }
 
   changeKeyframePositionForSelection (newPosition) {
+    this.undoStart('move-keyframe');
+    const undo = this.undoStop('move-keyframe');
     this.selectedTimelineKeyframes.forEach(timelineKeyframe =>
       timelineKeyframe.changeKeyframePosition(newPosition));
+    this.env.undoManager.group(undo);
   }
 
   async promptUserForNewAbsolutePositionForSelection (multipleKeyframesSelected) {
