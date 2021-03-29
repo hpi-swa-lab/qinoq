@@ -108,25 +108,14 @@ export class TimelineKeyframe extends Morph {
     }
   }
 
-  async promptEasing () {
-    const possibleEasings = Keyframe.possibleEasings;
-    const preselectIndex = possibleEasings.indexOf(this.keyframe.easingName);
-    const listPrompt = new ListPrompt({ label: 'Set Easing', items: possibleEasings, filterable: true });
-    listPrompt.preselect = preselectIndex; // TODO: Make this work consistently (fails sometimes because building listprompt is not done yet (whenRendered is no option, this takes a few seconds))
-    const result = await $world.openPrompt(listPrompt);
-    if (result.selected.length > 0) {
-      this.keyframe.setEasing(result.selected[0]);
-      this.layer.redraw();
-    }
-  }
-
   menuItems (evt) {
+    const multiselect = this.timeline.selectedTimelineKeyframes.length > 1;
     return [
       ['Rename Keyframe', async () => await this.promptRename()],
-      ['Delete Keyframe', () => this.timeline.deleteSelection()],
+      ['Delete Selected Keyframes', () => this.timeline.deleteSelection()],
       ['Edit Relative Keyframe Position (0 to 1)', async () => { await this.promptUserForNewRelativePosition(); }],
       ['Edit Absolute Keyframe Position', async () => { await this.promptUserForNewAbsolutePosition(); }],
-      ['Set Easing', () => this.promptEasing()]
+      ['Set Easing for Selected Keyframes', () => this.timeline.promptEasingForSelection(multiselect)]
     ];
   }
 
@@ -178,7 +167,7 @@ export class TimelineKeyframe extends Morph {
     super.onMouseDown(evt);
     if (evt.leftMouseButtonPressed() && evt.keyCombo == 'Shift') {
       this.toggleSelection();
-    } else if (evt.leftMouseButtonPressed()) {
+    } else if (evt.keyCombo != 'Shift') {
       this.layer.timeline.deselectAllTimelineKeyframesExcept(this);
     }
   }
@@ -195,13 +184,13 @@ export class TimelineKeyframe extends Morph {
   onDragStart (event) {
     this.isSelected = true;
     this.undoStart('keyframe-move');
-    const states = [];
-    this.timeline.selectedTimelineKeyframes.forEach(timelinekeyframe => states.push({
-      timelineKeyframe: timelinekeyframe,
-      keyframe: timelinekeyframe.keyframe,
-      previousPosition: timelinekeyframe.keyframe.position
-    }));
-    event.hand.dragKeyframeStates = states;
+    event.hand.dragKeyframeStates = this.timeline.selectedTimelineKeyframes.map(timelinekeyframe => {
+      return {
+        timelineKeyframe: timelinekeyframe,
+        keyframe: timelinekeyframe.keyframe,
+        previousPosition: timelinekeyframe.keyframe.position
+      };
+    });
   }
 
   onDragEnd (event) {
