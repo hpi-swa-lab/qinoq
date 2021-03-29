@@ -350,7 +350,7 @@ export class InteractivesEditor extends Morph {
       },
       {
         name: 'delete selected',
-        exec: () => { this.displayedTimeline.deleteSelection(); }
+        exec: () => { this.displayedTimeline.deleteSelectedItems(); }
       }];
   }
 
