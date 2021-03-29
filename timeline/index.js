@@ -9,6 +9,8 @@ import { CONSTANTS } from './constants.js';
 import { TimelineLayerInfo } from './layer-info.js';
 import { COLOR_SCHEME } from '../colors.js';
 import { arr } from 'lively.lang';
+import { ListPrompt } from 'lively.components/prompts.js';
+import { Keyframe } from 'interactives-editor';
 
 export class Timeline extends Morph {
   static get properties () {
@@ -592,5 +594,27 @@ export class SequenceTimeline extends Timeline {
 
   deleteSelection () {
     this.selectedTimelineKeyframes.forEach(keyframe => keyframe.remove());
+  }
+
+  async promptEasingForSelection (multiselect) {
+    debugger;
+    const possibleEasings = Keyframe.possibleEasings;
+    const listPrompt = new ListPrompt({ label: 'Set Easing', items: possibleEasings, filterable: true });
+    listPrompt.preselect = false;
+    if (!multiselect) {
+      const preselectIndex = possibleEasings.indexOf(this.selectedTimelineKeyframes[0].keyframe.easingName);
+      listPrompt.preselect = preselectIndex; // TODO: Make this work consistently (fails sometimes because building listprompt is not done yet (whenRendered is no option, this takes a few seconds))
+    }
+    const result = await $world.openPrompt(listPrompt);
+    if (result.selected.length > 0) {
+      this.setEasingForSelection(result.selected[0]);
+    }
+  }
+
+  setEasingForSelection (easing) {
+    this.selectedTimelineKeyframes.forEach(timelineKeyframe => {
+      timelineKeyframe.keyframe.setEasing(easing);
+      timelineKeyframe.layer.redraw();
+    });
   }
 }
