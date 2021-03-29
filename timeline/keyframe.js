@@ -21,6 +21,7 @@ export class TimelineKeyframe extends Morph {
         set (keyframe) {
           this.setProperty('_keyframe', keyframe);
           this.name = keyframe.name;
+          this.easing = keyframe.easingName;
         }
       },
       animation: {},
@@ -55,6 +56,13 @@ export class TimelineKeyframe extends Morph {
       },
       borderColor: {
         defaultValue: COLOR_SCHEME.PRIMARY
+      },
+      easing: {
+        set (easing) {
+          this.setProperty('easing', easing);
+          this.keyframe.setEasing(this.easing);
+          if (this.layer) this.layer.redraw();
+        }
       }
     };
   }
@@ -159,17 +167,19 @@ export class TimelineKeyframe extends Morph {
   onDragStart (event) {
     this.isSelected = true;
     this.undoStart('keyframe-move');
+    const x = this.undoStop('keyframe-move');
     event.hand.dragKeyframeStates = this.timeline.selectedTimelineKeyframes.map(timelinekeyframe => {
       return {
         timelineKeyframe: timelinekeyframe,
-        keyframe: timelinekeyframe.keyframe,
-        previousPosition: timelinekeyframe.keyframe.position
+        previousPosition: timelinekeyframe.position,
+        keyframe: timelinekeyframe.keyframe
       };
     });
+    event.hand.undoStop = x;
   }
 
   onDragEnd (event) {
-    this.undoStop('keyframe-move');
+    this.env.undoManager.group(event.hand.undoStop);
     this.editor.interactive.redraw();
     this.layer.redraw();
     delete event.hand.dragKeyframeStates;
@@ -187,18 +197,33 @@ export class TimelineKeyframe extends Morph {
   }
 
   onDrag (event) {
+    this.undoStart('keyframe-move');
     super.onDrag(event);
-    const dragState = event.hand.dragKeyframeStates.filter(dragState => dragState.timelineKeyframe == this)[0];
-    const prevPosition = dragState.previousPosition;
-    const dragDelta = prevPosition - this.keyframe.position;
+    this.updatePosition();
+    this.undoStop('keyframe-move');
 
-    event.hand.dragKeyframeStates.forEach(dragState => { if (dragState.timelineKeyframe != this) dragState.keyframe.position = dragState.previousPosition - dragDelta; });
+    const dragState = event.hand.dragKeyframeStates.filter(dragState => dragState.timelineKeyframe == this)[0];
+    const prevPositionX = dragState.previousPosition.x;
+    const dragDeltaX = prevPositionX - this.position.x;
+
+    event.hand.dragKeyframeStates.forEach(dragState => {
+      if (dragState.timelineKeyframe != this) {
+        dragState.timelineKeyframe.undoStart('keyframe-move');
+        dragState.timelineKeyframe.position = pt(dragState.previousPosition.x - dragDeltaX, dragState.previousPosition.y);
+        dragState.timelineKeyframe.undoStop('keyframe-move');
+      }
+    });
+
     if (!this.checkForValidDrag(event.hand.dragKeyframeStates)) {
       event.hand.dragKeyframeStates.forEach(stateForKeyframe => {
-        stateForKeyframe.keyframe.position = stateForKeyframe.previousPosition;
+        dragState.timelineKeyframe.undoStart('keyframe-move');
+        stateForKeyframe.timelineKeyframe.position = stateForKeyframe.previousPosition;
+        dragState.timelineKeyframe.undoStop('keyframe-move');
       });
     }
-    this.timeline.selectedTimelineKeyframes.forEach(keyframe => keyframe.updatePosition());
+
+    // this.timeline.selectedTimelineKeyframes.forEach(keyframe => keyframe.updatePosition());
+
     this.editor.interactive.redraw();
   }
 
