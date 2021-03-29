@@ -28,8 +28,8 @@ export class TimelineKeyframe extends Morph {
         type: String,
         set (name) {
           this.setProperty('name', name);
-          this.tooltip = this.name;
           if (this.keyframe) this.keyframe.name = this.name;
+          this.setTooltip();
         }
       },
       position: {
@@ -77,6 +77,7 @@ export class TimelineKeyframe extends Morph {
     this.animation = animation;
     this._keyframe = keyframe;
     this.draggable = true;
+    this.setTooltip();
     this._lockModelUpdate = false;
     return this;
   }
@@ -89,6 +90,10 @@ export class TimelineKeyframe extends Morph {
 
   get layer () {
     return this.owner;
+  }
+
+  setTooltip () {
+    this.tooltip = this.keyframe ? `${this.name}\nEasing: ${this.keyframe.easingName}` : this.name;
   }
 
   async promptRename () {
