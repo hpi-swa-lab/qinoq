@@ -10,7 +10,7 @@ import { TimelineLayerInfo } from './layer-info.js';
 import { COLOR_SCHEME } from '../colors.js';
 import { arr } from 'lively.lang';
 import { ListPrompt } from 'lively.components/prompts.js';
-import { Keyframe } from 'interactives-editor';
+import { Keyframe, Sequence } from 'interactives-editor';
 
 export class Timeline extends Morph {
   static get properties () {
@@ -597,7 +597,6 @@ export class SequenceTimeline extends Timeline {
   }
 
   async promptEasingForSelection (multiselect) {
-    debugger;
     const possibleEasings = Keyframe.possibleEasings;
     const listPrompt = new ListPrompt({ label: 'Set Easing', items: possibleEasings, filterable: true });
     listPrompt.preselect = false;
@@ -616,5 +615,65 @@ export class SequenceTimeline extends Timeline {
       timelineKeyframe.keyframe.setEasing(easing);
       timelineKeyframe.layer.redraw();
     });
+  }
+
+  async promptRenameForSelection (multiselect) {
+    let newName;
+    if (!multiselect) {
+      newName = await $world.prompt('Keyframe name:', { input: this.selectedTimelineKeyframes[0].name });
+    } else {
+      newName = await $world.prompt('Keyframe names:');
+    }
+    if (newName) {
+      this.undoStart('rename keyframe');
+      this.renameSelection(newName);
+      this.undoStop('rename keyframe');
+    }
+  }
+
+  renameSelection (newName) {
+    this.selectedTimelineKeyframes.forEach(timelineKeyframe => timelineKeyframe.name = newName);
+  }
+
+  async promptUserForNewRelativePositionForSelection (multiselect) {
+    let newPosition;
+    if (!multiselect) {
+      newPosition = await $world.prompt('Keyframe position:', { input: `${this.selectedTimelineKeyframes[0].keyframe.position}` });
+    } else {
+      newPosition = await $world.prompt('Keyframe positions:');
+    }
+    if (newPosition) {
+      if (newPosition >= 0 && newPosition <= 1) {
+        this.changeKeyframePositionForSelection(newPosition);
+      } else {
+        await $world.inform('Enter a value between 0 and 1.');
+        await this.promptUserForNewRelativePositionForSelection(multiselect);
+      }
+    }
+  }
+
+  changeKeyframePositionForSelection (newPosition) {
+    debugger;
+    this.selectedTimelineKeyframes.forEach(timelineKeyframe =>
+      timelineKeyframe.changeKeyframePosition(newPosition));
+  }
+
+  async promptUserForNewAbsolutePositionForSelection (multiselect) {
+    const sequence = Sequence.getSequenceOfMorph(this.selectedTimelineKeyframes[0].animation.target);
+    let newPosition;
+    if (!multiselect) {
+      newPosition = await $world.prompt('Keyframe position:', { input: `${sequence.getAbsolutePositionFor(this.selectedTimelineKeyframes[0].keyframe)}` });
+    } else {
+      newPosition = await $world.prompt('Keyframe positions:');
+    }
+    if (newPosition) {
+      const newRelativePosition = sequence.getRelativePositionFor(newPosition);
+      if (newPosition >= 0 && newPosition <= this.editor.interactive.length && newRelativePosition >= 0 && newRelativePosition <= 1) {
+        this.changeKeyframePositionForSelection(newRelativePosition);
+      } else {
+        await $world.inform('Enter a valid scroll position inside this sequence.');
+        await this.promptUserForNewAbsolutePositionForSelection(multiselect);
+      }
+    }
   }
 }

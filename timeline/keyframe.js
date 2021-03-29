@@ -4,6 +4,7 @@ import { pt } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';
 import { Keyframe, Sequence } from 'qinoq';
 import { ListPrompt } from 'lively.components/prompts.js';
+
 export class TimelineKeyframe extends Morph {
   static get properties () {
     return {
@@ -111,38 +112,12 @@ export class TimelineKeyframe extends Morph {
   menuItems (evt) {
     const multiselect = this.timeline.selectedTimelineKeyframes.length > 1;
     return [
-      ['Rename Keyframe', async () => await this.promptRename()],
+      ['Rename Selected Keyframes', async () => await this.timeline.promptRenameForSelection(multiselect)],
       ['Delete Selected Keyframes', () => this.timeline.deleteSelection()],
-      ['Edit Relative Keyframe Position (0 to 1)', async () => { await this.promptUserForNewRelativePosition(); }],
-      ['Edit Absolute Keyframe Position', async () => { await this.promptUserForNewAbsolutePosition(); }],
+      ['Edit Selected Relative Keyframe Positions (0 to 1)', async () => { await this.timeline.promptUserForNewRelativePositionForSelection(multiselect); }],
+      ['Edit Selected Absolute Keyframe Position', async () => { await this.timeline.promptUserForNewAbsolutePositionForSelection(multiselect); }],
       ['Set Easing for Selected Keyframes', () => this.timeline.promptEasingForSelection(multiselect)]
     ];
-  }
-
-  async promptUserForNewAbsolutePosition (type) {
-    const sequence = Sequence.getSequenceOfMorph(this.animation.target);
-    const newPosition = await $world.prompt('Keyframe position:', { input: `${sequence.getAbsolutePositionFor(this.keyframe)}` });
-    if (newPosition) {
-      const newRelativePosition = sequence.getRelativePositionFor(newPosition);
-      if (newPosition >= 0 && newPosition <= this.editor.interactive.length && newRelativePosition >= 0 && newRelativePosition <= 1) {
-        this.changeKeyframePosition(newRelativePosition);
-      } else {
-        await $world.inform('Enter a valid scroll position inside this sequence.');
-        await this.promptUserForNewAbsolutePosition();
-      }
-    }
-  }
-
-  async promptUserForNewRelativePosition (type) {
-    const newPosition = await $world.prompt('Keyframe position:', { input: `${this.keyframe.position}` });
-    if (newPosition) {
-      if (newPosition >= 0 && newPosition <= 1) {
-        this.changeKeyframePosition(newPosition);
-      } else {
-        await $world.inform('Enter a value between 0 and 1.');
-        await this.promptUserForNewRelativePosition();
-      }
-    }
   }
 
   changeKeyframePosition (newPosition) {
