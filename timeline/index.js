@@ -351,28 +351,35 @@ export class GlobalTimeline extends Timeline {
   }
 
   deselectAllSequences (filter) {
-    let allSequences = this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences);
+    let allSequences = this.sequences;
     if (filter) {
       allSequences = allSequences.filter(filter);
     }
     allSequences.forEach(sequence => sequence.selected = false);
   }
 
+  get sequences () {
+    return this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences);
+  }
+
+  get selectedSequences () {
+    return this.sequences.filter(sequence => sequence.selected);
+  }
+
   getSelectedSequences (filter) {
-    const selectedSequences = this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences).filter(sequence => sequence.selected);
     if (filter) {
-      return selectedSequences.filter(filter);
+      return this.selectedSequences.filter(filter);
     }
-    return selectedSequences;
+    return this.selectedSequences;
   }
 
   selectAllSequences (filter, deselectIfAllAreSelected = true) {
-    let allSequences = this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences);
+    let allSequences = this.sequences;
     if (filter) {
       allSequences = allSequences.filter(filter);
     }
     if (deselectIfAllAreSelected && arr.equals(allSequences, this.getSelectedSequences(filter))) {
-      allSequences.forEach(sequence => sequence.selected = false);
+      this.deselectAllSequences();
     } else {
       allSequences.forEach(sequence => sequence.selected = true);
     }
