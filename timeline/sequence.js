@@ -629,17 +629,21 @@ export class TimelineSequence extends Morph {
 
   handleOverlappingOtherSequence (timelineSequenceStates) {
     if (this.isOverlappingOtherSequence()) {
-      const sequenceStates = timelineSequenceStates;
-      sequenceStates.forEach(sequenceState => {
-        const sequence = sequenceState.sequence;
-        sequence.position = sequenceState.previousPosition;
-        sequence.width = sequenceState.previousWidth;
-        sequence.remove();
-        sequence.timelineLayer = sequenceState.previousTimelineLayer;
-        sequence.updateAppearance();
-        this.env.undoManager.removeLatestUndo();
-      });
+      this.undoLatestMovement(timelineSequenceStates);
     }
+  }
+
+  undoLatestMovement (timelineSequenceStates) {
+    const sequenceStates = timelineSequenceStates;
+    sequenceStates.forEach(sequenceState => {
+      const sequence = sequenceState.sequence;
+      sequence.position = sequenceState.previousPosition;
+      sequence.width = sequenceState.previousWidth;
+      sequence.remove();
+      sequence.timelineLayer = sequenceState.previousTimelineLayer;
+      sequence.updateAppearance();
+      this.env.undoManager.removeLatestUndo();
+    });
   }
 
   get overlappingSequences () {
