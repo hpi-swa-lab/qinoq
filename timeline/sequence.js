@@ -649,13 +649,13 @@ export class TimelineSequence extends Morph {
 
   menuItems (evt) {
     return [
-      ['Rename Sequence', async () => await this.promptName()],
-      ['Delete Sequence', () => this.abandon()],
-      ['Edit duration', async () => await this.promptDuration()],
-      ['Edit start position', async () => await this.promptStart()],
+      ['✏️ Rename Sequence', async () => await this.promptName()],
+      ['❌ Delete Sequence', () => this.abandon()],
+      ['↔️ Edit duration', async () => await this.promptDuration()],
+      ['🏃‍♂️ Edit start position', async () => await this.promptStart()],
       { isDivider: true },
-      ['View sequence', () => this.openSequenceView()],
-      ['Go to start', () => this.editor.interactiveScrollPosition = this.sequence.start]
+      ['🔍 View sequence', () => this.openSequenceView()],
+      ['▶️ Go to start', () => this.editor.interactiveScrollPosition = this.sequence.start]
     ];
   }
 
