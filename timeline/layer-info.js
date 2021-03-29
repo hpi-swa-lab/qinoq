@@ -118,10 +118,10 @@ export class TimelineLayerInfo extends Morph {
     if (this.isInGlobalTimeline) {
       menuOptions.push(['✏️ Rename Layer', async () => await this.promptLayerName()]);
       if (this.layer.hidden) {
-        menuOptions.push(['👁 Show Layer', () => this.toggleLayerVisibility()]);
+        menuOptions.push(['🐵 Show Layer', () => this.toggleLayerVisibility()]);
       }
       if (!this.layer.hidden) {
-        menuOptions.push(['👁 Hide Layer', () => this.toggleLayerVisibility()]);
+        menuOptions.push(['🙈 Hide Layer', () => this.toggleLayerVisibility()]);
       }
       if (this.timelineLayer.currentIndex > 0) {
         menuOptions.push(['⬆️ Move layer up once', () => this.timelineLayer.moveLayerBy(-1)]);
