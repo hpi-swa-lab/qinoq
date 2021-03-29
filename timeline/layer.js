@@ -318,6 +318,9 @@ export class GlobalTimelineLayer extends TimelineLayer {
     this.container.addMorphAt(this, Math.round(index));
     this.timeline.arrangeLayerInfos();
     this.timeline.updateZIndicesFromTimelineLayerPositions();
+
+    this.timeline.ui.cursor.remove();
+    this.container.addMorph(this.timeline.ui.cursor);
   }
 
   moveLayerBy (number) {
