@@ -21,6 +21,16 @@ Closes [fill in your issues here]
 - [ ] moving a sequence to the right will make the active area (light grey) larger
 - [ ] When making the zoom factor higher/lower with the input field, the length of the sequences adapt accordingly, the cursor updates its position and the whole scrollytelling can still be scrolled through
 
+#### Selection of sequences
+
+- [ ] an unselected (default) sequence can be selected by clicking on it
+- [ ] when clicking another sequence, the first sequence is no longer selected, but the second one is
+- [ ] when selecting a sequence with the `Alt` key pressed, the previous selection is not removed
+- [ ] when clicking while pressing `Alt` on a selected sequence, the sequence is deselected
+- [ ] all sequences can be selected with `Ctrl + A`
+- [ ] when all sequences are selected, `Ctrl + A` deselects all sequences
+- [ ] in the standard sequence setup, clicking on the night background and then clicking on the tree sequence while pressing `Shift` selects tree sequence, night background and day background
+
 ### TimelineLayer
 
 - [ ] one can bring the background layer to the front via drag and drop and the tree is not visible afterwards
