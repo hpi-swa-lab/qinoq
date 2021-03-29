@@ -653,7 +653,6 @@ export class SequenceTimeline extends Timeline {
   }
 
   changeKeyframePositionForSelection (newPosition) {
-    debugger;
     this.selectedTimelineKeyframes.forEach(timelineKeyframe =>
       timelineKeyframe.changeKeyframePosition(newPosition));
   }
