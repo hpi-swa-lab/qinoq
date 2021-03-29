@@ -222,6 +222,7 @@ export class InteractivesEditor extends Morph {
       { keys: 'Right', command: { command: 'move sequence right or increase scroll position', args: { stepSize: CONSTANTS.DEFAULT_SCROLL_STEP } } },
       { keys: 'Shift-Right', command: { command: 'move sequence right or increase scroll position', args: { stepSize: CONSTANTS.LARGE_SCROLL_STEP } } },
       { keys: 'Ctrl-A', command: 'select all sequences' }
+      { keys: 'Delete', command: 'delete selected' }
     ].concat(super.keybindings);
   }
 
@@ -345,7 +346,11 @@ export class InteractivesEditor extends Morph {
           if (this.displayedTimeline.isGlobalTimeline) {
             this.displayedTimeline.selectAllSequences();
           }
-        }
+	}
+      },
+      {
+        name: 'delete selected',
+        exec: () => { this.displayedTimeline.deleteSelection(); }
       }];
   }
 

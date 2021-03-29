@@ -174,6 +174,10 @@ export class Timeline extends Morph {
     throw new Error('Subclass resposibility');
   }
 
+  deleteSelection () {
+    throw new Error('Subclass resposibility');
+  }
+
   createTimelineLayer (layer, index = 0, name = undefined) {
     const timelineLayer = this.getNewTimelineLayer();
     timelineLayer.initialize(this.editor, this.ui.layerContainer, layer);
@@ -436,6 +440,10 @@ export class GlobalTimeline extends Timeline {
   clear () {
     this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences).forEach(timelineSequence => timelineSequence.disbandInteractiveConnections());
   }
+
+  deleteSelection () {
+    // TODO
+  }
 }
 
 export class SequenceTimeline extends Timeline {
@@ -674,5 +682,19 @@ export class SequenceTimeline extends Timeline {
         await this.promptUserForNewAbsolutePositionForSelection(multiselect);
       }
     }
+  }
+
+  get keybindings () {
+    return [
+      { keys: 'Strg + Q', command: 'delete selected keyframes' }
+    ].concat(super.keybindings);
+  }
+
+  get commands () {
+    return [
+      {
+        name: 'delete selected keyframes',
+        exec: () => this.deleteSelection()
+      }];
   }
 }
