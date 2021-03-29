@@ -11,6 +11,7 @@ import { COLOR_SCHEME } from '../colors.js';
 import { arr } from 'lively.lang';
 import { ListPrompt } from 'lively.components/prompts.js';
 import { Keyframe, Sequence } from 'interactives-editor';
+import { arr } from 'lively.lang';
 
 export class Timeline extends Morph {
   static get properties () {
@@ -174,7 +175,7 @@ export class Timeline extends Morph {
     throw new Error('Subclass resposibility');
   }
 
-  deleteSelection () {
+  deleteSelectedItems () {
     throw new Error('Subclass resposibility');
   }
 
@@ -441,7 +442,7 @@ export class GlobalTimeline extends Timeline {
     this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences).forEach(timelineSequence => timelineSequence.disbandInteractiveConnections());
   }
 
-  deleteSelection () {
+  deleteSelectedItems () {
     // TODO
   }
 }
@@ -600,15 +601,15 @@ export class SequenceTimeline extends Timeline {
     this.selectedTimelineKeyframes.forEach(keyframe => keyframe.isSelected = false);
   }
 
-  deleteSelection () {
-    this.selectedTimelineKeyframes.forEach(keyframe => keyframe.remove());
+  deleteSelectedItems () {
+    arr.invoke(this.selectedTimelineKeyframes, 'remove');
   }
 
-  async promptEasingForSelection (multiselect) {
+  async promptEasingForSelection (multipleKeyframesSelected) {
     const possibleEasings = Keyframe.possibleEasings;
     const listPrompt = new ListPrompt({ label: 'Set Easing', items: possibleEasings, filterable: true });
     listPrompt.preselect = false;
-    if (!multiselect) {
+    if (!multipleKeyframesSelected) {
       const preselectIndex = possibleEasings.indexOf(this.selectedTimelineKeyframes[0].keyframe.easingName);
       listPrompt.preselect = preselectIndex; // TODO: Make this work consistently (fails sometimes because building listprompt is not done yet (whenRendered is no option, this takes a few seconds))
     }
@@ -625,12 +626,12 @@ export class SequenceTimeline extends Timeline {
     });
   }
 
-  async promptRenameForSelection (multiselect) {
+  async promptRenameForSelection (multipleKeyframesSelected) {
     let newName;
-    if (!multiselect) {
+    if (!multipleKeyframesSelected) {
       newName = await $world.prompt('Keyframe name:', { input: this.selectedTimelineKeyframes[0].name });
     } else {
-      newName = await $world.prompt('Keyframe names:');
+      newName = await $world.prompt(`Name for the selected ${this.selectedTimelineKeyframes.length} Keyframes:`);
     }
     if (newName) {
       this.undoStart('rename keyframe');
@@ -643,19 +644,19 @@ export class SequenceTimeline extends Timeline {
     this.selectedTimelineKeyframes.forEach(timelineKeyframe => timelineKeyframe.name = newName);
   }
 
-  async promptUserForNewRelativePositionForSelection (multiselect) {
+  async promptUserForNewRelativePositionForSelection (multipleKeyframesSelected) {
     let newPosition;
-    if (!multiselect) {
+    if (!multipleKeyframesSelected) {
       newPosition = await $world.prompt('Keyframe position:', { input: `${this.selectedTimelineKeyframes[0].keyframe.position}` });
     } else {
-      newPosition = await $world.prompt('Keyframe positions:');
+      newPosition = await $world.prompt('Set Keyframes to relative position:');
     }
     if (newPosition) {
       if (newPosition >= 0 && newPosition <= 1) {
         this.changeKeyframePositionForSelection(newPosition);
       } else {
         await $world.inform('Enter a value between 0 and 1.');
-        await this.promptUserForNewRelativePositionForSelection(multiselect);
+        await this.promptUserForNewRelativePositionForSelection(multipleKeyframesSelected);
       }
     }
   }
@@ -665,13 +666,13 @@ export class SequenceTimeline extends Timeline {
       timelineKeyframe.changeKeyframePosition(newPosition));
   }
 
-  async promptUserForNewAbsolutePositionForSelection (multiselect) {
+  async promptUserForNewAbsolutePositionForSelection (multipleKeyframesSelected) {
     const sequence = Sequence.getSequenceOfMorph(this.selectedTimelineKeyframes[0].animation.target);
     let newPosition;
-    if (!multiselect) {
+    if (!multipleKeyframesSelected) {
       newPosition = await $world.prompt('Keyframe position:', { input: `${sequence.getAbsolutePositionFor(this.selectedTimelineKeyframes[0].keyframe)}` });
     } else {
-      newPosition = await $world.prompt('Keyframe positions:');
+      newPosition = await $world.prompt('Set Keyframes to absolute Position:');
     }
     if (newPosition) {
       const newRelativePosition = sequence.getRelativePositionFor(newPosition);
@@ -679,22 +680,8 @@ export class SequenceTimeline extends Timeline {
         this.changeKeyframePositionForSelection(newRelativePosition);
       } else {
         await $world.inform('Enter a valid scroll position inside this sequence.');
-        await this.promptUserForNewAbsolutePositionForSelection(multiselect);
+        await this.promptUserForNewAbsolutePositionForSelection(multipleKeyframesSelected);
       }
     }
-  }
-
-  get keybindings () {
-    return [
-      { keys: 'Strg + Q', command: 'delete selected keyframes' }
-    ].concat(super.keybindings);
-  }
-
-  get commands () {
-    return [
-      {
-        name: 'delete selected keyframes',
-        exec: () => this.deleteSelection()
-      }];
   }
 }

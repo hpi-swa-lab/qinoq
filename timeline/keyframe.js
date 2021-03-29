@@ -110,13 +110,13 @@ export class TimelineKeyframe extends Morph {
   }
 
   menuItems (evt) {
-    const multiselect = this.timeline.selectedTimelineKeyframes.length > 1;
+    const multipleKeyframesSelected = this.timeline.selectedTimelineKeyframes.length > 1;
     return [
-      ['✏️ Rename Selected Keyframes', async () => await this.timeline.promptRenameForSelection(multiselect)],
+      ['✏️ Rename Selected Keyframes', async () => await this.timeline.promptRenameForSelection(multipleKeyframesSelected)],
       ['❌ Delete Selected Keyframes', () => this.timeline.deleteSelection()],
-      ['📏 Edit Selected Relative Keyframe Positions (0 to 1)', async () => { await this.timeline.promptUserForNewRelativePositionForSelection(multiselect); }],
-      ['📏 Edit Selected Absolute Keyframe Position', async () => { await this.timeline.promptUserForNewAbsolutePositionForSelection(multiselect); }],
-      ['📈 Set Easing for Selected Keyframes', () => this.timeline.promptEasingForSelection(multiselect)]
+      ['📏 Edit Selected Relative Keyframe Positions (0 to 1)', async () => { await this.timeline.promptUserForNewRelativePositionForSelection(multipleKeyframesSelected); }],
+      ['📏 Edit Selected Absolute Keyframe Position', async () => { await this.timeline.promptUserForNewAbsolutePositionForSelection(multipleKeyframesSelected); }],
+      ['📈 Set Easing for Selected Keyframes', () => this.timeline.promptEasingForSelection(multipleKeyframesSelected)]
     ];
   }
 
@@ -140,10 +140,10 @@ export class TimelineKeyframe extends Morph {
 
   onMouseDown (evt) {
     super.onMouseDown(evt);
-    if (evt.leftMouseButtonPressed() && evt.keyCombo == 'Shift') {
+    if (evt.leftMouseButtonPressed() && evt.isShiftDown()) {
       this.toggleSelection();
-    } else if (evt.keyCombo != 'Shift') {
-      this.layer.timeline.deselectAllTimelineKeyframesExcept(this);
+    } else if (evt.leftMouseButtonPressed() || (evt.rightMouseButtonPressed() && !this.isSelected)) {
+      this.timeline.deselectAllTimelineKeyframesExcept(this);
     }
   }
 
