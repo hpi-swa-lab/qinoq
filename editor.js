@@ -21,7 +21,9 @@ const CONSTANTS = {
   MENU_BAR_HEIGHT: 32,
   NEW_SEQUENCE_LENGTH: 125,
   SPACING: 3,
-  SCROLL_POSITION_TOOLBAR_X_OFFSET: 360
+  SCROLL_POSITION_TOOLBAR_X_OFFSET: 360,
+  DEFAULT_SCROLL_STEP: 1,
+  LARGE_SCROLL_STEP: 10
 };
 CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
 CONSTANTS.TIMELINE_HEIGHT = CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT - CONSTANTS.MENU_BAR_HEIGHT;
@@ -205,8 +207,10 @@ export class InteractivesEditor extends Morph {
 
   get keybindings () {
     return [
-      { keys: 'Left', command: 'move scrollposition backwards' },
-      { keys: 'Right', command: 'move scrollposition forward' },
+      { keys: 'Left', command: 'left arrow key' },
+      { keys: 'Shift-Left', command: 'left arrow key' },
+      { keys: 'Right', command: 'right arrow key' },
+      { keys: 'Shift-Right', command: 'right arrow key' },
       { keys: 'Ctrl-A', command: 'select all sequences' }
     ].concat(super.keybindings);
   }
@@ -291,22 +295,42 @@ export class InteractivesEditor extends Morph {
     signal(this, 'interactiveScrollPosition', this.interactiveScrollPosition);
   }
 
-  /*
-handleOverlappingOtherSequence (timelineSequenceStates) {
-    if (this.isOverlappingOtherSequence()) {
-      const sequenceStates = timelineSequenceStates;
-      sequenceStates.forEach(sequenceState => {
-        const sequence = sequenceState.timelineSequence;
-        sequence.position = sequenceState.previousPosition;
-        sequence.width = sequenceState.previousWidth;
-        sequence.remove();
-        sequence.timelineLayer = sequenceState.previousTimelineLayer;
-        sequence.updateAppearance();
-        this.env.undoManager.removeLatestUndo();
+  moveTimelineSequencesBy (timelineSequences, scrollStepSize) {
+    this.undoStart('timeline-sequence-move');
+
+    let faultyTimelineSequence;
+    const timelineSequenceStates = [];
+    timelineSequences.forEach(timelineSequence => {
+      timelineSequenceStates.push({
+        sequence: timelineSequence,
+        previousPosition: timelineSequence.position,
+        previousWidth: timelineSequence.width,
+        previousTimelineLayer: timelineSequence.timelineLayer,
+        isDrag: true
       });
-    }
+
+      timelineSequence.position = pt(timelineSequence.position.x + timelineSequence.timeline.getWidthFromDuration(scrollStepSize),
+        timelineSequence.position.y);
+      timelineSequence.updateSequenceAfterArrangement();
+
+      const forbiddenMovement = timelineSequence.isOverlappingOtherSequence() || timelineSequence.sequence.start < 0;
+
+      if (forbiddenMovement) {
+        faultyTimelineSequence = timelineSequence;
+        if (scrollStepSize > 0) {
+          timelineSequence.showWarningRight(CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA);
+          timelineSequence.hideWarningRight();
+        } else {
+          timelineSequence.showWarningLeft(CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA);
+          timelineSequence.hideWarningLeft();
+        }
+      }
+    });
+
+    this.undoStop('timeline-sequence-move');
+
+    if (faultyTimelineSequence) faultyTimelineSequence.undoLatestMovement(timelineSequenceStates);
   }
-*/
 
   get commands () {
     return [
