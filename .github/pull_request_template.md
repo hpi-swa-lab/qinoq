@@ -7,19 +7,34 @@ Closes [fill in your issues here]
 
 ## Features that still work
 
+### Interactive
+
+- [ ] can be opened
+- [ ] is scrollable
+
+### Interactive and editor
+
+- [ ] can be loaded in the editor via drag and drop
+- [ ] a new scrollytelling can be created with a button
+- [ ] resizing the interactive resizes the interactive (by a fixed aspect ratio)
+- [ ] after resizing to have a bigger interactive the sun is bigger and still moves to about half of the interactive width
+- [ ] a interactive can be grabbed out of the editor and placed in the world with both the editor and ineractive still working
+
 ### Sequences in GlobalTimeline
 
 - [ ] the tree sequence is resizeable both left and right, this can be reversed
 - [ ] the day sequence can't be dragged or resized onto the night sequence, instead it will snap to the night sequence and the snap indicator is shown
-- [ ] the day sequence can be dragged to the middle layer, it will snap onto the tree sequence
+- [ ] the day sequence can be dragged to the middle layer onto a free spot
 - [ ] the night sequence can't be dragged or resized beyond the left timeline bounds
-- [ ] double clicking on the sky sequence brings you to a new tab named 'sky sequence' containing the sequence view
+- [ ] clicking left on a sequence selects it (blue border shown)
+- [ ] the selected sequence can be moved by one scroll unit with the left/right arrows and by 10 scroll units when holding shift simultaneously
 - [ ] when clicking the "+" button a sequence is in the hand, which can only be dropped on a timelinelayer and changes color when you are not able to place the sequence
-  - [ ] this can be cancelled by pressing ESC
+	- [ ] this can be cancelled by pressing ESC
 - [ ] right clicking on a sequence brings up a context menu
 - [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the interactive/beginning of the next/previous sequence
 - [ ] moving a sequence to the right will make the active area (light grey) larger
 - [ ] When making the zoom factor higher/lower with the input field, the length of the sequences adapt accordingly, the cursor updates its position and the whole scrollytelling can still be scrolled through
+- [ ] double clicking on the sky sequence brings you to a new tab named 'sky sequence' containing the sequence view
 
 #### Selection of sequences
 
@@ -45,27 +60,14 @@ Closes [fill in your issues here]
 - [ ] with open interactive, scroll position (and cursor position) may be changed with arrow keys
 - [ ] the number in the menubar is consistent with the cursorposition
 
-### Interactive
-
-- [ ] can be opened
-- [ ] is scrollable
-
-### Interactive and editor
-
-- [ ] can be loaded in the editor via drag and drop
-- [ ] a new scrollytelling can be created with a button
-- [ ] resizing the interactive resizes the interactive (by a fixed aspect ratio)
-- [ ] after resizing to have a bigger interactive the sun is bigger and still moves to about half of the interactive width
-- [ ] a interactive can be grabbed out of the editor and placed in the world with both the editor and ineractive still working
-
 ### Sequence View
 
 - [ ] there are three OverviewLayers (one per Morph in the sky sequence)
 - [ ] they hold four to six keyframes each
 - [ ] right-clicking a keyframe shows a context menu
-  - [ ] right-clicking on the last keyframe of the sun's position animation, an option to select easing is shown
-  - [ ] when clicked, a list of easings appears
-  - [ ] when outBack is selected as the easing, the sun moves a little back at the end of the animation
+	- [ ] right-clicking on the last keyframe of the sun's position animation, an option to select easing is shown
+	- [ ] when clicked, a list of easings appears
+	- [ ] when outBack is selected as the easing, the sun moves a little back at the end of the animation
 - [ ] clicking on the triangle expands those into two new layers with two keyframes each
 - [ ] when expanding both morphs the cursor is still visible over all layers
 - [ ] creating a new keyframe (with the inspector) will update the layers accordingly
