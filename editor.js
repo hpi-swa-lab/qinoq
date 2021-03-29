@@ -302,7 +302,7 @@ export class InteractivesEditor extends Morph {
     const timelineSequenceStates = [];
     timelineSequences.forEach(timelineSequence => {
       timelineSequenceStates.push({
-        sequence: timelineSequence,
+        timelineSequence: timelineSequence,
         previousPosition: timelineSequence.position,
         previousWidth: timelineSequence.width,
         previousTimelineLayer: timelineSequence.timelineLayer,

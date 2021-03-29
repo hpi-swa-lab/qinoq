@@ -636,7 +636,7 @@ export class TimelineSequence extends Morph {
   undoLatestMovement (timelineSequenceStates) {
     const sequenceStates = timelineSequenceStates;
     sequenceStates.forEach(sequenceState => {
-      const sequence = sequenceState.sequence;
+      const sequence = sequenceState.timelineSequence;
       sequence.position = sequenceState.previousPosition;
       sequence.width = sequenceState.previousWidth;
       sequence.remove();
