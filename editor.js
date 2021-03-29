@@ -311,7 +311,7 @@ export class InteractivesEditor extends Morph {
         }
       },
       {
-        name: 'select all sequences',
+        name: 'select all',
         exec: () => {
           if (this.displayedTimeline.isGlobalTimeline) {
             this.displayedTimeline.selectAllSequences();

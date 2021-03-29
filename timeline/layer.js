@@ -271,11 +271,6 @@ export class GlobalTimelineLayer extends TimelineLayer {
     }
   }
 
-  onMouseDown (event) {
-    super.onMouseDown(event);
-    // this.timeline.deselectAllSequences();
-  }
-
   changeBorderAppearance () {
     [this, this.activeArea, this.inactiveArea].forEach(morph => {
       morph.borderWidth = 3;
