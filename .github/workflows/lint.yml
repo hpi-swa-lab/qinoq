@@ -3,7 +3,7 @@ name: Lint
 on: ['push']
 
 jobs:
-  build:
+  eslint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -11,3 +11,11 @@ jobs:
       run: npm install
     - name: Run ESLint
       run: npx eslint . --ext .js
+  markdownlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Markdown linter
+        uses: bewuethr/mdl-action@v1
+        with:
+          style-file: .github/workflows/markdown-style.rb
