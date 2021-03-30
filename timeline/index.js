@@ -102,8 +102,23 @@ export class Timeline extends Morph {
       fill: COLOR_SCHEME.BACKGROUND_VARIANT,
       position: pt(CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN),
       extent: pt(0, CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - (2 * CONSTANTS.SCROLLBAR_MARGIN)),
-      borderRadius: 10
+      borderRadius: 10,
+      draggable: true
     }));
+    connect(this.ui.scroller, 'onDrag', this.ui.scroller, 'ensureValidPosition');
+    this.ui.scroller.ensureValidPosition = (evt) => {
+      let positionX = this.ui.scroller.position.x;
+      if (this.ui.scroller.position.x < CONSTANTS.SCROLLBAR_MARGIN) {
+        positionX = CONSTANTS.SCROLLBAR_MARGIN;
+      }
+      if (this.ui.scroller.extent.x + this.ui.scroller.position.x + CONSTANTS.SCROLLBAR_MARGIN > this.ui.scrollBar.extent.x) {
+        positionX = this.ui.scrollBar.extent.x - CONSTANTS.SCROLLBAR_MARGIN - this.ui.scroller.extent.x;
+      }
+      this.ui.scroller.position = pt(positionX, CONSTANTS.SCROLLBAR_MARGIN);
+
+      const relative = (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x) / (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN));
+      this.ui.layerContainer.scroll = pt(this.ui.scroller.position.x * relative + CONSTANTS.SCROLLBAR_MARGIN, this.ui.layerContainer.scroll.y);
+    };
 
     this.ui.scrollbarCursor = this.ui.scrollBar.addMorph(new Morph({
       name: 'scrollbar cursor',
