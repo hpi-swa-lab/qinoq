@@ -255,10 +255,6 @@ export class Timeline extends Morph {
     throw new Error('Subclass resposibility');
   }
 
-  isGlobalTimeline () {
-    return false;
-  }
-
   abandon () {
     disconnect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange');
     disconnect(this.editor.interactive, 'name', this, 'name');
@@ -387,10 +383,6 @@ export class GlobalTimeline extends Timeline {
     } else {
       allSequences.forEach(sequence => sequence.selected = true);
     }
-  }
-
-  get isGlobalTimeline () {
-    return true;
   }
 
   clear () {

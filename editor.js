@@ -207,10 +207,10 @@ export class InteractivesEditor extends Morph {
 
   get keybindings () {
     return [
-      { keys: 'Left', command: 'left arrow key' },
-      { keys: 'Shift-Left', command: 'left arrow key' },
-      { keys: 'Right', command: 'right arrow key' },
-      { keys: 'Shift-Right', command: 'right arrow key' },
+      { keys: 'Left', command: { command: 'move sequence left or decrease scroll position', args: { stepSize: CONSTANTS.DEFAULT_SCROLL_STEP } } },
+      { keys: 'Shift-Left', command: { command: 'move sequence left or decrease scroll position', args: { stepSize: CONSTANTS.LARGE_SCROLL_STEP } } },
+      { keys: 'Right', command: { command: 'move sequence right or increase scroll position', args: { stepSize: CONSTANTS.DEFAULT_SCROLL_STEP } } },
+      { keys: 'Shift-Right', command: { command: 'move sequence right or increase scroll position', args: { stepSize: CONSTANTS.LARGE_SCROLL_STEP } } },
       { keys: 'Ctrl-A', command: 'select all sequences' }
     ].concat(super.keybindings);
   }
@@ -306,7 +306,7 @@ export class InteractivesEditor extends Morph {
         previousPosition: timelineSequence.position,
         previousWidth: timelineSequence.width,
         previousTimelineLayer: timelineSequence.timelineLayer,
-        isDrag: true
+        isMove: true
       });
 
       timelineSequence.position = pt(timelineSequence.position.x + timelineSequence.timeline.getWidthFromDuration(scrollStepSize),
@@ -335,55 +335,36 @@ export class InteractivesEditor extends Morph {
   get commands () {
     return [
       {
-        name: 'move scrollposition forward',
-        doc: 'Move the scrollPosition of the interactive forward by one unit',
-        exec: () => {
-          if (!this.interactive) return;
-          if (this.displayedTimeline.isGlobalTimeline() && this.displayedTimeline.selectedSequences.length > 0) {
-            const timelineSequenceStates = [];
-            let overlappingSequence;
-            this.displayedTimeline.selectedSequences.forEach(timelineSequence => {
-              timelineSequenceStates.push({
-                sequence: timelineSequence,
-                previousPosition: timelineSequence.position,
-                previousWidth: timelineSequence.width,
-                previousTimelineLayer: timelineSequence.timelineLayer,
-                isDrag: true
-              });
-              if (timelineSequence.isOverlappingOtherSequence) overlappingSequence = timelineSequence;
-              timelineSequence.position = pt(timelineSequence.position.x + 1, timelineSequence.position.y);
-              timelineSequence.updateSequenceAfterArrangement();
-            });
-
-            if (overlappingSequence) overlappingSequence.handleOverlappingOtherSequence(timelineSequenceStates);
-
+        name: 'move sequence right or increase scroll position',
+        doc: 'Move the scrollPosition or the selected sequences of the interactive right by args.stepSize units',
+        exec: (morph, args) => {
+          if (!this.interactive || this.inputFieldFocused()) return;
+          if (this.displayedTimeline.isGlobalTimeline && this.displayedTimeline.selectedSequences.length > 0) {
+            this.moveTimelineSequencesBy(this.displayedTimeline.selectedSequences, args.stepSize);
             return;
           }
-          if (!this.inputFieldFocused() && this.interactive.scrollPosition < this.interactive.length) {
-            this.interactive.scrollPosition++;
+          if (this.interactive.scrollPosition + args.stepSize <= this.interactive.length) {
+            this.interactive.scrollPosition += args.stepSize;
+          } else {
+            this.interactive.scrollPosition = this.interactive.length;
           }
         }
       },
       {
-        name: 'move scrollposition backwards',
-        doc: 'Move the scrollPosition of the interactive back by one unit',
-        exec: () => {
-          if (!this.interactive) return;
-          if (this.displayedTimeline.isGlobalTimeline() && this.displayedTimeline.selectedSequences.length > 0) {
-            const timelineSequences = this.displayedTimeline.selectedSequences;
-            if (timelineSequences.sort((a, b) => a.position.x - b.position.x).filter((seq, index, sequences) => seq.position.x === sequences[0].position.x)[0].position.x <= TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) return;
-
-            timelineSequences.forEach(timelineSequence => {
-              timelineSequence.position = pt(timelineSequence.position.x - 1, timelineSequence.position.y);
-              timelineSequence.updateSequenceAfterArrangement();
-            });
+        name: 'move sequence left or decrease scroll position',
+        doc: 'Move the scroll position or the selected sequences of the interactive left by args.stepSize units',
+        exec: (morph, args) => {
+          if (!this.interactive || this.inputFieldFocused()) return;
+          if (this.displayedTimeline.isGlobalTimeline && this.displayedTimeline.selectedSequences.length > 0) {
+            this.moveTimelineSequencesBy(this.displayedTimeline.selectedSequences, -args.stepSize);
             return;
           }
-          if (!this.inputFieldFocused() && this.interactive.scrollPosition > 0) {
-            this.interactive.scrollPosition--;
+          if (this.interactive.scrollPosition - args.stepSize >= 0) {
+            this.interactive.scrollPosition -= args.stepSize;
+          } else {
+            this.interactive.scrollPosition = 0;
           }
-        }
-      },
+        },
       {
         name: 'select all',
         exec: () => {
