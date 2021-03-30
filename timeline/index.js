@@ -21,7 +21,13 @@ export class Timeline extends Morph {
         }
       },
       interactive: {},
-      _editor: {},
+      _editor: {
+        after: ['ui'],
+        set (editor) {
+          this.setProperty('_editor', editor);
+          this.initialize();
+        }
+      },
       clipMode: {
         defaultValue: 'hidden'
       },
@@ -53,8 +59,8 @@ export class Timeline extends Morph {
     return this._editor;
   }
 
-  initialize (editor) {
-    this._editor = editor;
+  // Is automatically called by editor setter
+  initialize () {
     this.ui.scrollableContainer = new Morph(
       {
         name: 'scrollable container',
@@ -213,7 +219,7 @@ export class Timeline extends Morph {
   loadContent (content) {
     if (this.submorphs.length !== 0) {
       this.submorphs.forEach(submorph => submorph.remove());
-      this.initialize(this.editor);
+      this.initialize();
     }
     this._inInitialConstruction = true;
     this.onLoadContent(content);

@@ -95,9 +95,9 @@ export class InteractivesEditor extends Morph {
 
     this.globalTimeline = new GlobalTimeline({
       position: pt(0, 0),
-      extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.TIMELINE_HEIGHT)
+      extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.TIMELINE_HEIGHT),
+      _editor: this
     });
-    this.globalTimeline.initialize(this);
 
     this.tabContainer = await resource('part://tabs/tabs').read();
     Object.assign(this.tabContainer, {
@@ -209,8 +209,7 @@ export class InteractivesEditor extends Morph {
   }
 
   initializeSequenceTimeline (sequence) {
-    const sequenceTimeline = new SequenceTimeline({ position: pt(0, 0), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.TIMELINE_HEIGHT) });
-    sequenceTimeline.initialize(this);
+    const sequenceTimeline = new SequenceTimeline({ position: pt(0, 0), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.TIMELINE_HEIGHT), _editor: this });
     sequenceTimeline.loadContent(sequence);
     return sequenceTimeline;
   }
