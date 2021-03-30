@@ -9,16 +9,16 @@ Closes [fill in your issues here]
 
 ### Interactive
 
-- [ ] can be opened
+- [ ] can be opened in the world
 - [ ] is scrollable
 
 ### Interactive and editor
 
-- [ ] can be loaded in the editor via drag and drop
 - [ ] a new scrollytelling can be created with a button
-- [ ] resizing the interactive resizes the interactive (by a fixed aspect ratio)
+- [ ] can be loaded in the editor via drag and drop
+- [ ] the interactive can be resized by a fixed aspect ratio
 - [ ] after resizing to have a bigger interactive the sun is bigger and still moves to about half of the interactive width
-- [ ] a interactive can be grabbed out of the editor and placed in the world with both the editor and ineractive still working
+- [ ] an interactive can be grabbed out of the editor and placed in the world with both the editor and interactive still working. The editor is cleared
 
 ### Sequences in GlobalTimeline
 
@@ -99,5 +99,5 @@ Closes [fill in your issues here]
 
 - [ ] when scrolling in the interactive, the cursor indicator in the scrollbar of the timeline moves accordingly
 - [ ] when the zoomfactor of a timeline is changed, the scroller in the scrollbar changes its width accordingly
-- [ ] moving in the scrolled timeline with alt+wheel changes the scroller position
+- [ ] moving in the scrolled timeline with `Alt+Wheel` changes the scroller position
 - [ ] in a scrollable timeline normal scrolling will always move the layers and their information and nothing else
