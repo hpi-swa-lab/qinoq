@@ -35,6 +35,8 @@ Closes [fill in your issues here]
 
 - [ ] one can bring the background layer to the front via drag and drop and the tree is not visible afterwards
 - [ ] the info labels change accordingly
+- [ ] the background layer can now be moved down via the context menu of the layer info
+- [ ] a layer may be removed, its sequences will not be visible anymore and the layer is removed from the editor
 - [ ] a layer can be hidden with a click on the eye icon. The sequences in that layer will no longer be shown in the interactive
 
 ### TimelineCursor
