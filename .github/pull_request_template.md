@@ -26,7 +26,7 @@ Closes [fill in your issues here]
 - [ ] the day sequence can't be dragged or resized onto the night sequence, instead it will snap to the night sequence and the snap indicator is shown
 - [ ] the day sequence can be dragged to the middle layer onto a free spot
 - [ ] the night sequence can't be dragged or resized beyond the left timeline bounds
-- [ ] clicking left on a sequence selects it (blue border shown)
+- [ ] using left click on a sequence selects it (blue border shown)
 - [ ] the selected sequence can be moved by one scroll unit with the left/right arrows and by 10 scroll units when holding shift simultaneously
 - [ ] when clicking the "+" button a sequence is in the hand, which can only be dropped on a timelinelayer and changes color when you are not able to place the sequence
 	- [ ] this can be cancelled by pressing ESC
