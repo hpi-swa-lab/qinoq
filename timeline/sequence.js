@@ -80,7 +80,13 @@ export class TimelineSequence extends Morph {
           this.onSelectionChange(selected);
         }
       },
-      _editor: {}
+      _editor: {
+        after: ['timelineLayer', 'sequence', '_lockModelUpdate', 'height'],
+        set (editor) {
+          this.setProperty('_editor', editor);
+          this.initialize(); // _editor should be set only once
+        }
+      }
     };
   }
 
@@ -88,22 +94,18 @@ export class TimelineSequence extends Morph {
     return this._editor;
   }
 
-  initialize (editor, sequence, timelineLayer) {
-    this._lockModelUpdate = true;
-    this._editor = editor;
-    this.sequence = sequence;
-    this.timelineLayer = timelineLayer;
-
-    const startPosition = timelineLayer.timeline.getPositionFromScroll(this.sequence.start);
-    const endPosition = startPosition + timelineLayer.timeline.getWidthFromDuration(this.sequence.duration);
+  // Is automatically called on creation when "_editor" is set
+  initialize () {
+    const startPosition = this.timelineLayer.timeline.getPositionFromScroll(this.sequence.start);
+    const endPosition = startPosition + this.timelineLayer.timeline.getWidthFromDuration(this.sequence.duration);
     this.position = pt(startPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     this.width = endPosition - startPosition;
     this.addMorph(new Label({
       padding: rect(5, 4, 0, 0),
       reactsToPointer: false
     }));
-    timelineLayer.addMorph(this);
-    this.caption = sequence.name;
+    this.timelineLayer.addMorph(this);
+    this.caption = this.sequence.name;
     this.initializeResizers();
     this._lockModelUpdate = false;
     this.updateAppearance();

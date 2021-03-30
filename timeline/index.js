@@ -273,9 +273,9 @@ export class Timeline extends Morph {
 
 export class GlobalTimeline extends Timeline {
   createTimelineSequence (sequence) {
-    const seq = new TimelineSequence();
-    seq.initialize(this.editor, sequence, this.getTimelineLayerFor(sequence.layer));
-    return seq;
+    const timelineSequence = new TimelineSequence({ _editor: this.editor, sequence, timelineLayer: this.getTimelineLayerFor(sequence.layer) });
+    connect(sequence, 'name', timelineSequence, 'caption');
+    return timelineSequence;
   }
 
   createTimelineSequenceInHand (sequence) {
@@ -294,8 +294,7 @@ export class GlobalTimeline extends Timeline {
     this.editor.interactive.layers.sort((a, b) => a.zIndex - b.zIndex).forEach(layer => this.createTimelineLayer(layer));
     connect(this.editor.interactive, 'onLengthChange', this, '_activeAreaWidth', { converter: '(length) => target.getWidthFromDuration(length)' }).update(this.editor.interactive.length);
     this.editor.interactive.sequences.forEach(sequence => {
-      const timeline_seq = this.createTimelineSequence(sequence);
-      connect(sequence, 'name', timeline_seq, 'caption');
+      this.createTimelineSequence(sequence);
     });
     this.updateLayerPositions();
   }
