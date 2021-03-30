@@ -1,6 +1,7 @@
 # qinoq
 
-qinoq allows you to create and edit scrollytellings. It includes classes for an Interactives Editor and for the Interactive itself.  
+qinoq allows you to create and edit scrollytellings. It includes classes for an Interactives Editor and for the Interactive itself.
+
 The Interactives Editor allows editing of Interactives. Currently it is designed to edit Scrollytellings.
 
 ## Editor Usage
@@ -54,7 +55,7 @@ interactive.initialize(pt(400, 300)); //extent of the interactive
 ```js
 const layer = new Layer();
 layer.name = 'example layer';
-interactive.addLayer(layer);    
+interactive.addLayer(layer);
 ```
 
 ### Adding a Sequence to an Interactive
@@ -72,7 +73,8 @@ interactive.addSequence(exampleSequence);
 
 ### Animations
 
-Animations are stored in sequences. Every animation affects one property in one morph (in that sequence). Animations are based on Keyframes that store specific property values at specific relative positions.  
+Animations are stored in sequences. Every animation affects one property in one morph (in that sequence).
+Animations are based on Keyframes that store specific property values at specific relative positions.
 This code adds an animation to the morph "bird" in the "skySequence", which is composed of 3 Keyframes. The animation makes the bird move over the screen by changing the position property.
 
 ```js
