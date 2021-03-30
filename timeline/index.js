@@ -442,7 +442,7 @@ export class GlobalTimeline extends Timeline {
   }
 
   deleteSelectedItems () {
-    // TODO
+    arr.invoke(this.selectedSequences, 'abandon');
   }
 }
 
