@@ -190,7 +190,7 @@ export class TimelineSequence extends Morph {
       previousPosition: this.position,
       previousWidth: this.width,
       previousTimelineLayer: this.timelineLayer,
-      isDragState: true
+      isMove: true
     }];
     this.prepareSnappingData();
   }
@@ -408,7 +408,7 @@ export class TimelineSequence extends Morph {
       previousPosition: this.position,
       previousWidth: this.width,
       previousTimelineLayer: this.timelineLayer,
-      isDragState: false
+      isMove: false
     }];
     this.prepareSnappingData();
   }
