@@ -346,7 +346,7 @@ export class InteractivesEditor extends Morph {
           if (this.displayedTimeline.isGlobalTimeline) {
             this.displayedTimeline.selectAllSequences();
           }
-	}
+        }
       },
       {
         name: 'delete selected',
