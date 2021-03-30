@@ -238,6 +238,7 @@ export class TimelineSequence extends Morph {
 
   handleSnapping (mode) {
     this.removeSnapIndicators();
+    if (this._otherTimelineSequencesSortedByStart.length == 0) return;
     let positionsOfSnapTargets = [];
     switch (mode) {
       case 'drag': positionsOfSnapTargets = [this.sequence.start, this.sequence.end];
