@@ -619,16 +619,13 @@ export class SequenceTimeline extends Timeline {
   }
 
   setEasingForSelection (easing) {
-    this.undoStart('set-keyframe-easing');
-    const undo = this.undoStop('set-keyframe-easing');
+    const undo = this.undoStart('set-keyframe-easing');
     this.selectedTimelineKeyframes.forEach(timelineKeyframe => {
-      timelineKeyframe.undoStart('set-keyframe-easing');
+      undo.addTarget(timelineKeyframe);
       timelineKeyframe.easing = easing;
-      timelineKeyframe.keyframe.setEasing(easing);
       timelineKeyframe.layer.redraw();
-      timelineKeyframe.undoStop('set-keyframe-easing');
     });
-    this.env.undoManager.group(undo);
+    this.undoStop('set-keyframe-easing');
   }
 
   async promptRenameForSelection (multipleKeyframesSelected) {
@@ -644,14 +641,12 @@ export class SequenceTimeline extends Timeline {
   }
 
   renameSelection (newName) {
-    this.undoStart('rename-keyframe');
-    const undo = this.undoStop('rename-keyframe');
+    const undo = this.undoStart('rename-keyframe');
     this.selectedTimelineKeyframes.forEach(timelineKeyframe => {
-      timelineKeyframe.undoStart('rename-keyframe');
+      undo.addTarget(timelineKeyframe);
       timelineKeyframe.name = newName;
-      timelineKeyframe.undoStop('rename-keyframe');
     });
-    this.env.undoManager.group(undo);
+    this.undoStop('rename-keyframe');
   }
 
   async promptUserForNewRelativePositionForSelection (multipleKeyframesSelected) {
@@ -672,11 +667,12 @@ export class SequenceTimeline extends Timeline {
   }
 
   changeKeyframePositionForSelection (newPosition) {
-    this.undoStart('move-keyframe');
-    const undo = this.undoStop('move-keyframe');
-    this.selectedTimelineKeyframes.forEach(timelineKeyframe =>
-      timelineKeyframe.changeKeyframePosition(newPosition));
-    this.env.undoManager.group(undo);
+    const undo = this.undoStart('move-keyframe');
+    this.selectedTimelineKeyframes.forEach(timelineKeyframe => {
+      undo.addTarget(timelineKeyframe);
+      timelineKeyframe.changeKeyframePosition(newPosition);
+    });
+    this.undoStop('move-keyframe');
   }
 
   async promptUserForNewAbsolutePositionForSelection (multipleKeyframesSelected) {
