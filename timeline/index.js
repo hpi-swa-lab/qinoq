@@ -607,7 +607,7 @@ export class SequenceTimeline extends Timeline {
 
   async promptEasingForSelection (multipleKeyframesSelected) {
     const possibleEasings = Keyframe.possibleEasings;
-    const listPrompt = new ListPrompt({ label: 'Set Easing', items: possibleEasings, filterable: true });
+    const listPrompt = new ListPrompt({ label: `Set Easing for the ${this.selectedTimelineKeyframes.length} selected Keyframes`, items: possibleEasings, filterable: true });
     listPrompt.preselect = false;
     if (!multipleKeyframesSelected) {
       const preselectIndex = possibleEasings.indexOf(this.selectedTimelineKeyframes[0].keyframe.easingName);
@@ -620,8 +620,8 @@ export class SequenceTimeline extends Timeline {
   }
 
   setEasingForSelection (easing) {
-    this.undoStart('keyframe-easing');
-    const undo = this.undoStop('keyframe-easing');
+    this.undoStart('set-keyframe-easing');
+    const undo = this.undoStop('set-keyframe-easing');
     this.selectedTimelineKeyframes.forEach(timelineKeyframe => {
       timelineKeyframe.undoStart('set-keyframe-easing');
       timelineKeyframe.easing = easing;
@@ -660,7 +660,7 @@ export class SequenceTimeline extends Timeline {
     if (!multipleKeyframesSelected) {
       newPosition = await $world.prompt('Keyframe position:', { input: `${this.selectedTimelineKeyframes[0].keyframe.position}` });
     } else {
-      newPosition = await $world.prompt('Set Keyframes to relative position:');
+      newPosition = await $world.prompt(`Set the selected ${this.selectedTimelineKeyframes.length} Keyframes to relative position:`);
     }
     if (newPosition) {
       if (newPosition >= 0 && newPosition <= 1) {
