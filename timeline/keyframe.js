@@ -209,6 +209,10 @@ export class TimelineKeyframe extends Morph {
       event.hand.dragKeyframeStates.forEach(stateForKeyframe => {
         stateForKeyframe.timelineKeyframe.position = stateForKeyframe.previousPosition;
       });
+    } else {
+      event.hand.dragKeyframeStates.forEach(stateForKeyframe => {
+        stateForKeyframe.previousPosition = stateForKeyframe.timelineKeyframe.position;
+      });
     }
 
     this.editor.interactive.redraw();
