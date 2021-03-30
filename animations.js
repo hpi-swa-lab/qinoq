@@ -1,6 +1,6 @@
 import { pt } from 'lively.graphics';
 import { arr } from 'lively.lang';
-import { Sequence } from 'interactives-editor';
+import { Sequence } from 'qinoq';
 import { easings, stringToEasing } from 'lively.morphic';
 
 class Animation {

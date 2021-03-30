@@ -1,6 +1,6 @@
 /* global it, describe, beforeEach */
 import { expect } from 'mocha-es6';
-import { Interactive, Layer, Sequence } from 'interactives-editor';
+import { Interactive, Layer, Sequence } from 'qinoq';
 import { pt } from 'lively.graphics';
 
 describe('Interactive object', () => {

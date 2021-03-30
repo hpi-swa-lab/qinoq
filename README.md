@@ -1,11 +1,12 @@
-# interactives-editor
+# qinoq
 
+qinoq allows you to create and edit scrollytellings. It includes classes for an Interactives Editor and for the Interactive itself.  
 The Interactives Editor allows editing of Interactives. Currently it is designed to edit Scrollytellings.
 
 ## Editor Usage
 
 Before first usage of the editor within a world, you need to add the Interactives Editor package to the world.
-For the following examples to work, you need to import the respective classes from the Interactives Editor package. Do so by opening a browser via `Ctrl+b`, clicking the `+` button at the top, selecting `Load Existing Package` and exchange `lively.morphic` with `interactives-editor`. Click `OK`.
+For the following examples to work, you need to import the respective classes from the Interactives Editor package. Do so by opening a browser via `Ctrl+b`, clicking the `+` button at the top, selecting `Load Existing Package` and exchange `lively.morphic` with `qinoq`. Click `OK`.
 
 Use the `javascript workspace` to execute the following commands. You can open one via `Ctrl+k`.
 
@@ -13,7 +14,7 @@ Use the `javascript workspace` to execute the following commands. You can open o
 
 ```js
 /* import necessary modules into workspace */
-import { InteractivesEditor, Interactive } from "interactives-editor";
+import { InteractivesEditor, Interactive } from "qinoq";
 
 /* open an Interactives Editor in a window within the world */
 const editor = await new InteractivesEditor().initialize();
@@ -68,6 +69,7 @@ exampleSequence.addMorph(exampleMorph);
 exampleSequence.layer = layer; // we have to put the sequence on a layer in the interactive
 interactive.addSequence(exampleSequence);
 ```
+
 ### Animations
 
 Animations are stored in sequences. Every animation affects one property in one morph (in that sequence). Animations are based on Keyframes that store specific property values at specific relative positions.  

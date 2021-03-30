@@ -6,9 +6,8 @@ import { InteractiveMorphInspector } from './inspector.js';
 import { resource } from 'lively.resources';
 import { arr } from 'lively.lang';
 import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
-import { Sequence } from 'interactives-editor';
+import { Sequence, Interactive } from 'qinoq';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
-import { Interactive } from 'interactives-editor';
 import StripeButton from 'StripeButton';
 
 const CONSTANTS = {

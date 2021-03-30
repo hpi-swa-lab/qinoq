@@ -2,9 +2,8 @@ import { Morph } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
 import { pt } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';
-import { Keyframe } from 'interactives-editor';
+import { Keyframe, Sequence } from 'qinoq';
 import { ListPrompt } from 'lively.components/prompts.js';
-import { Sequence } from 'interactives-editor';
 export class TimelineKeyframe extends Morph {
   static get properties () {
     return {

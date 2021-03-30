@@ -4,8 +4,6 @@ import { HTMLMorph } from 'lively.morphic';
 import { resource } from 'lively.resources';
 
 import Lottie from 'https://jspm.dev/lottie-web';
-import { promise } from 'lively.lang/promise.js';
-import { Path } from 'lively.lang';
 
 export class LottieMorph extends HTMLMorph {
   static get properties () {
