@@ -601,12 +601,12 @@ export class SequenceTimeline extends Timeline {
   }
 
   deleteSelectedItems () {
-    arr.invoke(this.selectedTimelineKeyframes, 'remove');
+    arr.invoke(this.selectedTimelineKeyframes, 'abandon');
   }
 
   async promptEasingForSelection (multipleKeyframesSelected) {
     const possibleEasings = Keyframe.possibleEasings;
-    const listPrompt = new ListPrompt({ label: `Set Easing for the ${this.selectedTimelineKeyframes.length} selected Keyframes`, items: possibleEasings, filterable: true });
+    const listPrompt = new ListPrompt({ label: `Set Easing for the ${this.selectedTimelineKeyframes.length} selected Keyframe(s)`, items: possibleEasings, filterable: true });
     listPrompt.preselect = false;
     if (!multipleKeyframesSelected) {
       const preselectIndex = possibleEasings.indexOf(this.selectedTimelineKeyframes[0].keyframe.easingName);
@@ -636,7 +636,7 @@ export class SequenceTimeline extends Timeline {
     if (!multipleKeyframesSelected) {
       newName = await $world.prompt('Keyframe name:', { input: this.selectedTimelineKeyframes[0].name });
     } else {
-      newName = await $world.prompt(`Name for the selected ${this.selectedTimelineKeyframes.length} Keyframes:`);
+      newName = await $world.prompt(`Name for the ${this.selectedTimelineKeyframes.length} selected Keyframes:`);
     }
     if (newName) {
       this.renameSelection(newName);
@@ -659,7 +659,7 @@ export class SequenceTimeline extends Timeline {
     if (!multipleKeyframesSelected) {
       newPosition = await $world.prompt('Keyframe position:', { input: `${this.selectedTimelineKeyframes[0].keyframe.position}` });
     } else {
-      newPosition = await $world.prompt(`Set the selected ${this.selectedTimelineKeyframes.length} Keyframes to relative position:`);
+      newPosition = await $world.prompt(`Set the ${this.selectedTimelineKeyframes.length} selected Keyframes to relative position:`);
     }
     if (newPosition) {
       if (newPosition >= 0 && newPosition <= 1) {
@@ -685,7 +685,7 @@ export class SequenceTimeline extends Timeline {
     if (!multipleKeyframesSelected) {
       newPosition = await $world.prompt('Keyframe position:', { input: `${sequence.getAbsolutePositionFor(this.selectedTimelineKeyframes[0].keyframe)}` });
     } else {
-      newPosition = await $world.prompt('Set Keyframes to absolute Position:');
+      newPosition = await $world.prompt(`Set the ${this.selectedTimelineKeyframes.length} selected Keyframes to absolute position:`);
     }
     if (newPosition) {
       const newRelativePosition = sequence.getRelativePositionFor(newPosition);

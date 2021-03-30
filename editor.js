@@ -343,14 +343,14 @@ export class InteractivesEditor extends Morph {
       {
         name: 'select all sequences',
         exec: () => {
-          if (this.displayedTimeline.isGlobalTimeline) {
+          if (this.displayedTimeline.isGlobalTimeline && !this.inputFieldFocused()) {
             this.displayedTimeline.selectAllSequences();
           }
         }
       },
       {
         name: 'delete selected',
-        exec: () => { this.displayedTimeline.deleteSelectedItems(); }
+        exec: () => { if (!this.inputFieldFocused()) this.displayedTimeline.deleteSelectedItems(); }
       }];
   }
 
