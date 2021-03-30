@@ -9,13 +9,10 @@ describe('Interactive object', () => {
   let foreground, background;
 
   beforeEach(() => {
-    interactive = new Interactive();
-    interactive.initialize(pt(10, 10), 20);
+    interactive = new Interactive({ extent: pt(10, 10) });
 
-    sequenceOne = new Sequence();
-    sequenceTwo = new Sequence();
-    sequenceOne.initialize(0, 10);
-    sequenceTwo.initialize(8, 10);
+    sequenceOne = new Sequence({ start: 0, duration: 10 });
+    sequenceTwo = new Sequence({ start: 8, duration: 10 });
 
     background = new Layer();
     background.zIndex = 0;

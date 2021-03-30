@@ -14,8 +14,7 @@ describe('Sequence object', () => {
   const duration = 10;
 
   beforeEach(function () {
-    sequence = new Sequence({ name: 'test sequence' });
-    sequence.initialize(start, duration);
+    sequence = new Sequence({ name: 'test sequence', start, duration });
     sequence.layer = new Layer();
   });
 
@@ -114,14 +113,12 @@ describe('Sequence object', () => {
 
     beforeEach(() => {
       interactive = new Interactive();
-      interactive.initialize(pt(100, 50), 500);
 
       mainLayer = sequence.layer;
       interactive.addLayer(mainLayer);
       interactive.addSequence(sequence);
 
-      anotherSequence = new Sequence();
-      anotherSequence.initialize(50, 100);
+      anotherSequence = new Sequence({ start: 50, duration: 100 });
       anotherSequence.layer = mainLayer;
       interactive.addSequence(anotherSequence);
     });
