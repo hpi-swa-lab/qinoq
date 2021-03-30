@@ -67,8 +67,7 @@ export class InteractivesEditor extends Morph {
   async initializePanels () {
     this.sequenceOverview = this.addMorph(new SequenceOverview({ position: pt(0, 0) }));
 
-    this.preview = new Preview();
-    this.preview.initialize(this);
+    this.preview = new Preview({ _editor: this });
     this.addMorph(this.preview);
 
     this.inspector = new InteractiveMorphInspector({
@@ -79,8 +78,7 @@ export class InteractivesEditor extends Morph {
     this.inspector.initialize(this);
     this.addMorph(this.inspector);
 
-    this.menuBar = new MenuBar({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT) });
-    this.menuBar.initialize(this);
+    this.menuBar = new MenuBar({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), _editor: this });
     this.addMorph(this.menuBar);
     connect(this, 'onDisplayedTimelineChange', this.menuBar, 'onGlobalTimelineTab', {
       updater: `($update, displayedTimeline) => { 
@@ -381,17 +379,17 @@ class Preview extends Morph {
       placeholderCaption: {
         defaultValue: 'Open an Interactive by grab-and-dropping it here, or...'
       },
-      _editor: {}
+      _editor: {
+        set (editor) {
+          this.setProperty('_editor', editor);
+          this.showEmptyPreviewPlaceholder();
+        }
+      }
     };
   }
 
   get editor () {
     return this._editor;
-  }
-
-  initialize (editor) {
-    this._editor = editor;
-    this.showEmptyPreviewPlaceholder();
   }
 
   onDrop (evt) {
@@ -483,7 +481,11 @@ class MenuBar extends Morph {
         defaultValue: false
       },
       ui: {
-        defaultValue: {}
+        after: ['_editor'],
+        defaultValue: {},
+        initialize () {
+          this.initializeUI();
+        }
       },
       _editor: {}
     };
@@ -493,9 +495,7 @@ class MenuBar extends Morph {
     return this._editor;
   }
 
-  initialize (editor) {
-    this._editor = editor;
-
+  initializeUI () {
     const containerCount = 3;
     const containerWidth = this.width / containerCount;
 
