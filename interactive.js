@@ -10,7 +10,6 @@ import { arr } from 'lively.lang';
 export class Interactive extends Morph {
   static example () {
     const interactive = new Interactive();
-    interactive.initialize();
 
     const foregroundLayer = Layer.exampleForegroundLayer();
     const middleLayer = Layer.exampleMiddleLayer();
@@ -40,7 +39,7 @@ export class Interactive extends Morph {
     const backgroundLayer = Layer.exampleBackgroundLayer();
     interactive.addLayer(backgroundLayer);
     interactive.addLayer(foregroundLayer);
-    interactive.initialize();
+
     return interactive;
   }
 
@@ -74,6 +73,7 @@ export class Interactive extends Morph {
         defaultValue: 16 / 9
       },
       extent: {
+        defaultValue: pt(533, 300),
         set (extent) {
           if (this.fixedAspectRatio) {
             extent.x = extent.y * this.fixedAspectRatio;
@@ -89,22 +89,22 @@ export class Interactive extends Morph {
       },
       clipMode: {
         defaultValue: 'hidden'
+      },
+      scrollOverlay: {
+        after: ['extent'],
+        initialize () {
+          this.initScrollOverlay();
+          // VDOM seems to hold older nodes and mistakes them for the new ScrollHolder
+          // this leads to unexpected jumps of the scrollPosition
+          // therefore we reset it again here with respect to the rendering routine
+          this.whenRendered().then(() => { this.scrollOverlay.scroll = pt(0, 0); });
+        }
       }
     };
   }
 
-  initialize (extent = pt(533, 300)) {
-    this.extent = extent;
-    this.initScrollOverlay();
-    // VDOM seems to hold older nodes and mistakes them for the new ScrollHolder
-    // this leads to unexpected jumps of the scrollPosition
-    // therefore we reset it again here with respect to the rendering routine
-    this.whenRendered().then(() => { this.scrollOverlay.scroll = pt(0, 0); });
-  }
-
   initScrollOverlay () {
-    this.scrollOverlay = new InteractiveScrollHolder();
-    this.scrollOverlay.initialize(this);
+    this.scrollOverlay = new InteractiveScrollHolder({ interactive: this });
     const scrollLengthContainer = new Morph({
       name: 'scrollable content',
       halosEnabled: false
@@ -296,10 +296,6 @@ class InteractiveScrollHolder extends Morph {
     };
   }
 
-  initialize (interactive) {
-    this.interactive = interactive;
-  }
-
   onScroll (evt) {
     this.interactive.scrollPosition = this.scroll.y;
   }
@@ -352,7 +348,9 @@ export class Layer {
 export class Sequence extends Morph {
   static get properties () {
     return {
-      start: {},
+      start: {
+        defaultValue: 0
+      },
       duration: {
         defaultValue: 0,
         isFloat: false
@@ -418,16 +416,14 @@ export class Sequence extends Morph {
   }
 
   static backgroundNightExample () {
-    const backgroundSequence = new Sequence({ name: 'night background' });
-    backgroundSequence.initialize(0, 250);
+    const backgroundSequence = new Sequence({ name: 'night background', start: 0, duration: 250 });
     const backgroundMorph = new Morph({ fill: Color.rgbHex('272a7c'), extent: pt(533, 300), name: 'night background' });
     backgroundSequence.addMorph(backgroundMorph);
     return backgroundSequence;
   }
 
   static backgroundDayExample () {
-    const backgroundSequence = new Sequence({ name: 'day background' });
-    backgroundSequence.initialize(250, 250);
+    const backgroundSequence = new Sequence({ name: 'day background', start: 250, duration: 250 });
     const backgroundMorph = new Morph({ fill: Color.rgbHex('60b2e5'), extent: pt(533, 300), name: 'day background' });
     backgroundSequence.addMorph(backgroundMorph);
 
@@ -440,8 +436,7 @@ export class Sequence extends Morph {
   }
 
   static treeExample () {
-    const treeSequence = new Sequence({ name: 'tree sequence' });
-    treeSequence.initialize(0, 500);
+    const treeSequence = new Sequence({ name: 'tree sequence', start: 0, duration: 500 });
     const stemMorph = new Morph({ fill: Color.rgbHex('734c30'), extent: pt(30, 60), name: 'stem' });
     const vertices = [pt(60, 0), pt(90, 50), pt(70, 50), pt(100, 100), pt(70, 100), pt(110, 150), pt(10, 150), pt(50, 100), pt(20, 100), pt(50, 50), pt(30, 50)];
     const crownMorph = new Polygon({ fill: Color.rgbHex('74a57f'), vertices: vertices, name: 'leafs' });
@@ -454,8 +449,7 @@ export class Sequence extends Morph {
   }
 
   static skyExample () {
-    const skySequence = new Sequence({ name: 'sky sequence' });
-    skySequence.initialize(0, 500);
+    const skySequence = new Sequence({ name: 'sky sequence', start: 0, duration: 500 });
 
     const stars = new LottieMorph({ fill: Color.transparent, extent: pt(200, 200), position: pt(0, 0), name: 'lottie stars', animationDataUrl: 'https://assets4.lottiefiles.com/packages/lf20_Aerz0y.json' });
     skySequence.addMorph(stars);
@@ -499,11 +493,6 @@ export class Sequence extends Morph {
 
   get progress () {
     return this._progress;
-  }
-
-  initialize (start, duration) {
-    this.start = start;
-    this.duration = duration;
   }
 
   isDisplayed () {

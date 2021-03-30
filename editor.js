@@ -253,12 +253,12 @@ export class InteractivesEditor extends Morph {
 
   createNewSequence () {
     if (!this.interactive) return;
-    const newSequence = new Sequence({ name: 'unnamed sequence' });
 
     // Assign a valid position to the new sequence
     const lastSequenceInFirstLayer = this.interactive.getLastSequenceInLayer(this.interactive.layers[0]);
     const startingPosition = lastSequenceInFirstLayer ? lastSequenceInFirstLayer.end : 0;
-    newSequence.initialize(startingPosition, CONSTANTS.NEW_SEQUENCE_LENGTH);
+
+    const newSequence = new Sequence({ name: 'unnamed sequence', start: startingPosition, duration: CONSTANTS.NEW_SEQUENCE_LENGTH });
     newSequence.layer = this.interactive.layers[0];
     this.interactive.addSequence(newSequence);
 
