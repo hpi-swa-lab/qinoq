@@ -44,7 +44,11 @@ export class TimelineKeyframe extends Morph {
       },
       _editor: {},
       _lockModelUpdate: {
-        defaultValue: true
+        after: ['animation', '_editor', '_keyframe'],
+        defaultValue: true,
+        initialize () {
+          this._lockModelUpdate = false;
+        }
       },
       isSelected: {
         defaultValue: false,
@@ -80,17 +84,6 @@ export class TimelineKeyframe extends Morph {
 
   get timelineKeyframeY () {
     return (CONSTANTS.LAYER_HEIGHT / 2) - (Math.sqrt(2) * CONSTANTS.KEYFRAME_EXTENT.x / 2);
-  }
-
-  initialize (editor, keyframe, animation) {
-    this._lockModelUpdate = true;
-    this._editor = editor;
-    this.animation = animation;
-    this._keyframe = keyframe;
-    this.draggable = true;
-    this.setTooltip();
-    this._lockModelUpdate = false;
-    return this;
   }
 
   updatePosition () {
