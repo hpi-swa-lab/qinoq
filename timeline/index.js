@@ -178,8 +178,8 @@ export class Timeline extends Morph {
   }
 
   createTimelineLayer (layer, index = 0, name = undefined) {
-    const timelineLayer = this.getNewTimelineLayer();
-    timelineLayer.initialize(this.editor, this.ui.layerContainer, layer);
+    const spec = layer.constructor.name == 'Layer' ? { layer: layer } : { morph: layer };
+    const timelineLayer = this.getNewTimelineLayer({ _editor: this.editor, container: this.ui.layerContainer, ...spec });
     this.ui.layerContainer.addMorphAt(timelineLayer, index);
 
     const layerInfo = new TimelineLayerInfo({ timelineLayer, name });
@@ -286,8 +286,8 @@ export class GlobalTimeline extends Timeline {
     newTimelineSequence.center = pt(0, 0);
   }
 
-  getNewTimelineLayer () {
-    return new GlobalTimelineLayer();
+  getNewTimelineLayer (props) {
+    return new GlobalTimelineLayer(props);
   }
 
   onLoadContent (interactive) {
@@ -555,8 +555,8 @@ export class SequenceTimeline extends Timeline {
     });
   }
 
-  getNewTimelineLayer () {
-    return this._inInitialConstruction ? new OverviewSequenceTimelineLayer() : new SequenceTimelineLayer();
+  getNewTimelineLayer (props) {
+    return this._inInitialConstruction ? new OverviewSequenceTimelineLayer(props) : new SequenceTimelineLayer(props);
   }
 
   getPositionFromScroll (scrollPosition) {

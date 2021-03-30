@@ -8,7 +8,11 @@ export class TimelineLayer extends Morph {
   static get properties () {
     return {
       layerInfo: {},
-      container: {},
+      container: {
+        initialize () {
+          this.addAreaMorphs();
+        }
+      },
       focusable: {
         defaultValue: false
       },
@@ -24,12 +28,6 @@ export class TimelineLayer extends Morph {
 
   get editor () {
     return this._editor;
-  }
-
-  initialize (editor, container) {
-    this._editor = editor;
-    this.container = container;
-    this.addAreaMorphs();
   }
 
   get isTimelineLayer () {
@@ -101,11 +99,6 @@ export class SequenceTimelineLayer extends TimelineLayer {
         }
       }
     };
-  }
-
-  initialize (editor, container, morph) {
-    super.initialize(editor, container);
-    this.morph = morph;
   }
 
   get name () {
@@ -244,20 +237,13 @@ export class GlobalTimelineLayer extends TimelineLayer {
       nativeCursor: {
         defaultValue: 'grab'
       },
-      layer: {},
-      name: {
-        set (name) {
-          this.setProperty('name', name);
-          this.tooltip = name;
+      layer: {
+        set (layer) {
+          this.setProperty('layer', layer);
+          this.tooltip = layer.name;
         }
       }
     };
-  }
-
-  initialize (editor, container, layer) {
-    super.initialize(editor, container);
-    this.layer = layer;
-    this.tooltip = layer.name;
   }
 
   get timelineSequences () {
