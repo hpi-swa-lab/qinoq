@@ -11,6 +11,7 @@ export class TimelineCursor extends Morph {
         defaultValue: false
       },
       displayValue: {
+        after: ['ui'],
         defaultValue: 0,
         type: 'Number',
         set (displayValue) {
@@ -46,14 +47,13 @@ export class TimelineCursor extends Morph {
       name: {
         defaultValue: 'cursor'
       },
-      ui: {}
+      ui: {
+        initialize () {
+          this.initializeSubmorphs();
+          this.initializeAppearance();
+        }
+      }
     };
-  }
-
-  initialize (displayValue = 0) {
-    this.initializeSubmorphs();
-    this.initializeAppearance();
-    this.displayValue = displayValue;
   }
 
   initializeSubmorphs () {
