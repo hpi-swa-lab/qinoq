@@ -162,20 +162,19 @@ export class TimelineKeyframe extends Morph {
 
   onDragStart (event) {
     this.isSelected = true;
-    this.undoStart('move-keyframe');
-    const undo = this.undoStop('move-keyframe');
+    const undo = this.undoStart('move-keyframe');
     event.hand.dragKeyframeStates = this.timeline.selectedTimelineKeyframes.map(timelinekeyframe => {
+      undo.addTarget(timelinekeyframe);
       return {
         timelineKeyframe: timelinekeyframe,
         previousPosition: timelinekeyframe.position,
         keyframe: timelinekeyframe.keyframe
       };
     });
-    event.hand.undoStop = undo;
   }
 
   onDragEnd (event) {
-    this.env.undoManager.group(event.hand.undoStop);
+    this.undoStop('move-keyframe');
     this.editor.interactive.redraw();
     this.layer.redraw();
     delete event.hand.dragKeyframeStates;
@@ -193,10 +192,8 @@ export class TimelineKeyframe extends Morph {
   }
 
   onDrag (event) {
-    this.undoStart('move-keyframe');
     super.onDrag(event);
     this.position = pt(this.position.x, this.timelineKeyframeY);
-    this.undoStop('move-keyframe');
 
     const dragState = event.hand.dragKeyframeStates.filter(dragState => dragState.timelineKeyframe == this)[0];
     const prevPositionX = dragState.previousPosition.x;
@@ -204,17 +201,13 @@ export class TimelineKeyframe extends Morph {
 
     event.hand.dragKeyframeStates.forEach(dragState => {
       if (dragState.timelineKeyframe != this) {
-        dragState.timelineKeyframe.undoStart('move-keyframe');
         dragState.timelineKeyframe.position = pt(dragState.previousPosition.x - dragDeltaX, dragState.previousPosition.y);
-        dragState.timelineKeyframe.undoStop('move-keyframe');
       }
     });
 
     if (!this.checkForValidDrag(event.hand.dragKeyframeStates)) {
       event.hand.dragKeyframeStates.forEach(stateForKeyframe => {
-        dragState.timelineKeyframe.undoStart('move-keyframe');
         stateForKeyframe.timelineKeyframe.position = stateForKeyframe.previousPosition;
-        dragState.timelineKeyframe.undoStop('move-keyframe');
       });
     }
 
