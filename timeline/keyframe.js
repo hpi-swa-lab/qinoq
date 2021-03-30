@@ -21,7 +21,7 @@ export class TimelineKeyframe extends Morph {
         set (keyframe) {
           this.setProperty('_keyframe', keyframe);
           this.name = keyframe.name;
-          this.easing = keyframe.easingName;
+          this.setProperty('easing', keyframe.easingName);
         }
       },
       animation: {},
@@ -136,14 +136,10 @@ export class TimelineKeyframe extends Morph {
     this.undoStop('move-keyframe');
   }
 
-  remove () {
+  abandon () {
     this.animation.removeKeyframe(this.keyframe);
     this.layer.redraw();
-    this.removeMorph();
-  }
-
-  removeMorph () {
-    super.remove();
+    super.abandon();
   }
 
   onMouseDown (evt) {
