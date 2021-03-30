@@ -32,7 +32,7 @@ export class Timeline extends Morph {
           if (zoomFactor <= 0) return;
           this.undoStart('interactive-editor-change-zoom');
           this.setProperty('zoomFactor', zoomFactor);
-          this.undoStart('interactive-editor-change-zoom');
+          this.undoStop('interactive-editor-change-zoom');
           if (!this.editor.interactive) return;
           this.redraw();
         }

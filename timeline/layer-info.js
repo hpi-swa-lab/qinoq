@@ -124,10 +124,10 @@ export class TimelineLayerInfo extends Morph {
         menuOptions.push(['🙈 Hide Layer', () => this.toggleLayerVisibility()]);
       }
       if (this.timelineLayer.currentIndex > 0) {
-        menuOptions.push(['⬆️ Move layer up once', () => this.timelineLayer.moveLayerBy(-1)]);
+        menuOptions.push(['⬆️ Move layer up', () => this.timelineLayer.moveLayerBy(-1)]);
       }
       if (this.timelineLayer.currentIndex < this.timelineLayer.container.submorphs.length - 2) {
-        menuOptions.push(['⬇️ Move layer down once', () => this.timelineLayer.moveLayerBy(1)]);
+        menuOptions.push(['⬇️ Move layer down', () => this.timelineLayer.moveLayerBy(1)]);
       }
       menuOptions.push(['❌ Remove layer', async () => await this.removeLayer()]);
     }
