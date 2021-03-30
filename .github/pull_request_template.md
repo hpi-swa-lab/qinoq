@@ -45,6 +45,7 @@ Closes [fill in your issues here]
 - [ ] all sequences can be selected with `Ctrl + A`
 - [ ] when all sequences are selected, `Ctrl + A` deselects all sequences
 - [ ] in the standard sequence setup, clicking on the night background and then clicking on the tree sequence while pressing `Shift` selects tree sequence, night background and day background
+- [ ] selected Sequences can be deleted with `Del`
 
 ### TimelineLayer
 
@@ -77,6 +78,9 @@ Closes [fill in your issues here]
 - [ ] when clicking on a single keyframe this one is highlighted with a blue border
 - [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the sequence and to the prev/next keyframe
 - [ ] When making the zoom factor higher/lower with the input field, the length of the active area adapt accordingly as well as the position of the keyframes and the cursor updates its position
+- [ ] it is possible to select more than one keyframe using `Shift`
+- [ ] having more than two keyframes selected the context menu with right click and using clicking relative position, entering a relative position changes position for all selected keyframes - this works with all menu items and is undoable as expected (one undo for all selected keyframes)
+- [ ] having more than one keyframe selected and dragging one with shift pressed moves all keyframes, this is undoable
 
 ### Inspector
 
