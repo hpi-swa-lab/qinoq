@@ -9,7 +9,6 @@ import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
 import { Sequence, Interactive } from 'qinoq';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
 import { CONSTANTS as TIMELINE_CONSTANTS } from './timeline/constants.js';
-import { Interactive } from 'interactives-editor';
 import StripeButton from 'StripeButton';
 
 const CONSTANTS = {
@@ -364,7 +363,8 @@ export class InteractivesEditor extends Morph {
           } else {
             this.interactive.scrollPosition = 0;
           }
-        },
+        }
+      },
       {
         name: 'select all',
         exec: () => {
