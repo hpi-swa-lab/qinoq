@@ -279,7 +279,11 @@ export class Timeline extends Morph {
 
 export class GlobalTimeline extends Timeline {
   createTimelineSequence (sequence) {
-    const timelineSequence = new TimelineSequence({ _editor: this.editor, sequence, timelineLayer: this.getTimelineLayerFor(sequence.layer) });
+    const timelineSequence = new TimelineSequence({
+        _editor: this.editor,
+        sequence,
+        timelineLayer: this.getTimelineLayerFor(sequence.layer)
+    });
     connect(sequence, 'name', timelineSequence, 'caption');
     return timelineSequence;
   }
