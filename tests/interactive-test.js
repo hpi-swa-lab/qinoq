@@ -2,6 +2,8 @@
 import { expect } from 'mocha-es6';
 import { Interactive, Layer, Sequence } from 'qinoq';
 import { pt } from 'lively.graphics';
+import { NumberAnimation } from 'qinoq';
+import { Keyframe } from 'qinoq';
 
 describe('Interactive object', () => {
   let interactive;
@@ -64,5 +66,36 @@ describe('Interactive object', () => {
   it('can get sequence starts', () => {
     expect(interactive.getNextSequenceStart(5)).to.equal(8);
     expect(interactive.getPrevSequenceStart(5)).to.equal(0);
+  });
+
+  describe('with animations', () => {
+    let animation1;
+    let animation2;
+
+    let keyframeA, keyframeB, keyframeC;
+    let keyframeD, keyframeE;
+
+    beforeEach(() => {
+      animation1 = new NumberAnimation(undefined, 'opacity');
+      animation2 = new NumberAnimation(undefined, 'grayscale');
+      keyframeA = new Keyframe(0, 0, { name: 'keyframeA' });
+      keyframeB = new Keyframe(0.5, 0.5, { name: 'keyframeB' });
+      keyframeC = new Keyframe(1, 1, { name: 'keyframeC' });
+      keyframeD = new Keyframe(0, 0, { name: 'keyframeD' });
+      keyframeE = new Keyframe(1, 1, { name: 'keyframeE' });
+
+      animation1.addKeyframes([keyframeA, keyframeB, keyframeC]);
+      animation2.addKeyframes([keyframeD, keyframeE]);
+
+      sequenceOne.addAnimation(animation1);
+      sequenceOne.addAnimation(animation2);
+    });
+
+    it('can find a keyframe', () => {
+      expect(interactive.findKeyframe(keyframeA).sequence).to.be.equal(sequenceOne);
+      expect(interactive.findKeyframe(keyframeB).animation).to.be.equal(animation1);
+      expect(interactive.findKeyframe(keyframeD).animation).to.be.equal(animation2);
+      expect(interactive.findKeyframe(new Keyframe(2, 2))).to.be.undefined;
+    });
   });
 });

@@ -442,8 +442,8 @@ export class Sequence extends Morph {
     const backgroundMorph = new Morph({ fill: Color.rgbHex('60b2e5'), extent: pt(533, 300), name: 'day background' });
     backgroundSequence.addMorph(backgroundMorph);
 
-    const sunrise = new Keyframe(0, Color.rgbHex('#ff4d00'));
-    const daylight = new Keyframe(0.3, Color.rgbHex('60b2e5'));
+    const sunrise = new Keyframe(0, Color.rgbHex('#ff4d00'), { name: 'sunrise' });
+    const daylight = new Keyframe(0.3, Color.rgbHex('60b2e5'), { name: 'daylight' });
     const colorAnimation = new ColorAnimation(backgroundMorph, 'fill');
     colorAnimation.addKeyframes([sunrise, daylight]);
     backgroundSequence.addAnimation(colorAnimation);
