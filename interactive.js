@@ -144,7 +144,7 @@ export class Interactive extends Morph {
   }
 
   onOwnerChanged (newOwner) {
-    if (newOwner) {
+    if (newOwner && this.scrollOverlay) {
       newOwner.addMorph(this.scrollOverlay);
     }
   }
