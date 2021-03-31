@@ -705,4 +705,21 @@ export class SequenceTimeline extends Timeline {
       }
     }
   }
+
+  scrollToTimelineKeyframe (timelineKeyframe) {
+    const timelineKeyframeX = timelineKeyframe.position.x;
+    const timelineKeyframeIsVisible = timelineKeyframeX >= this.ui.layerContainer.scroll.x && timelineKeyframeX <= this.ui.layerContainer.extent.x + this.ui.layerContainer.scroll.x;
+    if (timelineKeyframeIsVisible) return;
+
+    const scrollTo = timelineKeyframeX - this.ui.layerContainer.extent.x / 2;
+    this.scrollVerticallyTo(scrollTo);
+  }
+
+  scrollVerticallyTo (scrollLeft) {
+    const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
+    layerContainerNode.scrollLeft = scrollLeft;
+    this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
+    const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
+    this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
+  }
 }

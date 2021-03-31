@@ -371,13 +371,13 @@ export class InteractivesEditor extends Morph {
       const findResult = this.interactive.findKeyframe(item);
       if (!findResult) return;
       const { animation, sequence } = findResult;
-      let tab = this.getTabFor(sequence);
-      if (!tab) {
-        tab = await this.initializeSequenceView(sequence);
-      }
+      const tab = this.getTabFor(sequence) || await this.initializeSequenceView(sequence);
       tab.selected = true;
       const timeline = this.getTimelineFor(tab);
-      const timelineKeyframe = timeline.getTimelineKeyframe(item).show();
+      const timelineKeyframe = timeline.getTimelineKeyframe(item);
+      timeline.scrollToTimelineKeyframe(timelineKeyframe);
+
+      timelineKeyframe.show();
     }
   }
 
