@@ -4,10 +4,23 @@ qinoq allows you to create and edit scrollytellings. It includes classes for an 
 
 The Interactives Editor allows editing of Interactives. Currently it is designed to edit Scrollytellings.
 
+## lively.next
+
+qinoq is used within lively.next. You can find an installation guide [here](https://github.com/LivelyKernel/lively.next#Installation-and-Setup).
+Once lively is installed, clone this repository within the lively.next repository.
+You also need to adjust the file `lively.installer/packages-config.json` in your lively.next installation to include the following lines:
+
+```json
+{
+    "name": "qinoq",
+    "repoURL": "https://github.com/hpi-swa-lab/qinoq"
+},
+```
+
 ## Editor Usage
 
-Before first usage of the editor within a world, you need to add the Interactives Editor package to the world.
-For the following examples to work, you need to import the respective classes from the Interactives Editor package. Do so by opening a browser via `Ctrl+b`, clicking the `+` button at the top, selecting `Load Existing Package` and exchange `lively.morphic` with `qinoq`. Click `OK`.
+Before the first usage of the editor within a world, you need to add the qinoq package to the world.
+For the following examples to work, you need to import the respective classes from the qinoq package. Do so by opening a browser via `Ctrl+b`, clicking the `+` button at the top, selecting `Load Existing Package` and exchange `lively.morphic` with `qinoq`. Click `OK`.
 
 Use the `javascript workspace` to execute the following commands. You can open one via `Ctrl+k`.
 
