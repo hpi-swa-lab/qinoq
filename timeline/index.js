@@ -184,8 +184,8 @@ export class Timeline extends Morph {
   }
 
   createTimelineLayer (layer, index = 0, name = undefined) {
-    const spec = layer.constructor.name == 'Layer' ? { layer: layer } : { morph: layer };
-    const timelineLayer = this.getNewTimelineLayer({ _editor: this.editor, container: this.ui.layerContainer, ...spec });
+    const props = layer.constructor.name == 'Layer' ? { layer: layer } : { morph: layer };
+    const timelineLayer = this.getNewTimelineLayer({ _editor: this.editor, container: this.ui.layerContainer, ...props });
     this.ui.layerContainer.addMorphAt(timelineLayer, index);
 
     const layerInfo = new TimelineLayerInfo({ timelineLayer, name });
