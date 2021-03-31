@@ -325,7 +325,7 @@ export class InteractivesEditor extends Morph {
       },
       {
         name: 'move sequence left or decrease scroll position',
-        doc: 'Move the the selected sequences left or decrease the scroll position by args.stepSize units',
+        doc: 'Move the selected sequences left or decrease the scroll position by args.stepSize units',
         exec: (morph, args) => {
           if (!this.interactive || this.inputFieldFocused()) return;
           if (this.displayedTimeline.isGlobalTimeline && this.displayedTimeline.selectedSequences.length > 0) {
