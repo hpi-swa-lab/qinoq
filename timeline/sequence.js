@@ -550,9 +550,9 @@ export class TimelineSequence extends Morph {
     });
   }
 
-  showWarningLeft (dragValue) {
+  showWarningLeft (dragValue, showImmediately = false) {
     const newWarning = !this.warningStartLeft;
-    if (newWarning) this.warningStartLeft = dragValue;
+    if (newWarning) this.warningStartLeft = showImmediately ? 0 : dragValue;
     const currentDrag = Math.abs(this.warningStartLeft - dragValue);
     const strength = currentDrag / CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA;
     const warning = !newWarning
@@ -562,10 +562,10 @@ export class TimelineSequence extends Morph {
     this.addMorph(warning);
   }
 
-  showWarningRight (dragValue) {
+  showWarningRight (dragValue, showImmediately = false) {
     const newWarning = !this.warningStartRight;
-    if (newWarning) this.warningStartRight = dragValue;
-    const currentDrag = this.warningStartRight - dragValue;
+    if (newWarning) this.warningStartRight = showImmediately ? 0 : dragValue;
+    const currentDrag = Math.abs(this.warningStartRight - dragValue);
     const strength = currentDrag / CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA;
     const warning = !newWarning
       ? this.getSubmorphNamed('warning right')
