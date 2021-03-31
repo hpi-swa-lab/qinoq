@@ -1,4 +1,4 @@
-import { ProportionalLayout, CustomLayout, TilingLayout, HorizontalLayout, VerticalLayout, Icon, Label, Morph } from 'lively.morphic';
+import { ProportionalLayout, HorizontalLayout, VerticalLayout, Icon, Label, Morph } from 'lively.morphic';
 import { connect, signal, disconnectAll, disconnect } from 'lively.bindings';
 import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
@@ -8,7 +8,7 @@ import { arr } from 'lively.lang';
 import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
 import { Sequence, Interactive } from 'qinoq';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
-import { CONSTANTS as TIMELINE_CONSTANTS } from './timeline/constants.js';
+
 import StripeButton from 'StripeButton';
 
 const CONSTANTS = {
@@ -490,6 +490,10 @@ class MenuBar extends Morph {
 
   initialize (editor) {
     this._editor = editor;
+
+    const containerCount = 3;
+    const containerWidth = this.width / containerCount;
+
     this.ui.leftContainer = new Morph({
       layout: new HorizontalLayout({
         spacing: CONSTANTS.SPACING,
@@ -499,7 +503,7 @@ class MenuBar extends Morph {
       name: 'left container',
       fill: COLOR_SCHEME.TRANSPARENT,
       borderWidth: 0,
-      extent: pt(this.width / 3, CONSTANTS.MENU_BAR_HEIGHT)
+      extent: pt(containerWidth, CONSTANTS.MENU_BAR_HEIGHT)
     });
 
     this.ui.scrollPositionToolbar = new Morph({
@@ -510,10 +514,10 @@ class MenuBar extends Morph {
         align: 'center'
       }),
       name: 'scroll position toolbar',
-      position: pt(this.width / 3, 0),
+      position: pt(containerWidth, 0),
       fill: COLOR_SCHEME.TRANSPARENT,
       borderWidth: 0,
-      extent: pt(this.width / 3, CONSTANTS.MENU_BAR_HEIGHT)
+      extent: pt(containerWidth, CONSTANTS.MENU_BAR_HEIGHT)
     });
 
     this.ui.rightContainer = new Morph({
@@ -524,9 +528,9 @@ class MenuBar extends Morph {
         align: 'center'
       }),
       name: 'right container',
-      position: pt(this.width / 3 * 2, 0),
+      position: pt(containerWidth * 2, 0),
       fill: COLOR_SCHEME.TRANSPARENT,
-      extent: pt(this.width / 3, CONSTANTS.MENU_BAR_HEIGHT),
+      extent: pt(containerWidth, CONSTANTS.MENU_BAR_HEIGHT),
       borderWidth: 0
     });
 
