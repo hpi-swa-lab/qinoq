@@ -394,6 +394,43 @@ export class GlobalTimeline extends Timeline {
     return true;
   }
 
+  moveTimelineSequencesBy (timelineSequences, scrollStepSize) {
+    this.undoStart('timeline-sequence-move');
+
+    let faultyTimelineSequence;
+    const timelineSequenceStates = [];
+    timelineSequences.forEach(timelineSequence => {
+      timelineSequenceStates.push({
+        timelineSequence: timelineSequence,
+        previousPosition: timelineSequence.position,
+        previousWidth: timelineSequence.width,
+        previousTimelineLayer: timelineSequence.timelineLayer,
+        isMove: true
+      });
+
+      timelineSequence.position = pt(timelineSequence.position.x + timelineSequence.timeline.getWidthFromDuration(scrollStepSize),
+        timelineSequence.position.y);
+      timelineSequence.updateSequenceAfterArrangement();
+
+      const forbiddenMovement = timelineSequence.isOverlappingOtherSequence() || timelineSequence.sequence.start < 0;
+
+      if (forbiddenMovement) {
+        faultyTimelineSequence = timelineSequence;
+        if (scrollStepSize > 0) {
+          timelineSequence.showWarningRight(CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA);
+          timelineSequence.hideWarningRight();
+        } else {
+          timelineSequence.showWarningLeft(CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA);
+          timelineSequence.hideWarningLeft();
+        }
+      }
+    });
+
+    this.undoStop('timeline-sequence-move');
+
+    if (faultyTimelineSequence) faultyTimelineSequence.undoLatestMovement(timelineSequenceStates);
+  }
+
   clear () {
     this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences).forEach(timelineSequence => timelineSequence.disbandInteractiveConnections());
   }

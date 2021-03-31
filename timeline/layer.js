@@ -336,10 +336,6 @@ export class GlobalTimelineLayer extends TimelineLayer {
     return this.timelineSequences.filter(timelineSequence => timelineSequence.bounds().intersects(rectangle));
   }
 
-  get selectedSequences () {
-    return this.timelineSequences.filter(sequence => sequence.selected);
-  }
-
   deselectAllSequences () {
     this.timelineSequences.forEach(timelineSequence => timelineSequence.selected = false);
   }
