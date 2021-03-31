@@ -8,8 +8,7 @@ import { arr } from 'lively.lang';
 import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
 import { Sequence, Interactive, Layer } from 'qinoq';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
-
-import StripeButton from 'StripeButton';
+import { Button } from 'lively.components';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -479,7 +478,7 @@ class Preview extends Morph {
     });
     text.height = 30;
 
-    const newInteractiveButton = new StripeButton({
+    const newInteractiveButton = new Button({
       label: 'Create a new interactive',
       master: 'styleguide://SystemUserUI/blue button',
       acceptsDrops: false,
