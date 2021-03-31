@@ -113,7 +113,7 @@ export class Timeline extends Morph {
       draggable: true
     }));
     connect(this.ui.scroller, 'onDrag', this.ui.scroller, 'ensureValidPosition');
-    this.ui.scroller.ensureValidPosition = (evt) => {
+    this.ui.scroller.ensureValidPosition = () => {
       let positionX = this.ui.scroller.position.x;
       if (this.ui.scroller.position.x < CONSTANTS.SCROLLBAR_MARGIN) {
         positionX = CONSTANTS.SCROLLBAR_MARGIN;
@@ -124,7 +124,9 @@ export class Timeline extends Morph {
       this.ui.scroller.position = pt(positionX, CONSTANTS.SCROLLBAR_MARGIN);
 
       const relative = (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x) / (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN));
-      this.ui.layerContainer.scroll = pt(this.ui.scroller.position.x * relative + CONSTANTS.SCROLLBAR_MARGIN, this.ui.layerContainer.scroll.y);
+      const layerContainerNode = this.ui.layerContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
+      layerContainerNode.scrollLeft = this.ui.scroller.position.x * relative + CONSTANTS.SCROLLBAR_MARGIN;
+      this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
     };
 
     this.ui.scroller.ensureValidPosition = () => {
