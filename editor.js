@@ -493,36 +493,40 @@ class MenuBar extends Morph {
     this.ui.leftContainer = new Morph({
       layout: new HorizontalLayout({
         spacing: CONSTANTS.SPACING,
-        autoResize: false
-
+        autoResize: false,
+        align: 'center'
       }),
       name: 'left container',
       fill: COLOR_SCHEME.TRANSPARENT,
       borderWidth: 0,
-      extent: pt(200, CONSTANTS.MENU_BAR_HEIGHT)
+      extent: pt(this.width / 3, CONSTANTS.MENU_BAR_HEIGHT)
     });
 
     this.ui.scrollPositionToolbar = new Morph({
       layout: new HorizontalLayout({
         spacing: CONSTANTS.SPACING,
         autoResize: false,
-        direction: 'centered'
+        direction: 'centered',
+        align: 'center'
       }),
       name: 'scroll position toolbar',
-      position: pt(CONSTANTS.SCROLL_POSITION_TOOLBAR_X_OFFSET, 0),
+      position: pt(this.width / 3, 0),
       fill: COLOR_SCHEME.TRANSPARENT,
-      borderWidth: 0
+      borderWidth: 0,
+      extent: pt(this.width / 3, CONSTANTS.MENU_BAR_HEIGHT)
     });
 
     this.ui.rightContainer = new Morph({
       layout: new HorizontalLayout({
         spacing: CONSTANTS.SPACING,
         autoResize: false,
-        direction: 'rightToLeft'
+        direction: 'rightToLeft',
+        align: 'center'
       }),
       name: 'right container',
-      position: pt(CONSTANTS.SCROLL_POSITION_TOOLBAR_X_OFFSET, 0),
+      position: pt(this.width / 3 * 2, 0),
       fill: COLOR_SCHEME.TRANSPARENT,
+      extent: pt(this.width / 3, CONSTANTS.MENU_BAR_HEIGHT),
       borderWidth: 0
     });
 
@@ -530,29 +534,7 @@ class MenuBar extends Morph {
     this.addMorph(this.ui.scrollPositionToolbar);
     this.addMorph(this.ui.rightContainer);
 
-    // TODO: Change this as soon as the GridLayout works
-    this.layout = new CustomLayout({
-      autoResize: true,
-      relayout: (container) => {
-        const third = container.width / 3;
-        const left = container.getSubmorphNamed('left container');
-        const center = container.getSubmorphNamed('scroll position toolbar');
-        const right = container.getSubmorphNamed('right container');
-        left.extent = pt(third, container.height);
-        left.position = pt(0, 0);
-        center.extent = pt(third, container.height);
-        center.position = pt(third, 0);
-        right.extent = pt(third, container.height);
-        right.position = pt(third * 2, 0);
-        left.layout.apply();
-        center.layout.apply();
-        right.layout.apply();
-      },
-      varMapping: {
-        pt
-      }
-    });
-    connect(this, 'extent', () => this.layout.apply);
+    this.layout = new ProportionalLayout({ initialExtent: this.extent });
 
     this.buildIconButton({
       tooltip: 'Create a new sequence',
