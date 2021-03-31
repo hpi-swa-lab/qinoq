@@ -112,7 +112,7 @@ export class Timeline extends Morph {
       borderRadius: 10,
       draggable: true
     }));
-    connect(this.ui.scroller, 'onDrag', this.ui.scroller, 'ensureValidPosition');
+
     this.ui.scroller.ensureValidPosition = () => {
       let positionX = this.ui.scroller.position.x;
       if (this.ui.scroller.position.x < CONSTANTS.SCROLLBAR_MARGIN) {
