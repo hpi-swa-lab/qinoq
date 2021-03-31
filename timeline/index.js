@@ -736,10 +736,10 @@ export class SequenceTimeline extends Timeline {
     if (timelineKeyframeIsVisible) return;
 
     const scrollTo = timelineKeyframeX - this.ui.layerContainer.extent.x / 2;
-    this.scrollVerticallyTo(scrollTo);
+    this.scrollHorizontallyTo(scrollTo);
   }
 
-  scrollVerticallyTo (scrollLeft) {
+  scrollHorizontallyTo (scrollLeft) {
     const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
     layerContainerNode.scrollLeft = scrollLeft;
     this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
