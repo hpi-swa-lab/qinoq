@@ -305,52 +305,15 @@ export class InteractivesEditor extends Morph {
     signal(this, 'interactiveScrollPosition', this.interactiveScrollPosition);
   }
 
-  moveTimelineSequencesBy (timelineSequences, scrollStepSize) {
-    this.undoStart('timeline-sequence-move');
-
-    let faultyTimelineSequence;
-    const timelineSequenceStates = [];
-    timelineSequences.forEach(timelineSequence => {
-      timelineSequenceStates.push({
-        timelineSequence: timelineSequence,
-        previousPosition: timelineSequence.position,
-        previousWidth: timelineSequence.width,
-        previousTimelineLayer: timelineSequence.timelineLayer,
-        isMove: true
-      });
-
-      timelineSequence.position = pt(timelineSequence.position.x + timelineSequence.timeline.getWidthFromDuration(scrollStepSize),
-        timelineSequence.position.y);
-      timelineSequence.updateSequenceAfterArrangement();
-
-      const forbiddenMovement = timelineSequence.isOverlappingOtherSequence() || timelineSequence.sequence.start < 0;
-
-      if (forbiddenMovement) {
-        faultyTimelineSequence = timelineSequence;
-        if (scrollStepSize > 0) {
-          timelineSequence.showWarningRight(CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA);
-          timelineSequence.hideWarningRight();
-        } else {
-          timelineSequence.showWarningLeft(CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA);
-          timelineSequence.hideWarningLeft();
-        }
-      }
-    });
-
-    this.undoStop('timeline-sequence-move');
-
-    if (faultyTimelineSequence) faultyTimelineSequence.undoLatestMovement(timelineSequenceStates);
-  }
-
   get commands () {
     return [
       {
         name: 'move sequence right or increase scroll position',
-        doc: 'Move the scrollPosition or the selected sequences of the interactive right by args.stepSize units',
+        doc: 'Move the selected sequences right or increase the scrollPosition by args.stepSize units',
         exec: (morph, args) => {
           if (!this.interactive || this.inputFieldFocused()) return;
           if (this.displayedTimeline.isGlobalTimeline && this.displayedTimeline.selectedSequences.length > 0) {
-            this.moveTimelineSequencesBy(this.displayedTimeline.selectedSequences, args.stepSize);
+            this.displayedTimeline.moveTimelineSequencesBy(this.displayedTimeline.selectedSequences, args.stepSize);
             return;
           }
           if (this.interactive.scrollPosition + args.stepSize <= this.interactive.length) {
@@ -362,11 +325,11 @@ export class InteractivesEditor extends Morph {
       },
       {
         name: 'move sequence left or decrease scroll position',
-        doc: 'Move the scroll position or the selected sequences of the interactive left by args.stepSize units',
+        doc: 'Move the the selected sequences left or decrease the scroll position by args.stepSize units',
         exec: (morph, args) => {
           if (!this.interactive || this.inputFieldFocused()) return;
           if (this.displayedTimeline.isGlobalTimeline && this.displayedTimeline.selectedSequences.length > 0) {
-            this.moveTimelineSequencesBy(this.displayedTimeline.selectedSequences, -args.stepSize);
+            this.displayedTimeline.moveTimelineSequencesBy(this.displayedTimeline.selectedSequences, -args.stepSize);
             return;
           }
           if (this.interactive.scrollPosition - args.stepSize >= 0) {
