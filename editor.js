@@ -632,6 +632,14 @@ class MenuBar extends Morph {
       container: 'scrollPositionToolbar'
     });
 
+    this.buildIconButton({
+      tooltip: 'Find keyframe',
+      action: () => this.editor.execCommand('find keyframe'),
+      icon: 'search-location',
+      name: 'findKeyframeButton',
+      container: 'rightContainer'
+    });
+
     this.buildZoomInput();
   }
 
