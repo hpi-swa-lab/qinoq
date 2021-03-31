@@ -123,10 +123,9 @@ export class Timeline extends Morph {
     }));
     connect(this.editor, 'interactiveScrollPosition', this.ui.scrollbarCursor, 'position', {
       converter: `(scrollPosition) => {
-      const relative = (scrollBar.extent.x - target.extent.x) / source.interactive.length;
-      return pt((relative * scrollPosition), scrollbarMargin)
+      return pt((source.displayedTimeline.getPositionFromScroll(scrollPosition) - initialXOffset) * (scrollbar.width - (2 * scrollbarMargin + target.extent.x)) / source.displayedTimeline._activeAreaWidth + scrollbarMargin, scrollbarMargin)
     }`,
-      varMapping: { pt: pt, scrollBar: this.ui.scrollBar, scrollbarMargin: CONSTANTS.SCROLLBAR_MARGIN }
+      varMapping: { pt: pt, scrollbar: this.ui.scrollBar, scrollbarMargin: CONSTANTS.SCROLLBAR_MARGIN, initialXOffset: CONSTANTS.SEQUENCE_INITIAL_X_OFFSET }
     });
   }
 
