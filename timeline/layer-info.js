@@ -56,13 +56,14 @@ export class TimelineLayerInfo extends Morph {
     this.ui = {};
     this.name = this.name || (this.isInGlobalTimeline ? this.layer.name : this.morph.name);
     this.ui.label = new Label({
-      textString: this.name
+      textString: this.name,
+      reactsToPointer: false
     });
     this.addMorph(this.ui.label);
 
     if (this.isInGlobalTimeline) {
       this.ui.hideButton = new Label({ name: 'hide button', tooltip: 'Hide layer in interactive', nativeCursor: 'pointer', reactsToPointer: true });
-      this.ui.hideButton.onMouseUp = () => this.toggleLayerVisibility();
+      this.ui.hideButton.onMouseUp = (evt) => { if (evt.leftMouseButtonPressed()) this.toggleLayerVisibility(); };
       Icon.setIcon(this.ui.hideButton, 'eye');
 
       this.addMorph(this.ui.hideButton);
