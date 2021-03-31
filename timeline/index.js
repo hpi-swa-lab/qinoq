@@ -417,10 +417,10 @@ export class GlobalTimeline extends Timeline {
       if (forbiddenMovement) {
         faultyTimelineSequence = timelineSequence;
         if (scrollStepSize > 0) {
-          timelineSequence.showWarningRight(CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA);
+          timelineSequence.showWarningRight(CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA, true);
           timelineSequence.hideWarningRight();
         } else {
-          timelineSequence.showWarningLeft(CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA);
+          timelineSequence.showWarningLeft(CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA, true);
           timelineSequence.hideWarningLeft();
         }
       }
