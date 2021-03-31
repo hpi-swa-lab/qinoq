@@ -84,11 +84,12 @@ export class Timeline extends Morph {
       borderWidth: 1,
       borderRadius: 10
     });
-    this.addScrollbarSubmorphs();
+    this.initializeScrollbarScroller();
+    this.initializeScrollbarCursorIndicator();
     this.addMorph(this.ui.scrollBar);
   }
 
-  addScrollbarSubmorphs () {
+  initializeScrollbarScroller () {
     this.ui.scroller = this.ui.scrollBar.addMorph(new Morph({
       name: 'scroller',
       fill: COLOR_SCHEME.BACKGROUND_VARIANT,
@@ -97,7 +98,7 @@ export class Timeline extends Morph {
       borderRadius: 10,
       draggable: true
     }));
-    connect(this.ui.scroller, 'onDrag', this.ui.scroller, 'ensureValidPosition');
+
     this.ui.scroller.ensureValidPosition = () => {
       let positionX = this.ui.scroller.position.x;
       if (this.ui.scroller.position.x < CONSTANTS.SCROLLBAR_MARGIN) {
@@ -114,6 +115,10 @@ export class Timeline extends Morph {
       this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
     };
 
+    connect(this.ui.scroller, 'onDrag', this.ui.scroller, 'ensureValidPosition');
+  }
+
+  initializeScrollbarCursorIndicator () {
     this.ui.scrollbarCursor = this.ui.scrollBar.addMorph(new Morph({
       name: 'scrollbar cursor',
       fill: COLOR_SCHEME.SECONDARY,
@@ -121,9 +126,12 @@ export class Timeline extends Morph {
       extent: pt(10, CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - (2 * CONSTANTS.SCROLLBAR_MARGIN)),
       borderRadius: 10
     }));
+
     connect(this.editor, 'interactiveScrollPosition', this.ui.scrollbarCursor, 'position', {
       converter: `(scrollPosition) => {
-      return pt((source.displayedTimeline.getPositionFromScroll(scrollPosition) - initialXOffset) * (scrollbar.width - (2 * scrollbarMargin + target.extent.x)) / source.displayedTimeline._activeAreaWidth + scrollbarMargin, scrollbarMargin)
+      return pt(
+        (source.displayedTimeline.getPositionFromScroll(scrollPosition) - initialXOffset) * (scrollbar.width - (2 * scrollbarMargin + target.extent.x)) / source.displayedTimeline._activeAreaWidth + scrollbarMargin, 
+        scrollbarMargin)
     }`,
       varMapping: { pt: pt, scrollbar: this.ui.scrollBar, scrollbarMargin: CONSTANTS.SCROLLBAR_MARGIN, initialXOffset: CONSTANTS.SEQUENCE_INITIAL_X_OFFSET }
     });
