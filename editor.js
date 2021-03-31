@@ -204,6 +204,7 @@ export class InteractivesEditor extends Morph {
     const tab = await this.tabContainer.addTab(sequence.name, timeline);
     connect(sequence, 'name', tab, 'caption');
     connect(tab, 'caption', sequence, 'name');
+    return tab;
   }
 
   initializeSequenceTimeline (sequence) {
@@ -349,7 +350,35 @@ export class InteractivesEditor extends Morph {
         name: 'delete selected items',
         doc: 'All currently selected items in a timeline get deleted',
         exec: () => { if (!this.inputFieldFocused()) this.displayedTimeline.deleteSelectedItems(); }
+      },
+      {
+        name: 'find keyframe',
+        exec: async () => {
+          const allKeyframes = this.interactive.sequences.flatMap(sequence => sequence.animations).flatMap(animation => animation.keyframes);
+          const keyframeSearchStrings = this.interactive.sequences.flatMap(sequence => sequence.animations).map(animation => animation.keyframes.map(keyframe => `${keyframe.name} - ${animation.property} on ${animation.target.name}`)).flat();
+          const result = await $world.listPrompt('Select a keyframe', keyframeSearchStrings, { filterable: true });
+          if (result.selected.length > 0) {
+            const keyframe = allKeyframes[keyframeSearchStrings.indexOf(result.selected[0])];
+            await this.goto(keyframe);
+          }
+        }
       }];
+  }
+
+  // Focus on a specific item in the interactive
+  async goto (item) {
+    if (item.constructor.name == 'Keyframe') {
+      const findResult = this.interactive.findKeyframe(item);
+      if (!findResult) return;
+      const { animation, sequence } = findResult;
+      let tab = this.getTabFor(sequence);
+      if (!tab) {
+        tab = await this.initializeSequenceView(sequence);
+      }
+      tab.selected = true;
+      const timeline = this.getTimelineFor(tab);
+      const timelineKeyframe = timeline.getTimelineKeyframe(item).show();
+    }
   }
 
   abandon () {

@@ -552,6 +552,10 @@ export class SequenceTimeline extends Timeline {
     return this.timelineLayers.flatMap(timelineLayer => timelineLayer.keyframes);
   }
 
+  getTimelineKeyframe (keyframe) {
+    return this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe == keyframe);
+  }
+
   updateLayers () {
     this.withAllSubmorphsDo(submorph => {
       if (submorph.isTimelineLayer) {

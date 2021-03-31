@@ -267,6 +267,21 @@ export class Interactive extends Morph {
   get length () {
     return this._length;
   }
+
+  findKeyframe (keyframe) {
+    for (const sequence of this.sequences) {
+      let foundAnimation;
+      for (const animation of sequence.animations) {
+        if (animation.keyframes.includes(keyframe)) {
+          foundAnimation = animation;
+          break;
+        }
+      }
+      if (foundAnimation) {
+        return { sequence, animation: foundAnimation };
+      }
+    }
+  }
 }
 
 class InteractiveScrollHolder extends Morph {
