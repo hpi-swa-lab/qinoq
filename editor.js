@@ -221,8 +221,8 @@ export class InteractivesEditor extends Morph {
       { keys: 'Shift-Left', command: { command: 'move sequence left or decrease scroll position', args: { stepSize: CONSTANTS.LARGE_SCROLL_STEP } } },
       { keys: 'Right', command: { command: 'move sequence right or increase scroll position', args: { stepSize: CONSTANTS.DEFAULT_SCROLL_STEP } } },
       { keys: 'Shift-Right', command: { command: 'move sequence right or increase scroll position', args: { stepSize: CONSTANTS.LARGE_SCROLL_STEP } } },
-      { keys: 'Ctrl-A', command: 'select all sequences' }
-      { keys: 'Delete', command: 'delete selected' }
+      { keys: 'Ctrl-A', command: 'select all sequences' },
+      { keys: 'Delete', command: 'delete selected items' }
     ].concat(super.keybindings);
   }
 
@@ -349,7 +349,8 @@ export class InteractivesEditor extends Morph {
         }
       },
       {
-        name: 'delete selected',
+        name: 'delete selected items',
+        doc: 'All currently selected items in a timeline get deleted',
         exec: () => { if (!this.inputFieldFocused()) this.displayedTimeline.deleteSelectedItems(); }
       }];
   }

@@ -19,6 +19,7 @@ export class TimelineKeyframe extends Morph {
         set (keyframe) {
           this.setProperty('_keyframe', keyframe);
           this.name = keyframe.name;
+          // will not trigger change propagation in the easing setter
           this.setProperty('easing', keyframe.easingName);
         }
       },
@@ -74,7 +75,7 @@ export class TimelineKeyframe extends Morph {
   }
 
   get timeline () {
-    return this.editor.displayedTimeline;
+    return this.owner.timeline;
   }
 
   get timelineKeyframeY () {
@@ -144,7 +145,7 @@ export class TimelineKeyframe extends Morph {
     super.onMouseDown(evt);
     if (evt.leftMouseButtonPressed() && evt.isShiftDown()) {
       this.toggleSelection();
-    } else if (evt.leftMouseButtonPressed() || (evt.rightMouseButtonPressed() && !this.isSelected)) {
+    } else if (!this.isSelected) {
       this.timeline.deselectAllTimelineKeyframesExcept(this);
     }
   }
@@ -154,12 +155,20 @@ export class TimelineKeyframe extends Morph {
     this.editor.interactiveScrollPosition = scrollPosition;
   }
 
+  onMouseUp (evt) {
+    if (!this._dragged && !evt.isShiftDown()) {
+      this.timeline.deselectAllTimelineKeyframesExcept(this);
+    } else {
+      this._dragged = false;
+    }
+  }
+
   toggleSelection () {
     this.isSelected = !this.isSelected;
   }
 
   onDragStart (event) {
-    this.isSelected = true;
+    if (event.isShiftDown()) return;
     const undo = this.undoStart('move-keyframe');
     event.hand.dragKeyframeStates = this.timeline.selectedTimelineKeyframes.map(timelinekeyframe => {
       undo.addTarget(timelinekeyframe);
@@ -172,13 +181,15 @@ export class TimelineKeyframe extends Morph {
   }
 
   onDragEnd (event) {
+    if (!event.hand.dragKeyframeStates) return;
     this.undoStop('move-keyframe');
     this.editor.interactive.redraw();
     this.layer.redraw();
+    this._dragged = true;
     delete event.hand.dragKeyframeStates;
   }
 
-  checkForValidDrag (dragStates) {
+  isValidDrag (dragStates) {
     let validDrag = true;
     dragStates.forEach(dragState => {
       if (dragState.keyframe.position < 0 || dragState.keyframe.position > 1) {
@@ -190,11 +201,12 @@ export class TimelineKeyframe extends Morph {
   }
 
   onDrag (event) {
+    if (!event.hand.dragKeyframeStates) return;
     super.onDrag(event);
     this.position = pt(this.position.x, this.timelineKeyframeY);
 
-    const dragState = event.hand.dragKeyframeStates.filter(dragState => dragState.timelineKeyframe == this)[0];
-    const prevPositionX = dragState.previousPosition.x;
+    const referenceDragState = event.hand.dragKeyframeStates.filter(dragState => dragState.timelineKeyframe == this)[0];
+    const prevPositionX = referenceDragState.previousPosition.x;
     const dragDeltaX = prevPositionX - this.position.x;
 
     event.hand.dragKeyframeStates.forEach(dragState => {
@@ -203,7 +215,7 @@ export class TimelineKeyframe extends Morph {
       }
     });
 
-    if (!this.checkForValidDrag(event.hand.dragKeyframeStates)) {
+    if (!this.isValidDrag(event.hand.dragKeyframeStates)) {
       event.hand.dragKeyframeStates.forEach(stateForKeyframe => {
         stateForKeyframe.timelineKeyframe.position = stateForKeyframe.previousPosition;
       });
