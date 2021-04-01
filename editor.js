@@ -186,7 +186,6 @@ export class InteractivesEditor extends Morph {
 
   clearInteractive () {
     if (!this.interactive) return;
-
     this.interactiveInEditMode = false;
 
     disconnect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
