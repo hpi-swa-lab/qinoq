@@ -29,7 +29,7 @@ Closes [fill in your issues here]
 - [ ] using left click on a sequence selects it (blue border shown)
 - [ ] the selected sequence can be moved by one scroll unit with the left/right arrows and by 10 scroll units when holding shift simultaneously
 - [ ] when clicking the "+" button a sequence is in the hand, which can only be dropped on a timelinelayer and changes color when you are not able to place the sequence
-	- [ ] this can be cancelled by pressing ESC
+  - [ ] this can be cancelled by pressing ESC
 - [ ] right clicking on a sequence brings up a context menu
 - [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the interactive/beginning of the next/previous sequence
 - [ ] moving a sequence to the right will make the active area (light grey) larger
@@ -66,9 +66,9 @@ Closes [fill in your issues here]
 - [ ] there are three OverviewLayers (one per Morph in the sky sequence)
 - [ ] they hold four to six keyframes each
 - [ ] right-clicking a keyframe shows a context menu
-	- [ ] right-clicking on the last keyframe of the sun's position animation, an option to select easing is shown
-	- [ ] when clicked, a list of easings appears
-	- [ ] when outBack is selected as the easing, the sun moves a little back at the end of the animation
+  - [ ] right-clicking on the last keyframe of the sun's position animation, an option to select easing is shown
+  - [ ] when clicked, a list of easings appears
+  - [ ] when outBack is selected as the easing, the sun moves a little back at the end of the animation
 - [ ] clicking on the triangle expands those into two new layers with two keyframes each
 - [ ] when expanding both morphs the cursor is still visible over all layers
 - [ ] creating a new keyframe (with the inspector) will update the layers accordingly
@@ -105,3 +105,10 @@ Closes [fill in your issues here]
 - [ ] when the zoomfactor of a timeline is changed, the scroller in the scrollbar changes its width accordingly
 - [ ] moving in the scrolled timeline with `Alt+Wheel` changes the scroller position
 - [ ] in a scrollable timeline normal scrolling will always move the layers and their information and nothing else
+
+### Search
+
+- [ ] searching for a keyframe takes you to that keyframe
+  - [ ] this works for keyframes in another tab
+  - [ ] this works for keyframes in a sequence with no tab
+  - [ ] this works for keyframes in another tab with zoom and expanded layers (so scrolling is necessary in both directions)
