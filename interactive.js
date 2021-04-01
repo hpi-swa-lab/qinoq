@@ -118,17 +118,17 @@ export class Interactive extends Morph {
       halosEnabled: false
     });
     this.scrollOverlay.addMorph(scrollLengthContainer);
-    connect(this, 'position', this.scrollOverlay, 'position');
+    connect(this, 'position', this.scrollOverlay, 'globalPosition', { converter: '() => source.globalPosition' });
     // the width of the scrollable content needs to be smaller then that of the scroll container including scrollBar(s)
     // otherwise sometimes one can scroll further than intended
-    connect(this, 'onLengthChange', scrollLengthContainer, 'extent', { converter: '(length) => pt(source.extent.x/2, length + source.extent.y)', varMapping: { pt } });
+    connect(this, 'onLengthChange', scrollLengthContainer, 'extent', { converter: '(length) => pt(1, length + source.extent.y)', varMapping: { pt } });
     connect(this, 'extent', this, 'updateScrollContainerExtents');
   }
 
   updateScrollContainerExtents () {
     this.scrollOverlay.extent = this.extent;
     const scrollableContent = this.scrollOverlay.submorphs[0];
-    scrollableContent.extent = pt(this.extent.x / 2, this.extent.y + this._length);
+    scrollableContent.extent = pt(1, this.extent.y + this._length);
   }
 
   updateInteractiveLength () {
@@ -317,14 +317,35 @@ class InteractiveScrollHolder extends Morph {
       opacity: {
         defaultValue: 0.001
       },
+      fill: {
+        defaultValue: Color.transparent
+      },
       halosEnabled: {
         defaultValue: false
-      }
+      },
+      draggable: {
+        defaultValue: true
+      },
+      passThroughMorph: {
+        defaultValue: false
+      },
+      // holds morphs that are created with the topbar for the editor to subscribe to
+      newMorph: {}
     };
   }
 
   onScroll (evt) {
     this.interactive.scrollPosition = this.scroll.y;
+  }
+
+  onDrag (evt) {
+    // just cancel dragging to enable drawing morphs on me without moving myself
+  }
+
+  onDragEnd (evt) {
+    if (this.passThroughMorph) {
+      this.newMorph = this.submorphs.filter(submorph => submorph.name !== 'scrollable content')[0];
+    }
   }
 }
 

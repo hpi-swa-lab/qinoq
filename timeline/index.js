@@ -245,14 +245,14 @@ export class Timeline extends Morph {
       this.submorphs.forEach(submorph => submorph.remove());
       this.initialize();
     }
-    this._inInitialConstruction = true;
+    this._wantsOverviewLayers = true;
     this.onLoadContent(content);
     this.initializeCursor();
     connect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange', {
       updater: '($update, scrollPosition) => { if (target.isDisplayed) $update(scrollPosition); }'
     }).update(this.editor.interactiveScrollPosition);
     connect(content, 'name', this, 'name', { converter: newName => `${newName.toLowerCase()} timeline` }).update(content.name);
-    this._inInitialConstruction = false;
+    this._wantsOverviewLayers = false;
   }
 
   onLoadContent (content) {
@@ -604,7 +604,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   getNewTimelineLayer (props) {
-    return this._inInitialConstruction ? new OverviewSequenceTimelineLayer(props) : new SequenceTimelineLayer(props);
+    return this._wantsOverviewLayers ? new OverviewSequenceTimelineLayer(props) : new SequenceTimelineLayer(props);
   }
 
   getPositionFromScroll (scrollPosition) {
