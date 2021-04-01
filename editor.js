@@ -292,7 +292,6 @@ export class InteractivesEditor extends Morph {
     connect(displayedTimeline, 'zoomFactor', this.menuBar.ui.zoomInput, 'number', { converter: '(zoomFactor) => zoomFactor * 100' }).update(displayedTimeline.zoomFactor);
     connect(this.window, 'extent', displayedTimeline, 'relayout').update(this.window.extent);
     displayedTimeline.onScrollChange(this.interactiveScrollPosition);
-
     return displayedTimeline;
   }
 
@@ -375,6 +374,10 @@ export class InteractivesEditor extends Morph {
       tab.selected = true;
       const timeline = this.getTimelineFor(tab);
       const timelineKeyframe = timeline.getTimelineKeyframe(item);
+
+      // If this line is removed, the scroll does not happen (Race issue)
+      await new Promise(r => setTimeout(r, 20));
+
       timeline.scrollToTimelineKeyframe(timelineKeyframe);
       timelineKeyframe.show();
       return timelineKeyframe;

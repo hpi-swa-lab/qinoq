@@ -734,6 +734,9 @@ export class SequenceTimeline extends Timeline {
   }
 
   scrollVerticallyTo (scrollTop) {
+    const maxScroll = this.ui.scrollableContainer.scrollExtent.y - this.ui.scrollableContainer.extent.y - this.ui.scrollableContainer.scrollbarOffset.y;
+    scrollTop = scrollTop > maxScroll ? maxScroll : scrollTop;
+
     const scrollableContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.scrollableContainer);
     if (!scrollableContainerNode) return;
     scrollableContainerNode.scrollTop = scrollTop;
