@@ -1,6 +1,6 @@
 import { ProportionalLayout, HorizontalLayout, VerticalLayout, Icon, Label, Morph } from 'lively.morphic';
 import { connect, signal, disconnectAll, disconnect } from 'lively.bindings';
-import { pt, Color, rect } from 'lively.graphics';
+import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
 import { InteractiveMorphInspector } from './inspector.js';
 import { resource } from 'lively.resources';
@@ -56,11 +56,9 @@ export class InteractivesEditor extends Morph {
           this.setProperty('interactiveInEditMode', bool);
           if (this.interactiveInEditMode) {
             $world.get('lively top bar').attachToTarget(this.interactive.scrollOverlay);
-            this.interactive.scrollOverlay.opacity = 1;
             this.interactive.scrollOverlay.passThroughMorph = true;
           } else {
             $world.get('lively top bar').attachToTarget($world);
-            this.interactive.scrollOverlay.opacity = 0.001;
             this.interactive.scrollOverlay.passThroughMorph = false;
           }
         }
