@@ -170,7 +170,6 @@ export class PointAnimation extends Animation {
   }
 
   interpolate (progress, start, end) {
-    console.log(end);
     const factor = end.easing(this.lerp(start, end, progress));
     return pt(start.value.x + (end.value.x - start.value.x) * factor,
       start.value.y + (end.value.y - start.value.y) * factor);
