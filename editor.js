@@ -1,6 +1,6 @@
 import { ProportionalLayout, HorizontalLayout, VerticalLayout, Icon, Label, Morph } from 'lively.morphic';
 import { connect, signal, disconnectAll, disconnect } from 'lively.bindings';
-import { pt, rect } from 'lively.graphics';
+import { pt, Color, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
 import { InteractiveMorphInspector } from './inspector.js';
 import { resource } from 'lively.resources';
@@ -48,6 +48,22 @@ export class InteractivesEditor extends Morph {
       },
       interactiveScrollPosition: {
         defaultValue: 0
+      },
+      interactiveInEditMode: {
+        defaultValue: false,
+        set (bool) {
+          if (!this.interactive) return;
+          this.setProperty('interactiveInEditMode', bool);
+          if (this.interactiveInEditMode) {
+            $world.get('lively top bar').attachToTarget(this.interactive.scrollOverlay);
+            this.interactive.scrollOverlay.opacity = 1;
+            this.interactive.scrollOverlay.passThroughMorph = true;
+          } else {
+            $world.get('lively top bar').attachToTarget($world);
+            this.interactive.scrollOverlay.opacity = 0.001;
+            this.interactive.scrollOverlay.passThroughMorph = false;
+          }
+        }
       }
     };
   }
@@ -60,7 +76,14 @@ export class InteractivesEditor extends Morph {
     });
     await this.initializePanels();
     connect(this.window, 'close', this, 'abandon');
+    connect(this.window, 'position', this, 'positionChanged');
     return this;
+  }
+
+  positionChanged () {
+    if (this.interactive) {
+      this.interactive.scrollOverlay.globalPosition = this.interactive.globalPosition;
+    }
   }
 
   async initializePanels () {
@@ -145,6 +168,8 @@ export class InteractivesEditor extends Morph {
     connect(this.interactive, 'remove', this, 'reset');
     connect(this.preview, 'extent', this.interactive, 'extent');
 
+    connect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
+
     connect(this.globalTab, 'caption', this.interactive, 'name');
 
     // trigger update of timeline dependents
@@ -163,6 +188,9 @@ export class InteractivesEditor extends Morph {
 
   clearInteractive () {
     if (!this.interactive) return;
+
+    this.interactiveInEditMode = false;
+
     disconnect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
     disconnect(this.interactive, 'name', this.globalTimeline, 'name');
     disconnect(this.interactive, 'remove', this, 'reset');
@@ -175,11 +203,12 @@ export class InteractivesEditor extends Morph {
     disconnect(this.interactive, 'onLengthChange', this.globalTimeline, '_activeAreaWidth');
 
     disconnect(this.globalTab, 'caption', this.interactive, 'name');
-    this.globalTimeline.clear();
 
+    disconnect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
+
+    this.globalTimeline.clear();
     this.tabs.forEach(tab => { if (tab !== this.globalTab) tab.close(); });
 
-    this.interactive.remove();
     this.inspector.deselect();
     this.preview.showEmptyPreviewPlaceholder();
   }
@@ -276,6 +305,15 @@ export class InteractivesEditor extends Morph {
     this.globalTimeline.onActiveAreaWidthChange();
   }
 
+  addMorphToInteractive (aMorph) {
+    this.currentSequence.addMorph(aMorph);
+    this.inspector.targetMorph = aMorph;
+    this.displayedTimeline._wantsOverviewLayers = true;
+    this.displayedTimeline.createOverviewTimelineLayer(aMorph);
+    this.displayedTimeline._wantsOverviewLayers = false;
+    this.displayedTimeline.onActiveAreaWidthChange();
+  }
+
   get inputFieldClasses () {
     return ['ValueScrubber', 'ColorPropertyView', 'TabCaption'];
   }
@@ -292,8 +330,10 @@ export class InteractivesEditor extends Morph {
 
     if (displayedTimeline === this.globalTimeline) {
       this.interactive.showAllSequences();
+      this.interactiveInEditMode = false;
     } else {
       this.interactive.showOnly(this.currentSequence);
+      this.interactiveInEditMode = true;
     }
     if (previouslyDisplayedTimeline) {
       disconnect(this.window, 'extent', previouslyDisplayedTimeline, 'relayout');
