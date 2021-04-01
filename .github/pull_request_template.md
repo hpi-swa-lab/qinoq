@@ -54,6 +54,9 @@ Closes [fill in your issues here]
 - [ ] the background layer can now be moved down via the context menu of the layer info
 - [ ] a layer may be removed, its sequences will not be visible anymore and the layer is removed from the editor
 - [ ] a layer can be hidden with a click on the eye icon. The sequences in that layer will no longer be shown in the interactive
+- [ ] a new layer can be created, it will appear at the top
+- [ ] the sky sequence can be dragged into the new layer
+- [ ] the layer can be dragged under the background layer
 
 ### TimelineCursor
 
