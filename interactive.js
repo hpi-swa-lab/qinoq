@@ -211,6 +211,10 @@ export class Interactive extends Morph {
     this.getSequencesInLayer(layer).forEach(sequence => this.removeSequence(sequence));
   }
 
+  get highestZIndex () {
+    return Math.max(...this.layers.map(layer => layer.zIndex));
+  }
+
   addSequence (sequence) {
     connect(sequence, 'layer', this, 'sortSequences');
     this.sequences.push(sequence);
@@ -318,23 +322,15 @@ class InteractiveScrollHolder extends Morph {
 
 export class Layer {
   static exampleBackgroundLayer () {
-    const layer = new Layer();
-    layer.name = 'Background';
-    return layer;
+    return new Layer({ name: 'Background' });
   }
 
   static exampleMiddleLayer () {
-    const layer = new Layer();
-    layer.name = 'Middle';
-    layer.zIndex = 10;
-    return layer;
+    return new Layer({ name: 'Middle', zIndex: 10 });
   }
 
   static exampleForegroundLayer () {
-    const layer = new Layer();
-    layer.name = 'Foreground';
-    layer.zIndex = 20;
-    return layer;
+    return new Layer({ name: 'Foreground', zIndex: 20 });
   }
 
   set zIndex (zIndex) {
@@ -348,10 +344,15 @@ export class Layer {
     return this._zIndex;
   }
 
-  constructor () {
-    this.name = 'Unnamed Layer';
-    this.hidden = false;
-    this._zIndex = 0;
+  constructor (props = {}) {
+    const {
+      name = 'Unnamed Layer',
+      hidden = false,
+      zIndex = 0
+    } = props;
+    this.name = name;
+    this.hidden = hidden;
+    this._zIndex = zIndex;
     this.id = newUUID();
   }
 

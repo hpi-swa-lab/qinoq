@@ -63,7 +63,10 @@ export class TimelineLayerInfo extends Morph {
 
     if (this.isInGlobalTimeline) {
       this.ui.hideButton = new Label({ name: 'hide button', tooltip: 'Hide layer in interactive', nativeCursor: 'pointer', reactsToPointer: true });
-      this.ui.hideButton.onMouseUp = (evt) => { if (evt.leftMouseButtonPressed()) this.toggleLayerVisibility(); };
+      this.ui.hideButton.onMouseUp = (evt) => {
+        // domEvt.button 0 is left click, .isLeftMouseButton doesnt work currently
+        if (evt.domEvt.button == 0) this.toggleLayerVisibility();
+      };
       Icon.setIcon(this.ui.hideButton, 'eye');
 
       this.addMorph(this.ui.hideButton);

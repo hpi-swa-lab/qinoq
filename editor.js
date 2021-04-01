@@ -6,7 +6,7 @@ import { InteractiveMorphInspector } from './inspector.js';
 import { resource } from 'lively.resources';
 import { arr } from 'lively.lang';
 import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
-import { Sequence, Interactive } from 'qinoq';
+import { Sequence, Interactive, Layer } from 'qinoq';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
 
 import StripeButton from 'StripeButton';
@@ -264,6 +264,17 @@ export class InteractivesEditor extends Morph {
     this.interactive.addSequence(newSequence);
 
     this.globalTimeline.createTimelineSequenceInHand(newSequence);
+  }
+
+  createNewLayer () {
+    if (!this.interactive) return;
+
+    const newZIndex = this.interactive.highestZIndex + 1;
+    const newLayer = new Layer({ name: 'unnamed layer', zIndex: newZIndex });
+
+    this.interactive.addLayer(newLayer);
+    this.globalTimeline.createTimelineLayer(newLayer);
+    this.globalTimeline.onActiveAreaWidthChange();
   }
 
   get inputFieldClasses () {
@@ -588,6 +599,16 @@ class MenuBar extends Morph {
     });
 
     this.buildIconButton({
+      tooltip: 'Create a new layer',
+      action: () => {
+        this.editor.createNewLayer();
+      },
+      icon: 'layer-group',
+      name: 'addLayerButton',
+      container: 'leftContainer'
+    });
+
+    this.buildIconButton({
       tooltip: 'Go to start',
       action: () => {
         this.editor.interactiveScrollPosition = this.editor.currentSequence ? this.editor.currentSequence.start : 0;
@@ -711,14 +732,18 @@ class MenuBar extends Morph {
 
   onGlobalTimelineTab () {
     this.ui.addSequenceButton.reactsToPointer = true;
+    this.ui.addLayerButton.reactsToPointer = true;
     this.ui.addSequenceButton.fontColor = COLOR_SCHEME.SECONDARY;
+    this.ui.addLayerButton.fontColor = COLOR_SCHEME.SECONDARY;
     this.ui.gotoNextButton.tooltip = 'Go to next sequence';
     this.ui.gotoPrevButton.tooltip = 'Go to previous sequence';
   }
 
   onSequenceView () {
     this.ui.addSequenceButton.reactsToPointer = false;
+    this.ui.addLayerButton.reactsToPointer = false;
     this.ui.addSequenceButton.fontColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
+    this.ui.addLayerButton.fontColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
     this.ui.gotoNextButton.tooltip = 'Go to next keyframe';
     this.ui.gotoPrevButton.tooltip = 'Go to previous keyframe';
   }
