@@ -119,8 +119,6 @@ export class Interactive extends Morph {
     });
     this.scrollOverlay.addMorph(scrollLengthContainer);
     connect(this, 'position', this.scrollOverlay, 'globalPosition', { converter: '() => source.globalPosition' });
-    // the width of the scrollable content needs to be smaller then that of the scroll container including scrollBar(s)
-    // otherwise sometimes one can scroll further than intended
     connect(this, 'onLengthChange', scrollLengthContainer, 'extent', { converter: '(length) => pt(1, length + source.extent.y)', varMapping: { pt } });
     connect(this, 'extent', this, 'updateScrollContainerExtents');
   }
