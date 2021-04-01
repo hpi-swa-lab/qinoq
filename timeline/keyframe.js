@@ -16,6 +16,7 @@ export class TimelineKeyframe extends Morph {
         defaultValue: Math.PI / 4
       },
       _keyframe: {
+        after: ['name'],
         set (keyframe) {
           this.setProperty('_keyframe', keyframe);
           this.name = keyframe.name;
