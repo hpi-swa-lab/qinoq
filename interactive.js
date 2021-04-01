@@ -342,10 +342,17 @@ class InteractiveScrollHolder extends Morph {
     // just cancel dragging to enable drawing morphs on me without moving myself
   }
 
+  onDragStart (evt) {
+    this.opacity = 1;
+    this.clipMode = 'hidden';
+  }
+
   onDragEnd (evt) {
     if (this.passThroughMorph) {
       this.newMorph = this.submorphs.filter(submorph => submorph.name !== 'scrollable content')[0];
     }
+    this.opacity = 0.001;
+    this.clipMode = 'auto';
   }
 }
 
