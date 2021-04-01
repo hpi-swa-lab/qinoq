@@ -269,8 +269,8 @@ export class InteractivesEditor extends Morph {
   createNewLayer () {
     if (!this.interactive) return;
 
-    const newZIndex = this.interactive.highestZIndex + 1;
-    const newLayer = new Layer({ name: 'unnamed layer', zIndex: newZIndex });
+    const newZIndex = this.interactive.highestZIndex + 10;
+    const newLayer = new Layer({ zIndex: newZIndex });
 
     this.interactive.addLayer(newLayer);
     this.globalTimeline.createTimelineLayer(newLayer);
