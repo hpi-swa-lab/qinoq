@@ -550,7 +550,7 @@ class MenuBar extends Morph {
       action: () => {
         this.editor.createNewSequence();
       },
-      icon: 'plus',
+      icon: 'ticket-alt',
       name: 'addSequenceButton',
       container: 'leftContainer'
     });
