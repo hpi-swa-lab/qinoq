@@ -90,7 +90,7 @@ export class Interactive extends Morph {
       clipMode: {
         defaultValue: 'hidden'
       },
-      scrollOverlay: {
+      _scrollOverlay: {
         after: ['extent'],
         initialize () {
           this.initScrollOverlay();
@@ -101,6 +101,14 @@ export class Interactive extends Morph {
         }
       }
     };
+  }
+
+  get scrollOverlay () {
+    return this._scrollOverlay;
+  }
+
+  set scrollOverlay (scrollOverlay) {
+    this._scrollOverlay = scrollOverlay;
   }
 
   initScrollOverlay () {
@@ -571,5 +579,9 @@ export class Sequence extends Morph {
 
   getRelativePositionFor (scrollPosition) {
     return (scrollPosition - this.start) / this.duration;
+  }
+
+  onLoad () {
+    this.animations.forEach(animation => animation.keyframes.forEach(keyframe => keyframe.setEasing(keyframe.easingName)));
   }
 }
