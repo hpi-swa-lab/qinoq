@@ -376,8 +376,8 @@ export class InteractivesEditor extends Morph {
       const timeline = this.getTimelineFor(tab);
       const timelineKeyframe = timeline.getTimelineKeyframe(item);
       timeline.scrollToTimelineKeyframe(timelineKeyframe);
-
       timelineKeyframe.show();
+      return timelineKeyframe;
     }
   }
 
