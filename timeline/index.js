@@ -280,9 +280,9 @@ export class Timeline extends Morph {
 export class GlobalTimeline extends Timeline {
   createTimelineSequence (sequence) {
     const timelineSequence = new TimelineSequence({
-        _editor: this.editor,
-        sequence,
-        timelineLayer: this.getTimelineLayerFor(sequence.layer)
+      _editor: this.editor,
+      sequence,
+      timelineLayer: this.getTimelineLayerFor(sequence.layer)
     });
     connect(sequence, 'name', timelineSequence, 'caption');
     return timelineSequence;
@@ -707,12 +707,11 @@ export class SequenceTimeline extends Timeline {
   }
 
   scrollToTimelineKeyframe (timelineKeyframe) {
-    const timelineKeyframeX = timelineKeyframe.position.x;
-    const timelineKeyframeIsVisible = timelineKeyframeX >= this.ui.layerContainer.scroll.x && timelineKeyframeX <= this.ui.layerContainer.extent.x + this.ui.layerContainer.scroll.x;
-    if (timelineKeyframeIsVisible) return;
+    const scrollToX = timelineKeyframe.position.x - this.ui.layerContainer.extent.x / 2;
+    this.scrollHorizontallyTo(scrollToX);
 
-    const scrollTo = timelineKeyframeX - this.ui.layerContainer.extent.x / 2;
-    this.scrollHorizontallyTo(scrollTo);
+    const scrollToY = timelineKeyframe.layer.position.y;
+    this.scrollVerticallyTo(scrollToY);
   }
 
   scrollHorizontallyTo (scrollLeft) {
@@ -721,5 +720,11 @@ export class SequenceTimeline extends Timeline {
     this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
     const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
     this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
+  }
+
+  scrollVerticallyTo (scrollTop) {
+    const scrollableContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
+    scrollableContainerNode.scrollTop = scrollTop;
+    this.ui.scrollableContainer.setProperty('scroll', pt(0, scrollTop));
   }
 }
