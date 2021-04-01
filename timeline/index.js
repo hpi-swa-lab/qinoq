@@ -529,7 +529,17 @@ export class SequenceTimeline extends Timeline {
   }
 
   getTimelineKeyframe (keyframe) {
-    return this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe == keyframe);
+    return this.keyframes.find(timelineKeyframe => {
+      const timelineLayer = timelineKeyframe.layer;
+      if (timelineLayer.isOverviewLayer) {
+        if (!timelineLayer.isExpanded) {
+          return timelineKeyframe.keyframe == keyframe;
+        }
+        return false;
+      } else {
+        return timelineKeyframe.keyframe == keyframe;
+      }
+    });
   }
 
   updateLayers () {
@@ -716,6 +726,7 @@ export class SequenceTimeline extends Timeline {
 
   scrollHorizontallyTo (scrollLeft) {
     const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
+    if (!layerContainerNode) return;
     layerContainerNode.scrollLeft = scrollLeft;
     this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
     const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
@@ -723,7 +734,8 @@ export class SequenceTimeline extends Timeline {
   }
 
   scrollVerticallyTo (scrollTop) {
-    const scrollableContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
+    const scrollableContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.scrollableContainer);
+    if (!scrollableContainerNode) return;
     scrollableContainerNode.scrollTop = scrollTop;
     this.ui.scrollableContainer.setProperty('scroll', pt(0, scrollTop));
   }
