@@ -64,6 +64,7 @@ export class TimelineKeyframe extends Morph {
         set (easing) {
           this.setProperty('easing', easing);
           this.keyframe.setEasing(this.easing);
+          this.setTooltip();
           if (this.layer) this.layer.redraw();
         }
       }
