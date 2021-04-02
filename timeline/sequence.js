@@ -32,6 +32,7 @@ export class TimelineSequence extends Morph {
         set (caption) {
           if (!caption) return;
           this.getSubmorphNamed('aLabel').textString = caption;
+          this.sequence.name = caption;
         }
       },
       sequence: {
@@ -656,31 +657,14 @@ export class TimelineSequence extends Morph {
 
   menuItems (evt) {
     return [
-      ['✏️ Rename Sequence', async () => await this.promptName()],
-      ['❌ Delete Sequence', () => this.abandon()],
-      ['↔️ Edit duration', async () => await this.promptDuration()],
+      ['✏️ Rename Sequence', async () => await this.timeline.promptRenameForSelection()],
+      ['❌ Delete Sequence', () => this.timeline.deleteSelectedItems()],
+      ['↔️ Edit duration', async () => await this.timeline.promptDurationForSelection()],
       ['🏁 Edit start position', async () => await this.promptStart()],
       { isDivider: true },
       ['🔍 View sequence', () => this.openSequenceView()],
       ['▶️ Go to start', () => this.editor.interactiveScrollPosition = this.sequence.start]
     ];
-  }
-
-  async promptName () {
-    const newName = await $world.prompt('Sequence name:', { input: this.sequence.name });
-    if (newName) {
-      this.sequence.name = newName;
-    }
-  }
-
-  async promptDuration () {
-    const newDuration = Number(await $world.prompt('Duration:', { input: this.sequence.duration }));
-    if (this.editor.interactive.validSequenceDuration(this.sequence, newDuration)) {
-      this.sequence.duration = newDuration;
-      this.width = this.timeline.getWidthFromDuration(newDuration);
-    } else {
-      $world.setStatusMessage('Duration not set', COLOR_SCHEME.ERROR);
-    }
   }
 
   async promptStart () {
