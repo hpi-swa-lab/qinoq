@@ -299,6 +299,10 @@ export class Timeline extends Morph {
     disconnect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange');
     disconnect(this.editor.interactive, 'name', this, 'name');
   }
+
+  renameSelection (newName) {
+    throw new Error('Subclass responsibility');
+  }
 }
 
 export class GlobalTimeline extends Timeline {
@@ -475,6 +479,53 @@ export class GlobalTimeline extends Timeline {
 
   deleteSelectedItems () {
     arr.invoke(this.selectedSequences, 'abandon');
+  }
+
+  async promptRenameForSelection () {
+    let newName;
+    if (!(this.selectedSequences.length > 1)) {
+      newName = await $world.prompt('Sequence name:', { input: this.selectedSequences[0].sequence.name });
+    } else {
+      newName = await $world.prompt(`Name for the ${this.selectedSequences.length} selected Sequences`);
+    }
+    if (newName) {
+      this.renameSelection(newName);
+    }
+  }
+
+  renameSelection (newName) {
+    const undo = this.undoStart('rename-sequence');
+    this.selectedSequences.forEach(timelineSequence => {
+      undo.addTarget(timelineSequence);
+      timelineSequence.caption = newName;
+    });
+    this.undoStop('rename-sequence');
+  }
+
+  async promptDurationForSelection () {
+    let newDuration;
+    if (!(this.selectedSequences.length > 1)) {
+      newDuration = Number(await $world.prompt('Duration:', { input: this.selectedSequences[0].sequence.duration }));
+    } else {
+      newDuration = Number(await $world.prompt(`Duration of the ${this.selectedSequences.length} selected Sequences:`));
+    }
+
+    const invalidDuration = this.selectedSequences.some(timelineSequence => !this.editor.interactive.validSequenceDuration(timelineSequence.sequence, newDuration));
+    if (!invalidDuration) {
+      this.setDurationForSelection(newDuration);
+    } else {
+      $world.setStatusMessage('Duration not set', COLOR_SCHEME.ERROR);
+    }
+  }
+
+  setDurationForSelection (newDuration) {
+    const undo = this.undoStart('sequence-duration');
+    this.selectedSequences.forEach(timelineSequence => {
+      undo.addTarget(timelineSequence);
+      timelineSequence.sequence.duration = newDuration;
+      timelineSequence.width = this.getWidthFromDuration(newDuration);
+    });
+    this.undoStop('sequence-duration');
   }
 }
 
