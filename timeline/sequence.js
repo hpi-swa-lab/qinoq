@@ -66,13 +66,14 @@ export class TimelineSequence extends Morph {
       extent: {
         set (extent) {
           this.setProperty('extent', extent);
-          if (!this._lockModelUpdate) { this.updateSequenceAfterArrangement(); }
+          if (!this._lockModelUpdate && this.timeline) { this.updateSequenceAfterArrangement(); }
         }
       },
       position: {
+        after: ['owner'],
         set (position) {
           this.setProperty('position', position);
-          if (!this._lockModelUpdate) { this.updateSequenceAfterArrangement(); }
+          if (!this._lockModelUpdate && this.timeline) { this.updateSequenceAfterArrangement(); }
         }
       },
       isSelected: {

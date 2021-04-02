@@ -40,6 +40,7 @@ export class TimelineLayer extends Morph {
   }
 
   get timeline () {
+    if (!this.owner || !this.owner.owner) return undefined;
     return this.owner.owner.owner;
   }
 

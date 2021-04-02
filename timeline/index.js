@@ -51,6 +51,7 @@ export class Timeline extends Morph {
         }
       },
       _activeAreaWidth: {
+        after: ['ui'],
         defaultValue: CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH,
         set (width) {
           this.setProperty('_activeAreaWidth', width);

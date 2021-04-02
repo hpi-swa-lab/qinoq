@@ -6,6 +6,7 @@ export class TimelineLayerInfo extends Morph {
   static get properties () {
     return {
       timelineLayer: {
+        before: ['ui'],
         set (timelineLayer) {
           this.setProperty('timelineLayer', timelineLayer);
           this._editor = timelineLayer.editor;
