@@ -531,6 +531,31 @@ export class GlobalTimeline extends Timeline {
     });
     this.undoStop('sequence-duration');
   }
+
+  async promptStartForSelection () {
+    let newStart;
+    if (!(this.selectedSequences.length > 1)) {
+      newStart = Number(await $world.prompt('Start:', { input: this.selectedSequences[0].sequence.start }));
+    } else {
+      newStart = (await $world.prompt(`Start of the ${this.selectedSequences.length} selected Sequences:`));
+    }
+    const invalidStart = this.selectedSequences.some(timelineSequence => !this.editor.interactive.validSequenceStart(timelineSequence.sequence, newStart));
+    if (!invalidStart) {
+      this.setStartForSelection(newStart);
+    } else {
+      $world.setStatusMessage('Start not set', COLOR_SCHEME.ERROR);
+    }
+  }
+
+  setStartForSelection (newStart) {
+    const undo = this.undoStart();
+    const newPositionX = this.getPositionFromScroll(newStart);
+    this.selectedSequences.forEach(timelineSequence => {
+      undo.addTarget(timelineSequence);
+      timelineSequence.position = pt(newPositionX, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+    });
+    this.undoStop();
+  }
 }
 
 export class SequenceTimeline extends Timeline {

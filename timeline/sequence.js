@@ -656,25 +656,18 @@ export class TimelineSequence extends Morph {
   }
 
   menuItems (evt) {
-    return [
+    let items = [
       ['✏️ Rename Sequence', async () => await this.timeline.promptRenameForSelection()],
       ['❌ Delete Sequence', () => this.timeline.deleteSelectedItems()],
       ['↔️ Edit duration', async () => await this.timeline.promptDurationForSelection()],
-      ['🏁 Edit start position', async () => await this.promptStart()],
-      { isDivider: true },
-      ['🔍 View sequence', () => this.openSequenceView()],
-      ['▶️ Go to start', () => this.editor.interactiveScrollPosition = this.sequence.start]
-    ];
-  }
-
-  async promptStart () {
-    const newStart = Number(await $world.prompt('Start:', { input: this.sequence.start }));
-    if (this.editor.interactive.validSequenceStart(this.sequence, newStart)) {
-      this.sequence.start = newStart;
-      this.position = pt(this.timeline.getPositionFromScroll(newStart), CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-    } else {
-      $world.setStatusMessage('Start not set', COLOR_SCHEME.ERROR);
+      ['🏁 Edit start position', async () => await this.timeline.promptStartForSelection()]];
+    if (!(this.timeline.selectedSequences.length > 1)) {
+      items = items.concat([{ isDivider: true },
+        ['🔍 View sequence', () => this.openSequenceView()],
+        ['▶️ Go to start', () => this.editor.interactiveScrollPosition = this.sequence.start]
+      ]);
     }
+    return items;
   }
 
   disbandInteractiveConnections () {
