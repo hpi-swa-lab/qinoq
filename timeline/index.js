@@ -409,6 +409,11 @@ export class GlobalTimeline extends Timeline {
     allSequences.forEach(sequence => sequence.selected = false);
   }
 
+  deselectAllSequencesExcept (timelineSequence) {
+    this.deselectAllSequences();
+    timelineSequence.selected = true;
+  }
+
   get sequences () {
     return this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences);
   }

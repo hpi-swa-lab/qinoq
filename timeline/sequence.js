@@ -165,19 +165,32 @@ export class TimelineSequence extends Morph {
 
   onMouseDown (event) {
     super.onMouseDown(event);
-    const wasSelected = this.selected;
+    if (!this.selected && !event.isShiftDown() && !event.isAltDown()) {
+      this.timeline.deselectAllSequencesExcept(this);
+      return;
+    }
     if (event.leftMouseButtonPressed()) {
-      if (!event.isAltDown() && !event.isShiftDown()) {
-        this.timeline.deselectAllSequences();
-      }
       if (event.isAltDown() && !this.selected && this.timeline._lastSelectedTimelineSequence && this.timeline.getSelectedSequences().length > 0) {
         this.timeline.selectAllSequences(this.rectangularSelectionFilter);
       } else if (event.isAltDown() && this.selected && this.timeline._lastSelectedTimelineSequence) {
         this.timeline.deselectAllSequences(this.rectangularSelectionFilter);
+      } else if (event.isShiftDown()) {
+        this.toggleSelected();
       }
       this.timeline._lastSelectedTimelineSequence = this;
     }
-    this.selected = !wasSelected;
+  }
+
+  toggleSelected () {
+    this.selected = !this.selected;
+  }
+
+  onMouseUp (evt) {
+    if (!this._dragged && !evt.isShiftDown()) {
+      this.timeline.deselectAllSequencesExcept(this);
+    } else {
+      this._dragged = false;
+    }
   }
 
   onSelectionChange (selected) {
@@ -185,19 +198,25 @@ export class TimelineSequence extends Morph {
   }
 
   onDragStart (event) {
-    this.undoStart('timeline-sequence-move');
-    event.hand.timelineSequenceStates = [{
-      timelineSequence: this,
-      previousPosition: this.position,
-      previousWidth: this.width,
-      previousTimelineLayer: this.timelineLayer,
-      isMove: true
-    }];
+    if (event.isShiftDown()) return;
+    this.selected = true;
+    this._dragged = true;
+    const undo = this.undoStart('move-timeline-sequence');
+    event.hand.timelineSequenceStates = this.timeline.selectedSequences.map(timelineSequence => {
+      undo.addTarget(timelineSequence);
+      return {
+        timelineSequence: timelineSequence,
+        previousPosition: timelineSequence.position,
+        previousWidth: timelineSequence.width,
+        previousTimelineLayer: timelineSequence.timelineLayer,
+        isMove: true
+      };
+    });
     this.prepareSnappingData();
   }
 
   onDragEnd (event) {
-    this.undoStop('timeline-sequence-move');
+    this.undoStop('move-timeline-sequence');
     this.handleOverlappingOtherSequence(event.hand.timelineSequenceStates);
     this.hideWarningLeft();
     this.hideWarningRight();
@@ -207,7 +226,18 @@ export class TimelineSequence extends Morph {
   }
 
   onDrag (event) {
+    if (!event.hand.timelineSequenceStates) return;
     super.onDrag(event);
+
+    const referenceDragState = event.hand.timelineSequenceStates.filter(dragState => dragState.timelineSequence == this)[0];
+    const prevPositionX = referenceDragState.previousPosition.x;
+    const dragDeltaX = prevPositionX - this.position.x;
+
+    event.hand.timelineSequenceStates.forEach(dragState => {
+      if (dragState.timelineSequence != this) {
+        dragState.timelineSequence.position = pt(dragState.previousPosition.x - dragDeltaX, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+      }
+    });
     if (this.position.x <= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
       this.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       this.showWarningLeft(event.hand.position.x);
