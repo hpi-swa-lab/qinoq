@@ -402,12 +402,12 @@ export class GlobalTimeline extends Timeline {
     if (filter) {
       allSequences = allSequences.filter(filter);
     }
-    allSequences.forEach(sequence => sequence.selected = false);
+    allSequences.forEach(sequence => sequence.isSelected = false);
   }
 
   deselectAllSequencesExcept (timelineSequence) {
     this.deselectAllSequences();
-    timelineSequence.selected = true;
+    timelineSequence.isSelected = true;
   }
 
   get sequences () {
@@ -415,7 +415,7 @@ export class GlobalTimeline extends Timeline {
   }
 
   get selectedSequences () {
-    return this.sequences.filter(sequence => sequence.selected);
+    return this.sequences.filter(sequence => sequence.isSelected);
   }
 
   getSelectedSequences (filter) {
@@ -433,7 +433,7 @@ export class GlobalTimeline extends Timeline {
     if (deselectIfAllAreSelected && arr.equals(allSequences, this.getSelectedSequences(filter))) {
       this.deselectAllSequences();
     } else {
-      allSequences.forEach(sequence => sequence.selected = true);
+      allSequences.forEach(sequence => sequence.isSelected = true);
     }
   }
 
