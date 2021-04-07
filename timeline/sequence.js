@@ -31,14 +31,15 @@ export class TimelineSequence extends Morph {
       caption: {
         set (caption) {
           if (!caption) return;
+          this.setProperty('caption', caption);
           this.getSubmorphNamed('aLabel').textString = caption;
           this.sequence.name = caption;
+          this.tooltip = caption;
         }
       },
       sequence: {
         set (sequence) {
           this.setProperty('sequence', sequence);
-          this.tooltip = sequence.name;
         }
       },
       _lockModelUpdate: {
@@ -73,11 +74,11 @@ export class TimelineSequence extends Morph {
           if (!this._lockModelUpdate) { this.updateSequenceAfterArrangement(); }
         }
       },
-      selected: {
+      isSelected: {
         defaultValue: false,
         type: 'Boolean',
         set (selected) {
-          this.setProperty('selected', selected);
+          this.setProperty('isSelected', selected);
           this.onSelectionChange(selected);
         }
       },
@@ -165,14 +166,14 @@ export class TimelineSequence extends Morph {
 
   onMouseDown (event) {
     super.onMouseDown(event);
-    if (!this.selected && !event.isShiftDown() && !event.isAltDown()) {
+    if (!this.isSelected && !event.isShiftDown() && !event.isAltDown()) {
       this.timeline.deselectAllSequencesExcept(this);
       return;
     }
     if (event.leftMouseButtonPressed()) {
-      if (event.isAltDown() && !this.selected && this.timeline._lastSelectedTimelineSequence && this.timeline.getSelectedSequences().length > 0) {
+      if (event.isAltDown() && !this.isSelected && this.timeline._lastSelectedTimelineSequence && this.timeline.getSelectedSequences().length > 0) {
         this.timeline.selectAllSequences(this.rectangularSelectionFilter);
-      } else if (event.isAltDown() && this.selected && this.timeline._lastSelectedTimelineSequence) {
+      } else if (event.isAltDown() && this.isSelected && this.timeline._lastSelectedTimelineSequence) {
         this.timeline.deselectAllSequences(this.rectangularSelectionFilter);
       } else if (event.isShiftDown()) {
         this.toggleSelected();
@@ -182,15 +183,7 @@ export class TimelineSequence extends Morph {
   }
 
   toggleSelected () {
-    this.selected = !this.selected;
-  }
-
-  onMouseUp (evt) {
-    if (!this._dragged && !evt.isShiftDown()) {
-      this.timeline.deselectAllSequencesExcept(this);
-    } else {
-      this._dragged = false;
-    }
+    this.isSelected = !this.isSelected;
   }
 
   onSelectionChange (selected) {
@@ -199,10 +192,10 @@ export class TimelineSequence extends Morph {
 
   onDragStart (event) {
     if (event.isShiftDown()) return;
-    this.selected = true;
+    this.isSelected = true;
     this._dragged = true;
     const undo = this.undoStart('move-timeline-sequence');
-    event.hand.timelineSequenceStates = this.timeline.selectedSequences.map(timelineSequence => {
+    event.hand.timelineSequenceStates = this.timeline.getSelectedSequences().map(timelineSequence => {
       undo.addTarget(timelineSequence);
       return {
         timelineSequence: timelineSequence,
@@ -689,7 +682,7 @@ export class TimelineSequence extends Morph {
       ['❌ Delete Sequence', () => this.timeline.deleteSelectedItems()],
       ['↔️ Edit duration', async () => await this.timeline.promptDurationForSelection()],
       ['🏁 Edit start position', async () => await this.timeline.promptStartForSelection()]];
-    if (!(this.timeline.selectedSequences.length > 1)) {
+    if (!(this.timeline.getSelectedSequences().length > 1)) {
       items = items.concat([{ isDivider: true },
         ['🔍 View sequence', () => this.openSequenceView()],
         ['▶️ Go to start', () => this.editor.interactiveScrollPosition = this.sequence.start]
