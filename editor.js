@@ -31,6 +31,10 @@ export class InteractivesEditor extends Morph {
     return {
       interactive: {
         set (interactive) {
+          if (this._deserializing) {
+            this.setProperty('interactive', interactive);
+            return;
+          }
           this.clearInteractive();
           this.setProperty('interactive', interactive);
           this.initializeInteractive(interactive);
@@ -62,7 +66,14 @@ export class InteractivesEditor extends Morph {
             this.interactive.scrollOverlay.passThroughMorph = false;
           }
         }
-      }
+      },
+      menuBar: {},
+      tabContainer: {},
+      window: {},
+      sequenceOverview: {},
+      preview: {},
+      globalTimeline: {},
+      globalTab: {}
     };
   }
 
@@ -594,7 +605,7 @@ class MenuBar extends Morph {
         after: ['_editor'],
         defaultValue: {},
         initialize () {
-          this.initializeUI();
+          if (!this._deserializing) { this.initializeUI(); }
         }
       },
       _editor: {}

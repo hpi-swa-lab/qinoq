@@ -11,7 +11,7 @@ export class TimelineLayer extends Morph {
       layerInfo: {},
       container: {
         initialize () {
-          this.addAreaMorphs();
+          if (!this._deserializing) this.addAreaMorphs();
         }
       },
       focusable: {
@@ -106,9 +106,11 @@ export class SequenceTimelineLayer extends TimelineLayer {
       animation: {
         set (animation) {
           this.setProperty('animation', animation);
+          if (!this._deserializing) {
           this.updateTooltip();
           this.layerInfo.updateLabel();
-          this.redraw();
+            this.redraw();
+          }
         }
       }
     };
@@ -269,7 +271,10 @@ export class GlobalTimelineLayer extends TimelineLayer {
       layer: {
         set (layer) {
           this.setProperty('layer', layer);
-          this.tooltip = layer.name;
+          if (!this._deserializing) {
+            this.tooltip = layer.name;
+            this.name = layer.name;
+          }
         }
       }
     };
@@ -378,7 +383,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
         defaultValue: false,
         set (isExpanded) {
           this.setProperty('isExpanded', isExpanded);
-          if (this.layerInfo && this.layerInfo.ui.collapseButton) {
+          if (this.layerInfo && this.layerInfo.ui.collapseButton && !this._deserializing) {
             isExpanded ? this.expand() : this.collapse();
           }
         }
