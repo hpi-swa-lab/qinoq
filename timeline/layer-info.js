@@ -9,13 +9,13 @@ export class TimelineLayerInfo extends Morph {
       timelineLayer: {
         set (timelineLayer) {
           this.setProperty('timelineLayer', timelineLayer);
-          this._editor = timelineLayer.editor;
+          if (!this._deserializing) this._editor = timelineLayer.editor;
         }
       },
       ui: {
         after: ['timelineLayer', 'name'],
         initialize () {
-          this.initialize();
+          if (!this._deserializing) this.initialize();
         }
       },
       _editor: { },

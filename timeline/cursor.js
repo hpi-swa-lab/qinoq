@@ -16,7 +16,7 @@ export class TimelineCursor extends Morph {
         type: 'Number',
         set (displayValue) {
           this.setProperty('displayValue', displayValue);
-          this.redraw();
+          if (!this._deserializing) this.redraw();
         }
       },
       location: {
@@ -27,21 +27,21 @@ export class TimelineCursor extends Morph {
         isFloat: false,
         set (location) {
           this.setProperty('location', location);
-          this.updatePosition();
+          if (!this._deserializing) this.updatePosition();
         }
       },
       fill: {
         defaultValue: COLOR_SCHEME.SECONDARY,
         set (color) {
           this.setProperty('fill', color);
-          this.updateColor();
+          if (!this._deserializing) this.updateColor();
         }
       },
       fontColor: {
         defaultValue: COLOR_SCHEME.ON_SECONDARY,
         set (color) {
           this.setProperty('fontColor', color);
-          this.updateColor();
+          if (!this._deserializing) this.updateColor();
         }
       },
       name: {
@@ -49,6 +49,7 @@ export class TimelineCursor extends Morph {
       },
       ui: {
         initialize () {
+          if (this._deserializing) return;
           this.initializeSubmorphs();
           this.initializeAppearance();
         }
@@ -114,7 +115,8 @@ export class TimelineCursor extends Morph {
     if (newOwner && arr.include(newOwner.submorphs, this)) {
       if (this.previousOwner) { disconnect(this.previousOwner, 'extent', this, 'height'); }
       connect(newOwner, 'extent', this, 'height', {
-        updater: `($update, extent) => { 
+        updater: `($update, extent) => {
+        if (!target.timeline) return;
         if (extent.y >= target.timeline.ui.layerContainer.height) $update(extent.y);
         else $update(target.timeline.ui.layerContainer.height)
       }`
@@ -124,6 +126,7 @@ export class TimelineCursor extends Morph {
   }
 
   get timeline () {
+    if (!this.owner || !this.owner.owner) return undefined;
     return this.owner.owner.owner;
   }
 
