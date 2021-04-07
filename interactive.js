@@ -582,6 +582,7 @@ export class Sequence extends Morph {
   }
 
   onLoad () {
+    // while savings the easings itself get lost and we need to recreate them
     this.animations.forEach(animation => animation.keyframes.forEach(keyframe => keyframe.setEasing(keyframe.easingName)));
   }
 }

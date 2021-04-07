@@ -11,6 +11,7 @@ Closes [fill in your issues here]
 
 - [ ] can be opened in the world
 - [ ] is scrollable
+- [ ] can be saved
 
 ### Interactive and editor
 
