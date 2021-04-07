@@ -55,8 +55,8 @@ export class TimelineSequence extends Morph {
       timelineLayer: {
         set (timelineLayer) {
           this.setProperty('timelineLayer', timelineLayer);
-          if (!this._lockModelUpdate) {
-            this.onTimelineLayerChange();
+          if (!this._lockModelUpdate && !this._deserializing) {
+            this.onTimelineLayerChange(timelineLayer);
           }
         }
       },
@@ -66,13 +66,13 @@ export class TimelineSequence extends Morph {
       extent: {
         set (extent) {
           this.setProperty('extent', extent);
-          if (!this._lockModelUpdate) { this.updateSequenceAfterArrangement(); }
+          if (!this._lockModelUpdate && !this._deserializing) { this.updateSequenceAfterArrangement(); }
         }
       },
       position: {
         set (position) {
           this.setProperty('position', position);
-          if (!this._lockModelUpdate) { this.updateSequenceAfterArrangement(); }
+          if (!this._lockModelUpdate && !this._deserializing) { this.updateSequenceAfterArrangement(); }
         }
       },
       isSelected: {
@@ -87,7 +87,7 @@ export class TimelineSequence extends Morph {
         after: ['timelineLayer', 'sequence', '_lockModelUpdate', 'height'],
         set (editor) {
           this.setProperty('_editor', editor);
-          this.initialize(); // _editor should be set only once
+          if (!this._deserializing) { this.initialize(); } // _editor should be set only once and then when deserializing
         }
       },
       isHidden: {
