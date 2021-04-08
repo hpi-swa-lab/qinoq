@@ -205,6 +205,12 @@ export class TimelineSequence extends Morph {
         isMove: true
       };
     });
+    const leftMostSequence = this.timeline.getSelectedSequences().sort((a, b) => a.sequence.start - b.sequence.start)[0];
+    event.hand.leftMostSequenceState = {
+      timelineSequence: leftMostSequence,
+      previousPosition: leftMostSequence.position
+    };
+
     this.prepareSnappingData();
   }
 
@@ -216,6 +222,7 @@ export class TimelineSequence extends Morph {
     this.removeSnapIndicators();
     this.clearSnappingData();
     delete event.hand.timelineSequenceStates;
+    delete event.hand.leftMostSequenceState;
   }
 
   onDrag (event) {
@@ -231,12 +238,17 @@ export class TimelineSequence extends Morph {
         dragState.timelineSequence.position = pt(dragState.previousPosition.x - dragDeltaX, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       }
     });
-    if (this.position.x <= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
-      this.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-      this.showWarningLeft(event.hand.position.x);
+
+    if (event.hand.leftMostSequenceState.timelineSequence.position.x <= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
+      event.hand.leftMostSequenceState.timelineSequence.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+      event.hand.leftMostSequenceState.timelineSequence.showWarningLeft(event.hand.position.x);
+
+      event.hand.timelineSequenceStates.forEach(dragState => {
+        dragState.timelineSequence.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + dragState.previousPosition.x - event.hand.leftMostSequenceState.previousPosition.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+      });
     } else {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-      this.hideWarningLeft();
+      event.hand.leftMostSequenceState.timelineSequence.hideWarningLeft();
     }
     this.handleSnapping('drag');
 
