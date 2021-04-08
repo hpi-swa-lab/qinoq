@@ -625,7 +625,6 @@ export class TimelineSequence extends Morph {
 
   setDefaultAppearance () {
     this.fill = COLOR_SCHEME.SURFACE;
-    this.borderColor = COLOR_SCHEME.ON_BACKGROUND;
   }
 
   setHiddenAppearance () {
