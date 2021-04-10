@@ -766,7 +766,8 @@ class MenuBar extends QinoqMorph {
         spacing: CONSTANTS.SPACING,
         autoResize: false,
         direction: 'centered',
-        align: 'center'
+        align: 'center',
+        orderByIndex: true
       }),
       name: 'scroll position toolbar',
       position: pt(containerWidth, 0),
@@ -795,37 +796,41 @@ class MenuBar extends QinoqMorph {
 
     this.layout = new ProportionalLayout({ initialExtent: this.extent });
 
-    this.buildIconButton({
+    await this.buildIconButton({
       tooltip: 'Create a new sequence',
       action: () => {
         this.editor.createNewSequence();
       },
       icon: 'ticket-alt',
+      label: 'New Sequence',
       name: 'addSequenceButton',
       container: 'leftContainer'
     });
 
-    this.buildIconButton({
+    await this.buildIconButton({
       tooltip: 'Create a new layer',
       action: () => {
         this.editor.createNewLayer();
       },
       icon: 'layer-group',
+      label: 'New Layer',
       name: 'addLayerButton',
       container: 'leftContainer'
     });
 
-    this.buildIconButton({
+    await this.buildIconButton({
       tooltip: 'Go to start',
       action: () => {
         this.editor.internalScrollChangeWithGUIUpdate(this.editor.currentSequence ? this.editor.currentSequence.start : 0);
       },
       icon: 'fast-backward',
+      label: 'Go to start',
+      collapsed: true,
       name: 'gotoStartButton',
       container: 'scrollPositionToolbar'
     });
 
-    this.buildIconButton({
+    await this.buildIconButton({
       tooltip: 'Go to previous sequence',
       action: () => {
         const sequence = this.editor.currentSequence;
@@ -834,13 +839,15 @@ class MenuBar extends QinoqMorph {
         this.editor.internalScrollChangeWithGUIUpdate(nextPosition);
       },
       icon: 'step-backward',
+      label: 'Go to previous sequence',
+      collapsed: true,
       name: 'gotoPrevButton',
       container: 'scrollPositionToolbar'
     });
 
     this.buildScrollPositionInput();
 
-    this.buildIconButton({
+    await this.buildIconButton({
       tooltip: 'Go to next sequence',
       action: () => {
         const sequence = this.editor.currentSequence;
@@ -849,40 +856,47 @@ class MenuBar extends QinoqMorph {
         this.editor.internalScrollChangeWithGUIUpdate(nextPosition);
       },
       icon: 'step-forward',
+      label: 'Go to next sequence',
       name: 'gotoNextButton',
+      collapsed: true,
       container: 'scrollPositionToolbar'
     });
 
-    this.buildIconButton({
+    await this.buildIconButton({
       tooltip: 'Go to end',
       action: () => {
         this.editor.internalScrollChangeWithGUIUpdate(this.editor.currentSequence ? this.editor.currentSequence.end : this.editor.interactive.length);
       },
       icon: 'fast-forward',
+      label: 'Go to end',
+      collapsed: true,
       name: 'gotoEndButton',
       container: 'scrollPositionToolbar'
     });
 
-    this.buildIconButton({
-      tooltip: 'Toggle snapping',
+    await this.buildIconButton({
+      tooltip: 'Toggle Snapping',
       action: () => this.editor.execCommand('toggle snapping'),
       icon: 'magnet',
+      label: 'Toggle Snapping',
       name: 'toggleSnappingButton',
       container: 'rightContainer'
     });
 
-    this.buildIconButton({
+    await this.buildIconButton({
       tooltip: 'Zoom to fit timeline',
       action: () => this.editor.displayedTimeline.zoomToFit(),
       icon: 'expand-arrows-alt',
+	  label: 'Zoom to fit timeline',
       name: 'fitZoomButton',
       container: 'rightContainer'
     });
 
-    this.buildIconButton({
-      tooltip: 'Find keyframe',
+    await this.buildIconButton({
+      tooltip: 'Find Keyframe',
       action: () => this.editor.execCommand('find keyframe'),
       icon: 'search-location',
+      label: 'Find Keyframe',
       name: 'findKeyframeButton',
       container: 'rightContainer'
     });
@@ -925,37 +939,44 @@ class MenuBar extends QinoqMorph {
     this.ui.scrollPositionToolbar.addMorph(this.ui.scrollPositionInput);
   }
 
-  buildIconButton (options = {}) {
-    const { action, tooltip, name, morphName = 'aButton', icon, container } = options;
-    this.ui[name] = new Label({
-      extent: pt(64, 64),
-      fontSize: 20,
-      fontColor: COLOR_SCHEME.SECONDARY,
-      nativeCursor: 'pointer',
+  async buildIconButton (options = {}) {
+    const {
+      action, tooltip, name, morphName = 'anIconButton',
+      icon, label = '', container, collapsed = false, autoResize = true
+    } = options;
+
+    this.ui[name] = await resource('part://QinoqWidgets/icon button').read();
+
+    Object.assign(this.ui[name], {
+      icon: icon,
+      label: label,
       name: morphName,
-      tooltip
+      longTooltip: tooltip,
+      action: action,
+      fontColor: COLOR_SCHEME.ON_SURFACE,
+      fontSize: 12,
+      collapsed: collapsed
     });
-    this.ui[name].onMouseUp = action;
-    Icon.setIcon(this.ui[name], icon);
+
     this.ui[container].addMorph(this.ui[name]);
+
+    $world.whenRendered().then(() => {
+      this.ui[name].autoResize = autoResize;
+    });
   }
 
   onGlobalTimelineTab () {
-    this.ui.addSequenceButton.reactsToPointer = true;
-    this.ui.addLayerButton.reactsToPointer = true;
-    this.ui.addSequenceButton.fontColor = COLOR_SCHEME.SECONDARY;
-    this.ui.addLayerButton.fontColor = COLOR_SCHEME.SECONDARY;
-    this.ui.gotoNextButton.tooltip = 'Go to next sequence';
-    this.ui.gotoPrevButton.tooltip = 'Go to previous sequence';
+    this.ui.addSequenceButton.deactived = false;
+    this.ui.addLayerButton.deactived = false;
+    this.ui.gotoNextButton.label = 'Go to next sequence';
+    this.ui.gotoPrevButton.label = 'Go to previous sequence';
   }
 
   onSequenceView () {
-    this.ui.addSequenceButton.reactsToPointer = false;
-    this.ui.addLayerButton.reactsToPointer = false;
-    this.ui.addSequenceButton.fontColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
-    this.ui.addLayerButton.fontColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
-    this.ui.gotoNextButton.tooltip = 'Go to next keyframe';
-    this.ui.gotoPrevButton.tooltip = 'Go to previous keyframe';
+    this.ui.addSequenceButton.deactived = true;
+    this.ui.addLayerButton.deactived = true;
+    this.ui.gotoNextButton.label = 'Go to next keyframe';
+    this.ui.gotoPrevButton.label = 'Go to previous keyframe';
   }
 
   __after_deserialize__ (snapshot, ref, pool) {
