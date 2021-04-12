@@ -337,18 +337,32 @@ class InteractiveScrollHolder extends Morph {
   }
 
   onDrag (evt) {
-    // just cancel dragging to enable drawing morphs on me without moving myself
+    if (!this.passThroughMorph && this.delegatedTarget) {
+      this.delegatedTarget.onDrag(evt);
+    }
   }
 
   onDragStart (evt) {
     this.opacity = 1;
     this.clipMode = 'hidden';
+    if (!this.passThroughMorph) {
+      console.log(evt);
+      const targetMorph = this.getUnderlyingMorph(evt.hand.position);
+      this.delegatedMorph = undefined;
+      if (targetMorph.draggable) {
+        this.delegatedTarget = targetMorph;
+        targetMorph.onDragStart(evt);
+      }
+    }
   }
 
   onDragEnd (evt) {
     if (this.passThroughMorph) {
       const newMorph = this.submorphs.filter(submorph => submorph.name !== 'scrollable content')[0];
       if (newMorph) this.newMorph = newMorph;
+    }
+    if (!this.passThroughMorph && this.delegatedTarget) {
+      this.delegatedTarget.onDragEnd(evt);
     }
     this.opacity = 0.001;
     this.clipMode = 'auto';
