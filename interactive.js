@@ -316,7 +316,7 @@ class InteractiveScrollHolder extends Morph {
         defaultValue: 0.001
       },
       fill: {
-        defaultValue: Color.transparent
+        defaultValue: COLOR_SCHEME.TRANSPARENT
       },
       halosEnabled: {
         defaultValue: false
