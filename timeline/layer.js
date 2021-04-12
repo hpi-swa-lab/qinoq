@@ -260,7 +260,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
   }
 
   onHoverIn (event) {
-    if (event.hand.timelineSequenceStates) {
+    if (event.hand.timelineSequenceStates && event.hand.timelineSequenceStates[0].isMove) {
       const timelineLayerIndeces = event.hand.timelineSequenceStates.map(timelineSequenceState => timelineSequenceState.timelineSequence.timelineLayer.index);
       const minLayerIndex = Math.min(...timelineLayerIndeces);
       const maxLayerIndex = Math.max(...timelineLayerIndeces);
