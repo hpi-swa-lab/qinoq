@@ -211,6 +211,8 @@ export class TimelineSequence extends Morph {
       previousPosition: leftMostSequence.position
     };
 
+    event.hand.draggedSequence = this;
+
     this.prepareSnappingData();
   }
 
@@ -223,6 +225,7 @@ export class TimelineSequence extends Morph {
     this.clearSnappingData();
     delete event.hand.timelineSequenceStates;
     delete event.hand.leftMostSequenceState;
+    delete event.hand.draggedSequence;
   }
 
   onDrag (event) {
