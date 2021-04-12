@@ -55,7 +55,7 @@ export class TimelineSequence extends Morph {
         set (timelineLayer) {
           this.setProperty('timelineLayer', timelineLayer);
           if (!this._lockModelUpdate) {
-            this.onTimelineLayerChange(timelineLayer);
+            this.onTimelineLayerChange();
           }
         }
       },
@@ -232,7 +232,8 @@ export class TimelineSequence extends Morph {
     if (!event.hand.timelineSequenceStates) return;
     super.onDrag(event);
 
-    const referenceDragState = event.hand.timelineSequenceStates.filter(dragState => dragState.timelineSequence == this)[0];
+    const referenceDragState = event.hand.timelineSequenceStates.find(dragState => dragState.timelineSequence === this);
+    console.log(referenceDragState);
     const prevPositionX = referenceDragState.previousPosition.x;
     const dragDeltaX = prevPositionX - this.position.x;
 
@@ -254,9 +255,10 @@ export class TimelineSequence extends Morph {
       event.hand.leftMostSequenceState.timelineSequence.hideWarningLeft();
     }
     this.handleSnapping('drag');
-
-    this.updateAppearance();
-    this.updateSequenceAfterArrangement();
+    event.hand.timelineSequenceStates.forEach(dragState => {
+      dragState.timelineSequence.updateAppearance();
+      dragState.timelineSequence.updateSequenceAfterArrangement();
+    });
   }
 
   removeSnapIndicators () {
@@ -480,7 +482,7 @@ export class TimelineSequence extends Morph {
     return new Polygon({ fill: COLOR_SCHEME.PRIMARY, position: position, vertices: vertices });
   }
 
-  onTimelineLayerChange (timelineLayer) {
+  onTimelineLayerChange () {
     this.timelineLayer.addMorph(this);
     this.sequence.layer = this.timelineLayer.layer;
     this.updateSequenceAfterArrangement();
@@ -667,7 +669,8 @@ export class TimelineSequence extends Morph {
   }
 
   handleOverlappingOtherSequence (timelineSequenceStates) {
-    if (this.isOverlappingOtherSequence()) {
+    debugger;
+    if (timelineSequenceStates.some(timelineSequenceState => timelineSequenceState.timelineSequence.isOverlappingOtherSequence())) {
       this.undoLatestMovement(timelineSequenceStates);
     }
   }
