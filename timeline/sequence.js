@@ -213,11 +213,10 @@ export class TimelineSequence extends Morph {
           previousPosition: timelineSequence.position
         };
       }
-    });
-
+    }).filter(i => i);
     event.hand.draggedSequence = this;
 
-    this.prepareSnappingData();
+    this.prepareSnappingData(event);
   }
 
   onDragEnd (event) {
@@ -257,7 +256,7 @@ export class TimelineSequence extends Morph {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.hideWarningLeft());
     }
-    this.handleSnapping('drag');
+    this.handleSnapping('drag', event);
     event.hand.timelineSequenceStates.forEach(dragState => {
       dragState.timelineSequence.updateAppearance();
       dragState.timelineSequence.updateSequenceAfterArrangement();
@@ -269,8 +268,8 @@ export class TimelineSequence extends Morph {
     this._snapIndicators = [];
   }
 
-  prepareSnappingData () {
-    const otherTimelineSequences = this.allTimelineSequences.filter(sequence => sequence != this);
+  prepareSnappingData (event) {
+    const otherTimelineSequences = this.allTimelineSequences.filter(sequence => !event.hand.timelineSequenceStates.map(timelineSequenceState => timelineSequenceState.timelineSequence).includes(sequence));
     this._otherTimelineSequencesSortedByStart = [...otherTimelineSequences].sort((a, b) => a.sequence.start - b.sequence.start);
     this._otherTimelineSequencesSortedByEnd = [...otherTimelineSequences].sort((a, b) => a.sequence.end - b.sequence.end);
   }
@@ -280,12 +279,12 @@ export class TimelineSequence extends Morph {
     delete this._otherTimelineSequencesSortedByEnd;
   }
 
-  handleSnapping (mode) {
+  handleSnapping (mode, event) {
     this.removeSnapIndicators();
     if (this._otherTimelineSequencesSortedByStart.length == 0) return;
     let positionsOfSnapTargets = [];
     switch (mode) {
-      case 'drag': positionsOfSnapTargets = [this.sequence.start, this.sequence.end];
+      case 'drag': positionsOfSnapTargets = event.hand.timelineSequenceStates.flatMap(timelineSequenceState => { return [timelineSequenceState.timelineSequence.sequence.start, timelineSequenceState.timelineSequence.sequence.end]; });
         break;
       case 'resizeLeft': positionsOfSnapTargets = [this.sequence.start];
         break;
@@ -407,7 +406,7 @@ export class TimelineSequence extends Morph {
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
     } else {
       this.width = newSequenceWidth;
-      this.handleSnapping('resizeRight');
+      this.handleSnapping('resizeRight', event);
     }
 
     this.updateAppearance();
@@ -437,7 +436,7 @@ export class TimelineSequence extends Morph {
       this.extent = pt(newSequenceWidth, this.height);
       this.hideWarningLeft();
     }
-    this.handleSnapping('resizeLeft');
+    this.handleSnapping('resizeLeft', event);
 
     this.updateAppearance();
     this.updateSequenceAfterArrangement();
@@ -456,7 +455,7 @@ export class TimelineSequence extends Morph {
       isMove: false
     }];
 
-    this.prepareSnappingData();
+    this.prepareSnappingData(event);
   }
 
   onResizeEnd (event) {
