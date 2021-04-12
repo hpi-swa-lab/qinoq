@@ -380,6 +380,22 @@ class InteractiveScrollHolder extends Morph {
       this.newMorph = grabbedMorph;
     });
   }
+
+  onMouseDown (evt) {
+    this.getUnderlyingMorph(evt.hand.position).onMouseDown(evt);
+  }
+
+  onMouseUp (evt) {
+    this.getUnderlyingMorph(evt.hand.position).onMouseUp(evt);
+  }
+
+  getUnderlyingMorph (position) {
+    let targetedMorph = this.morphBeneath(position);
+    while (targetedMorph.isSequence) {
+      targetedMorph = targetedMorph.morphBeneath(position);
+    }
+    return targetedMorph;
+  }
 }
 
 export class Layer {
