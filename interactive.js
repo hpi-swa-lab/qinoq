@@ -352,6 +352,22 @@ class InteractiveScrollHolder extends Morph {
     this.opacity = 0.001;
     this.clipMode = 'auto';
   }
+
+  onHoverIn (evt) {
+    if (this.passThroughMorph) {
+      $world.get('lively top bar').attachToTarget(this);
+      // should not be neccessary, this is a bug in upstream lively
+      $world.get('lively top bar').setEditMode($world.get('lively top bar').editMode);
+    }
+  }
+
+  onHoverOut (evt) {
+    if (this.passThroughMorph) {
+      $world.get('lively top bar').attachToTarget($world);
+      // should not be neccessary, this is a bug in upstream lively
+      $world.get('lively top bar').setEditMode($world.get('lively top bar').editMode);
+    }
+  }
 }
 
 export class Layer {

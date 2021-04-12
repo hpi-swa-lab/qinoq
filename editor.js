@@ -55,10 +55,8 @@ export class InteractivesEditor extends Morph {
           if (!this.interactive) return;
           this.setProperty('interactiveInEditMode', bool);
           if (this.interactiveInEditMode) {
-            $world.get('lively top bar').attachToTarget(this.interactive.scrollOverlay);
             this.interactive.scrollOverlay.passThroughMorph = true;
           } else {
-            $world.get('lively top bar').attachToTarget($world);
             this.interactive.scrollOverlay.passThroughMorph = false;
           }
         }
