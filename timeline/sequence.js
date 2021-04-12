@@ -412,7 +412,6 @@ export class TimelineSequence extends Morph {
   }
 
   onResizeLeft (event) {
-    // TODO: change when multiple sequence selection is implemented
     const sequenceState = event.hand.timelineSequenceStates[0];
     const dragDelta = this.leftResizer.position.x;
     const newSequenceWidth = sequenceState.previousWidth - dragDelta;
@@ -445,6 +444,7 @@ export class TimelineSequence extends Morph {
     // because lively automatically records drag moves, we have to remove that drag move. Then we can record our own undo.
     this.env.undoManager.removeLatestUndo();
     this.undoStart('timeline-sequence-resize');
+    this.timeline.deselectAllSequencesExcept(this);
     event.hand.timelineSequenceStates = [{
       timelineSequence: this,
       previousPosition: this.position,
@@ -452,6 +452,7 @@ export class TimelineSequence extends Morph {
       previousTimelineLayer: this.timelineLayer,
       isMove: false
     }];
+
     this.prepareSnappingData();
   }
 
