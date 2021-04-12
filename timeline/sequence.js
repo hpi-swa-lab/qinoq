@@ -219,9 +219,8 @@ export class TimelineSequence extends Morph {
   onDragEnd (event) {
     this.undoStop('move-timeline-sequence');
     this.handleOverlappingOtherSequence(event.hand.timelineSequenceStates);
-    this.hideWarningLeft();
-    this.hideWarningRight();
-    this.removeSnapIndicators();
+    event.hand.leftMostSequenceState.timelineSequence.hideWarningLeft();
+    event.hand.timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.removeSnapIndicators());
     this.clearSnappingData();
     delete event.hand.timelineSequenceStates;
     delete event.hand.leftMostSequenceState;
@@ -459,9 +458,8 @@ export class TimelineSequence extends Morph {
   onResizeEnd (event) {
     this.undoStop('timeline-sequence-resize');
     this.hideWarningLeft();
-    this.hideWarningRight();
     this.handleOverlappingOtherSequence(event.hand.timelineSequenceStates);
-    this.removeSnapIndicators();
+    event.hand.timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.removeSnapIndicators());
     this.clearSnappingData();
     this.leftResizer.position = pt(0, 0);
     this.rightResizer.position = pt(this.width - this.rightResizer.width, 0);
@@ -670,23 +668,10 @@ export class TimelineSequence extends Morph {
   }
 
   handleOverlappingOtherSequence (timelineSequenceStates) {
-    debugger;
     if (timelineSequenceStates.some(timelineSequenceState => timelineSequenceState.timelineSequence.isOverlappingOtherSequence())) {
-      this.undoLatestMovement(timelineSequenceStates);
+      timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.removeSnapIndicators());
+      this.env.undoManager.undo();
     }
-  }
-
-  undoLatestMovement (timelineSequenceStates) {
-    const sequenceStates = timelineSequenceStates;
-    sequenceStates.forEach(sequenceState => {
-      const sequence = sequenceState.timelineSequence;
-      sequence.position = sequenceState.previousPosition;
-      sequence.width = sequenceState.previousWidth;
-      sequence.remove();
-      sequence.timelineLayer = sequenceState.previousTimelineLayer;
-      sequence.updateAppearance();
-      this.env.undoManager.removeLatestUndo();
-    });
   }
 
   get overlappingSequences () {
