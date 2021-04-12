@@ -302,11 +302,11 @@ export class InteractivesEditor extends Morph {
     this.globalTimeline.onActiveAreaWidthChange();
   }
 
-  addMorphToInteractive (aMorph) {
-    this.currentSequence.addMorph(aMorph);
-    this.inspector.targetMorph = aMorph;
+  addMorphToInteractive (morph) {
+    this.currentSequence.addMorph(morph);
+    this.inspector.targetMorph = morph;
     this.displayedTimeline._wantsOverviewLayers = true;
-    this.displayedTimeline.createOverviewTimelineLayer(aMorph);
+    this.displayedTimeline.createOverviewTimelineLayer(morph);
     this.displayedTimeline._wantsOverviewLayers = false;
     this.displayedTimeline.onActiveAreaWidthChange();
   }
