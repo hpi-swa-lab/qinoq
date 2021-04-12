@@ -38,6 +38,10 @@ export class Timeline extends Morph {
         min: 0,
         set (zoomFactor) {
           if (zoomFactor <= 0) return;
+          // when a connection is removed, it is triggered one last time
+          // this happens when grabbing the interactive out of the editor
+          // at this time another undo (for the grab) is also recorded
+          // this needs to be catched here, otherwise an error will be triggered
           if (!this.undoStart('interactive-editor-change-zoom')) return;
           this.setProperty('zoomFactor', zoomFactor);
           this.undoStop('interactive-editor-change-zoom');
@@ -245,14 +249,14 @@ export class Timeline extends Morph {
       this.submorphs.forEach(submorph => submorph.remove());
       this.initialize();
     }
-    this._wantsOverviewLayers = true;
+    this._createOverviewLayers = true;
     this.onLoadContent(content);
     this.initializeCursor();
     connect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange', {
       updater: '($update, scrollPosition) => { if (target.isDisplayed) $update(scrollPosition); }'
     }).update(this.editor.interactiveScrollPosition);
     connect(content, 'name', this, 'name', { converter: newName => `${newName.toLowerCase()} timeline` }).update(content.name);
-    this._wantsOverviewLayers = false;
+    this._createOverviewLayers = false;
   }
 
   onLoadContent (content) {
@@ -604,7 +608,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   getNewTimelineLayer (props) {
-    return this._wantsOverviewLayers ? new OverviewSequenceTimelineLayer(props) : new SequenceTimelineLayer(props);
+    return this._createOverviewLayers ? new OverviewSequenceTimelineLayer(props) : new SequenceTimelineLayer(props);
   }
 
   getPositionFromScroll (scrollPosition) {

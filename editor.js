@@ -80,6 +80,8 @@ export class InteractivesEditor extends Morph {
 
   positionChanged () {
     if (this.interactive) {
+      // interactive has a fixed position in the editor
+      // we need to manually keep the scrolloverlay at the correct position
       this.interactive.scrollOverlay.globalPosition = this.interactive.globalPosition;
     }
   }
@@ -305,9 +307,9 @@ export class InteractivesEditor extends Morph {
   addMorphToInteractive (morph) {
     this.currentSequence.addMorph(morph);
     this.inspector.targetMorph = morph;
-    this.displayedTimeline._wantsOverviewLayers = true;
+    this.displayedTimeline._createOverviewLayers = true;
     this.displayedTimeline.createOverviewTimelineLayer(morph);
-    this.displayedTimeline._wantsOverviewLayers = false;
+    this.displayedTimeline._createOverviewLayers = false;
     this.displayedTimeline.onActiveAreaWidthChange();
   }
 
