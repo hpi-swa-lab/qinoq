@@ -87,6 +87,7 @@ Closes [fill in your issues here]
 - [ ] having more than one keyframe selected and dragging one with shift pressed moves all keyframes, this is undoable
 - [ ] it is possible to add a new morph to the interactive using the top bar
   - [ ] the newly created morph is also added to the timeline as an own layer
+- [ ] it is possible to add a new morph to the interactive by grab-and-drop
 - [ ] when leaving the sequence view, the topbar does not draw on the interactive anymore but it is again possible to add morphs to the world
 
 ### Inspector
