@@ -332,10 +332,23 @@ class InteractiveScrollHolder extends Morph {
     };
   }
 
+  onMouseMoving (mousePosition) {
+    const morphUnderMouse = this.getUnderlyingMorph(mousePosition);
+    if (morphUnderMouse == this.previousMorphUnderMouse) return;
+    if (morphUnderMouse) morphUnderMouse.onHoverIn({ hand: $world.firstHand });
+    if (this.previousMorphUnderMouse) this.previousMorphUnderMouse.onHoverOut({ hand: $world.firstHand });
+    this.previousMorphUnderMouse = morphUnderMouse;
+  }
+
+  abandon () {
+    disconnect($world.firstHand, 'position', this, 'onMouseMoving');
+  }
+
   onScroll (evt) {
     this.interactive.scrollPosition = this.scroll.y;
   }
 
+  // TODO: normalize coordinates (globalposition is currently used)
   onDrag (evt) {
     if (!this.passThroughMorph && this.delegatedTarget) {
       this.delegatedTarget.onDrag(evt);
@@ -346,7 +359,6 @@ class InteractiveScrollHolder extends Morph {
     this.opacity = 1;
     this.clipMode = 'hidden';
     if (!this.passThroughMorph) {
-      console.log(evt);
       const targetMorph = this.getUnderlyingMorph(evt.hand.position);
       this.delegatedMorph = undefined;
       if (targetMorph.draggable) {
@@ -369,6 +381,8 @@ class InteractiveScrollHolder extends Morph {
   }
 
   onHoverIn (evt) {
+    connect(evt.hand, 'position', this, 'onMouseMoving');
+
     if (this.passThroughMorph) {
       $world.get('lively top bar').attachToTarget(this);
       // should not be neccessary, this is a bug in upstream lively
@@ -377,6 +391,8 @@ class InteractiveScrollHolder extends Morph {
   }
 
   onHoverOut (evt) {
+    disconnect(evt.hand, 'position', this, 'onMouseMoving');
+
     if (this.passThroughMorph) {
       $world.get('lively top bar').attachToTarget($world);
       // should not be neccessary, this is a bug in upstream lively
@@ -396,7 +412,13 @@ class InteractiveScrollHolder extends Morph {
   }
 
   onMouseDown (evt) {
+    super.onMouseDown(evt);
     this.getUnderlyingMorph(evt.hand.position).onMouseDown(evt);
+  }
+
+  onDoubleMouseDown (evt) {
+    // TODO: check for previously clicked morph
+    this.getUnderlyingMorph(evt.hand.position).onDoubleMouseDown(evt);
   }
 
   onMouseUp (evt) {
@@ -405,7 +427,7 @@ class InteractiveScrollHolder extends Morph {
 
   getUnderlyingMorph (position) {
     let targetedMorph = this.morphBeneath(position);
-    while (targetedMorph.isSequence) {
+    while (targetedMorph && targetedMorph.isSequence) {
       targetedMorph = targetedMorph.morphBeneath(position);
     }
     return targetedMorph;
