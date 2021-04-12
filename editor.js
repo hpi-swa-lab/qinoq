@@ -480,6 +480,10 @@ class Preview extends Morph {
     const grabbedMorph = arr.first(evt.hand.grabbedMorphs);
     if (grabbedMorph.isInteractive) {
       this.editor.interactive = grabbedMorph;
+
+      // Restore style properties set during grab
+      const { pointerAndShadow } = evt.hand._grabbedMorphProperties.get(grabbedMorph) || {};
+      Object.assign(grabbedMorph, pointerAndShadow);
     } else {
       $world.setStatusMessage('You have to drop an interactive here');
     }
