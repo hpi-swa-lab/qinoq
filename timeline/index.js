@@ -26,6 +26,7 @@ export class Timeline extends Morph {
         after: ['ui'],
         set (editor) {
           this.setProperty('_editor', editor);
+          if (this._deserializing) return;
           this.initialize();
         }
       },
@@ -43,8 +44,9 @@ export class Timeline extends Morph {
           // this happens when grabbing the interactive out of the editor
           // at this time another undo (for the grab) is also recorded
           // this needs to be catched here, otherwise an error will be triggered
-          if (!this.undoStart('interactive-editor-change-zoom')) return;
+          if (!this._deserializing && !this.undoStart('interactive-editor-change-zoom')) return;
           this.setProperty('zoomFactor', zoomFactor);
+          if (this._deserializing) return;
           this.undoStop('interactive-editor-change-zoom');
           if (!this.editor.interactive) return;
           this.redraw();
@@ -55,6 +57,7 @@ export class Timeline extends Morph {
         defaultValue: CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH,
         set (width) {
           this.setProperty('_activeAreaWidth', width);
+          if (this._deserializing) return;
           this.onActiveAreaWidthChange();
         }
       }
@@ -339,7 +342,7 @@ export class Timeline extends Morph {
   abandon () {
     super.abandon();
     disconnect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange');
-    disconnect(this.editor.interactive, 'name', this, 'name');
+    if (this.editor.interactive) { disconnect(this.editor.interactive, 'name', this, 'name'); }
   }
 
   renameSelection (newName) {
@@ -597,6 +600,7 @@ export class GlobalTimeline extends Timeline {
     this.undoStop();
   }
 }
+
 
 export class SequenceTimeline extends Timeline {
   static get properties () {
