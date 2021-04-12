@@ -753,7 +753,8 @@ class MenuBar extends QinoqMorph {
       layout: new HorizontalLayout({
         spacing: CONSTANTS.SPACING,
         autoResize: false,
-        align: 'center'
+        align: 'center',
+        orderByIndex: true
       }),
       name: 'left container',
       fill: COLOR_SCHEME.TRANSPARENT,
@@ -781,7 +782,8 @@ class MenuBar extends QinoqMorph {
         spacing: CONSTANTS.SPACING,
         autoResize: false,
         direction: 'rightToLeft',
-        align: 'center'
+        align: 'center',
+        orderByIndex: true
       }),
       name: 'right container',
       position: pt(containerWidth * 2, 0),
