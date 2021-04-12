@@ -85,6 +85,9 @@ Closes [fill in your issues here]
 - [ ] it is possible to select more than one keyframe using `Shift`
 - [ ] when more than two keyframes are selected, the context menu allows changing of relative positions, where entering a relative position changes the position of all selected keyframes - this works with all menu items and is undoable as expected (one undo for all selected keyframes)
 - [ ] having more than one keyframe selected and dragging one with shift pressed moves all keyframes, this is undoable
+- [ ] it is possible to add a new morph to the interactive using the top bar
+  - [ ] the newly created morph is also added to the timeline as an own layer
+- [ ] when leaving the sequence view, the topbar does not draw on the interactive anymore but it is again possible to add morphs to the world
 
 ### Inspector
 
