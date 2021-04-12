@@ -50,6 +50,11 @@ export class TimelineLayer extends Morph {
     return this.container.submorphs.indexOf(this);
   }
 
+  get highestIndex () {
+    // timeline cursor is also a submorph
+    return (this.container.submorphs.length - 2);
+  }
+
   addAreaMorphs () {
     const activeArea = this.addMorph(new Canvas({
       extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.LAYER_HEIGHT),
@@ -255,10 +260,21 @@ export class GlobalTimelineLayer extends TimelineLayer {
   }
 
   onHoverIn (event) {
-    super.onHoverIn(event);
     if (event.hand.timelineSequenceStates) {
+      const timelineLayerIndeces = event.hand.timelineSequenceStates.map(timelineSequenceState => timelineSequenceState.timelineSequence.timelineLayer.index);
+      const minLayerIndex = Math.min(...timelineLayerIndeces);
+      const maxLayerIndex = Math.max(...timelineLayerIndeces);
+      let moveUp = false;
+      if (this.index < event.hand.draggedSequence.timelineLayer.index) {
+        moveUp = true;
+        if (minLayerIndex == 0) return;
+      } else {
+        if (maxLayerIndex == this.highestIndex) return;
+      }
       event.hand.timelineSequenceStates.forEach(timelineSequenceState => {
-        if (timelineSequenceState.isMove) timelineSequenceState.timelineSequence.timelineLayer = this;
+        if (timelineSequenceState.isMove) {
+          timelineSequenceState.timelineSequence.timelineLayer = this.container.submorphs[timelineSequenceState.timelineSequence.timelineLayer.index + (moveUp ? -1 : 1)];
+        }
       });
     }
   }
