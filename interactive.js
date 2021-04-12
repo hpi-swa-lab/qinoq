@@ -347,7 +347,8 @@ class InteractiveScrollHolder extends Morph {
 
   onDragEnd (evt) {
     if (this.passThroughMorph) {
-      this.newMorph = this.submorphs.filter(submorph => submorph.name !== 'scrollable content')[0];
+      const newMorph = this.submorphs.filter(submorph => submorph.name !== 'scrollable content')[0];
+      if (newMorph) this.newMorph = newMorph;
     }
     this.opacity = 0.001;
     this.clipMode = 'auto';
@@ -373,10 +374,11 @@ class InteractiveScrollHolder extends Morph {
     if (evt.type != 'morphicdrop' || !this.passThroughMorph) {
       return;
     }
-    const grabbedMorph = arr.first(evt.hand.grabbedMorphs);
-    const { pointerAndShadow } = evt.hand._grabbedMorphProperties.get(grabbedMorph) || {};
-    Object.assign(grabbedMorph, pointerAndShadow);
-    this.newMorph = grabbedMorph;
+    evt.hand.grabbedMorphs.forEach(grabbedMorph => {
+      const { pointerAndShadow } = evt.hand._grabbedMorphProperties.get(grabbedMorph) || {};
+      Object.assign(grabbedMorph, pointerAndShadow);
+      this.newMorph = grabbedMorph;
+    });
   }
 }
 
