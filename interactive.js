@@ -368,6 +368,16 @@ class InteractiveScrollHolder extends Morph {
       $world.get('lively top bar').setEditMode($world.get('lively top bar').editMode);
     }
   }
+
+  onDrop (evt) {
+    if (evt.type != 'morphicdrop' || !this.passThroughMorph) {
+      return;
+    }
+    const grabbedMorph = arr.first(evt.hand.grabbedMorphs);
+    const { pointerAndShadow } = evt.hand._grabbedMorphProperties.get(grabbedMorph) || {};
+    Object.assign(grabbedMorph, pointerAndShadow);
+    this.newMorph = grabbedMorph;
+  }
 }
 
 export class Layer {
