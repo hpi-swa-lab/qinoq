@@ -130,7 +130,7 @@ export class TimelineLayerInfo extends Morph {
       if (this.timelineLayer.index > 0) {
         menuOptions.push(['⬆️ Move layer up', () => this.timelineLayer.moveLayerBy(-1)]);
       }
-      if (this.timelineLayer.index < this.timelineLayer.container.submorphs.length - 2) {
+      if (this.timelineLayer.index < this.timelineLayer.highestIndex) {
         menuOptions.push(['⬇️ Move layer down', () => this.timelineLayer.moveLayerBy(1)]);
       }
       menuOptions.push(['❌ Remove layer', async () => await this.removeLayer()]);
