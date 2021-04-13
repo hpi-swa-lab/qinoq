@@ -261,9 +261,9 @@ export class GlobalTimelineLayer extends TimelineLayer {
 
   onHoverIn (event) {
     if (event.hand.timelineSequenceStates && event.hand.timelineSequenceStates[0].isMove) {
-      const timelineLayerIndeces = event.hand.timelineSequenceStates.map(timelineSequenceState => timelineSequenceState.timelineSequence.timelineLayer.index);
-      const minLayerIndex = Math.min(...timelineLayerIndeces);
-      const maxLayerIndex = Math.max(...timelineLayerIndeces);
+      const timelineLayerIndices = event.hand.timelineSequenceStates.map(timelineSequenceState => timelineSequenceState.timelineSequence.timelineLayer.index);
+      const minLayerIndex = Math.min(...timelineLayerIndices);
+      const maxLayerIndex = Math.max(...timelineLayerIndices);
       let moveUp = false;
       if (this.index < event.hand.draggedSequence.timelineLayer.index) {
         moveUp = true;
@@ -326,8 +326,8 @@ export class GlobalTimelineLayer extends TimelineLayer {
   }
 
   moveLayerBy (number) {
-    const index = this.index + number;
-    this.moveLayerToIndex(index);
+    this.index += number;
+    this.moveLayerToIndex(this.index);
   }
 
   getAllSequencesIntersectingWith (rectangle) {

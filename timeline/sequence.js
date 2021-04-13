@@ -213,7 +213,7 @@ export class TimelineSequence extends Morph {
           previousPosition: timelineSequence.position
         };
       }
-    }).filter(i => i);
+    }).filter(Boolean);
     event.hand.draggedSequence = this;
 
     this.prepareSnappingData(event);
@@ -671,7 +671,7 @@ export class TimelineSequence extends Morph {
       ['❌ Delete Sequence', () => this.timeline.deleteSelectedItems()],
       ['↔️ Edit duration', async () => await this.timeline.promptDurationForSelection()],
       ['🏁 Edit start position', async () => await this.timeline.promptStartForSelection()]];
-    if (!(this.timeline.getSelectedSequences().length > 1)) {
+    if (this.timeline.getSelectedSequences().length === 1) {
       items = items.concat([{ isDivider: true },
         ['🔍 View sequence', () => this.openSequenceView()],
         ['▶️ Go to start', () => this.editor.interactiveScrollPosition = this.sequence.start]

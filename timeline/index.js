@@ -487,14 +487,14 @@ export class GlobalTimeline extends Timeline {
   }
 
   async promptRenameForSelection () {
-    let newName;
-    if (!(this.selectedSequences.length > 1)) {
-      newName = await $world.prompt('Sequence name:', { input: this.selectedSequences[0].sequence.name });
-    } else {
-      newName = await $world.prompt(`Name for the ${this.selectedSequences.length} selected Sequences`);
-    }
+    const newName = !(this.selectedSequences.length > 1)
+      ? await $world.prompt('Sequence name:', { input: this.selectedSequences[0].sequence.name })
+      : await $world.prompt(`Name for the ${this.selectedSequences.length} selected Sequences`);
+
     if (newName) {
       this.renameSelection(newName);
+    } else {
+      $world.setStatusMessage('Name not set', COLOR_SCHEME.ERROR);
     }
   }
 
@@ -508,12 +508,9 @@ export class GlobalTimeline extends Timeline {
   }
 
   async promptDurationForSelection () {
-    let newDuration;
-    if (!(this.selectedSequences.length > 1)) {
-      newDuration = Number(await $world.prompt('Duration:', { input: this.selectedSequences[0].sequence.duration }));
-    } else {
-      newDuration = Number(await $world.prompt(`Duration of the ${this.selectedSequences.length} selected Sequences:`));
-    }
+    const newDuration = !(this.selectedSequences.length > 1)
+      ? Number(await $world.prompt('Duration:', { input: this.selectedSequences[0].sequence.duration }))
+      : Number(await $world.prompt(`Duration of the ${this.selectedSequences.length} selected Sequences:`));
 
     const invalidDuration = this.selectedSequences.some(timelineSequence => !this.editor.interactive.validSequenceDuration(timelineSequence.sequence, newDuration));
     if (!invalidDuration) {
@@ -534,12 +531,10 @@ export class GlobalTimeline extends Timeline {
   }
 
   async promptStartForSelection () {
-    let newStart;
-    if (!(this.selectedSequences.length > 1)) {
-      newStart = Number(await $world.prompt('Start:', { input: this.selectedSequences[0].sequence.start }));
-    } else {
-      newStart = (await $world.prompt(`Start of the ${this.selectedSequences.length} selected Sequences:`));
-    }
+    const newStart = !(this.selectedSequences.length > 1)
+      ? Number(await $world.prompt('Start:', { input: `${this.selectedSequences[0].sequence.start}` }))
+      : Number(await $world.prompt(`Start of the ${this.selectedSequences.length} selected Sequences:`));
+
     const invalidStart = this.selectedSequences.some(timelineSequence => !this.editor.interactive.validSequenceStart(timelineSequence.sequence, newStart));
     if (!invalidStart) {
       this.setStartForSelection(newStart);
@@ -756,12 +751,10 @@ export class SequenceTimeline extends Timeline {
   }
 
   async promptRenameForSelection (multipleKeyframesSelected) {
-    let newName;
-    if (!multipleKeyframesSelected) {
-      newName = await $world.prompt('Keyframe name:', { input: this.selectedTimelineKeyframes[0].name });
-    } else {
-      newName = await $world.prompt(`Name for the ${this.selectedTimelineKeyframes.length} selected Keyframes:`);
-    }
+    let newName = multipleKeyframesSelected
+      ? newName = await $world.prompt('Keyframe name:', { input: this.selectedTimelineKeyframes[0].name })
+      : newName = await $world.prompt(`Name for the ${this.selectedTimelineKeyframes.length} selected Keyframes:`);
+
     if (newName) {
       this.renameSelection(newName);
     }
@@ -777,12 +770,10 @@ export class SequenceTimeline extends Timeline {
   }
 
   async promptUserForNewRelativePositionForSelection (multipleKeyframesSelected) {
-    let newPosition;
-    if (!multipleKeyframesSelected) {
-      newPosition = await $world.prompt('Keyframe position:', { input: `${this.selectedTimelineKeyframes[0].keyframe.position}` });
-    } else {
-      newPosition = await $world.prompt(`Set the ${this.selectedTimelineKeyframes.length} selected Keyframes to relative position:`);
-    }
+    let newPosition = !multipleKeyframesSelected
+      ? newPosition = await $world.prompt('Keyframe position:', { input: `${this.selectedTimelineKeyframes[0].keyframe.position}` })
+      : newPosition = await $world.prompt(`Set the ${this.selectedTimelineKeyframes.length} selected Keyframes to relative position:`);
+
     if (newPosition) {
       if (newPosition >= 0 && newPosition <= 1) {
         this.changeKeyframePositionForSelection(newPosition);
@@ -804,12 +795,10 @@ export class SequenceTimeline extends Timeline {
 
   async promptUserForNewAbsolutePositionForSelection (multipleKeyframesSelected) {
     const sequence = Sequence.getSequenceOfMorph(this.selectedTimelineKeyframes[0].animation.target);
-    let newPosition;
-    if (!multipleKeyframesSelected) {
-      newPosition = await $world.prompt('Keyframe position:', { input: `${sequence.getAbsolutePositionFor(this.selectedTimelineKeyframes[0].keyframe)}` });
-    } else {
-      newPosition = await $world.prompt(`Set the ${this.selectedTimelineKeyframes.length} selected Keyframes to absolute position:`);
-    }
+    let newPosition = !multipleKeyframesSelected
+      ? newPosition = await $world.prompt('Keyframe position:', { input: `${sequence.getAbsolutePositionFor(this.selectedTimelineKeyframes[0].keyframe)}` })
+      : newPosition = await $world.prompt(`Set the ${this.selectedTimelineKeyframes.length} selected Keyframes to absolute position:`);
+
     if (newPosition) {
       const newRelativePosition = sequence.getRelativePositionFor(newPosition);
       if (newPosition >= 0 && newPosition <= this.editor.interactive.length && newRelativePosition >= 0 && newRelativePosition <= 1) {
