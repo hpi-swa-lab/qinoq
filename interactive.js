@@ -418,12 +418,14 @@ class InteractiveScrollHolder extends Morph {
 
   onMouseDown (evt) {
     super.onMouseDown(evt);
-    this.getUnderlyingMorph(evt.hand.position).onMouseDown(evt);
+    this.lastMouseDownTarget = this.getUnderlyingMorph(evt.hand.position);
+    this.lastMouseDownTarget.onMouseDown(evt);
   }
 
   onDoubleMouseDown (evt) {
-    // TODO: check for previously clicked morph
-    this.getUnderlyingMorph(evt.hand.position).onDoubleMouseDown(evt);
+    if (this.getUnderlyingMorph(evt.hand.position) == this.lastMouseDownTarget) {
+      this.lastMouseDownTarget.onDoubleMouseDown(evt);
+    }
   }
 
   onMouseUp (evt) {
