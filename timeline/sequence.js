@@ -606,18 +606,6 @@ export class TimelineSequence extends Morph {
     this.addMorph(warning);
   }
 
-  showWarningRight (dragValue, showImmediately = false) {
-    const newWarning = !this.warningStartRight;
-    if (newWarning) this.warningStartRight = showImmediately ? 0 : dragValue;
-    const currentDrag = Math.abs(this.warningStartRight - dragValue);
-    const strength = currentDrag / CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA;
-    const warning = !newWarning
-      ? this.getSubmorphNamed('warning right')
-      : this.createWarningMorph('right', pt(this.width - CONSTANTS.WARNING_WIDTH, 0), 'westeast');
-    warning.opacity = strength;
-    this.addMorph(warning);
-  }
-
   hideWarning (morphSuffix, fadeout = 1000) {
     this.withAllSubmorphsDo(morph => {
       if (morph.name == `warning ${morphSuffix}`) morph.fadeOut(fadeout);
@@ -627,11 +615,6 @@ export class TimelineSequence extends Morph {
   hideWarningLeft (fadeout = 1000) {
     delete this.warningStartLeft;
     this.hideWarning('left', fadeout);
-  }
-
-  hideWarningRight (fadeout = 1000) {
-    delete this.warningStartRight;
-    this.hideWarning('right', fadeout);
   }
 
   setOverlappingAppearance () {
