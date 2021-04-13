@@ -11,6 +11,10 @@ Closes [fill in your issues here]
 
 - [ ] can be opened in the world
 - [ ] is scrollable
+- [ ] mouseDown on the leaves makes them darker
+- [ ] mouseUp on the leaves makes them ligher again (it is expected that the color is not green anymore)
+- [ ] hovering over the clouds blurs them
+- [ ] moving the mouse away from the clouds removes the blur  
 - [ ] can be saved
 
 ### Interactive and editor
