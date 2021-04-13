@@ -378,6 +378,10 @@ class InteractiveScrollHolder extends Morph {
     }
     if (!this.passThroughMorph && this.delegatedTarget) {
       evt.state.dragStartMorphPosition = this.dragStartPosition;
+      // this should not be neccessary but if we do not call this here
+      // grabbing will only work once
+      // in theory the onDragEnd of the delegatedTarget should stop the undo
+      // and we do not start a separate one
       this.env.undoManager.undoStop();
       this.delegatedTarget.onDragEnd(evt);
     }
