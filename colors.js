@@ -1,4 +1,5 @@
 import { Color } from 'lively.graphics';
+import { string } from 'lively.lang';
 export const COLOR_SCHEME = {
   PRIMARY: Color.rgb(0, 176, 255),
   PRIMARY_VARIANT: Color.rgb(0, 72, 255),
@@ -15,3 +16,10 @@ export const COLOR_SCHEME = {
   ERROR: Color.red,
   TRANSPARENT: Color.transparent
 };
+
+// use this function to get a color for a property name
+export function getColorForString (input, saturation = 0.6, brightness = 0.70) {
+  // calculation has been adjusted to generate nice colors for "opacity", "position", "scale" and "fill"
+  const stringValue = (Math.abs(string.hashCode(input)) + input.length ** 3) % 360;
+  return Color.hsb(stringValue, saturation, brightness);
+}
