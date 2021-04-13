@@ -348,9 +348,9 @@ class InteractiveScrollHolder extends Morph {
     this.interactive.scrollPosition = this.scroll.y;
   }
 
-  // TODO: normalize coordinates (globalposition is currently used)
   onDrag (evt) {
     if (!this.passThroughMorph && this.delegatedTarget) {
+      evt.state.dragStartMorphPosition = this.dragStartPosition;
       this.delegatedTarget.onDrag(evt);
     }
   }
@@ -360,9 +360,12 @@ class InteractiveScrollHolder extends Morph {
     this.clipMode = 'hidden';
     if (!this.passThroughMorph) {
       const targetMorph = this.getUnderlyingMorph(evt.hand.position);
-      this.delegatedMorph = undefined;
+      this.delegatedTarget = undefined;
       if (targetMorph.draggable) {
         this.delegatedTarget = targetMorph;
+        const { dragStartMorphPosition } = evt.state;
+        this.dragStartPosition = targetMorph.position;
+        evt.state.dragStartMorphPosition = this.dragStartPosition;
         targetMorph.onDragStart(evt);
       }
     }
@@ -374,6 +377,8 @@ class InteractiveScrollHolder extends Morph {
       if (newMorph) this.newMorph = newMorph;
     }
     if (!this.passThroughMorph && this.delegatedTarget) {
+      evt.state.dragStartMorphPosition = this.dragStartPosition;
+      this.env.undoManager.undoStop();
       this.delegatedTarget.onDragEnd(evt);
     }
     this.opacity = 0.001;
