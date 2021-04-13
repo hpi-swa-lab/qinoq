@@ -280,7 +280,7 @@ export class TimelineSequence extends Morph {
   }
 
   handleSnapping (mode, event) {
-    this.removeSnapIndicators();
+    event.hand.timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.removeSnapIndicators());
     if (this._otherTimelineSequencesSortedByStart.length == 0) return;
     let positionsOfSnapTargets = [];
     switch (mode) {
@@ -292,12 +292,10 @@ export class TimelineSequence extends Morph {
         break;
     }
 
-    const snapPosition = this.timeline.getPositionFromScroll(
-      this.getSnappingPosition(positionsOfSnapTargets)
-    );
-    if (snapPosition) this.snapTo(snapPosition, mode);
+    const snapPosition = this.timeline.getPositionFromScroll(this.getSnappingPosition(positionsOfSnapTargets));
+    if (snapPosition) event.hand.timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.snapTo(snapPosition, mode));
 
-    this.buildSnapIndicators(mode);
+    event.hand.timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.buildSnapIndicators(mode));
   }
 
   getSnappingPosition (positionsOfSnapTargets) {
@@ -354,14 +352,15 @@ export class TimelineSequence extends Morph {
     switch (mode) {
       case 'drag': {
         const snapTarget = startIsCloserThanEnd ? 'position' : 'topRight';
-        this[snapTarget] = pt(snapPosition, this.position.y);
+        this.timeline.getSelectedSequences(s => s !== this).forEach(timelineSequence => timelineSequence[snapTarget] = pt(Math.abs(this[snapTarget].x - snapPosition - timelineSequence[snapTarget].x), CONSTANTS.SEQUENCE_LAYER_Y_OFFSET));
+        this[snapTarget] = pt(snapPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
         break;
       }
 
       case 'resizeLeft': {
         if (!startIsCloserThanEnd) return;
         const newWidth = this.topRight.x - snapPosition;
-        this.position = pt(snapPosition, this.position.y);
+        this.position = pt(snapPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
         this.width = newWidth;
         break;
       }
@@ -376,7 +375,7 @@ export class TimelineSequence extends Morph {
 
   buildSnapIndicators (mode) {
     let buildRightIndicator, buildLeftIndicator;
-    this._otherTimelineSequencesSortedByStart.forEach(timelineSequence => {
+    this.allTimelineSequences.filter(s => s !== this).forEach(timelineSequence => {
       const sequence = timelineSequence.sequence;
       if (sequence.start == this.sequence.start && mode != 'resizeRight') {
         buildLeftIndicator = true;
