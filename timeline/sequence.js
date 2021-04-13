@@ -220,6 +220,7 @@ export class TimelineSequence extends Morph {
   }
 
   onDragEnd (event) {
+    if (event.isShiftDown()) return;
     this.undoStop('move-timeline-sequence');
     this.handleOverlappingOtherSequence(event.hand.timelineSequenceStates);
     event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.hideWarningLeft());
