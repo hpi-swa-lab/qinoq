@@ -577,6 +577,12 @@ export class Sequence extends Morph {
     const stemMorph = new Morph({ fill: Color.rgbHex('734c30'), extent: pt(30, 60), name: 'stem' });
     const vertices = [pt(60, 0), pt(90, 50), pt(70, 50), pt(100, 100), pt(70, 100), pt(110, 150), pt(10, 150), pt(50, 100), pt(20, 100), pt(50, 50), pt(30, 50)];
     const crownMorph = new Polygon({ fill: Color.rgbHex('74a57f'), vertices: vertices, name: 'leafs' });
+    crownMorph.onMouseDown = () => {
+      crownMorph.fill = crownMorph.fill.darker();
+    };
+    crownMorph.onMouseUp = () => {
+      crownMorph.fill = crownMorph.fill.lighter();
+    };
 
     treeSequence.addMorph(stemMorph);
     treeSequence.addMorph(crownMorph);
@@ -612,7 +618,12 @@ export class Sequence extends Morph {
 
     const cloud = new Image({ name: 'cloud', extent: pt(100, 50), imageUrl: 'https://cdn.pixabay.com/photo/2017/06/20/04/42/cloud-2421760_960_720.png' });
     skySequence.addMorph(cloud);
-
+    cloud.onHoverIn = () => {
+      cloud.blur = 3;
+    };
+    cloud.onHoverOut = () => {
+      cloud.blur = 0;
+    };
     const cloudPositionAnimation = new PointAnimation(cloud, 'position', true);
     cloudPositionAnimation.addKeyframes([new Keyframe(0, pt(0.25, 0.17), { name: 'start' }), new Keyframe(1, pt(0.5, 0.17), { name: 'end' })]);
     skySequence.addAnimation(cloudPositionAnimation);
