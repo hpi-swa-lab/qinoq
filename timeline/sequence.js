@@ -236,8 +236,8 @@ export class TimelineSequence extends Morph {
     if (!event.hand.timelineSequenceStates) return;
     super.onDrag(event);
 
-    const referenceDragState = event.hand.timelineSequenceStates.find(dragState => dragState.timelineSequence === this);
-    const prevPositionX = referenceDragState.previousPosition.x;
+    const draggedByUserState = event.hand.timelineSequenceStates.find(dragState => dragState.timelineSequence === this);
+    const prevPositionX = draggedByUserState.previousPosition.x;
     const dragDeltaX = prevPositionX - this.position.x;
 
     event.hand.timelineSequenceStates.forEach(dragState => {
