@@ -46,6 +46,8 @@ export class InteractivesEditor extends Morph {
       },
       inspector: {
       },
+      preview: {
+      },
       interactiveScrollPosition: {
         defaultValue: 0
       },
