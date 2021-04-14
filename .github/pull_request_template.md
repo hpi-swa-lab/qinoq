@@ -28,6 +28,7 @@ Closes [fill in your issues here]
 ### Sequences in GlobalTimeline
 
 - [ ] the tree sequence is resizeable both left and right, this can be reversed
+- [ ] when 3 sequences are selected and one tries to resize all get deselected except the one that gets resized
 - [ ] the day sequence can't be dragged or resized onto the night sequence, instead it will snap to the night sequence and the snap indicator is shown
 - [ ] the day sequence can be dragged to the middle layer onto a free spot
 - [ ] the night sequence can't be dragged or resized beyond the left timeline bounds
@@ -45,12 +46,14 @@ Closes [fill in your issues here]
 
 - [ ] an unselected (default) sequence can be selected by clicking on it
 - [ ] when clicking another sequence, the first sequence is no longer selected, but the second one is
-- [ ] when selecting a sequence with the `Alt` key pressed, the previous selection is not removed
-- [ ] when clicking while pressing `Alt` on a selected sequence, the sequence is deselected
+- [ ] when selecting a sequence with the `Shift` key pressed, the previous selection is not removed
+- [ ] when clicking while pressing `Shift` on a selected sequence, the sequence is deselected
 - [ ] all sequences can be selected with `Ctrl + A`
 - [ ] when all sequences are selected, `Ctrl + A` deselects all sequences
-- [ ] in the standard sequence setup, clicking on the night background and then clicking on the tree sequence while pressing `Shift` selects tree sequence, night background and day background
+- [ ] in the standard sequence setup, clicking on the night background and then clicking on the tree sequence while pressing `Alt` selects tree sequence, night background and day background
 - [ ] selected Sequences can be deleted with `Del`
+- [ ] when multiple sequences are selected the context menu renames all of them
+- [ ] having multiple sequences selected dragging one drags all and they snap in all possible positions
 
 ### TimelineLayer
 
