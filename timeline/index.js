@@ -300,6 +300,7 @@ export class Timeline extends Morph {
   }
 
   abandon () {
+    super.abandon();
     disconnect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange');
     disconnect(this.editor.interactive, 'name', this, 'name');
   }

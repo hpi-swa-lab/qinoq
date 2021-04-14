@@ -54,11 +54,11 @@ export class TimelineLayerInfo extends Morph {
 
   initialize () {
     this.ui = {};
-    this.name = this.name || (this.isInGlobalTimeline ? this.layer.name : this.morph.name);
     this.ui.label = new Label({
       textString: this.name,
       reactsToPointer: false
     });
+    this.updateLabel();
     this.addMorph(this.ui.label);
 
     if (this.isInGlobalTimeline) {
@@ -74,6 +74,20 @@ export class TimelineLayerInfo extends Morph {
 
     this.layout = new VerticalLayout({ spacing: 4, autoResize: false });
     this.restyleAfterHideToggle();
+  }
+
+  updateLabel () {
+    console.log(this.timelineLayer);
+    if (this.isInGlobalTimeline) {
+      this.name = this.layer.name;
+    } else {
+      if (this.timelineLayer.isOverviewLayer) {
+        this.name = this.morph.name;
+      } else if (this.timelineLayer.animation) {
+        this.name = this.timelineLayer.animation.property;
+      }
+    }
+    this.ui.label.textString = this.name;
   }
 
   toggleLayerVisibility () {
@@ -105,7 +119,7 @@ export class TimelineLayerInfo extends Morph {
     if (newName) {
       this.layer.name = newName;
       this.timelineLayer.name = newName;
-      this.ui.label.textString = newName;
+      this.updateLabel();
     }
   }
 
@@ -128,12 +142,6 @@ export class TimelineLayerInfo extends Morph {
     const newName = await $world.prompt('Morph name:', { input: this.morph.name });
     if (newName) {
       this.morph.name = newName;
-      this.timeline.timelineLayers.filter(timelineLayer => timelineLayer.morph == this.morph).forEach(timelineLayer => {
-        timelineLayer.updateTooltip();
-        if (timelineLayer.isOverviewLayer) {
-          timelineLayer.layerInfo.ui.label.textString = newName;
-        }
-      });
     }
   }
 

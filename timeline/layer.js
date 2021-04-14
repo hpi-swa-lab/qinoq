@@ -2,7 +2,7 @@ import { Morph, Icon, Label } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
 import { pt } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';
-import { connect } from 'lively.bindings';
+import { connect, disconnect } from 'lively.bindings';
 import { Canvas } from 'lively.components/canvas.js';
 export class TimelineLayer extends Morph {
   static get properties () {
@@ -95,11 +95,18 @@ export class TimelineLayer extends Morph {
 export class SequenceTimelineLayer extends TimelineLayer {
   static get properties () {
     return {
-      morph: {},
+      morph: {
+        set (morph) {
+          this.setProperty('morph', morph);
+          connect(morph, 'name', this, 'onMorphNameChange');
+          this.updateTooltip();
+        }
+      },
       animation: {
         set (animation) {
           this.setProperty('animation', animation);
           this.updateTooltip();
+          this.layerInfo.updateLabel();
           this.redraw();
         }
       }
@@ -111,7 +118,12 @@ export class SequenceTimelineLayer extends TimelineLayer {
   }
 
   updateTooltip () {
-    this.tooltip = `${this.morph.name}:${this.animation.property}`;
+    this.tooltip = `${this.morph.name}` + (this.animation ? `:${this.animation.property}` : '');
+  }
+
+  onMorphNameChange () {
+    this.updateTooltip();
+    this.layerInfo.updateLabel();
   }
 
   onMouseUp (evt) {
@@ -234,6 +246,11 @@ export class SequenceTimelineLayer extends TimelineLayer {
     // final lines
     this.activeArea.line(pt(previousPosition, previousXValue), pt(this.activeArea.width, previousXValue), xStyle);
     this.activeArea.line(pt(previousPosition, previousYValue), pt(this.activeArea.width, previousYValue), yStyle);
+  }
+
+  abandon () {
+    disconnect(this.morph, 'name', this, 'onMorphNameChange');
+    super.abandon();
   }
 }
 
