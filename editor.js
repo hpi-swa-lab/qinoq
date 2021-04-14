@@ -313,6 +313,19 @@ export class InteractivesEditor extends Morph {
     this.displayedTimeline.onActiveAreaWidthChange();
   }
 
+  removeMorphFromInteractive (morph) {
+    const sequenceOfMorph = Sequence.getSequenceOfMorph(morph);
+    const tab = this.getTabFor(sequenceOfMorph);
+    if (tab) {
+      const timeline = this.getTimelineFor(tab);
+      timeline.timelineLayers.filter(timelineLayer => timelineLayer.morph == morph).forEach(timelineLayer => timeline.abandonTimelineLayer(timelineLayer));
+    }
+    if (this.inspector.targetMorph == morph) {
+      this.inspector.deselect();
+    }
+    sequenceOfMorph.abandonMorph(morph);
+  }
+
   get inputFieldClasses () {
     return ['ValueScrubber', 'ColorPropertyView', 'TabCaption'];
   }

@@ -655,6 +655,15 @@ export class Sequence extends Morph {
     return true;
   }
 
+  /**
+  * Remove a morph from a sequence and clear references to it,
+  * e.g. removing animations with that morph
+  **/
+  abandonMorph (morph) {
+    morph.abandon(true);
+    this.animations.filter(animation => animation.target == morph).forEach(animation => this.removeAnimation(animation));
+  }
+
   applyUnfocusedEffect () {
     this.submorphs.forEach(submorph => submorph.halosEnabled = this.focused);
     // stop opacity and grayscale setters from overwriting saved effects
