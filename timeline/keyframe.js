@@ -115,7 +115,7 @@ export class TimelineKeyframe extends Morph {
     const multipleKeyframesSelected = this.timeline.selectedTimelineKeyframes.length > 1;
     return [
       ['✏️ Rename Selected Keyframes', async () => await this.timeline.promptRenameForSelection(multipleKeyframesSelected)],
-      ['❌ Delete Selected Keyframes', () => this.timeline.deleteSelection()],
+      ['❌ Delete Selected Keyframes', () => this.timeline.deleteSelectedItems()],
       ['📏 Edit Selected Relative Keyframe Positions (0 to 1)', async () => { await this.timeline.promptUserForNewRelativePositionForSelection(multipleKeyframesSelected); }],
       ['📏 Edit Selected Absolute Keyframe Position', async () => { await this.timeline.promptUserForNewAbsolutePositionForSelection(multipleKeyframesSelected); }],
       ['📈 Set Easing for Selected Keyframes', () => this.timeline.promptEasingForSelection(multipleKeyframesSelected)]
