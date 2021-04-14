@@ -77,7 +77,6 @@ export class TimelineLayerInfo extends Morph {
   }
 
   updateLabel () {
-    console.log(this.timelineLayer);
     if (this.isInGlobalTimeline) {
       this.name = this.layer.name;
     } else {

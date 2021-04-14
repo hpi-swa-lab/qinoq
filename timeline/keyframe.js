@@ -131,9 +131,13 @@ export class TimelineKeyframe extends Morph {
   }
 
   abandon () {
-    this.animation.removeKeyframe(this.keyframe);
     this.layer.redraw();
     super.abandon();
+  }
+
+  delete () {
+    this.animation.removeKeyframe(this.keyframe);
+    this.abandon();
   }
 
   onMouseDown (evt) {

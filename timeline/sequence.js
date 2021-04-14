@@ -699,8 +699,13 @@ export class TimelineSequence extends Morph {
       sequenceTab.close();
     }
     this.disbandInteractiveConnections();
-    this.editor.interactive.removeSequence(this.sequence);
+
     this.updateSequenceAfterArrangement();
     super.abandon();
+  }
+
+  delete () {
+    this.editor.interactive.removeSequence(this.sequence);
+    this.abandon();
   }
 }
