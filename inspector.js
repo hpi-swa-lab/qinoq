@@ -7,6 +7,7 @@ import { InteractiveMorphSelector } from 'lively.halos';
 import { disconnect, connect } from 'lively.bindings';
 import { ColorPickerField } from 'lively.ide/styling/color-picker.js';
 import { Sequence, Keyframe } from 'qinoq';
+import { animatedPropertiesAndTypes } from './properties.js';
 
 const CONSTANTS = {
   LABEL_X: 10,
@@ -60,24 +61,6 @@ export class InteractiveMorphInspector extends Morph {
     return this._editor;
   }
 
-  get defaultProperties () {
-    return {
-      extent: 'point',
-      position: 'point',
-      fill: 'color',
-      blur: 'number',
-      flipped: 'number',
-      tilted: 'number',
-      grayscale: 'number',
-      opacity: 'number',
-      rotation: 'number',
-      scale: 'number',
-      fontSize: 'number',
-      lineHeight: 'number',
-      progress: 'number'
-    };
-  }
-
   get displayedProperties () {
     return Object.keys(this.propertyControls);
   }
@@ -91,12 +74,12 @@ export class InteractiveMorphInspector extends Morph {
   }
 
   get propertiesToDisplay () {
-    const defaultPropertiesInMorph = Object.entries(this.defaultProperties)
+    const defaultPropertiesAndTypesInMorph = Object.entries(animatedPropertiesAndTypes())
       .filter(propertyAndType => propertyAndType[0] in this.targetMorph);
     const additionalProperties = Object.entries(this.targetMorph.propertiesAndPropertySettings().properties)
       .filter(propertyAndSettings => 'animateAs' in propertyAndSettings[1])
       .map(propertyAndSettings => [propertyAndSettings[0], propertyAndSettings[1].animateAs]);
-    const propertyList = defaultPropertiesInMorph.concat(additionalProperties);
+    const propertyList = defaultPropertiesAndTypesInMorph.concat(additionalProperties);
     return Object.fromEntries(propertyList);
   }
 
