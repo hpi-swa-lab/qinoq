@@ -18,9 +18,9 @@ describe('Editor', () => {
   describe('with keybindings', () => {
     it('can select all and no sequences', () => {
       editor.simulateKeys('Ctrl-A');
-      expect(timelineSequences().every(timelineSequence => timelineSequence.selected)).to.be.ok;
+      expect(timelineSequences().every(timelineSequence => timelineSequence.isSelected)).to.be.ok;
       editor.simulateKeys('Ctrl-A');
-      expect(timelineSequences().every(timelineSequence => !timelineSequence.selected)).to.be.ok;
+      expect(timelineSequences().every(timelineSequence => !timelineSequence.isSelected)).to.be.ok;
     });
 
     it('can change interactive scroll position via arrow keys', () => {
@@ -35,7 +35,7 @@ describe('Editor', () => {
     it('can delete a sequence via Delete key', () => {
       const nightBackgroundSequence = interactive.sequences.find(sequence => sequence.name == 'night background');
       const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence == nightBackgroundSequence);
-      nightBackgroundTimelineSequence.selected = true;
+      nightBackgroundTimelineSequence.isSelected = true;
       editor.simulateKeys('Delete');
       expect(nightBackgroundTimelineSequence.world()).to.not.be.ok;
       expect(interactive.sequences).to.not.include(nightBackgroundSequence);
