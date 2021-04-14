@@ -156,12 +156,13 @@ export class TimelineLayerInfo extends Morph {
       menuOptions.push(['❌ Remove layer', async () => await this.removeLayer()]);
     }
     if (this.isInSequenceTimeline) {
-      menuOptions.push(['🔍 Select morph', () => {
+      menuOptions.push(['🔍 Select morph in inspector', () => {
         this.editor.inspector.targetMorph = this.morph;
         if (this.morph.world()) this.morph.show();
       }]);
       menuOptions.push(['❌ Remove morph', async () => await this.abandonMorph()]);
       menuOptions.push(['✏️ Rename morph', async () => await this.promptMorphName()]);
+      menuOptions.push(['▭ Show halo for morph', () => $world.showHaloFor(this.morph)]);
       if (this.timelineLayer.isOverviewLayer) {
         if (!this.timelineLayer.isExpanded && this.timelineLayer.mayBeExpanded) {
           menuOptions.push(['➕ Expand view', () => this.timelineLayer.isExpanded = true]);
