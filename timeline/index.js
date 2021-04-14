@@ -509,7 +509,7 @@ export class GlobalTimeline extends Timeline {
 
   async promptDurationForSelection () {
     const newDuration = !(this.selectedSequences.length > 1)
-      ? Number(await $world.prompt('Duration:', { input: this.selectedSequences[0].sequence.duration }))
+      ? Number(await $world.prompt('Duration:', { input: `${this.selectedSequences[0].sequence.duration}` }))
       : Number(await $world.prompt(`Duration of the ${this.selectedSequences.length} selected Sequences:`));
 
     const invalidDuration = this.selectedSequences.some(timelineSequence => !this.editor.interactive.validSequenceDuration(timelineSequence.sequence, newDuration));
@@ -757,6 +757,8 @@ export class SequenceTimeline extends Timeline {
 
     if (newName) {
       this.renameSelection(newName);
+    } else {
+      $world.setStatusMessage('Name not set', COLOR_SCHEME.ERROR);
     }
   }
 
