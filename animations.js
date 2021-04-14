@@ -2,6 +2,7 @@ import { pt } from 'lively.graphics';
 import { arr } from 'lively.lang';
 import { Sequence } from 'qinoq';
 import { easings, stringToEasing } from 'lively.morphic';
+import { animatedProperties } from './properties.js';
 
 class Animation {
   constructor (targetMorph, property, useRelativeValues = false) {
@@ -107,10 +108,11 @@ class Animation {
 }
 
 export function createAnimationForPropertyType (propType, targetMorph, property) {
+  const additionalPropertySpec = animatedProperties[property];
   switch (propType) {
     case 'point':
       // extent and position need to be scalable with the interactive thus we use relative values
-      return new PointAnimation(targetMorph, property, ['extent', 'position'].includes(property));
+      return new PointAnimation(targetMorph, property, additionalPropertySpec && additionalPropertySpec.defaultRelative);
     case 'color':
       return new ColorAnimation(targetMorph, property);
     case 'number':
