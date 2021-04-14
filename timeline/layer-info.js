@@ -117,6 +117,13 @@ export class TimelineLayerInfo extends Morph {
     }
   }
 
+  async abandonMorph () {
+    const accept = await $world.confirm('Do you want to delete this morph?\n This can not be undone.');
+    if (accept) {
+      this.editor.removeMorphFromInteractive(this.morph);
+    }
+  }
+
   menuItems (evt) {
     const menuOptions = [];
     if (this.isInGlobalTimeline) {
@@ -140,6 +147,7 @@ export class TimelineLayerInfo extends Morph {
         this.editor.inspector.targetMorph = this.morph;
         if (this.morph.world()) this.morph.show();
       }]);
+      menuOptions.push(['❌ Remove morph', async () => await this.abandonMorph()]);
       if (this.timelineLayer.isOverviewLayer) {
         if (!this.timelineLayer.isExpanded && this.timelineLayer.mayBeExpanded) {
           menuOptions.push(['➕ Expand view', () => this.timelineLayer.isExpanded = true]);
