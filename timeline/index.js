@@ -488,7 +488,7 @@ export class GlobalTimeline extends Timeline {
   }
 
   deleteSelectedItems () {
-    arr.invoke(this.selectedSequences, 'abandon');
+    arr.invoke(this.selectedSequences, 'delete');
   }
 
   async promptRenameForSelection () {
