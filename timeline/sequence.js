@@ -240,10 +240,8 @@ export class TimelineSequence extends Morph {
     const prevPositionX = draggedByUserState.previousPosition.x;
     const dragDeltaX = prevPositionX - this.position.x;
 
-    event.hand.timelineSequenceStates.forEach(dragState => {
-      if (dragState.timelineSequence != this) {
-        dragState.timelineSequence.position = pt(dragState.previousPosition.x - dragDeltaX, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-      }
+    event.hand.timelineSequenceStates.filter(dragState => dragState.timelineSequence !== this).forEach(dragState => {
+      dragState.timelineSequence.position = pt(dragState.previousPosition.x - dragDeltaX, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     });
 
     if (event.hand.leftMostSequenceStates[0].timelineSequence.position.x <= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
@@ -257,7 +255,7 @@ export class TimelineSequence extends Morph {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.hideWarningLeft());
     }
-    this.handleSnapping('drag', event);
+    this.handleSnapping('drag', event.hand.timelineSequenceStates);
     event.hand.timelineSequenceStates.forEach(dragState => {
       dragState.timelineSequence.updateAppearance();
       dragState.timelineSequence.updateSequenceAfterArrangement();
@@ -280,12 +278,12 @@ export class TimelineSequence extends Morph {
     delete this._otherTimelineSequencesSortedByEnd;
   }
 
-  handleSnapping (mode, event) {
-    event.hand.timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.removeSnapIndicators());
+  handleSnapping (mode, timelineSequenceStates) {
+    timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.removeSnapIndicators());
     if (this._otherTimelineSequencesSortedByStart.length == 0) return;
     let positionsOfSnapTargets = [];
     switch (mode) {
-      case 'drag': positionsOfSnapTargets = event.hand.timelineSequenceStates.flatMap(timelineSequenceState => { return [timelineSequenceState.timelineSequence.sequence.start, timelineSequenceState.timelineSequence.sequence.end]; });
+      case 'drag': positionsOfSnapTargets = timelineSequenceStates.flatMap(timelineSequenceState => { return [timelineSequenceState.timelineSequence.sequence.start, timelineSequenceState.timelineSequence.sequence.end]; });
         break;
       case 'resizeLeft': positionsOfSnapTargets = [this.sequence.start];
         break;
@@ -294,9 +292,9 @@ export class TimelineSequence extends Morph {
     }
 
     const snapPosition = this.timeline.getPositionFromScroll(this.getSnappingPosition(positionsOfSnapTargets));
-    if (snapPosition) event.hand.timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.snapTo(snapPosition, mode));
+    if (snapPosition) timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.snapTo(snapPosition, mode));
 
-    event.hand.timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.buildSnapIndicators(mode));
+    timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.buildSnapIndicators(mode));
   }
 
   getSnappingPosition (positionsOfSnapTargets) {
@@ -353,7 +351,12 @@ export class TimelineSequence extends Morph {
     switch (mode) {
       case 'drag': {
         const snapTarget = startIsCloserThanEnd ? 'position' : 'topRight';
-        this.timeline.getSelectedSequences(s => s !== this).forEach(timelineSequence => timelineSequence[snapTarget] = pt(Math.abs(this[snapTarget].x - snapPosition - timelineSequence[snapTarget].x), CONSTANTS.SEQUENCE_LAYER_Y_OFFSET));
+
+        this.timeline.getSelectedSequences(s => s !== this).forEach(timelineSequence =>
+          timelineSequence[snapTarget] = pt(
+            Math.abs(this[snapTarget].x - snapPosition - timelineSequence[snapTarget].x),
+            CONSTANTS.SEQUENCE_LAYER_Y_OFFSET));
+
         this[snapTarget] = pt(snapPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
         break;
       }
@@ -376,7 +379,7 @@ export class TimelineSequence extends Morph {
 
   buildSnapIndicators (mode) {
     let buildRightIndicator, buildLeftIndicator;
-    this.allTimelineSequences.filter(s => s !== this).forEach(timelineSequence => {
+    this.allTimelineSequences.filter(sequence => sequence !== this).forEach(timelineSequence => {
       const sequence = timelineSequence.sequence;
       if (sequence.start == this.sequence.start && mode != 'resizeRight') {
         buildLeftIndicator = true;
@@ -406,7 +409,7 @@ export class TimelineSequence extends Morph {
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
     } else {
       this.width = newSequenceWidth;
-      this.handleSnapping('resizeRight', event);
+      this.handleSnapping('resizeRight', event.hand.timelineSequenceStates);
     }
 
     this.updateAppearance();
@@ -436,7 +439,7 @@ export class TimelineSequence extends Morph {
       this.extent = pt(newSequenceWidth, this.height);
       this.hideWarningLeft();
     }
-    this.handleSnapping('resizeLeft', event);
+    this.handleSnapping('resizeLeft', event.hand.timelineSequenceStates);
 
     this.updateAppearance();
     this.updateSequenceAfterArrangement();
