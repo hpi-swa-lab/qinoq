@@ -124,6 +124,19 @@ export class TimelineLayerInfo extends Morph {
     }
   }
 
+  async promptMorphName () {
+    const newName = await $world.prompt('Morph name:', { input: this.morph.name });
+    if (newName) {
+      this.morph.name = newName;
+      this.timeline.timelineLayers.filter(timelineLayer => timelineLayer.morph == this.morph).forEach(timelineLayer => {
+        timelineLayer.updateTooltip();
+        if (timelineLayer.isOverviewLayer) {
+          timelineLayer.layerInfo.ui.label.textString = newName;
+        }
+      });
+    }
+  }
+
   menuItems (evt) {
     const menuOptions = [];
     if (this.isInGlobalTimeline) {
@@ -148,6 +161,7 @@ export class TimelineLayerInfo extends Morph {
         if (this.morph.world()) this.morph.show();
       }]);
       menuOptions.push(['❌ Remove morph', async () => await this.abandonMorph()]);
+      menuOptions.push(['✏️ Rename morph', async () => await this.promptMorphName()]);
       if (this.timelineLayer.isOverviewLayer) {
         if (!this.timelineLayer.isExpanded && this.timelineLayer.mayBeExpanded) {
           menuOptions.push(['➕ Expand view', () => this.timelineLayer.isExpanded = true]);

@@ -99,7 +99,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
       animation: {
         set (animation) {
           this.setProperty('animation', animation);
-          this.tooltip = `${this.morph.name}:${this.animation.property}`;
+          this.updateTooltip();
           this.redraw();
         }
       }
@@ -108,6 +108,10 @@ export class SequenceTimelineLayer extends TimelineLayer {
 
   get name () {
     return this.morph.name;
+  }
+
+  updateTooltip () {
+    this.tooltip = `${this.morph.name}:${this.animation.property}`;
   }
 
   onMouseUp (evt) {
@@ -362,10 +366,14 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     };
   }
 
+  updateTooltip () {
+    this.tooltip = this.isExpanded ? '' : this.morph.name;
+  }
+
   collapse () {
     this.layerInfo.restyleCollapseToggle();
     this.opacity = 1;
-    this.tooltip = this.morph.name;
+    this.updateTooltip();
     this.reactsToPointer = true;
     this.timeline.addTimelineKeyframesForLayer(this);
     this.timeline.removePropertyLayers(this);
@@ -379,7 +387,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     }
     this.layerInfo.restyleCollapseToggle();
     this.opacity = 0;
-    this.tooltip = '';
+    this.updateTooltip();
     this.reactsToPointer = false;
     this.removeAllTimelineKeyframes();
     this.timeline.createPropertyLayers(this);
