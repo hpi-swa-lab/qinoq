@@ -151,6 +151,7 @@ export class TimelineKeyframe extends Morph {
 
   delete () {
     this.animation.removeKeyframe(this.keyframe);
+    if (this.layer.layerInfo.ui.collapseButton && (this.layer.numberOfKeyframes == 1)) this.layer.layerInfo.disableCollapseButton();
     this.abandon();
   }
 
