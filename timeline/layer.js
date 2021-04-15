@@ -1,6 +1,6 @@
 import { Morph } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
-import { pt } from 'lively.graphics';
+import { pt, Color } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';
 import { connect, disconnect } from 'lively.bindings';
 import { Canvas } from 'lively.components/canvas.js';
@@ -60,13 +60,11 @@ export class TimelineLayer extends Morph {
     const activeArea = this.addMorph(new Canvas({
       extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.LAYER_HEIGHT),
       position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0),
-      fill: COLOR_SCHEME.BACKGROUND,
       reactsToPointer: false,
       preserveContents: false, // Default value of true results in errors when the width was 0 and is increased (happens in an empty interactive)
       name: 'active area',
       borderStyle: { bottom: 'solid', left: 'none', right: 'none', top: 'solid' },
-      acceptsDrops: false,
-      opacity: 0.5
+      acceptsDrops: false
     }));
     const inactiveArea = this.addMorph(new Morph({
       draggable: true,
@@ -153,7 +151,11 @@ export class SequenceTimelineLayer extends TimelineLayer {
   }
 
   redrawActiveArea () {
-    this.activeArea.clear(COLOR_SCHEME.BACKGROUND);
+    const [h, s, b] = this.fill.toHSB();
+
+    (this.fill == COLOR_SCHEME.BACKGROUND_VARIANT)
+      ? this.activeArea.clear(COLOR_SCHEME.ON_BACKGROUND_VARIANT)
+      : this.activeArea.clear(Color.hsb(h, (s - 0.3), b + 0.1));
 
     if (!this.animation) return false;
     if (!this.activeArea.context) return false;
