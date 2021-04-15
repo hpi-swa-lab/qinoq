@@ -135,18 +135,33 @@ export class TimelineKeyframe extends Morph {
     super.abandon();
   }
 
+<<<<<<< HEAD
   delete () {
     this.animation.removeKeyframe(this.keyframe);
     this.abandon();
   }
 
-  onMouseDown (event) {
-    super.onMouseDown(event);
-    if (event.leftMouseButtonPressed() && event.isShiftDown()) {
+  onMouseDown (evt) {
+    super.onMouseDown(evt);
+    if (evt.leftMouseButtonPressed() && evt.isShiftDown()) {
       this.toggleSelection();
     } else if (!this.isSelected) {
       this.timeline.deselectAllTimelineKeyframesExcept(this);
     }
+||||||| parent of 61892aa... Change evt to event and remove unnecesarry linebreaks
+  onMouseDown (evt) {
+    super.onMouseDown(evt);
+    if (evt.leftMouseButtonPressed() && evt.isShiftDown()) {
+      this.toggleSelection();
+    } else if (!this.isSelected) {
+      this.timeline.deselectAllTimelineKeyframesExcept(this);
+    }
+=======
+  onMouseDown (event) {
+    super.onMouseDown(event);
+    if (event.leftMouseButtonPressed() && event.isShiftDown()) this.toggleSelection();
+    else if (!this.isSelected) this.timeline.deselectAllTimelineKeyframesExcept(this);
+>>>>>>> 61892aa... Change evt to event and remove unnecesarry linebreaks
   }
 
   onDoubleMouseDown () {
