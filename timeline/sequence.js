@@ -597,6 +597,23 @@ export class TimelineSequence extends Morph {
     });
   }
 
+  showWarningRight (dragValue, showImmediately = false) {
+    const newWarning = !this.warningStartRight;
+    if (newWarning) this.warningStartRight = showImmediately ? 0 : dragValue;
+    const currentDrag = Math.abs(this.warningStartRight - dragValue);
+    const strength = currentDrag / CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA;
+    const warning = !newWarning
+      ? this.getSubmorphNamed('warning right')
+      : this.createWarningMorph('right', pt(this.width - CONSTANTS.WARNING_WIDTH, 0), 'westeast');
+    warning.opacity = strength;
+    this.addMorph(warning);
+  }
+
+  hideWarningRight (fadeout = 1000) {
+    delete this.warningStartRight;
+    this.hideWarning('right', fadeout);
+  }
+
   showWarningLeft (dragValue, showImmediately = false) {
     const newWarning = !this.warningStartLeft;
     if (newWarning) this.warningStartLeft = showImmediately ? 0 : dragValue;
