@@ -1,6 +1,7 @@
 import { Morph, VerticalLayout, Icon, Label } from 'lively.morphic';
 import { CONSTANTS } from './constants.js';
 import { pt } from 'lively.graphics';
+import { COLOR_SCHEME } from '../colors.js';
 
 export class TimelineLayerInfo extends Morph {
   static get properties () {
@@ -105,8 +106,20 @@ export class TimelineLayerInfo extends Morph {
   addCollapseToggle () {
     this.ui.collapseButton = new Label({ name: 'collapseButton', position: pt(10, 10), fontSize: 15, nativeCursor: 'pointer' });
     Icon.setIcon(this.ui.collapseButton, 'caret-right');
-    this.ui.collapseButton.onMouseUp = () => { this.timelineLayer.isExpanded = !this.timelineLayer.isExpanded; };
     this.addMorph(this.ui.collapseButton);
+    this.disableCollapseButton();
+  }
+
+  disableCollapseButton () {
+    this.ui.collapseButton.fontColor = COLOR_SCHEME.BACKGROUND_VARIANT;
+    this.ui.collapseButton.onMouseUp = () => {};
+    this.ui.collapseButton.tooltip = 'Expanding is only available for morphs with keyframes.';
+  }
+
+  enableCollapseButton () {
+    this.ui.collapseButton.fontColor = COLOR_SCHEME.ON_SURFACE;
+    this.ui.collapseButton.onMouseUp = () => { this.timelineLayer.isExpanded = !this.timelineLayer.isExpanded; };
+    this.ui.collapseButton.tooltip = 'Expand this layer to see all animated properties.';
   }
 
   restyleCollapseToggle () {
