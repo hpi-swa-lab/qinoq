@@ -408,11 +408,6 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   }
 
   expand () {
-    if (!this.mayBeExpanded) {
-      this.isExpanded = false;
-      $world.inform('Expanding is only available for morphs with keyframes.');
-      return;
-    }
     this.layerInfo.restyleCollapseToggle();
     this.opacity = 0;
     this.updateTooltip();

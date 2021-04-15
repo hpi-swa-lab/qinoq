@@ -626,7 +626,9 @@ export class SequenceTimeline extends Timeline {
   }
 
   addTimelineKeyframesForLayer (timelineLayer) {
-    this.sequence.getAnimationsForMorph(timelineLayer.morph).forEach(animation => {
+    const animations = this.sequence.getAnimationsForMorph(timelineLayer.morph);
+    if (animations.length > 0 && timelineLayer.layerInfo.ui.collapseButton) timelineLayer.layerInfo.enableCollapseButton();
+    animations.forEach(animation => {
       this.addKeyframesForAnimation(animation, timelineLayer);
     });
     timelineLayer.redraw();
