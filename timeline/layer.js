@@ -122,7 +122,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
 
   onMorphNameChange () {
     this.updateTooltip();
-    this.layerInfo.updateLabel();
+    if (this.layerInfo) this.layerInfo.updateLabel();
   }
 
   onMouseUp (event) {
