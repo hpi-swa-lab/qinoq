@@ -3,6 +3,7 @@ import { COLOR_SCHEME } from '../colors.js';
 import { pt } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';
 import { singleSelectKeyPressed } from '../keys.js';
+import { getColorForProperty } from '../properties.js';
 
 export class TimelineKeyframe extends Morph {
   static get properties () {
@@ -100,7 +101,7 @@ export class TimelineKeyframe extends Morph {
 
   updatePosition () {
     this._lockModelUpdate = true;
-    if (this.layer) this.position = pt(this.timeline.getPositionFromKeyframe(this), this.timelineKeyframeY);
+    if (this.layer) this.position = pt(this.layer.timeline.getPositionFromKeyframe(this.keyframe), this.timelineKeyframeY);
     this._lockModelUpdate = false;
   }
 
@@ -171,7 +172,7 @@ export class TimelineKeyframe extends Morph {
   }
 
   onMouseUp (event) {
-    if (!this._dragged && !singleSelectKeyPressed(event)) {
+    if (!this._dragged && !event.isShiftDown()) {
       this.timeline.deselectAllTimelineKeyframesExcept(this);
     } else {
       this._dragged = false;
@@ -247,5 +248,42 @@ export class TimelineKeyframe extends Morph {
 
   updateAppearance () {
     this.borderColor = this.isSelected ? COLOR_SCHEME.PRIMARY : COLOR_SCHEME.KEYFRAME_BORDER;
+  }
+}
+
+export class KeyframeLine extends Morph {
+  static get properties () {
+    return {
+      animation: {
+        set (animation) {
+          this.setProperty('animation', animation);
+          this.fill = getColorForProperty(animation.property);
+          this.setTooltip();
+        }
+      },
+      _editor: {},
+      name: {
+        defaultValue: 'aKeyframeLine'
+      }
+    };
+  }
+
+  get layer () {
+    return this.owner;
+  }
+
+  get isKeyframeLine () {
+    return true;
+  }
+
+  setTooltip () {
+    this.tooltip = `Property: ${this.animation.property}`;
+  }
+
+  addKeyframes () {
+    this.animation.keyframes.forEach(keyframe => {
+      const position = pt(this.layer.timeline.getPositionFromKeyframe(keyframe) - this.position.x, -2);
+      this.addMorph(new Morph({ position, extent: pt(7, 7), position, fill: Color.rgb(40, 40, 40), rotation: Math.PI / 4 }));
+    });
   }
 }

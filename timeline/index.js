@@ -4,7 +4,7 @@ import { TimelineCursor } from './cursor.js';
 import { connect, disconnect } from 'lively.bindings';
 import { TimelineSequence } from './sequence.js';
 import { GlobalTimelineLayer, OverviewSequenceTimelineLayer, SequenceTimelineLayer } from './layer.js';
-import { TimelineKeyframe } from './keyframe.js';
+import { TimelineKeyframe, KeyframeLine } from './keyframe.js';
 import { CONSTANTS } from './constants.js';
 import { TimelineLayerInfo } from './layer-info.js';
 import { COLOR_SCHEME } from '../colors.js';
@@ -12,6 +12,7 @@ import { arr } from 'lively.lang';
 import { ListPrompt } from 'lively.components/prompts.js';
 import { singleSelectKeyPressed, zoomKeyPressed } from '../keys.js';
 import { Sequence, Keyframe } from '../index.js';
+import { getColorForProperty } from '../properties.js';
 
 export class Timeline extends Morph {
   static get properties () {
@@ -621,32 +622,37 @@ export class SequenceTimeline extends Timeline {
     this._sequence = sequence;
     this.sequence.submorphs.forEach(morph => {
       const timelineLayer = this.createOverviewTimelineLayer(morph);
-      this.addTimelineKeyframesForLayer(timelineLayer);
+      this.addTimelineKeyframesForLayer(timelineLayer, true);
     });
   }
 
-  addTimelineKeyframesForLayer (timelineLayer) {
+  addTimelineKeyframesForLayer (timelineLayer, overviewLayer = false) {
     const animations = this.sequence.getAnimationsForMorph(timelineLayer.morph);
-    animations.forEach(animation => {
-      this.addKeyframesForAnimation(animation, timelineLayer);
-    });
+    for (let index = 0; index < animations.length; index++) this.addKeyframesForAnimation(animations[index], timelineLayer, overviewLayer, index);
     timelineLayer.redraw();
   }
 
-  addKeyframesForAnimation (animation, timelineLayer) {
+  addKeyframesForAnimation (animation, timelineLayer, overviewLayer, index) {
     animation.keyframes.forEach(keyframe => {
-      const timelineKeyframe = timelineLayer.addMorph(new TimelineKeyframe({ _editor: this.editor, layer: timelineLayer, _keyframe: keyframe, animation }));
-      timelineKeyframe.updatePosition();
-      timelineLayer.onNumberOfKeyframesChanged();
+      if (overviewLayer) {
+        const start = Math.min(...animation.keyframes.map(keyframe => this.getPositionFromKeyframe(keyframe)));
+        const end = Math.max(...animation.keyframes.map(keyframe => this.getPositionFromKeyframe(keyframe)));
+        const keyframeLine = timelineLayer.addMorph(new KeyframeLine({ _editor: this.editor, animation, extent: pt(end - start, 5), position: pt(start, 5 + 10 * index) }));
+        keyframeLine.addKeyframes();
+      } else {
+        const timelineKeyframe = timelineLayer.addMorph(new TimelineKeyframe({ _editor: this.editor, layer: timelineLayer, _keyframe: keyframe, animation }));
+        timelineKeyframe.updatePosition();
+        timelineLayer.onNumberOfKeyframesChanged();
+      }
     });
   }
 
   redraw () {
     super.redraw();
-    this.keyframes.forEach(keyframe => {
-      keyframe._lockModelUpdate = true;
-      keyframe.position = pt(this.getPositionFromKeyframe(keyframe), keyframe.position.y);
-      keyframe._lockModelUpdate = false;
+    this.keyframes.forEach(timelineKeyframe => {
+      timelineKeyframe._lockModelUpdate = true;
+      timelineKeyframe.position = pt(this.getPositionFromKeyframe(timelineKeyframe.keyframe), timelineKeyframe.position.y);
+      timelineKeyframe._lockModelUpdate = false;
     });
     this._activeAreaWidth = CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor;
     this.timelineLayers.forEach(timelineLayer => timelineLayer.redraw());
@@ -729,12 +735,12 @@ export class SequenceTimeline extends Timeline {
     return (position.x - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) / (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor);
   }
 
-  getScrollFromKeyframe (timelineKeyframe) {
-    return this.sequence.getAbsolutePositionFor(timelineKeyframe.keyframe);
+  getScrollFromKeyframe (keyframe) {
+    return this.sequence.getAbsolutePositionFor(keyframe);
   }
 
-  getPositionFromKeyframe (timelineKeyframe) {
-    return this.getPositionFromScroll(this.getScrollFromKeyframe(timelineKeyframe));
+  getPositionFromKeyframe (keyframe) {
+    return this.getPositionFromScroll(this.getScrollFromKeyframe(keyframe));
   }
 
   getDisplayValueFromScroll (scrollPosition) {
