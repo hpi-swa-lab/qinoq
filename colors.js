@@ -14,7 +14,9 @@ export const COLOR_SCHEME = {
   SURFACE_VARIANT: Color.rgb(220, 220, 220),
   ON_SURFACE: Color.black,
   ERROR: Color.red,
-  TRANSPARENT: Color.transparent
+  TRANSPARENT: Color.transparent,
+  KEYFRAME_FILL: Color.rgb(134, 134, 134),
+  KEYFRAME_BORDER: Color.rgb(69, 69, 69)
 };
 
 // use this function to get a color for a property name

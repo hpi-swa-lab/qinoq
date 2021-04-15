@@ -1,6 +1,6 @@
 import { Morph } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
-import { pt, Color } from 'lively.graphics';
+import { pt } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';
 import { singleSelectKeyPressed } from '../keys.js';
 
@@ -11,7 +11,7 @@ export class TimelineKeyframe extends Morph {
         defaultValue: CONSTANTS.KEYFRAME_EXTENT
       },
       fill: {
-        defaultValue: Color.rgb(134, 134, 134)
+        defaultValue: COLOR_SCHEME.KEYFRAME_FILL
       },
       rotation: {
         defaultValue: Math.PI / 4
@@ -66,7 +66,7 @@ export class TimelineKeyframe extends Morph {
         }
       },
       borderColor: {
-        defaultValue: Color.rgb(69, 69, 69)
+        defaultValue: COLOR_SCHEME.KEYFRAME_BORDER
       },
       borderWidth: {
         defaultValue: 2
@@ -244,6 +244,6 @@ export class TimelineKeyframe extends Morph {
   }
 
   updateAppearance () {
-    this.borderColor = this.isSelected ? COLOR_SCHEME.PRIMARY : Color.rgb(69, 69, 69);
+    this.borderColor = this.isSelected ? COLOR_SCHEME.PRIMARY : COLOR_SCHEME.KEYFRAME_BORDER;
   }
 }
