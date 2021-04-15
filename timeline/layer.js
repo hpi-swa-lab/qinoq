@@ -98,8 +98,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
       morph: {
         set (morph) {
           this.setProperty('morph', morph);
-          connect(morph, 'name', this, 'onMorphNameChange');
-          this.updateTooltip();
+          connect(morph, 'name', this, 'onMorphNameChange').update();
         }
       },
       animation: {
