@@ -425,12 +425,12 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     this.keyframes.forEach(keyframe => keyframe.remove());
   }
 
-  get mayBeExpanded () {
-    return this.containsKeyframes;
+  get containsKeyframes () {
+    return this.numberOfKeyframes > 0;
   }
 
-  get containsKeyframes () {
-    return this.keyframes.length > 0;
+  get numberOfKeyframes () {
+    return this.keyframes.length;
   }
 
   updateTimelineKeyframes () {
