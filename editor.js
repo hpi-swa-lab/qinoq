@@ -416,7 +416,7 @@ export class InteractivesEditor extends Morph {
         name: 'find keyframe',
         exec: async () => {
           const allKeyframes = this.interactive.sequences.flatMap(sequence => sequence.animations).flatMap(animation => animation.keyframes);
-          const keyframeSearchStrings = this.interactive.sequences.flatMap(sequence => sequence.animations).map(animation => animation.keyframes.map(keyframe => `${keyframe.name} - ${animation.property} on ${animation.target.name}`)).flat();
+          const keyframeSearchStrings = this.interactive.sequences.flatMap(sequence => sequence.animations).map(animation => animation.keyframes.map(keyframe => `${keyframe.name} - ${animation.property} on ${animation.target.name} [${animation.sequence.name}]`)).flat();
           const result = await $world.listPrompt('Select a keyframe', keyframeSearchStrings, { filterable: true });
           if (result.selected.length > 0) {
             const keyframe = allKeyframes[keyframeSearchStrings.indexOf(result.selected[0])];
