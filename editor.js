@@ -486,16 +486,14 @@ class Preview extends Morph {
     return this._editor;
   }
 
-  onDrop (evt) {
-    if (evt.type != 'morphicdrop') {
-      return;
-    }
-    const grabbedMorph = arr.first(evt.hand.grabbedMorphs);
+  onDrop (event) {
+    if (event.type != 'morphicdrop') return;
+    const grabbedMorph = arr.first(event.hand.grabbedMorphs);
     if (grabbedMorph.isInteractive) {
       this.editor.interactive = grabbedMorph;
 
       // Restore style properties set during grab
-      const { pointerAndShadow } = evt.hand._grabbedMorphProperties.get(grabbedMorph) || {};
+      const { pointerAndShadow } = event.hand._grabbedMorphProperties.get(grabbedMorph) || {};
       Object.assign(grabbedMorph, pointerAndShadow);
     } else {
       $world.setStatusMessage('You have to drop an interactive here');

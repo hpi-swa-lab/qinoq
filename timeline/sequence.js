@@ -668,7 +668,7 @@ export class TimelineSequence extends Morph {
     return overlappingSequences.filter(sequence => sequence != this);
   }
 
-  menuItems (evt) {
+  menuItems () {
     let items = [
       ['✏️ Rename Sequence', async () => await this.timeline.promptRenameForSelection()],
       ['❌ Delete Sequence', () => this.timeline.deleteSelectedItems()],

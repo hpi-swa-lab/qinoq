@@ -63,9 +63,9 @@ export class TimelineLayerInfo extends Morph {
 
     if (this.isInGlobalTimeline) {
       this.ui.hideButton = new Label({ name: 'hide button', tooltip: 'Hide layer in interactive', nativeCursor: 'pointer', reactsToPointer: true });
-      this.ui.hideButton.onMouseUp = (evt) => {
-        // domEvt.button 0 is left click, the DOM event has a wrong buttons property, so evt.leftMouseButtonPressed() doesn't work currently
-        if (evt.domEvt.button == 0) this.toggleLayerVisibility();
+      this.ui.hideButton.onMouseUp = (event) => {
+        // domEvt.button 0 is left click, the DOM event has a wrong buttons property, so event.leftMouseButtonPressed() doesn't work currently
+        if (event.domEvt.button == 0) this.toggleLayerVisibility();
       };
       Icon.setIcon(this.ui.hideButton, 'eye');
 
@@ -144,7 +144,7 @@ export class TimelineLayerInfo extends Morph {
     }
   }
 
-  menuItems (evt) {
+  menuItems () {
     const menuOptions = [];
     if (this.isInGlobalTimeline) {
       menuOptions.push(['✏️ Rename Layer', async () => await this.promptLayerName()]);
