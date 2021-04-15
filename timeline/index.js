@@ -191,12 +191,11 @@ export class Timeline extends Morph {
         const cursorPosition = this.ui.layerContainer.localize(evt.hand.position).x;
         const offset = cursorPosition - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
 
-        const normalizedOffset = (offset / (this.zoomFactor));
+        const normalizedOffset = offset / this.zoomFactor;
 
         this.zoomFactor += zoomDelta;
 
-        const newOffset = (normalizedOffset * (this.zoomFactor));
-
+        const newOffset = normalizedOffset * this.zoomFactor;
         const scrollDifference = newOffset - offset;
 
         layerContainerNode.scrollLeft = layerContainerNode.scrollLeft + scrollDifference;
