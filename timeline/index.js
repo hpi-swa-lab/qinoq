@@ -449,7 +449,7 @@ export class GlobalTimeline extends Timeline {
   moveTimelineSequencesBy (timelineSequences, scrollStepSize) {
     this.undoStart('timeline-sequence-move');
 
-    let faultyTimelineSequence;
+    const faultyTimelineSequences = [];
     const timelineSequenceStates = [];
     timelineSequences.forEach(timelineSequence => {
       timelineSequenceStates.push({
@@ -467,20 +467,22 @@ export class GlobalTimeline extends Timeline {
       const forbiddenMovement = timelineSequence.isOverlappingOtherSequence() || timelineSequence.sequence.start < 0;
 
       if (forbiddenMovement) {
-        faultyTimelineSequence = timelineSequence;
-        if (scrollStepSize > 0) {
-          timelineSequence.showWarningRight(CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA, true);
-          timelineSequence.hideWarningRight();
-        } else {
-          timelineSequence.showWarningLeft(CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA, true);
-          timelineSequence.hideWarningLeft();
-        }
+        faultyTimelineSequences.push(timelineSequence);
       }
     });
 
     this.undoStop('timeline-sequence-move');
 
-    if (faultyTimelineSequence) faultyTimelineSequence.undoLatestMovement(timelineSequenceStates);
+    if (faultyTimelineSequences.length > 0) this.env.undoManager.undo();
+    faultyTimelineSequences.forEach(timelineSequence => {
+      if (scrollStepSize < 0) {
+        timelineSequence.showWarningLeft(CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA, true);
+        timelineSequence.hideWarningLeft();
+      } else {
+        timelineSequence.showWarningRight(CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA, true);
+        timelineSequence.hideWarningRight();
+      }
+    });
   }
 
   clear () {
