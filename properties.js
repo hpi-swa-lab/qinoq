@@ -1,3 +1,5 @@
+import { getColorForString } from './colors.js';
+import { Color } from 'lively.graphics';
 export const animatedProperties = {
   extent: {
     type: 'point',
@@ -8,7 +10,8 @@ export const animatedProperties = {
     defaultRelative: true
   },
   fill: {
-    type: 'color'
+    type: 'color',
+    color: Color.green
   },
   blur: {
     type: 'number'
@@ -49,4 +52,10 @@ export function animatedPropertiesAndTypes () {
     propertiesAndTypes[key] = animatedProperties[key].type;
   });
   return propertiesAndTypes;
+}
+
+export function getColorForProperty (property) {
+  if (animatedProperties[property] && animatedProperties[property].color) return animatedProperties[property].color;
+
+  return getColorForString(property);
 }
