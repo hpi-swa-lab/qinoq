@@ -95,6 +95,10 @@ Closes [fill in your issues here]
 - [ ] it is possible to add a new morph to the interactive using the top bar
   - [ ] the newly created morph is also added to the timeline as an own layer
 - [ ] it is possible to add a new morph to the interactive by grab-and-drop
+- [ ] it is possible to remove a morph using the layer info context menu
+- [ ] it is possible to rename a morph
+  - [ ] using the halo
+  - [ ] using the context menu on the layer info (both these options affect labels and tooltips)
 - [ ] when leaving the sequence view, the topbar does not draw on the interactive anymore but it is again possible to add morphs to the world
 
 ### Inspector
@@ -117,7 +121,7 @@ Closes [fill in your issues here]
 ### Timeline
 
 - [ ] when scrolling in the interactive, the cursor indicator in the scrollbar of the timeline moves accordingly
-- [ ] when the zoomfactor of a timeline is changed, the scroller in the scrollbar changes its width accordingly
+- [ ] when the zoom factor of a timeline is changed, the scroller in the scrollbar changes its width accordingly
 - [ ] moving in the scrolled timeline with `Alt+Wheel` changes the scroller position
 - [ ] in a scrollable timeline normal scrolling will always move the layers and their information and nothing else
 
