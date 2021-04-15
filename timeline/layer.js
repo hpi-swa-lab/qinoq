@@ -398,6 +398,10 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     };
   }
 
+  get keyframeLines () {
+    return this.submorphs.filter(submorph => submorph.isKeyframeLine);
+  }
+
   updateTooltip () {
     this.tooltip = this.isExpanded ? '' : this.morphName;
   }
@@ -407,7 +411,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     this.opacity = 1;
     this.updateTooltip();
     this.reactsToPointer = true;
-    this.updateTimelineKeyframes();
+    this.timeline.addTimelineKeyframesForLayer(this, true);
     this.timeline.removePropertyLayers(this);
   }
 
@@ -421,7 +425,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   }
 
   removeAllTimelineKeyframes () {
-    this.keyframes.forEach(keyframe => keyframe.remove());
+    this.keyframes.forEach(keyframe => keyframe.removeMorph());
   }
 
   get containsKeyframes () {
@@ -429,7 +433,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   }
 
   get numberOfKeyframes () {
-    return this.keyframes.length;
+    return this.keyframeLines.length;
   }
 
   updateTimelineKeyframes () {

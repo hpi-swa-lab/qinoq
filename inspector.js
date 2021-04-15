@@ -7,7 +7,7 @@ import { InteractiveMorphSelector } from 'lively.halos';
 import { disconnect, connect } from 'lively.bindings';
 import { ColorPickerField } from 'lively.ide/styling/color-picker.js';
 import { Sequence, Keyframe } from './index.js';
-import { animatedPropertiesAndTypes } from './properties.js';
+import { animatedPropertiesAndTypes, getColorForProperty } from './properties.js';
 
 const CONSTANTS = {
   LABEL_X: 10,
@@ -328,9 +328,6 @@ export class InteractiveMorphInspector extends Morph {
 class KeyframeButton extends Morph {
   static get properties () {
     return {
-      fill: {
-        defaultValue: COLOR_SCHEME.SECONDARY
-      },
       extent: {
         defaultValue: pt(15, 15)
       },
@@ -364,9 +361,10 @@ class KeyframeButton extends Morph {
       },
       sequence: {},
       property: {
-        set (prop) {
-          this.setProperty('property', prop);
-          this.tooltip = `Create a keyframe for the ${prop} property`;
+        set (property) {
+          this.setProperty('property', property);
+          this.tooltip = `Create a keyframe for the ${property} property`;
+          this.fill = getColorForProperty(property);
         }
       },
       propType: {}
