@@ -170,14 +170,17 @@ export class Timeline extends Morph {
       })
     });
 
-    this.ui.layerContainer.onMouseWheel = (event) => {
-      if (event.domEvt.altKey) {
+    this.ui.layerContainer.onMouseWheel = (evt) => {
+      const updateScrollerPosition = () => {
+        const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
+        this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
+      };
+      if (evt.domEvt.altKey) {
         const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
         layerContainerNode.scrollLeft = layerContainerNode.scrollLeft + event.domEvt.deltaY;
         this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
-        const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
-        this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
-        event.stop();
+        updateScrollerPosition();
+        evt.stop();
       }
       if (evt.isCtrlDown()) {
         evt.domEvt.preventDefault();
@@ -186,24 +189,19 @@ export class Timeline extends Morph {
         const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
 
         const cursorPosition = this.ui.layerContainer.localize(evt.hand.position).x;
-        const tmp = layerContainerNode.scrollLeft;
-        const realOffset = cursorPosition - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+        const offset = cursorPosition - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
 
-        const normalizedOffset = (realOffset / (this.zoomFactor));
+        const normalizedOffset = (offset / (this.zoomFactor));
 
         this.zoomFactor += zoomDelta;
 
         const newOffset = (normalizedOffset * (this.zoomFactor));
 
-        const scrollDifference = newOffset - realOffset;
+        const scrollDifference = newOffset - offset;
 
-        const maxScroll = (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x);
-        layerContainerNode.scrollLeft = ((this.getSubmorphNamed('inactive area').position.x - this.getSubmorphNamed('inactive area').position.x) < cursorPosition)
-          ? maxScroll
-          : tmp + scrollDifference;
-
+        layerContainerNode.scrollLeft = layerContainerNode.scrollLeft + scrollDifference;
         this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
-        // TODO: conection for scroller
+        updateScrollerPosition();
       }
     };
 
