@@ -170,25 +170,25 @@ export class Timeline extends Morph {
       })
     });
 
-    this.ui.layerContainer.onMouseWheel = (evt) => {
+    this.ui.layerContainer.onMouseWheel = (event) => {
       const updateScrollerPosition = () => {
         const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
         this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
       };
-      if (evt.domEvt.altKey) {
+      if (event.domEvt.altKey) {
         const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
         layerContainerNode.scrollLeft = layerContainerNode.scrollLeft + event.domEvt.deltaY;
         this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
         updateScrollerPosition();
-        evt.stop();
+        event.stop();
       }
-      if (evt.isCtrlDown()) {
-        evt.domEvt.preventDefault();
+      if (event.isCtrlDown()) {
+        event.domEvt.preventDefault();
 
-        const zoomDelta = -evt.domEvt.deltaY * CONSTANTS.MOUSE_WHEEL_FACTOR_FOR_ZOOM;
+        const zoomDelta = event.domEvt.deltaY * CONSTANTS.MOUSE_WHEEL_FACTOR_FOR_ZOOM;
         const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
 
-        const cursorPosition = this.ui.layerContainer.localize(evt.hand.position).x;
+        const cursorPosition = this.ui.layerContainer.localize(event.hand.position).x;
         const offset = cursorPosition - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
 
         const normalizedOffset = offset / this.zoomFactor;
