@@ -1,4 +1,4 @@
-import { ProportionalLayout, HorizontalLayout, VerticalLayout, Icon, Label, Morph } from 'lively.morphic';
+import { ProportionalLayout, config, HorizontalLayout, VerticalLayout, Icon, Label, Morph } from 'lively.morphic';
 import { connect, signal, disconnectAll, disconnect } from 'lively.bindings';
 import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
@@ -449,6 +449,14 @@ export class InteractivesEditor extends Morph {
   abandon () {
     this.clearInteractive();
     super.abandon();
+  }
+
+  onHoverIn () {
+    config.altClickDefinesThat = false;
+  }
+
+  onHoverOut () {
+    config.altClickDefinesThat = true;
   }
 }
 
