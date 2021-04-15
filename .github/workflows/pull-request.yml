@@ -1,9 +1,10 @@
 name: pull-request
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [ready_for_review, reopened, opened]
 jobs:
   assign:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
       - uses: delivery-much/actions-assigner@v1
