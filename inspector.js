@@ -156,7 +156,7 @@ export class InteractiveMorphInspector extends Morph {
       label: Icon.textAttribute('crosshairs'),
       extent: pt(CONSTANTS.TARGET_PICKER_DIAMETER, CONSTANTS.TARGET_PICKER_DIAMETER)
     });
-    this.ui.targetPicker.onMouseDown = async (evt) => {
+    this.ui.targetPicker.onMouseDown = async (event) => {
       this.targetMorph = await InteractiveMorphSelector.selectMorph($world, null, morph => Sequence.getSequenceOfMorph(morph) && Sequence.getSequenceOfMorph(morph).focused);
     };
   }
@@ -389,7 +389,7 @@ class KeyframeButton extends Morph {
     this.animation = this.sequence.getAnimationForMorphProperty(this.target, this.property);
   }
 
-  onMouseUp (evt) {
+  onMouseUp () {
     this.mode = 'activated';
     const newKeyframe = new Keyframe(this.sequence.progress, this.currentValue);
     this.animation = this.sequence.addKeyframeForMorph(newKeyframe, this.target, this.property, this.propType);
@@ -421,16 +421,16 @@ class KeyframeButton extends Morph {
     this.borderWidth = 0;
   }
 
-  onMouseDown (evt) {
-    super.onMouseDown(evt);
+  onMouseDown (event) {
+    super.onMouseDown(event);
     this.setClickStyle();
   }
 
-  onHoverIn (evt) {
+  onHoverIn () {
     this.setHoverStyle();
   }
 
-  onHoverOut (evt) {
+  onHoverOut () {
     if (this.mode == 'activated') {
       this.setActivatedStyle();
     } else {

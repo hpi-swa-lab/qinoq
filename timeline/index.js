@@ -170,18 +170,18 @@ export class Timeline extends Morph {
       })
     });
 
-    this.ui.layerContainer.onMouseWheel = (evt) => {
-      if (evt.domEvt.metaKey) {
-        this.zoomFactor = evt.domEvt.deltaY > 0 ? this.zoomFactor + 0.1 : this.zoomFactor - 0.1;
-        evt.stop();
+    this.ui.layerContainer.onMouseWheel = (event) => {
+      if (event.domEvt.metaKey) {
+        this.zoomFactor = event.domEvt.deltaY > 0 ? this.zoomFactor + 0.1 : this.zoomFactor - 0.1;
+        event.stop();
       }
-      if (evt.domEvt.altKey) {
+      if (event.domEvt.altKey) {
         const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
-        layerContainerNode.scrollLeft = layerContainerNode.scrollLeft + evt.domEvt.deltaY;
+        layerContainerNode.scrollLeft = layerContainerNode.scrollLeft + event.domEvt.deltaY;
         this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
         const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
         this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
-        evt.stop();
+        event.stop();
       }
     };
 

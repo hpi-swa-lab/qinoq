@@ -125,17 +125,17 @@ export class SequenceTimelineLayer extends TimelineLayer {
     this.layerInfo.updateLabel();
   }
 
-  onMouseUp (evt) {
-    super.onMouseUp(evt);
-    if (evt.targetMorphs[0] !== this) return;
+  onMouseUp (event) {
+    super.onMouseUp(event);
+    if (event.targetMorphs[0] !== this) return;
     this.editor.inspector.targetMorph = this.morph;
     if (this.morph.world()) this.morph.show();
   }
 
-  onMouseDown (evt) {
+  onMouseDown (event) {
     // we get the event before the keyframes
     // if the click is on a keyframe we do not need to handle it
-    if (this.morphsContainingPoint(evt.hand.position).filter(morph => morph.isTimelineKeyframe).length > 0) return;
+    if (this.morphsContainingPoint(event.hand.position).filter(morph => morph.isTimelineKeyframe).length > 0) return;
     this.timeline.deselectAllTimelineKeyframes();
   }
 

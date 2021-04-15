@@ -344,53 +344,53 @@ class InteractiveScrollHolder extends Morph {
     disconnect($world.firstHand, 'position', this, 'onMouseMoving');
   }
 
-  onScroll (evt) {
+  onScroll () {
     this.interactive.scrollPosition = this.scroll.y;
   }
 
-  onDrag (evt) {
+  onDrag (event) {
     if (!this.passThroughMorph && this.delegatedTarget) {
-      evt.state.dragStartMorphPosition = this.dragStartPosition;
-      this.delegatedTarget.onDrag(evt);
+      event.state.dragStartMorphPosition = this.dragStartPosition;
+      this.delegatedTarget.onDrag(event);
     }
   }
 
-  onDragStart (evt) {
+  onDragStart (event) {
     this.opacity = 1;
     this.clipMode = 'hidden';
     if (!this.passThroughMorph) {
-      const targetMorph = this.getUnderlyingMorph(evt.hand.position);
+      const targetMorph = this.getUnderlyingMorph(event.hand.position);
       this.delegatedTarget = undefined;
       if (targetMorph.draggable) {
         this.delegatedTarget = targetMorph;
-        const { dragStartMorphPosition } = evt.state;
+        const { dragStartMorphPosition } = event.state;
         this.dragStartPosition = targetMorph.position;
-        evt.state.dragStartMorphPosition = this.dragStartPosition;
-        targetMorph.onDragStart(evt);
+        event.state.dragStartMorphPosition = this.dragStartPosition;
+        targetMorph.onDragStart(event);
       }
     }
   }
 
-  onDragEnd (evt) {
+  onDragEnd (event) {
     if (this.passThroughMorph) {
       const newMorph = this.submorphs.filter(submorph => submorph.name !== 'scrollable content')[0];
       if (newMorph) this.newMorph = newMorph;
     }
     if (!this.passThroughMorph && this.delegatedTarget) {
-      evt.state.dragStartMorphPosition = this.dragStartPosition;
+      event.state.dragStartMorphPosition = this.dragStartPosition;
       // this should not be neccessary but if we do not call this here
       // grabbing will only work once
       // in theory the onDragEnd of the delegatedTarget should stop the undo
       // and we do not start a separate one
       this.env.undoManager.undoStop();
-      this.delegatedTarget.onDragEnd(evt);
+      this.delegatedTarget.onDragEnd(event);
     }
     this.opacity = 0.001;
     this.clipMode = 'auto';
   }
 
-  onHoverIn (evt) {
-    connect(evt.hand, 'position', this, 'onMouseMoving');
+  onHoverIn (event) {
+    connect(event.hand, 'position', this, 'onMouseMoving');
 
     if (this.passThroughMorph) {
       $world.get('lively top bar').attachToTarget(this);
@@ -399,8 +399,8 @@ class InteractiveScrollHolder extends Morph {
     }
   }
 
-  onHoverOut (evt) {
-    disconnect(evt.hand, 'position', this, 'onMouseMoving');
+  onHoverOut (event) {
+    disconnect(event.hand, 'position', this, 'onMouseMoving');
 
     if (this.passThroughMorph) {
       $world.get('lively top bar').attachToTarget($world);
@@ -409,31 +409,27 @@ class InteractiveScrollHolder extends Morph {
     }
   }
 
-  onDrop (evt) {
-    if (evt.type != 'morphicdrop' || !this.passThroughMorph) {
-      return;
-    }
-    evt.hand.grabbedMorphs.forEach(grabbedMorph => {
-      const { pointerAndShadow } = evt.hand._grabbedMorphProperties.get(grabbedMorph) || {};
+  onDrop (event) {
+    if (event.type != 'morphicdrop' || !this.passThroughMorph) return;
+    event.hand.grabbedMorphs.forEach(grabbedMorph => {
+      const { pointerAndShadow } = event.hand._grabbedMorphProperties.get(grabbedMorph) || {};
       Object.assign(grabbedMorph, pointerAndShadow);
       this.newMorph = grabbedMorph;
     });
   }
 
-  onMouseDown (evt) {
-    super.onMouseDown(evt);
-    this.lastMouseDownTarget = this.getUnderlyingMorph(evt.hand.position);
-    this.lastMouseDownTarget.onMouseDown(evt);
+  onMouseDown (event) {
+    super.onMouseDown(event);
+    this.lastMouseDownTarget = this.getUnderlyingMorph(event.hand.position);
+    this.lastMouseDownTarget.onMouseDown(event);
   }
 
-  onDoubleMouseDown (evt) {
-    if (this.getUnderlyingMorph(evt.hand.position) == this.lastMouseDownTarget) {
-      this.lastMouseDownTarget.onDoubleMouseDown(evt);
-    }
+  onDoubleMouseDown (event) {
+    if (this.getUnderlyingMorph(event.hand.position) == this.lastMouseDownTarget) this.lastMouseDownTarget.onDoubleMouseDown(event);
   }
 
-  onMouseUp (evt) {
-    this.getUnderlyingMorph(evt.hand.position).onMouseUp(evt);
+  onMouseUp (event) {
+    this.getUnderlyingMorph(event.hand.position).onMouseUp(event);
   }
 
   getUnderlyingMorph (position) {

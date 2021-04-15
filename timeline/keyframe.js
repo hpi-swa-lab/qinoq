@@ -111,7 +111,7 @@ export class TimelineKeyframe extends Morph {
     }
   }
 
-  menuItems (evt) {
+  menuItems (event) {
     const multipleKeyframesSelected = this.timeline.selectedTimelineKeyframes.length > 1;
     return [
       ['✏️ Rename Selected Keyframes', async () => await this.timeline.promptRenameForSelection(multipleKeyframesSelected)],
@@ -140,22 +140,22 @@ export class TimelineKeyframe extends Morph {
     this.abandon();
   }
 
-  onMouseDown (evt) {
-    super.onMouseDown(evt);
-    if (evt.leftMouseButtonPressed() && evt.isShiftDown()) {
+  onMouseDown (event) {
+    super.onMouseDown(event);
+    if (evt.leftMouseButtonPressed() && event.isShiftDown()) {
       this.toggleSelection();
     } else if (!this.isSelected) {
       this.timeline.deselectAllTimelineKeyframesExcept(this);
     }
   }
 
-  onDoubleMouseDown (evt) {
+  onDoubleMouseDown () {
     const scrollPosition = this.layer.timeline.getScrollFromKeyframe(this);
     this.editor.interactiveScrollPosition = scrollPosition;
   }
 
-  onMouseUp (evt) {
-    if (!this._dragged && !evt.isShiftDown()) {
+  onMouseUp (event) {
+    if (!this._dragged && !event.isShiftDown()) {
       this.timeline.deselectAllTimelineKeyframesExcept(this);
     } else {
       this._dragged = false;
