@@ -26,6 +26,7 @@ export class TimelineKeyframe extends Morph {
       },
       animation: {},
       name: {
+        after: ['layer'],
         type: String,
         set (name) {
           this.setProperty('name', name);
@@ -43,6 +44,7 @@ export class TimelineKeyframe extends Morph {
       draggable: {
         defaultValue: true
       },
+      layer: {},
       _editor: {},
       _lockModelUpdate: {
         after: ['animation', '_editor', '_keyframe'],
@@ -94,12 +96,16 @@ export class TimelineKeyframe extends Morph {
     this._lockModelUpdate = false;
   }
 
-  get layer () {
-    return this.owner;
+  get inOverviewLayer () {
+    return this.layer.isOverviewLayer;
   }
 
   setTooltip () {
-    this.tooltip = this.keyframe ? `${this.name}\nEasing: ${this.keyframe.easingName}` : this.name;
+    if (this.inOverviewLayer) {
+      this.tooltip = this.animation ? `${this.name}\nProperty: ${this.animation.property}` : this.name;
+    } else {
+      this.tooltip = this.keyframe ? `${this.name}\nEasing: ${this.keyframe.easingName}` : this.name;
+    }
   }
 
   async promptRename () {
