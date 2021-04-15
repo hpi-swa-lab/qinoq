@@ -823,9 +823,9 @@ export class SequenceTimeline extends Timeline {
 
   async promptUserForNewAbsolutePositionForSelection (multipleKeyframesSelected) {
     const sequence = Sequence.getSequenceOfMorph(this.selectedTimelineKeyframes[0].animation.target);
-    let newPosition = !multipleKeyframesSelected
-      ? newPosition = await $world.prompt('Keyframe position:', { input: `${sequence.getAbsolutePositionFor(this.selectedTimelineKeyframes[0].keyframe)}` })
-      : newPosition = await $world.prompt(`Set the ${this.selectedTimelineKeyframes.length} selected Keyframes to absolute position:`);
+    const newPosition = !multipleKeyframesSelected
+      ? await $world.prompt('Keyframe position:', { input: `${sequence.getAbsolutePositionFor(this.selectedTimelineKeyframes[0].keyframe)}` })
+      : await $world.prompt(`Set the ${this.selectedTimelineKeyframes.length} selected Keyframes to absolute position:`);
 
     if (newPosition) {
       const newRelativePosition = sequence.getRelativePositionFor(newPosition);
