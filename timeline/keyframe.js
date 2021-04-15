@@ -142,7 +142,7 @@ export class TimelineKeyframe extends Morph {
 
   onMouseDown (event) {
     super.onMouseDown(event);
-    if (evt.leftMouseButtonPressed() && event.isShiftDown()) {
+    if (event.leftMouseButtonPressed() && event.isShiftDown()) {
       this.toggleSelection();
     } else if (!this.isSelected) {
       this.timeline.deselectAllTimelineKeyframesExcept(this);
