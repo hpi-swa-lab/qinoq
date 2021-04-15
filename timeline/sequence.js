@@ -223,7 +223,7 @@ export class TimelineSequence extends Morph {
     if (event.isShiftDown()) return;
     this.undoStop('move-timeline-sequence');
     this.handleOverlappingOtherSequence(event.hand.timelineSequenceStates);
-    event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.hideWarningLeft());
+    event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.hideWarning('left'));
 
     event.hand.timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.removeSnapIndicators());
     this.clearSnappingData();
@@ -246,14 +246,14 @@ export class TimelineSequence extends Morph {
 
     if (event.hand.leftMostSequenceStates[0].timelineSequence.position.x <= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
       event.hand.leftMostSequenceStates[0].timelineSequence.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-      event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.showWarningLeft(event.hand.position.x));
+      event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.showWarning('left', event.hand.position.x));
 
       event.hand.timelineSequenceStates.forEach(dragState => {
         dragState.timelineSequence.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + dragState.previousPosition.x - event.hand.leftMostSequenceStates[0].previousPosition.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       });
     } else {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
-      event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.hideWarningLeft());
+      event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.hideWarning('left'));
     }
     this.handleSnapping('drag', event.hand.timelineSequenceStates);
     event.hand.timelineSequenceStates.forEach(dragState => {
@@ -405,7 +405,7 @@ export class TimelineSequence extends Morph {
   onResizeRight (event) {
     const newSequenceWidth = this.rightResizer.topRight.x;
     if (newSequenceWidth < CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
-      this.showWarningRight(event.hand.position.x);
+      this.showWarning('right', event.hand.position.x);
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
     } else {
       this.width = newSequenceWidth;
@@ -424,20 +424,20 @@ export class TimelineSequence extends Morph {
 
     // stop resizing due to minimal width
     if (newSequenceWidth < CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
-      this.showWarningLeft(-dragDelta);
+      this.showWarning('left', -dragDelta);
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
       this.position = pt(previousTopRight.x - CONSTANTS.MINIMAL_SEQUENCE_WIDTH, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     }
 
     // stop resizing due to end of timeline
     else if (sequenceState.previousPosition.x + dragDelta < CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
-      this.showWarningLeft(dragDelta);
+      this.showWarning('left', dragDelta);
       this.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       this.extent = pt(previousTopRight.x - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, this.height);
     } else {
       this.position = pt(sequenceState.previousPosition.x + dragDelta, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       this.extent = pt(newSequenceWidth, this.height);
-      this.hideWarningLeft();
+      this.hideWarning('left');
     }
     this.handleSnapping('resizeLeft', event.hand.timelineSequenceStates);
 
@@ -463,7 +463,7 @@ export class TimelineSequence extends Morph {
 
   onResizeEnd (event) {
     this.undoStop('timeline-sequence-resize');
-    this.hideWarningLeft();
+    this.hideWarning('left');
     this.handleOverlappingOtherSequence(event.hand.timelineSequenceStates);
     event.hand.timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.removeSnapIndicators());
     this.clearSnappingData();
@@ -598,44 +598,27 @@ export class TimelineSequence extends Morph {
     });
   }
 
-  showWarningRight (dragValue, showImmediately = false) {
-    const newWarning = !this.warningStartRight;
-    if (newWarning) this.warningStartRight = showImmediately ? 0 : dragValue;
-    const currentDrag = Math.abs(this.warningStartRight - dragValue);
+  // direction must be one of ["left", "right"]
+  showWarning (direction = 'left', dragValue, showImmediately = false) {
+    const warningKey = (direction == 'left' ? 'warningStartLeft' : 'warningStartRight');
+    const newWarning = !this[warningKey];
+    if (newWarning) this[warningKey] = showImmediately ? 0 : dragValue;
+    const currentDrag = Math.abs(this[warningKey] - dragValue);
     const strength = currentDrag / CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA;
+    const warningMorphPosition = (direction == 'left' ? pt(0, 0) : pt(this.width - CONSTANTS.WARNING_WIDTH, 0));
     const warning = !newWarning
-      ? this.getSubmorphNamed('warning right')
-      : this.createWarningMorph('right', pt(this.width - CONSTANTS.WARNING_WIDTH, 0), 'westeast');
-    warning.opacity = strength;
-    this.addMorph(warning);
-  }
-
-  hideWarningRight (fadeout = 1000) {
-    delete this.warningStartRight;
-    this.hideWarning('right', fadeout);
-  }
-
-  showWarningLeft (dragValue, showImmediately = false) {
-    const newWarning = !this.warningStartLeft;
-    if (newWarning) this.warningStartLeft = showImmediately ? 0 : dragValue;
-    const currentDrag = Math.abs(this.warningStartLeft - dragValue);
-    const strength = currentDrag / CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA;
-    const warning = !newWarning
-      ? this.getSubmorphNamed('warning left')
-      : this.createWarningMorph('left', pt(0, 0), 'eastwest');
+      ? this.getSubmorphNamed(`warning ${direction}`)
+      : this.createWarningMorph(direction, warningMorphPosition, (direction == 'left' ? 'eastwest' : 'westeast'));
     warning.opacity = strength;
     this.addMorph(warning);
   }
 
   hideWarning (morphSuffix, fadeout = 1000) {
+    if (morphSuffix == 'right') delete this.warningStartRight;
+    if (morphSuffix == 'left') delete this.warningStartLeft;
     this.withAllSubmorphsDo(morph => {
       if (morph.name == `warning ${morphSuffix}`) morph.fadeOut(fadeout);
     });
-  }
-
-  hideWarningLeft (fadeout = 1000) {
-    delete this.warningStartLeft;
-    this.hideWarning('left', fadeout);
   }
 
   setOverlappingAppearance () {

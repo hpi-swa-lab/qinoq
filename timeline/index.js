@@ -476,11 +476,11 @@ export class GlobalTimeline extends Timeline {
     if (faultyTimelineSequences.length > 0) this.env.undoManager.undo();
     faultyTimelineSequences.forEach(timelineSequence => {
       if (scrollStepSize < 0) {
-        timelineSequence.showWarningLeft(CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA, true);
-        timelineSequence.hideWarningLeft();
+        timelineSequence.showWarning('left', CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA, true);
+        timelineSequence.hideWarning('left');
       } else {
-        timelineSequence.showWarningRight(CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA, true);
-        timelineSequence.hideWarningRight();
+        timelineSequence.showWarning('right', CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA, true);
+        timelineSequence.hideWarning('right');
       }
     });
   }
