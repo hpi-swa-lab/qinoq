@@ -798,9 +798,9 @@ export class SequenceTimeline extends Timeline {
   }
 
   async promptUserForNewRelativePositionForSelection (multipleKeyframesSelected) {
-    let newPosition = !multipleKeyframesSelected
-      ? newPosition = await $world.prompt('Keyframe position:', { input: `${this.selectedTimelineKeyframes[0].keyframe.position}` })
-      : newPosition = await $world.prompt(`Set the ${this.selectedTimelineKeyframes.length} selected Keyframes to relative position:`);
+    const newPosition = !multipleKeyframesSelected
+      ? await $world.prompt('Keyframe position:', { input: `${this.selectedTimelineKeyframes[0].keyframe.position}` })
+      : await $world.prompt(`Set the ${this.selectedTimelineKeyframes.length} selected Keyframes to relative position:`);
 
     if (newPosition) {
       if (newPosition >= 0 && newPosition <= 1) {
