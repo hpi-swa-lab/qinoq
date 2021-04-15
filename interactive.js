@@ -236,6 +236,7 @@ export class Interactive extends Morph {
     disconnect(this, 'extent', sequence, 'extent');
     arr.remove(this.sequences, sequence);
     sequence.remove();
+    this.updateInteractiveLength();
   }
 
   sequenceWouldBeValidInLayer (sequence, start, duration, layer) {
