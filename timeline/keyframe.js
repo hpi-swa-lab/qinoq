@@ -132,12 +132,12 @@ export class TimelineKeyframe extends Morph {
     ];
   }
 
-  changeKeyframePosition (newPosition) {
-    this.undoStart('move-keyframe');
+  changeKeyframePosition (newPosition, undoable = true) {
+    if (undoable) this.undoStart('move-keyframe');
     this.keyframe.position = newPosition;
     this.updatePosition();
     this.editor.interactive.redraw();
-    this.undoStop('move-keyframe');
+    if (undoable) this.undoStop('move-keyframe');
   }
 
   abandon () {
