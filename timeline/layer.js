@@ -350,8 +350,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
   }
 
   moveLayerBy (number) {
-    this.index += number;
-    this.moveLayerToIndex(this.index);
+    this.moveLayerToIndex(this.index + number);
   }
 
   getAllSequencesIntersectingWith (rectangle) {
