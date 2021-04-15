@@ -174,7 +174,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
 
   drawNumberCurve () {
     const keyframePositionToActiveAreaPosition = x => { return this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET; };
-    const style = { color: COLOR_SCHEME.PRIMARY };
+    const style = { color: this.fill.invert() };
 
     const minValue = this.animation.min;
     const maxValue = this.animation.max;
@@ -216,8 +216,8 @@ export class SequenceTimelineLayer extends TimelineLayer {
   }
 
   drawPointCurves () {
-    const xStyle = { color: COLOR_SCHEME.PRIMARY };
-    const yStyle = { color: COLOR_SCHEME.PRIMARY_VARIANT };
+    const xStyle = { color: this.fill.invert() };
+    const yStyle = { color: this.fill.invert().darker(2) };
 
     const keyframePositionToActiveAreaPosition = x => { return this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET; };
 
