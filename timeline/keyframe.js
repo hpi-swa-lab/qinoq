@@ -2,6 +2,7 @@ import { Morph } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
 import { pt } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';
+import { singleSelectKeyPressed } from '../keys.js';
 
 export class TimelineKeyframe extends Morph {
   static get properties () {
@@ -142,7 +143,7 @@ export class TimelineKeyframe extends Morph {
 
   onMouseDown (event) {
     super.onMouseDown(event);
-    if (event.leftMouseButtonPressed() && event.isShiftDown()) {
+    if (event.leftMouseButtonPressed() && singleSelectKeyPressed(event)) {
       this.toggleSelection();
     } else if (!this.isSelected) {
       this.timeline.deselectAllTimelineKeyframesExcept(this);
@@ -155,7 +156,7 @@ export class TimelineKeyframe extends Morph {
   }
 
   onMouseUp (event) {
-    if (!this._dragged && !event.isShiftDown()) {
+    if (!this._dragged && !singleSelectKeyPressed(event)) {
       this.timeline.deselectAllTimelineKeyframesExcept(this);
     } else {
       this._dragged = false;
@@ -167,7 +168,7 @@ export class TimelineKeyframe extends Morph {
   }
 
   onDragStart (event) {
-    if (event.isShiftDown()) return;
+    if (singleSelectKeyPressed(event)) return;
     const undo = this.undoStart('move-keyframe');
     event.hand.dragKeyframeStates = this.timeline.selectedTimelineKeyframes.map(timelinekeyframe => {
       undo.addTarget(timelinekeyframe);

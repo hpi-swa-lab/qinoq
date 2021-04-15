@@ -4,6 +4,7 @@ import { pt, LinearGradient, rect } from 'lively.graphics';
 import { connect, disconnect, disconnectAll } from 'lively.bindings';
 import { CONSTANTS } from './constants.js';
 import { arr } from 'lively.lang';
+import { singleSelectKeyPressed, rangeSelectKeyPressed } from '../keys.js';
 export class TimelineSequence extends Morph {
   static get properties () {
     return {
@@ -166,16 +167,16 @@ export class TimelineSequence extends Morph {
 
   onMouseDown (event) {
     super.onMouseDown(event);
-    if (!this.isSelected && !event.isShiftDown() && !event.isAltDown()) {
+    if (!this.isSelected && !singleSelectKeyPressed(event) && !rangeSelectKeyPressed(event)) {
       this.timeline.deselectAllSequencesExcept(this);
       return;
     }
     if (event.leftMouseButtonPressed()) {
-      if (event.isAltDown() && !this.isSelected && this.timeline._lastSelectedTimelineSequence && this.timeline.getSelectedSequences().length > 0) {
+      if (rangeSelectKeyPressed(event) && !this.isSelected && this.timeline._lastSelectedTimelineSequence && this.timeline.getSelectedSequences().length > 0) {
         this.timeline.selectAllSequences(this.rectangularSelectionFilter);
-      } else if (event.isAltDown() && this.isSelected && this.timeline._lastSelectedTimelineSequence) {
+      } else if (rangeSelectKeyPressed(event) && this.isSelected && this.timeline._lastSelectedTimelineSequence) {
         this.timeline.deselectAllSequences(this.rectangularSelectionFilter);
-      } else if (event.isShiftDown()) {
+      } else if (singleSelectKeyPressed(event)) {
         this.toggleSelected();
       }
       this.timeline._lastSelectedTimelineSequence = this;
@@ -191,7 +192,7 @@ export class TimelineSequence extends Morph {
   }
 
   onDragStart (event) {
-    if (event.isShiftDown()) return;
+    if (singleSelectKeyPressed(event)) return;
     this.isSelected = true;
     this._dragged = true;
     const undo = this.undoStart('move-timeline-sequence');
@@ -220,7 +221,7 @@ export class TimelineSequence extends Morph {
   }
 
   onDragEnd (event) {
-    if (event.isShiftDown()) return;
+    if (singleSelectKeyPressed(event)) return;
     this.undoStop('move-timeline-sequence');
     this.handleOverlappingOtherSequence(event.hand.timelineSequenceStates);
     event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.hideWarning('left'));
