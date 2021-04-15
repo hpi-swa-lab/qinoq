@@ -38,7 +38,11 @@ export class TimelineKeyframe extends Morph {
         set (point) {
           this.setProperty('position', point);
           if (this._lockModelUpdate) return;
-          if (this.layer) this.keyframe.position = this.layer.timeline.getScrollFromPosition(this.position);
+          if (this.layer) {
+            this.keyframe.position = this.layer.timeline.getScrollFromPosition(this.position);
+            this.editor.interactive.redraw();
+            this.layer.redraw();
+          }
         }
       },
       draggable: {
@@ -188,8 +192,6 @@ export class TimelineKeyframe extends Morph {
   onDragEnd (event) {
     if (!event.hand.dragKeyframeStates) return;
     this.undoStop('move-keyframe');
-    this.editor.interactive.redraw();
-    this.layer.redraw();
     this._dragged = true;
     delete event.hand.dragKeyframeStates;
   }
