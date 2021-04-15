@@ -88,8 +88,7 @@ export class InteractivesEditor extends QinoqMorph {
   async initializePanels () {
     this.sequenceOverview = this.addMorph(new SequenceOverview({ position: pt(0, 0) }));
 
-    this.preview = new Preview({ _editor: this });
-    this.addMorph(this.preview);
+    this.preview = this.addMorph(new Preview({ _editor: this }));
 
     this.inspector = new InteractiveMorphInspector({
       position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0),
@@ -445,6 +444,14 @@ export class InteractivesEditor extends QinoqMorph {
 
   get snappingEnabled () {
     return !this._snappingDisabled;
+  }
+  
+  setHalosEnabledForEditorElements (halosEnabled = true) {
+    this.inspector.withAllSubmorphsDo(submorph => submorph.halosEnabled = halosEnabled);
+    this.menuBar.withAllSubmorphsDo(submorph => submorph.halosEnabled = halosEnabled);
+    this.tabContainer.withAllSubmorphsDo(submorph => submorph.halosEnabled = halosEnabled);
+    this.sequenceOverview.withAllSubmorphsDo(submorph => submorph.halosEnabled = halosEnabled);
+    this.halosEnabled = halosEnabled;
   }
 
   get commands () {
