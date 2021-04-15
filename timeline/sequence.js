@@ -508,7 +508,7 @@ export class TimelineSequence extends Morph {
     this.setDefaultAppearance();
     disconnect(this._grabbingHand, 'position', this, 'updateGrabAppearance');
     disconnect(this._grabbingHand, 'cancelGrab', this, 'onGrabAbort');
-    this._grabbingHand = undefined;
+    this._grabbingHand = null;
   }
 
   updateGrabAppearance () {
