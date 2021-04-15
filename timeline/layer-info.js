@@ -117,7 +117,7 @@ export class TimelineLayerInfo extends Morph {
     const newName = await $world.prompt('Layer name:', { input: this.layer.name });
     if (newName) {
       this.layer.name = newName;
-      this.timelineLayer.name = newName;
+      this.timelineLayer.updateTooltip();
       this.updateLabel();
     }
   }

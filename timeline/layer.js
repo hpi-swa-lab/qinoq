@@ -279,6 +279,10 @@ export class GlobalTimelineLayer extends TimelineLayer {
     return this.layer.name;
   }
 
+  updateTooltip () {
+    this.tooltip = this.name;
+  }
+
   onHoverIn (event) {
     if (event.hand.timelineSequenceStates && event.hand.timelineSequenceStates[0].isMove) {
       const timelineLayerIndices = event.hand.timelineSequenceStates.map(timelineSequenceState => timelineSequenceState.timelineSequence.timelineLayer.index);
