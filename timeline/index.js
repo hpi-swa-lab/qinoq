@@ -728,7 +728,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   deleteSelectedItems () {
-    arr.invoke(this.selectedTimelineKeyframes, 'abandon');
+    arr.invoke(this.selectedTimelineKeyframes, 'delete');
   }
 
   async promptEasingForSelection (multipleKeyframesSelected) {
