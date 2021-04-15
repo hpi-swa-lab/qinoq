@@ -1,4 +1,4 @@
-import { getColorForString } from './colors.js';
+import { getColorForString, COLOR_SCHEME } from './colors.js';
 import { Color } from 'lively.graphics';
 export const animatedProperties = {
   extent: {
@@ -12,7 +12,7 @@ export const animatedProperties = {
   },
   fill: {
     type: 'color',
-    color: Color.green
+    color: COLOR_SCHEME.BACKGROUND_VARIANT // light and neutral color so that the color curve is visible
   },
   blur: {
     type: 'number'
