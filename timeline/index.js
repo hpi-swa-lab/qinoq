@@ -816,7 +816,7 @@ export class SequenceTimeline extends Timeline {
     const undo = this.undoStart('move-keyframe');
     this.selectedTimelineKeyframes.forEach(timelineKeyframe => {
       undo.addTarget(timelineKeyframe);
-      timelineKeyframe.changeKeyframePosition(newPosition);
+      timelineKeyframe.changeKeyframePosition(newPosition, false);
     });
     this.undoStop('move-keyframe');
   }
