@@ -1,10 +1,10 @@
-import { Morph, Icon, Label } from 'lively.morphic';
+import { Morph } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
 import { pt } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';
 import { connect, disconnect } from 'lively.bindings';
 import { Canvas } from 'lively.components/canvas.js';
-import { animatedProperties } from '../properties.js';
+import { animatedProperties, getColorForProperty } from '../properties.js';
 export class TimelineLayer extends Morph {
   static get properties () {
     return {
@@ -60,17 +60,18 @@ export class TimelineLayer extends Morph {
     const activeArea = this.addMorph(new Canvas({
       extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.LAYER_HEIGHT),
       position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0),
-      fill: COLOR_SCHEME.SURFACE_VARIANT,
+      fill: COLOR_SCHEME.BACKGROUND,
       reactsToPointer: false,
       preserveContents: false, // Default value of true results in errors when the width was 0 and is increased (happens in an empty interactive)
       name: 'active area',
       borderStyle: { bottom: 'solid', left: 'none', right: 'none', top: 'solid' },
-      acceptsDrops: false
+      acceptsDrops: false,
+      opacity: 0.5
     }));
     const inactiveArea = this.addMorph(new Morph({
       draggable: true,
       extent: pt(CONSTANTS.INACTIVE_AREA_WIDTH, CONSTANTS.LAYER_HEIGHT),
-      fill: COLOR_SCHEME.BACKGROUND_VARIANT,
+      fill: this.fill,
       name: 'inactive area',
       borderStyle: { bottom: 'solid', left: 'none', right: 'none', top: 'solid' },
       acceptsDrops: false
@@ -105,6 +106,8 @@ export class SequenceTimelineLayer extends TimelineLayer {
       animation: {
         set (animation) {
           this.setProperty('animation', animation);
+          this.fill = getColorForProperty(animation.property);
+          this.inactiveArea.fill = this.fill;
           this.updateTooltip();
           this.layerInfo.updateLabel();
           this.redraw();
@@ -150,7 +153,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
   }
 
   redrawActiveArea () {
-    this.activeArea.clear(COLOR_SCHEME.SURFACE_VARIANT);
+    this.activeArea.clear(COLOR_SCHEME.BACKGROUND);
 
     if (!this.animation) return false;
     if (!this.activeArea.context) return false;
