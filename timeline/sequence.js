@@ -700,7 +700,6 @@ export class TimelineSequence extends Morph {
     }
     this.disbandInteractiveConnections();
 
-    this.updateSequenceAfterArrangement();
     super.abandon();
   }
 
