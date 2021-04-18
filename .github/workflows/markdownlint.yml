@@ -1,0 +1,16 @@
+name: Markdown lint
+
+on:
+  push:
+    paths:
+    - '**.md'
+
+jobs:
+  markdownlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Markdown linter
+        uses: bewuethr/mdl-action@v1
+        with:
+          style-file: .github/workflows/markdown-style.rb
