@@ -397,7 +397,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     this.opacity = 1;
     this.updateTooltip();
     this.reactsToPointer = true;
-    this.timeline.addTimelineKeyframesForLayer(this);
+    this.updateTimelineKeyframes();
     this.timeline.removePropertyLayers(this);
   }
 
@@ -416,7 +416,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   }
 
   removeAllTimelineKeyframes () {
-    this.keyframes.forEach(keyframe => keyframe.removeMorph());
+    this.submorphs.filter(submorph => submorph.isTimelineKeyframe).forEach(keyframe => keyframe.remove());
   }
 
   get mayBeExpanded () {
