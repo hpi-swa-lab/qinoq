@@ -113,7 +113,7 @@ export class TimelineLayerInfo extends Morph {
   disableCollapseButton () {
     this.ui.collapseButton.fontColor = COLOR_SCHEME.BACKGROUND_VARIANT;
     this.ui.collapseButton.onMouseUp = () => {};
-    this.ui.collapseButton.tooltip = 'Expanding is only available for morphs with keyframes.';
+    this.ui.collapseButton.tooltip = 'Expansion only available for morphs with keyframes';
   }
 
   onNumberOfKeyframesInLayerIsZero () {
@@ -127,7 +127,7 @@ export class TimelineLayerInfo extends Morph {
   enableCollapseButton () {
     this.ui.collapseButton.fontColor = COLOR_SCHEME.ON_SURFACE;
     this.ui.collapseButton.onMouseUp = () => { this.timelineLayer.isExpanded = !this.timelineLayer.isExpanded; };
-    this.ui.collapseButton.tooltip = 'Expand this layer to see all animated properties.';
+    this.ui.collapseButton.tooltip = 'Expand to see animated properties';
   }
 
   restyleCollapseToggle () {
