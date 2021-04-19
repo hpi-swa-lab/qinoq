@@ -266,6 +266,11 @@ export class SequenceTimelineLayer extends TimelineLayer {
 
   async redraw () {
     await this.activeArea.whenRendered();
+    this.keyframes.forEach(timelineKeyframe => {
+      timelineKeyframe._lockModelUpdate = true;
+      timelineKeyframe.position = pt(this.timeline.getPositionFromKeyframe(timelineKeyframe.keyframe), timelineKeyframe.position.y);
+      timelineKeyframe._lockModelUpdate = false;
+    });
     this.redrawActiveArea();
   }
 
@@ -415,17 +420,22 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     this.timeline.removePropertyLayers(this);
   }
 
+  async redraw () {
+    await this.activeArea.whenRendered();
+    this.keyframeLines.forEach(keyframeLine => keyframeLine.updatePosition());
+  }
+
   expand () {
     this.layerInfo.restyleCollapseToggle();
     this.opacity = 0;
     this.updateTooltip();
     this.reactsToPointer = false;
-    this.removeAllTimelineKeyframes();
+    this.removeKeyframeLines();
     this.timeline.createPropertyLayers(this);
   }
 
-  removeAllTimelineKeyframes () {
-    this.keyframes.forEach(keyframe => keyframe.removeMorph());
+  removeKeyframeLines () {
+    this.keyframeLines.forEach(keyframeLine => keyframeLine.abandon());
   }
 
   get containsKeyframes () {
@@ -437,7 +447,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   }
 
   updateTimelineKeyframes () {
-    this.removeAllTimelineKeyframes();
+    this.removeKeyframeLines();
     this.onNumberOfKeyframesChanged();
     this.timeline.addTimelineKeyframesForLayer(this, !this.isExpanded);
   }
