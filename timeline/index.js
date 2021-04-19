@@ -11,6 +11,7 @@ import { COLOR_SCHEME } from '../colors.js';
 import { arr } from 'lively.lang';
 import { ListPrompt } from 'lively.components/prompts.js';
 import { Keyframe, Sequence } from 'qinoq';
+import { singleSelectKeyPressed, zoomKeyPressed } from '../keys.js';
 
 export class Timeline extends Morph {
   static get properties () {
@@ -175,14 +176,14 @@ export class Timeline extends Morph {
         const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
         this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
       };
-      if (event.domEvt.altKey) {
+      if (singleSelectKeyPressed(event)) {
         const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
         layerContainerNode.scrollLeft = layerContainerNode.scrollLeft + event.domEvt.deltaY;
         this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
         updateScrollerPosition();
         event.stop();
       }
-      if (event.isCtrlDown()) {
+      if (zoomKeyPressed(event)) {
         event.domEvt.preventDefault();
 
         const zoomDelta = event.domEvt.deltaY * CONSTANTS.MOUSE_WHEEL_FACTOR_FOR_ZOOM;
