@@ -439,6 +439,6 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   updateTimelineKeyframes () {
     this.removeAllTimelineKeyframes();
     this.onNumberOfKeyframesChanged();
-    this.timeline.addTimelineKeyframesForLayer(this);
+    this.timeline.addTimelineKeyframesForLayer(this, !this.isExpanded);
   }
 }
