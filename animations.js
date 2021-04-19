@@ -24,6 +24,10 @@ class Animation {
     }
     this.keyframes.push(newKeyframe);
 
+    if (newKeyframe.hasDefaultName()) {
+      newKeyframe.name = `Keyframe ${this.sequence.interactive.nextKeyframeNumber++}`;
+    }
+
     if (!doNotSort) {
       this._sortKeyframes();
     }
@@ -127,6 +131,10 @@ export class Keyframe {
     this.value = value;
     this.name = name;
     this.setEasing(easing);
+  }
+
+  hasDefaultName () {
+    return this.name == 'aKeyframe';
   }
 
   setEasing (easing = 'inOutSine') {
