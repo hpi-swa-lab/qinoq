@@ -365,6 +365,10 @@ export class InteractivesEditor extends Morph {
     signal(this, 'interactiveScrollPosition', this.interactiveScrollPosition);
   }
 
+  get snappingEnabled () {
+    return !this._snappingDisabled;
+  }
+
   get commands () {
     return [
       {
@@ -411,6 +415,15 @@ export class InteractivesEditor extends Morph {
         name: 'delete selected items',
         doc: 'All currently selected items in a timeline get deleted',
         exec: () => { if (!this.inputFieldFocused()) this.displayedTimeline.deleteSelectedItems(); }
+      },
+      {
+        name: 'toggle snapping',
+        doc: 'Enable or disable snapping of editor elements (e.g. keyframes, sequences)',
+        exec: () => {
+          this._snappingDisabled = !this._snappingDisabled;
+          const toggleSnappingButton = this.menuBar.ui.toggleSnappingButton;
+          toggleSnappingButton.fontColor = this._snappingDisabled ? COLOR_SCHEME.ON_BACKGROUND_VARIANT : COLOR_SCHEME.SECONDARY;
+        }
       },
       {
         name: 'find keyframe',
@@ -707,6 +720,14 @@ class MenuBar extends Morph {
       icon: 'fast-forward',
       name: 'gotoEndButton',
       container: 'scrollPositionToolbar'
+    });
+
+    this.buildIconButton({
+      tooltip: 'Toggle snapping',
+      action: () => this.editor.execCommand('toggle snapping'),
+      icon: 'magnet',
+      name: 'toggleSnappingButton',
+      container: 'rightContainer'
     });
 
     this.buildIconButton({

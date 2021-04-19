@@ -217,7 +217,7 @@ export class TimelineSequence extends Morph {
     }).filter(Boolean);
     event.hand.draggedSequence = this;
 
-    this.prepareSnappingData(event);
+    if (this.editor.snappingEnabled) this.prepareSnappingData(event);
   }
 
   onDragEnd (event) {
@@ -226,8 +226,11 @@ export class TimelineSequence extends Morph {
     this.handleOverlappingOtherSequence(event.hand.timelineSequenceStates);
     event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.hideWarning('left'));
 
-    event.hand.timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.removeSnapIndicators());
-    this.clearSnappingData();
+    if (this.editor.snappingEnabled) {
+      event.hand.timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.removeSnapIndicators());
+      this.clearSnappingData();
+    }
+
     delete event.hand.timelineSequenceStates;
     delete event.hand.leftMostSequenceStates;
     delete event.hand.draggedSequence;
@@ -256,7 +259,7 @@ export class TimelineSequence extends Morph {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.hideWarning('left'));
     }
-    this.handleSnapping('drag', event.hand.timelineSequenceStates);
+    if (this.editor.snappingEnabled) this.handleSnapping('drag', event.hand.timelineSequenceStates);
     event.hand.timelineSequenceStates.forEach(dragState => {
       dragState.timelineSequence.updateAppearance();
       dragState.timelineSequence.updateSequenceAfterArrangement();
