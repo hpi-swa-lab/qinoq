@@ -91,7 +91,7 @@ export class TimelineKeyframe extends Morph {
   }
 
   get timeline () {
-    return this.owner.timeline;
+    return this.layer.timeline;
   }
 
   get timelineKeyframeY () {
@@ -100,7 +100,7 @@ export class TimelineKeyframe extends Morph {
 
   updatePosition () {
     this._lockModelUpdate = true;
-    if (this.layer) this.position = pt(this.layer.timeline.getPositionFromKeyframe(this), this.timelineKeyframeY);
+    if (this.layer) this.position = pt(this.timeline.getPositionFromKeyframe(this), this.timelineKeyframeY);
     this._lockModelUpdate = false;
   }
 

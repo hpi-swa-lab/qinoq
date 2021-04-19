@@ -656,7 +656,7 @@ export class TimelineSequence extends Morph {
   }
 
   get allTimelineSequences () {
-    return this.timeline.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences);
+    return this.timeline.timelineSequences;
   }
 
   isOverlappingOtherSequence () {
