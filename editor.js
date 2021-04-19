@@ -141,10 +141,9 @@ export class InteractivesEditor extends Morph {
     connect(this.tabContainer, 'onSelectedTabChange', this, 'onDisplayedTimelineChange', {
       updater: `($update, selectedAndPreviousTab) => {
         selectedAndPreviousTab.prev ? 
-          $update(getTimelineFor(selectedAndPreviousTab.curr),getTimelineFor(selectedAndPreviousTab.prev)) :
-          $update(getTimelineFor(selectedAndPreviousTab.curr))
-      }`,
-      varMapping: { getTimelineFor: this.getTimelineFor }
+          $update(target.getTimelineFor(selectedAndPreviousTab.curr),target.getTimelineFor(selectedAndPreviousTab.prev)) :
+          $update(target.getTimelineFor(selectedAndPreviousTab.curr))
+      }`
     });
     connect(this.tabContainer, 'onTabClose', this, 'onTabClose');
 
@@ -603,7 +602,6 @@ class MenuBar extends Morph {
       },
       ui: {
         after: ['_editor'],
-        defaultValue: {},
         initialize () {
           if (!this._deserializing) { this.initializeUI(); }
         }
@@ -617,6 +615,8 @@ class MenuBar extends Morph {
   }
 
   initializeUI () {
+    this.ui = {};
+
     const containerCount = 3;
     const containerWidth = this.width / containerCount;
 
