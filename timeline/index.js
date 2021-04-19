@@ -633,27 +633,21 @@ export class SequenceTimeline extends Timeline {
   }
 
   addKeyframesForAnimation (animation, timelineLayer, overviewLayer, index) {
-    animation.keyframes.forEach(keyframe => {
-      if (overviewLayer) {
-        const start = Math.min(...animation.keyframes.map(keyframe => this.getPositionFromKeyframe(keyframe)));
-        const end = Math.max(...animation.keyframes.map(keyframe => this.getPositionFromKeyframe(keyframe)));
-        const keyframeLine = timelineLayer.addMorph(new KeyframeLine({ _editor: this.editor, animation, extent: pt(end - start, 5), position: pt(start, 5 + 10 * index) }));
-        keyframeLine.addKeyframes();
-      } else {
-        const timelineKeyframe = timelineLayer.addMorph(new TimelineKeyframe({ _editor: this.editor, layer: timelineLayer, _keyframe: keyframe, animation }));
+    if (overviewLayer) {
+      const start = Math.min(...animation.keyframes.map(keyframe => this.getPositionFromKeyframe(keyframe)));
+      const end = Math.max(...animation.keyframes.map(keyframe => this.getPositionFromKeyframe(keyframe)));
+      const keyframeLine = timelineLayer.addMorph(new KeyframeLine({ _editor: this.editor, animation, extent: pt(end - start, 5), position: pt(start, 5 + 10 * index) }));
+      keyframeLine.addKeyframes();
+    } else {
+      animation.keyframes.forEach(keyframe => {
+        const timelineKeyframe = timelineLayer.addMorph(new TimelineKeyframe({ _editor: this.editor, _keyframe: keyframe, animation }));
         timelineKeyframe.updatePosition();
-        timelineLayer.onNumberOfKeyframesChanged();
-      }
-    });
+      });
+    }
   }
 
   redraw () {
     super.redraw();
-    this.keyframes.forEach(timelineKeyframe => {
-      timelineKeyframe._lockModelUpdate = true;
-      timelineKeyframe.position = pt(this.getPositionFromKeyframe(timelineKeyframe.keyframe), timelineKeyframe.position.y);
-      timelineKeyframe._lockModelUpdate = false;
-    });
     this._activeAreaWidth = CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor;
     this.timelineLayers.forEach(timelineLayer => timelineLayer.redraw());
   }
