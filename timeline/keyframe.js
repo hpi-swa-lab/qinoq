@@ -282,7 +282,8 @@ export class KeyframeLine extends Morph {
 
   addKeyframes () {
     this.animation.keyframes.forEach(keyframe => {
-      const position = pt(this.layer.timeline.getPositionFromKeyframe(keyframe) - this.position.x, -2);
+      const position = pt(this.layer.timeline.getPositionFromKeyframe(keyframe) - this.position.x,
+        -CONSTANTS.KEYFRAME_EXTENT.scaleBy(0.25).x / 2 / Math.sqrt(2));
       this.addMorph(new Morph({ position, extent: CONSTANTS.KEYFRAME_EXTENT.scaleBy(0.25), fill: COLOR_SCHEME.KEYFRAME_BORDER, rotation: Math.PI / 4 }));
     });
   }
