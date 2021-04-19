@@ -626,30 +626,8 @@ export class SequenceTimeline extends Timeline {
     this._sequence = sequence;
     this.sequence.submorphs.forEach(morph => {
       const timelineLayer = this.createOverviewTimelineLayer(morph);
-      this.addTimelineKeyframesForLayer(timelineLayer, true);
+      timelineLayer.addTimelineKeyframes();
     });
-  }
-
-  addTimelineKeyframesForLayer (timelineLayer, overviewLayer = false) {
-    const animations = this.sequence.getAnimationsForMorph(timelineLayer.morph);
-    for (let index = 0; index < animations.length; index++) this.addKeyframesForAnimation(animations[index], timelineLayer, overviewLayer, index);
-    timelineLayer.height = Math.max(CONSTANTS.LAYER_HEIGHT, 5 + 10 * animations.length);
-    this.getLayerInfoFor(timelineLayer).height = timelineLayer.height;
-    timelineLayer.redraw();
-  }
-
-  addKeyframesForAnimation (animation, timelineLayer, overviewLayer, index) {
-    if (overviewLayer) {
-      const start = Math.min(...animation.keyframes.map(keyframe => this.getPositionFromKeyframe(keyframe)));
-      const end = Math.max(...animation.keyframes.map(keyframe => this.getPositionFromKeyframe(keyframe)));
-      const keyframeLine = timelineLayer.addMorph(new KeyframeLine({ _editor: this.editor, animation, extent: pt(end - start, 5), position: pt(start, 5 + 10 * index) }));
-      keyframeLine.addKeyframes();
-    } else {
-      animation.keyframes.forEach(keyframe => {
-        const timelineKeyframe = timelineLayer.addMorph(new TimelineKeyframe({ _editor: this.editor, _keyframe: keyframe, animation }));
-        timelineKeyframe.updatePosition();
-      });
-    }
   }
 
   redraw () {
@@ -698,7 +676,7 @@ export class SequenceTimeline extends Timeline {
       // we assume that each sequence only holds one animation per morph per property
       const animationLayer = super.createTimelineLayer(morph, indexInLayerContainer + 1, animation.property);
       animationLayer.animation = animation;
-      this.addKeyframesForAnimation(animation, animationLayer);
+      animationLayer.addKeyframesForAnimation(animation);
     });
     this.onActiveAreaWidthChange();
   }
