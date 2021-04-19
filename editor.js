@@ -447,16 +447,18 @@ export class InteractivesEditor extends Morph {
   }
 
   abandon () {
+    config.altClickDefinesThat = this._altClickDefinesThatStorage;
     this.clearInteractive();
     super.abandon();
   }
 
   onHoverIn () {
+    this._altClickDefinesThatStorage = config.altClickDefinesThat;
     config.altClickDefinesThat = false;
   }
 
   onHoverOut () {
-    config.altClickDefinesThat = true;
+    config.altClickDefinesThat = this._altClickDefinesThatStorage;
   }
 }
 
