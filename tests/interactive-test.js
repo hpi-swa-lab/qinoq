@@ -4,6 +4,7 @@ import { Interactive, Layer, Sequence } from 'qinoq';
 import { pt } from 'lively.graphics';
 import { NumberAnimation } from 'qinoq';
 import { Keyframe } from 'qinoq';
+import { Morph } from 'lively.morphic';
 
 describe('Interactive object', () => {
   let interactive;
@@ -71,13 +72,16 @@ describe('Interactive object', () => {
   describe('with animations', () => {
     let animation1;
     let animation2;
+    let morph;
 
     let keyframeA, keyframeB, keyframeC;
     let keyframeD, keyframeE;
 
     beforeEach(() => {
-      animation1 = new NumberAnimation(undefined, 'opacity');
-      animation2 = new NumberAnimation(undefined, 'grayscale');
+      morph = new Morph();
+
+      animation1 = new NumberAnimation(morph, 'opacity');
+      animation2 = new NumberAnimation(morph, 'grayscale');
       keyframeA = new Keyframe(0, 0, { name: 'keyframeA' });
       keyframeB = new Keyframe(0.5, 0.5, { name: 'keyframeB' });
       keyframeC = new Keyframe(1, 1, { name: 'keyframeC' });
@@ -89,6 +93,8 @@ describe('Interactive object', () => {
 
       sequenceOne.addAnimation(animation1);
       sequenceOne.addAnimation(animation2);
+
+      sequenceOne.addMorph(morph);
     });
 
     it('can find a keyframe', () => {
@@ -96,6 +102,18 @@ describe('Interactive object', () => {
       expect(interactive.findKeyframe(keyframeB).animation).to.be.equal(animation1);
       expect(interactive.findKeyframe(keyframeD).animation).to.be.equal(animation2);
       expect(interactive.findKeyframe(new Keyframe(2, 2))).to.be.undefined;
+    });
+
+    it('automatically names new keyframes', () => {
+      const newKeyframe1 = new Keyframe(0.3, 0.7);
+      const newKeyframe2 = new Keyframe(0.4, 0.5);
+
+      expect(newKeyframe1.hasDefaultName()).to.be.ok;
+
+      animation2.addKeyframes([newKeyframe1, newKeyframe2]);
+
+      expect(newKeyframe1.hasDefaultName()).to.not.be.ok;
+      expect(newKeyframe1.name).to.not.be.equal(newKeyframe2.name);
     });
   });
 });
