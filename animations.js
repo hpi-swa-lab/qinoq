@@ -24,8 +24,8 @@ class Animation {
     }
     this.keyframes.push(newKeyframe);
 
-    if (newKeyframe.hasDefaultName()) {
-      newKeyframe.name = `Keyframe ${this.sequence.interactive.nextKeyframeNumber++}`;
+    if (newKeyframe.hasDefaultName() && this.interactive) {
+      newKeyframe.name = `Keyframe ${this.interactive.nextKeyframeNumber++}`;
     }
 
     if (!doNotSort) {
@@ -65,6 +65,10 @@ class Animation {
   get sequence () {
     if (!this._sequence) { this._sequence = Sequence.getSequenceOfMorph(this.target); }
     return this._sequence;
+  }
+
+  get interactive () {
+    return this.sequence && this.sequence.interactive;
   }
 
   // Linear Interpolation
