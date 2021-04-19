@@ -420,8 +420,8 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     this.timeline.removePropertyLayers(this);
   }
 
-  async redraw () {
-    await this.activeArea.whenRendered();
+  redraw () {
+    super.redraw();
     this.keyframeLines.forEach(keyframeLine => keyframeLine.updatePosition());
   }
 
