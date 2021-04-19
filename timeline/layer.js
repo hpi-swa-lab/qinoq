@@ -4,6 +4,7 @@ import { pt } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';
 import { connect, disconnect } from 'lively.bindings';
 import { Canvas } from 'lively.components/canvas.js';
+import { animatedProperties } from '../properties.js';
 export class TimelineLayer extends Morph {
   static get properties () {
     return {
@@ -217,10 +218,12 @@ export class SequenceTimelineLayer extends TimelineLayer {
 
     const keyframePositionToActiveAreaPosition = x => { return this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET; };
 
+    const flipCurve = animatedProperties[this.animation.property] && animatedProperties[this.animation.property].flipCurve;
+
     const minXValue = this.animation.getMin('x');
-    const minYValue = this.animation.getMin('y');
+    const minYValue = flipCurve ? this.animation.getMax('y') : this.animation.getMix('y');
     const maxXValue = this.animation.getMax('x');
-    const maxYValue = this.animation.getMax('y');
+    const maxYValue = flipCurve ? this.animation.getMin('y') : this.animation.getMax('y');
 
     const XvalueToDrawPosition = y => { return (y - maxXValue) / (minXValue - maxXValue) * this.activeArea.height; };
     const YvalueToDrawPosition = y => { return (y - maxYValue) / (minYValue - maxYValue) * this.activeArea.height; };
