@@ -113,12 +113,13 @@ export class SequenceTimelineLayer extends TimelineLayer {
     };
   }
 
-  get name () {
+  // just name leads to name collisions when using the getter in subclasses
+  get morphName () {
     return this.morph.name;
   }
 
   updateTooltip () {
-    this.tooltip = `${this.morph.name}` + (this.animation ? `:${this.animation.property}` : '');
+    this.tooltip = `${this.morphName}` + (this.animation ? `:${this.animation.property}` : '');
   }
 
   onMorphNameChange () {
@@ -389,7 +390,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   }
 
   updateTooltip () {
-    this.tooltip = this.isExpanded ? '' : this.morph.name;
+    this.tooltip = this.isExpanded ? '' : this.morphName;
   }
 
   collapse () {

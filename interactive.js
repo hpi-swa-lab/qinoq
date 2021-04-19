@@ -652,7 +652,7 @@ export class Sequence extends Morph {
   }
 
   isDisplayed () {
-    return this._progress >= 0 && this._progress < 1 && !this.layer.hidden;
+    return this.progress >= 0 && this.progress < 1 && !this.layer.hidden;
   }
 
   get isSequence () {
@@ -679,7 +679,7 @@ export class Sequence extends Morph {
 
   updateProgress (scrollPosition) {
     this._progress = (scrollPosition - this.start) / this.duration;
-    this.animations.forEach(animation => animation.progress = this._progress);
+    this.animations.forEach(animation => animation.progress = this.progress);
   }
 
   getAbsolutePosition (progress) {
@@ -731,7 +731,7 @@ export class Sequence extends Morph {
   }
 
   getAbsolutePositionFor (keyframe) {
-    return this.start + this.duration * keyframe.position;
+    return this.start + (this.duration * keyframe.position);
   }
 
   getRelativePositionFor (scrollPosition) {

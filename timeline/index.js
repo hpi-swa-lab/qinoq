@@ -591,8 +591,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   get selectedTimelineKeyframes () {
-    const sequenceTimelineLayer = this.ui.layerContainer.submorphs.filter(submorph => submorph.isTimelineLayer);
-    return sequenceTimelineLayer.flatMap(layer => layer.submorphs.filter(submorph => submorph.isTimelineKeyframe && submorph.isSelected));
+    return this.keyframes.filter(keyframe => keyframe.isSelected);
   }
 
   get sequence () {
