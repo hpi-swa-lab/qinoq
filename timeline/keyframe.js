@@ -32,6 +32,7 @@ export class TimelineKeyframe extends Morph {
         type: String,
         set (name) {
           this.setProperty('name', name);
+          if (this._deserializing) return;
           if (this.keyframe) this.keyframe.name = this.name;
           this.setTooltip();
         }
@@ -39,6 +40,7 @@ export class TimelineKeyframe extends Morph {
       position: {
         set (point) {
           this.setProperty('position', point);
+          if (this._deserializing) return;
           if (this._lockModelUpdate) return;
           if (this.layer) {
             this.keyframe.position = this.layer.timeline.getScrollFromPosition(this.position);
@@ -63,6 +65,7 @@ export class TimelineKeyframe extends Morph {
         defaultValue: false,
         set (isSelected) {
           this.setProperty('isSelected', isSelected);
+          if (this._deserializing) return;
           this.updateAppearance();
         }
       },
@@ -73,7 +76,7 @@ export class TimelineKeyframe extends Morph {
         defaultValue: 2
       },
       easing: {
-        after: ['layer'],
+        after: ['_keyframe', 'layer'],
         set (easing) {
           this.setProperty('easing', easing);
           this.keyframe.setEasing(this.easing);
