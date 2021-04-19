@@ -260,6 +260,15 @@ export class SequenceTimelineLayer extends TimelineLayer {
     return this.submorphs.filter(submorph => submorph.isTimelineKeyframe);
   }
 
+  onNumberOfKeyframesReduced () {
+    // off by one, so this is the case in which the last keyframe is reduced
+    if (this.numberOfKeyframes == 1) this.layerInfo.onNumberOfKeyframesInLayerIsZero();
+  }
+
+  onNumberOfKeyframesIncreased () {
+    this.layerInfo.onNumberOfKeyframesInLayerIncreased();
+  }
+
   async redraw () {
     await this.activeArea.whenRendered();
     this.redrawActiveArea();
