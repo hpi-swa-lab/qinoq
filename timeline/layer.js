@@ -5,6 +5,7 @@ import { CONSTANTS } from './constants.js';
 import { connect, disconnect } from 'lively.bindings';
 import { Canvas } from 'lively.components/canvas.js';
 import { animatedProperties, getColorForProperty } from '../properties.js';
+import { KeyframeLine, TimelineKeyframe } from './keyframe.js';
 export class TimelineLayer extends Morph {
   static get properties () {
     return {
@@ -233,6 +234,10 @@ export class SequenceTimelineLayer extends TimelineLayer {
     return this.morph.name;
   }
 
+  get sequence () {
+    return this.timeline.sequence;
+  }
+
   updateTooltip () {
     this.tooltip = `${this.morphName}` + (this.animation ? `:${this.animation.property}` : '');
   }
@@ -258,6 +263,30 @@ export class SequenceTimelineLayer extends TimelineLayer {
 
   get keyframes () {
     return this.submorphs.filter(submorph => submorph.isTimelineKeyframe);
+  }
+
+  addTimelineKeyframes () {
+    const animations = this.sequence.getAnimationsForMorph(this.morph);
+    animations.forEach((animation, index) => this.addKeyframesForAnimation(animation, index));
+    this.height = Math.max(CONSTANTS.LAYER_HEIGHT, CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * animations.length);
+    this.layerInfo.height = this.height;
+    this.redraw();
+  }
+
+  addKeyframesForAnimation (animation, index) {
+    if (this.isOverviewLayer) {
+      const keyframeLine = this.addMorph(new KeyframeLine({
+        _editor: this.editor,
+        animation,
+        layer: this,
+        y: CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * index
+      }));
+    } else {
+      animation.keyframes.forEach(keyframe => {
+        const timelineKeyframe = this.addMorph(new TimelineKeyframe({ _editor: this.editor, _keyframe: keyframe, animation }));
+        timelineKeyframe.updatePosition();
+      });
+    }
   }
 
   onNumberOfKeyframesChanged () {
@@ -397,15 +426,16 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
             this.redraw();
           }
         }
-      },
-      isOverviewLayer: {
-        defaultValue: true
       }
     };
   }
 
   get keyframeLines () {
     return this.submorphs.filter(submorph => submorph.isKeyframeLine);
+  }
+
+  get isOverviewLayer () {
+    return true;
   }
 
   updateTooltip () {
@@ -416,18 +446,18 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     this.layerInfo.restyleCollapseToggle();
     this.opacity = 1;
 
-    this.height = this._height;
+    this.height = this.expandedHeight;
 
     this.updateTooltip();
     this.reactsToPointer = true;
-    this.timeline.addTimelineKeyframesForLayer(this, true);
+    this.addTimelineKeyframes();
     this.timeline.removePropertyLayers(this);
   }
 
   redraw () {
     super.redraw();
 
-    this.timeline.getLayerInfoFor(this).height = this.height;
+    this.layerInfo.height = this.height;
     this.activeArea.height = this.height;
     this.inactiveArea.height = this.height;
     this.keyframeLines.forEach(keyframeLine => keyframeLine.updatePosition());
@@ -436,7 +466,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   expand () {
     this.layerInfo.restyleCollapseToggle();
     this.opacity = 0;
-    this._height = this.height;
+    this.expandedHeight = this.height;
     this.height = CONSTANTS.LAYER_HEIGHT;
 
     this.updateTooltip();
@@ -459,7 +489,6 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
 
   updateTimelineKeyframes () {
     this.removeKeyframeLines();
-    this.onNumberOfKeyframesChanged();
-    this.timeline.addTimelineKeyframesForLayer(this, !this.isExpanded);
+    this.addTimelineKeyframes();
   }
 }

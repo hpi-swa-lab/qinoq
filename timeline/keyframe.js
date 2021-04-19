@@ -261,15 +261,23 @@ export class KeyframeLine extends Morph {
           this.setTooltip();
         }
       },
+      y: {
+        after: ['animation', 'layer'],
+        set (y) {
+          this.setProperty('y', y);
+          this.updatePosition();
+        }
+      },
+      layer: {},
       _editor: {},
-      name: {
-        defaultValue: 'aKeyframeLine'
+      height: {
+        defaultValue: CONSTANTS.KEYFRAME_LINE_HEIGHT
       }
     };
   }
 
-  get layer () {
-    return this.owner;
+  get timeline () {
+    return this.layer.timeline;
   }
 
   get isKeyframeLine () {
@@ -282,22 +290,24 @@ export class KeyframeLine extends Morph {
 
   addKeyframes () {
     this.animation.keyframes.forEach(keyframe => {
-      const position = pt(this.layer.timeline.getPositionFromKeyframe(keyframe) - this.position.x,
-        -CONSTANTS.KEYFRAME_EXTENT.scaleBy(0.25).x / 2 / Math.sqrt(2));
-      this.addMorph(new Morph({ position, extent: CONSTANTS.KEYFRAME_EXTENT.scaleBy(0.25), fill: COLOR_SCHEME.KEYFRAME_BORDER, rotation: Math.PI / 4 }));
+      const position = pt(this.timeline.getPositionFromKeyframe(keyframe) - this.position.x,
+        -CONSTANTS.KEYFRAME_EXTENT.scaleBy(CONSTANTS.KEYFRAME_LINE_KEYFRAME_SCALE).x / 2 / Math.sqrt(2));
+      this.addMorph(new Morph({
+        position,
+        extent: CONSTANTS.KEYFRAME_EXTENT.scaleBy(CONSTANTS.KEYFRAME_LINE_KEYFRAME_SCALE),
+        fill: COLOR_SCHEME.KEYFRAME_BORDER,
+        rotation: Math.PI / 4,
+        name: 'aKeyframeLineKeyframe'
+      }));
     });
   }
 
   updatePosition () {
     this.submorphs.forEach(keyframe => keyframe.abandon());
     this.addKeyframes();
-    const start = Math.min(...this.animation.keyframes.map(keyframe => this.layer.timeline.getPositionFromKeyframe(keyframe)));
-    const end = Math.max(...this.animation.keyframes.map(keyframe => this.layer.timeline.getPositionFromKeyframe(keyframe)));
-    this.extent = pt(end - start, 5);
-    this.position = pt(start, this.position.y);
-  }
-
-  abandon () {
-    super.abandon();
+    const start = Math.min(...this.animation.keyframes.map(keyframe => this.timeline.getPositionFromKeyframe(keyframe)));
+    const end = Math.max(...this.animation.keyframes.map(keyframe => this.timeline.getPositionFromKeyframe(keyframe)));
+    this.width = end - start;
+    this.position = pt(start, this.y);
   }
 }
