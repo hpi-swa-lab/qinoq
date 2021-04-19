@@ -221,7 +221,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
     const flipCurve = animatedProperties[this.animation.property] && animatedProperties[this.animation.property].flipCurve;
 
     const minXValue = this.animation.getMin('x');
-    const minYValue = flipCurve ? this.animation.getMax('y') : this.animation.getMix('y');
+    const minYValue = flipCurve ? this.animation.getMax('y') : this.animation.getMin('y');
     const maxXValue = this.animation.getMax('x');
     const maxYValue = flipCurve ? this.animation.getMin('y') : this.animation.getMax('y');
 
