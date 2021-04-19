@@ -46,11 +46,11 @@ Closes [fill in your issues here]
 
 - [ ] an unselected (default) sequence can be selected by clicking on it
 - [ ] when clicking another sequence, the first sequence is no longer selected, but the second one is
-- [ ] when selecting a sequence with the `Shift` key pressed, the previous selection is not removed
-- [ ] when clicking while pressing `Shift` on a selected sequence, the sequence is deselected
+- [ ] when selecting a sequence with the `Alt` key pressed, the previous selection is not removed
+- [ ] when clicking while pressing `Alt` on a selected sequence, the sequence is deselected
 - [ ] all sequences can be selected with `Ctrl + A`
 - [ ] when all sequences are selected, `Ctrl + A` deselects all sequences
-- [ ] in the standard sequence setup, clicking on the night background and then clicking on the tree sequence while pressing `Alt` selects tree sequence, night background and day background
+- [ ] in the standard sequence setup, clicking on the night background and then clicking on the tree sequence while pressing `Shift` selects tree sequence, night background and day background
 - [ ] selected Sequences can be deleted with `Del`
 - [ ] when multiple sequences are selected the context menu renames all of them
 - [ ] having multiple sequences selected dragging one drags all and they snap in all possible positions
@@ -89,7 +89,7 @@ Closes [fill in your issues here]
 - [ ] when clicking on a single keyframe this one is highlighted with a blue border
 - [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the sequence and to the prev/next keyframe
 - [ ] When making the zoom factor higher/lower with the input field, the length of the active area adapt accordingly as well as the position of the keyframes and the cursor updates its position
-- [ ] it is possible to select more than one keyframe using `Shift`
+- [ ] it is possible to select more than one keyframe using `Alt`
 - [ ] when more than two keyframes are selected, the context menu allows changing of relative positions, where entering a relative position changes the position of all selected keyframes - this works with all menu items and is undoable as expected (one undo for all selected keyframes)
 - [ ] having more than one keyframe selected and dragging one with shift pressed moves all keyframes, this is undoable
 - [ ] it is possible to add a new morph to the interactive using the top bar
@@ -122,7 +122,7 @@ Closes [fill in your issues here]
 
 - [ ] when scrolling in the interactive, the cursor indicator in the scrollbar of the timeline moves accordingly
 - [ ] when the zoom factor of a timeline is changed, the scroller in the scrollbar changes its width accordingly
-- [ ] moving in the scrolled timeline with `Alt+Wheel` changes the scroller position
+- [ ] moving in the scrolled timeline with `Shift+Wheel` changes the scroller position
 - [ ] in a scrollable timeline normal scrolling will always move the layers and their information and nothing else
 
 ### Search
