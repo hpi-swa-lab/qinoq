@@ -394,6 +394,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
           this.setProperty('isExpanded', isExpanded);
           if (this.layerInfo && this.layerInfo.ui.collapseButton) {
             isExpanded ? this.expand() : this.collapse();
+            this.redraw();
           }
         }
       },
@@ -414,6 +415,9 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   collapse () {
     this.layerInfo.restyleCollapseToggle();
     this.opacity = 1;
+
+    this.height = this._height;
+
     this.updateTooltip();
     this.reactsToPointer = true;
     this.timeline.addTimelineKeyframesForLayer(this, true);
@@ -422,12 +426,19 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
 
   redraw () {
     super.redraw();
+
+    this.timeline.getLayerInfoFor(this).height = this.height;
+    this.activeArea.height = this.height;
+    this.inactiveArea.height = this.height;
     this.keyframeLines.forEach(keyframeLine => keyframeLine.updatePosition());
   }
 
   expand () {
     this.layerInfo.restyleCollapseToggle();
     this.opacity = 0;
+    this._height = this.height;
+    this.height = CONSTANTS.LAYER_HEIGHT;
+
     this.updateTooltip();
     this.reactsToPointer = false;
     this.removeKeyframeLines();

@@ -248,6 +248,10 @@ export class Timeline extends Morph {
     timelineLayer.abandon();
   }
 
+  getLayerInfoFor (timelineLayer) {
+    return this.ui.layerInfoContainer.submorphs[timelineLayer.index];
+  }
+
   arrangeLayerInfos () {
     this.ui.layerInfoContainer.removeAllMorphs();
     const layerInfos = new Array(this.timelineLayers.length);
@@ -629,6 +633,8 @@ export class SequenceTimeline extends Timeline {
   addTimelineKeyframesForLayer (timelineLayer, overviewLayer = false) {
     const animations = this.sequence.getAnimationsForMorph(timelineLayer.morph);
     for (let index = 0; index < animations.length; index++) this.addKeyframesForAnimation(animations[index], timelineLayer, overviewLayer, index);
+    timelineLayer.height = Math.max(CONSTANTS.LAYER_HEIGHT, 5 + 10 * animations.length);
+    this.getLayerInfoFor(timelineLayer).height = timelineLayer.height;
     timelineLayer.redraw();
   }
 
