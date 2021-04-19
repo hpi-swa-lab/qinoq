@@ -335,10 +335,13 @@ class KeyframeButton extends Morph {
         defaultValue: Math.PI / 4
       },
       borderColor: {
-        defaultValue: COLOR_SCHEME.SECONDARY
+        defaultValue: COLOR_SCHEME.KEYFRAME_BORDER
       },
       nativeCursor: {
         defaultValue: 'pointer'
+      },
+      borderWidth: {
+        defaultValue: 1
       },
       tooltip: {
         defaultValue: 'Create a keyframe'
@@ -391,6 +394,7 @@ class KeyframeButton extends Morph {
 
   onMouseUp () {
     this.mode = 'activated';
+    this.setActivatedStyle();
     const newKeyframe = new Keyframe(this.sequence.progress, this.currentValue);
     this.animation = this.sequence.addKeyframeForMorph(newKeyframe, this.target, this.property, this.propType);
     if (this.animation.useRelativeValues && this.propType == 'point') {
@@ -402,23 +406,20 @@ class KeyframeButton extends Morph {
   // The rest is styling. This may be improved with a master component. See styleguides/keyframe-inspector.json
 
   setDefaultStyle () {
-    this.fill = COLOR_SCHEME.TRANSPARENT;
-    this.borderWidth = 2;
+    this.fill = COLOR_SCHEME.KEYFRAME_FILL;
+    this.borderColor = COLOR_SCHEME.KEYFRAME_BORDER;
   }
 
   setHoverStyle () {
-    this.fill = COLOR_SCHEME.SECONDARY_VARIANT;
-    this.borderWidth = 0;
+    this.fill = getColorForProperty(this.property);
   }
 
   setClickStyle () {
-    this.fill = COLOR_SCHEME.SECONDARY_VARIANT;
-    this.borderWidth = 2;
+    this.fill = COLOR_SCHEME.TRANSPARENT;
   }
 
   setActivatedStyle () {
-    this.fill = COLOR_SCHEME.SECONDARY;
-    this.borderWidth = 0;
+    this.fill = getColorForProperty(this.property);
   }
 
   onMouseDown (event) {
@@ -431,7 +432,7 @@ class KeyframeButton extends Morph {
   }
 
   onHoverOut () {
-    if (this.mode == 'activated') {
+    if (this.mode === 'activated') {
       this.setActivatedStyle();
     } else {
       this.setDefaultStyle();
