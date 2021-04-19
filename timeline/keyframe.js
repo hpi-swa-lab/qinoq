@@ -297,7 +297,6 @@ export class KeyframeLine extends Morph {
   }
 
   abandon () {
-    this.layer.redraw();
     super.abandon();
   }
 }
