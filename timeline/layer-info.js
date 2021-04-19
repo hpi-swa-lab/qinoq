@@ -116,6 +116,14 @@ export class TimelineLayerInfo extends Morph {
     this.ui.collapseButton.tooltip = 'Expanding is only available for morphs with keyframes.';
   }
 
+  onNumberOfKeyframesInLayerIsZero () {
+    if (this.ui.collapseButton) this.disableCollapseButton();
+  }
+
+  onNumberOfKeyframesInLayerIncreased () {
+    if (this.ui.collapseButton) this.enableCollapseButton();
+  }
+
   enableCollapseButton () {
     this.ui.collapseButton.fontColor = COLOR_SCHEME.ON_SURFACE;
     this.ui.collapseButton.onMouseUp = () => { this.timelineLayer.isExpanded = !this.timelineLayer.isExpanded; };

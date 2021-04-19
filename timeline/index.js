@@ -627,7 +627,6 @@ export class SequenceTimeline extends Timeline {
 
   addTimelineKeyframesForLayer (timelineLayer) {
     const animations = this.sequence.getAnimationsForMorph(timelineLayer.morph);
-    if (animations.length > 0 && timelineLayer.layerInfo.ui.collapseButton) timelineLayer.layerInfo.enableCollapseButton();
     animations.forEach(animation => {
       this.addKeyframesForAnimation(animation, timelineLayer);
     });
@@ -638,6 +637,7 @@ export class SequenceTimeline extends Timeline {
     animation.keyframes.forEach(keyframe => {
       const timelineKeyframe = timelineLayer.addMorph(new TimelineKeyframe({ _editor: this.editor, layer: timelineLayer, _keyframe: keyframe, animation }));
       timelineKeyframe.updatePosition();
+      timelineLayer.onNumberOfKeyframesIncreased();
     });
   }
 
