@@ -93,6 +93,120 @@ export class TimelineLayer extends Morph {
   }
 }
 
+export class GlobalTimelineLayer extends TimelineLayer {
+  static get properties () {
+    return {
+      draggable: {
+        defaultValue: true
+      },
+      nativeCursor: {
+        defaultValue: 'grab'
+      },
+      layer: {
+        set (layer) {
+          this.setProperty('layer', layer);
+          this.tooltip = layer.name;
+        }
+      }
+    };
+  }
+
+  get timelineSequences () {
+    return this.submorphs.filter(submorph => !!submorph.isTimelineSequence);
+  }
+
+  get name () {
+    return this.layer.name;
+  }
+
+  updateTooltip () {
+    this.tooltip = this.name;
+  }
+
+  onHoverIn (event) {
+    if (event.hand.timelineSequenceStates && event.hand.timelineSequenceStates[0].isMove) {
+      const timelineLayerIndices = event.hand.timelineSequenceStates.map(timelineSequenceState => timelineSequenceState.timelineSequence.timelineLayer.index);
+      const minLayerIndex = Math.min(...timelineLayerIndices);
+      const maxLayerIndex = Math.max(...timelineLayerIndices);
+      let moveUp = false;
+      if (this.index < event.hand.draggedSequence.timelineLayer.index) {
+        moveUp = true;
+        if (minLayerIndex == 0) return;
+      } else {
+        if (maxLayerIndex == this.highestIndex) return;
+      }
+      event.hand.timelineSequenceStates.forEach(timelineSequenceState => {
+        if (timelineSequenceState.isMove) {
+          timelineSequenceState.timelineSequence.timelineLayer = this.container.submorphs[timelineSequenceState.timelineSequence.timelineLayer.index + (moveUp ? -1 : 1)];
+        }
+      });
+    }
+  }
+
+  changeBorderAppearance () {
+    [this, this.activeArea, this.inactiveArea].forEach(morph => {
+      morph.borderWidth = 3;
+      morph.borderColor = COLOR_SCHEME.PRIMARY;
+    });
+  }
+
+  resetBorderAppearance () {
+    [this, this.activeArea, this.inactiveArea].forEach(morph => {
+      morph.borderWidth = 0;
+      morph.borderColor = COLOR_SCHEME.PRIMARY;
+    });
+  }
+
+  onDragStart (event) {
+    const undo = this.container.undoStart('overview-layer-drag');
+    undo.addTarget(this.timeline);
+    this.changeBorderAppearance();
+  }
+
+  onDrag (event) {
+    const index = (event.hand.position.y - this.container.globalPosition.y) / (this.extent.y + 2 * this.container.layout.spacing);
+    this.moveLayerToIndex(index);
+  }
+
+  onDragEnd (event) {
+    this.container.undoStop('overview-layer-drag');
+    this.resetBorderAppearance();
+  }
+
+  moveLayerToIndex (index) {
+    if (index < 0) {
+      index = 0;
+    }
+    if (index > this.container.submorphs.length - 1) {
+      index = this.container.submorphs.length - 1;
+    }
+    this.remove();
+    this.container.addMorphAt(this, Math.round(index));
+    this.timeline.arrangeLayerInfos();
+    this.timeline.updateZIndicesFromTimelineLayerPositions();
+
+    this.timeline.ui.cursor.remove();
+    this.container.addMorph(this.timeline.ui.cursor);
+  }
+
+  moveLayerBy (number) {
+    this.moveLayerToIndex(this.index + number);
+  }
+
+  getAllSequencesIntersectingWith (rectangle) {
+    return this.timelineSequences.filter(timelineSequence => timelineSequence.bounds().intersects(rectangle));
+  }
+
+  deselectAllSequences () {
+    this.timelineSequences.forEach(timelineSequence => timelineSequence.selected = false);
+  }
+
+  toggleHiddenStyle () {
+    this.timelineSequences.forEach(timelineSequence => timelineSequence.updateAppearance());
+    this.activeArea.fill = this.layer.hidden ? COLOR_SCHEME.BACKGROUND_VARIANT : COLOR_SCHEME.SURFACE_VARIANT;
+  }
+}
+
 export class SequenceTimelineLayer extends TimelineLayer {
   static get properties () {
     return {
@@ -254,120 +368,6 @@ export class SequenceTimelineLayer extends TimelineLayer {
   abandon () {
     disconnect(this.morph, 'name', this, 'onMorphNameChange');
     super.abandon();
-  }
-}
-
-export class GlobalTimelineLayer extends TimelineLayer {
-  static get properties () {
-    return {
-      draggable: {
-        defaultValue: true
-      },
-      nativeCursor: {
-        defaultValue: 'grab'
-      },
-      layer: {
-        set (layer) {
-          this.setProperty('layer', layer);
-          this.tooltip = layer.name;
-        }
-      }
-    };
-  }
-
-  get timelineSequences () {
-    return this.submorphs.filter(submorph => !!submorph.isTimelineSequence);
-  }
-
-  get name () {
-    return this.layer.name;
-  }
-
-  updateTooltip () {
-    this.tooltip = this.name;
-  }
-
-  onHoverIn (event) {
-    if (event.hand.timelineSequenceStates && event.hand.timelineSequenceStates[0].isMove) {
-      const timelineLayerIndices = event.hand.timelineSequenceStates.map(timelineSequenceState => timelineSequenceState.timelineSequence.timelineLayer.index);
-      const minLayerIndex = Math.min(...timelineLayerIndices);
-      const maxLayerIndex = Math.max(...timelineLayerIndices);
-      let moveUp = false;
-      if (this.index < event.hand.draggedSequence.timelineLayer.index) {
-        moveUp = true;
-        if (minLayerIndex == 0) return;
-      } else {
-        if (maxLayerIndex == this.highestIndex) return;
-      }
-      event.hand.timelineSequenceStates.forEach(timelineSequenceState => {
-        if (timelineSequenceState.isMove) {
-          timelineSequenceState.timelineSequence.timelineLayer = this.container.submorphs[timelineSequenceState.timelineSequence.timelineLayer.index + (moveUp ? -1 : 1)];
-        }
-      });
-    }
-  }
-
-  changeBorderAppearance () {
-    [this, this.activeArea, this.inactiveArea].forEach(morph => {
-      morph.borderWidth = 3;
-      morph.borderColor = COLOR_SCHEME.PRIMARY;
-    });
-  }
-
-  resetBorderAppearance () {
-    [this, this.activeArea, this.inactiveArea].forEach(morph => {
-      morph.borderWidth = 0;
-      morph.borderColor = COLOR_SCHEME.PRIMARY;
-    });
-  }
-
-  onDragStart (event) {
-    const undo = this.container.undoStart('overview-layer-drag');
-    undo.addTarget(this.timeline);
-    this.changeBorderAppearance();
-  }
-
-  onDrag (event) {
-    const index = (event.hand.position.y - this.container.globalPosition.y) / (this.extent.y + 2 * this.container.layout.spacing);
-    this.moveLayerToIndex(index);
-  }
-
-  onDragEnd (event) {
-    this.container.undoStop('overview-layer-drag');
-    this.resetBorderAppearance();
-  }
-
-  moveLayerToIndex (index) {
-    if (index < 0) {
-      index = 0;
-    }
-    if (index > this.container.submorphs.length - 1) {
-      index = this.container.submorphs.length - 1;
-    }
-    this.remove();
-    this.container.addMorphAt(this, Math.round(index));
-    this.timeline.arrangeLayerInfos();
-    this.timeline.updateZIndicesFromTimelineLayerPositions();
-
-    this.timeline.ui.cursor.remove();
-    this.container.addMorph(this.timeline.ui.cursor);
-  }
-
-  moveLayerBy (number) {
-    this.moveLayerToIndex(this.index + number);
-  }
-
-  getAllSequencesIntersectingWith (rectangle) {
-    return this.timelineSequences.filter(timelineSequence => timelineSequence.bounds().intersects(rectangle));
-  }
-
-  deselectAllSequences () {
-    this.timelineSequences.forEach(timelineSequence => timelineSequence.selected = false);
-  }
-
-  toggleHiddenStyle () {
-    this.timelineSequences.forEach(timelineSequence => timelineSequence.updateAppearance());
-    this.activeArea.fill = this.layer.hidden ? COLOR_SCHEME.BACKGROUND_VARIANT : COLOR_SCHEME.SURFACE_VARIANT;
   }
 }
 
