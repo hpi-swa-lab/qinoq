@@ -39,6 +39,11 @@ export class InteractiveMorphInspector extends Morph {
       },
       targetMorph: {
         set (morph) {
+          if (this._deserializing) {
+            this.setProperty('targetMorph', morph);
+            return;
+          }
+
           if (morph && morph != this.targetMorph) {
             this.disbandConnections();
             this.setProperty('targetMorph', morph);
@@ -358,13 +363,14 @@ class KeyframeButton extends Morph {
       animation: { },
       _editor: {
         set (_editor) {
-          connect(_editor, 'interactiveScrollPosition', this, 'updateStyle');
+          if (this._deserializing) { connect(_editor, 'interactiveScrollPosition', this, 'updateStyle'); }
           this.setProperty('_editor', _editor);
         }
       },
       sequence: {},
       property: {
-        set (property) {
+	after:['tooltip'],
+	set (property) {
           this.setProperty('property', property);
           this.tooltip = `Create a keyframe for the ${property} property`;
           this.fill = getColorForProperty(property);
