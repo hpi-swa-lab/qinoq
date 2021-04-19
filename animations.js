@@ -1,6 +1,6 @@
 import { pt } from 'lively.graphics';
 import { arr } from 'lively.lang';
-import { Sequence } from 'qinoq';
+import { Sequence } from './index';
 import { easings, stringToEasing } from 'lively.morphic';
 import { animatedProperties } from './properties.js';
 
