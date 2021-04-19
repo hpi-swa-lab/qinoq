@@ -7,6 +7,7 @@ export const animatedProperties = {
   },
   position: {
     type: 'point',
+    flipCurve: true, // Flip curve in the animation curve in sequence layers
     defaultRelative: true
   },
   fill: {
