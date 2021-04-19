@@ -151,7 +151,8 @@ export class TimelineKeyframe extends Morph {
 
   delete () {
     this.animation.removeKeyframe(this.keyframe);
-    this.layer.onNumberOfKeyframesReduced();
+    this.remove();
+    this.layer.onNumberOfKeyframesChanged();
     this.abandon();
   }
 

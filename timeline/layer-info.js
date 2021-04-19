@@ -116,12 +116,11 @@ export class TimelineLayerInfo extends Morph {
     this.ui.collapseButton.tooltip = 'Expansion only available for morphs with keyframes';
   }
 
-  onNumberOfKeyframesInLayerIsZero () {
-    if (this.ui.collapseButton) this.disableCollapseButton();
-  }
-
-  onNumberOfKeyframesInLayerIncreased () {
-    if (this.ui.collapseButton) this.enableCollapseButton();
+  onNumberOfKeyframesInLayerChanged (numberOfKeyframes) {
+    if (this.ui.collapseButton) {
+      if (!numberOfKeyframes) this.disableCollapseButton();
+      else this.enableCollapseButton();
+    }
   }
 
   enableCollapseButton () {
