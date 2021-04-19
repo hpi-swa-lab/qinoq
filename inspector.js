@@ -183,7 +183,7 @@ export class InteractiveMorphInspector extends Morph {
 
   disbandConnections () {
     if (this.targetMorph) {
-      const sequenceOfTarget = Sequence.getSequenceOfMorph(this.targetMorph);
+      const sequenceOfTarget = this.sequence;
       this.displayedProperties.forEach(inspectedProperty => {
         this.propertyControls[inspectedProperty].keyframe.remove();
         const propType = this.propertiesToDisplay[inspectedProperty];
