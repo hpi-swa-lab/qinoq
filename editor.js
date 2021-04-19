@@ -166,6 +166,7 @@ export class InteractivesEditor extends Morph {
     connect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
     connect(this.interactive, 'name', this.globalTab, 'caption').update(this.interactive.name);
     connect(this.interactive, 'remove', this, 'reset');
+    connect(this.interactive, '_length', this.menuBar.ui.scrollPositionInput.max);
     connect(this.preview, 'extent', this.interactive, 'extent');
 
     connect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
