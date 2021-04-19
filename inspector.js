@@ -6,7 +6,7 @@ import { Button } from 'lively.components';
 import { InteractiveMorphSelector } from 'lively.halos';
 import { disconnect, connect } from 'lively.bindings';
 import { ColorPickerField } from 'lively.ide/styling/color-picker.js';
-import { Sequence, Keyframe } from 'qinoq';
+import { Sequence, Keyframe } from './index.js';
 import { animatedPropertiesAndTypes } from './properties.js';
 
 const CONSTANTS = {

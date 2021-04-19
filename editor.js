@@ -6,7 +6,7 @@ import { InteractiveMorphInspector } from './inspector.js';
 import { resource } from 'lively.resources';
 import { arr } from 'lively.lang';
 import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
-import { Sequence, Interactive, Layer } from 'qinoq';
+import { Sequence, Interactive, Layer } from './index.js';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
 import { Button } from 'lively.components';
 

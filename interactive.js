@@ -3,7 +3,7 @@ import { Color, pt } from 'lively.graphics';
 import { connect, disconnect, signal, disconnectAll } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
 import { COLOR_SCHEME } from './colors.js';
-import { Keyframe, createAnimationForPropertyType, NumberAnimation, PointAnimation, ColorAnimation } from 'qinoq';
+import { Keyframe, createAnimationForPropertyType, NumberAnimation, PointAnimation, ColorAnimation } from './index.js';
 import { LottieMorph } from './interactive-morphs/lottie-morph.js';
 import { arr } from 'lively.lang';
 
