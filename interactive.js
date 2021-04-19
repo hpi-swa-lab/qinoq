@@ -40,6 +40,9 @@ export class Interactive extends Morph {
     interactive.addLayer(backgroundLayer);
     interactive.addLayer(foregroundLayer);
 
+    const baseSequence = Sequence.baseSequence({ layer: foregroundLayer });
+    interactive.addSequence(baseSequence);
+
     return interactive;
   }
 
@@ -551,6 +554,10 @@ export class Sequence extends Morph {
 
   static getSequenceOfMorph (morph) {
     return morph ? morph.ownerChain().find(m => m.isSequence) : undefined;
+  }
+
+  static baseSequence (props = {}) {
+    return new Sequence({ name: 'first sequence', start: 0, duration: 250, ...props });
   }
 
   static backgroundNightExample () {
