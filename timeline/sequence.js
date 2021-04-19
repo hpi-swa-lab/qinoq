@@ -43,6 +43,11 @@ export class TimelineSequence extends Morph {
           this.setProperty('sequence', sequence);
         }
       },
+      ui: {
+        initialize () {
+          if (!this._deserializing) this.ui = {};
+        }
+      },
       _lockModelUpdate: {
         // Needs to be true since otherwise the morph creation will trigger unwanted
         // calls to updateSequenceAfterArrangement.
@@ -132,26 +137,26 @@ export class TimelineSequence extends Morph {
       height: this.height
     };
 
-    this.rightResizer = new Morph({
+    this.ui.rightResizer = new Morph({
       name: 'right resizer',
       position: pt(this.width - resizerProps.width, 0),
       ...resizerProps
     });
-    this.leftResizer = new Morph({
+    this.ui.leftResizer = new Morph({
       name: 'left resizer',
       position: pt(0, 0),
       ...resizerProps
     });
 
-    connect(this.rightResizer, 'onDrag', this, 'onResizeRight');
-    connect(this.rightResizer, 'onDragStart', this, 'onResizeStart');
-    connect(this.rightResizer, 'onDragEnd', this, 'onResizeEnd');
-    connect(this.leftResizer, 'onDrag', this, 'onResizeLeft');
-    connect(this.leftResizer, 'onDragStart', this, 'onResizeStart');
-    connect(this.leftResizer, 'onDragEnd', this, 'onResizeEnd');
+    connect(this.ui.rightResizer, 'onDrag', this, 'onResizeRight');
+    connect(this.ui.rightResizer, 'onDragStart', this, 'onResizeStart');
+    connect(this.ui.rightResizer, 'onDragEnd', this, 'onResizeEnd');
+    connect(this.ui.leftResizer, 'onDrag', this, 'onResizeLeft');
+    connect(this.ui.leftResizer, 'onDragStart', this, 'onResizeStart');
+    connect(this.ui.leftResizer, 'onDragEnd', this, 'onResizeEnd');
 
-    this.addMorphBack(this.rightResizer);
-    this.addMorphBack(this.leftResizer);
+    this.addMorphBack(this.ui.rightResizer);
+    this.addMorphBack(this.ui.leftResizer);
   }
 
   onDoubleMouseDown (event) {
@@ -418,7 +423,7 @@ export class TimelineSequence extends Morph {
   }
 
   onResizeRight (event) {
-    const newSequenceWidth = this.rightResizer.topRight.x;
+    const newSequenceWidth = this.ui.rightResizer.topRight.x;
     if (newSequenceWidth < CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
       this.showWarning('right', event.hand.position.x);
       this.extent = pt(CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
@@ -433,7 +438,7 @@ export class TimelineSequence extends Morph {
 
   onResizeLeft (event) {
     const sequenceState = event.hand.timelineSequenceStates[0];
-    const dragDelta = this.leftResizer.position.x;
+    const dragDelta = this.ui.leftResizer.position.x;
     const newSequenceWidth = sequenceState.previousWidth - dragDelta;
     const previousTopRight = sequenceState.previousPosition.addXY(sequenceState.previousWidth, 0);
 
@@ -482,8 +487,8 @@ export class TimelineSequence extends Morph {
     this.handleOverlappingOtherSequence(event.hand.timelineSequenceStates);
     event.hand.timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.removeSnapIndicators());
     this.clearSnappingData();
-    this.leftResizer.position = pt(0, 0);
-    this.rightResizer.position = pt(this.width - this.rightResizer.width, 0);
+    this.ui.leftResizer.position = pt(0, 0);
+    this.ui.rightResizer.position = pt(this.width - this.ui.rightResizer.width, 0);
     delete event.hand.timelineSequenceStates;
   }
 
@@ -588,7 +593,7 @@ export class TimelineSequence extends Morph {
 
   setWidthAndUpdateResizers (width) {
     this.width = width;
-    this.rightResizer.position = pt(this.width - this.rightResizer.width, 0);
+    this.ui.rightResizer.position = pt(this.width - this.ui.rightResizer.width, 0);
   }
 
   updateSequenceAfterArrangement () {
@@ -713,8 +718,8 @@ export class TimelineSequence extends Morph {
   abandon () {
     this.remove();
 
-    if (this.rightResizer) disconnectAll(this.rightResizer);
-    if (this.leftResizer) disconnectAll(this.leftResizer);
+    if (this.ui.rightResizer) disconnectAll(this.ui.rightResizer);
+    if (this.ui.leftResizer) disconnectAll(this.ui.leftResizer);
 
     const sequenceTab = this.editor.getTabFor(this.sequence);
     if (sequenceTab) {
