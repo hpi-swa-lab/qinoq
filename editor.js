@@ -454,6 +454,9 @@ export class InteractivesEditor extends Morph {
 
   onHoverIn () {
     this._altClickDefinesThatStorage = config.altClickDefinesThat;
+    // this key in the morphic confic makes it so that a press with alt and click
+    // does not bind that to the clicked morph
+    // the binding of that is what triggers the show()
     config.altClickDefinesThat = false;
   }
 
