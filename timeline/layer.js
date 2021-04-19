@@ -416,7 +416,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   }
 
   removeAllTimelineKeyframes () {
-    this.submorphs.filter(submorph => submorph.isTimelineKeyframe).forEach(keyframe => keyframe.remove());
+    this.keyframes.forEach(keyframe => keyframe.remove());
   }
 
   get mayBeExpanded () {
