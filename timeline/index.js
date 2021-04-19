@@ -637,7 +637,7 @@ export class SequenceTimeline extends Timeline {
     animation.keyframes.forEach(keyframe => {
       const timelineKeyframe = timelineLayer.addMorph(new TimelineKeyframe({ _editor: this.editor, layer: timelineLayer, _keyframe: keyframe, animation }));
       timelineKeyframe.updatePosition();
-      timelineLayer.onNumberOfKeyframesIncreased();
+      timelineLayer.onNumberOfKeyframesChanged();
     });
   }
 
