@@ -93,6 +93,11 @@ export class Interactive extends Morph {
       clipMode: {
         defaultValue: 'hidden'
       },
+      nextKeyframeNumber: {
+        // used for default keyframe names
+        type: 'Number',
+        defaultValue: 1
+      },
       _scrollOverlay: {
         after: ['extent'],
         initialize () {
