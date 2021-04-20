@@ -183,6 +183,7 @@ export class InteractiveMorphInspector extends Morph {
 
   disbandConnections () {
     if (this.targetMorph) {
+      disconnect(this, 'targetMorph', this.ui.headline, 'textString');
       const sequenceOfTarget = this.sequence;
       this.displayedProperties.forEach(inspectedProperty => {
         this.propertyControls[inspectedProperty].keyframe.remove();
@@ -205,6 +206,7 @@ export class InteractiveMorphInspector extends Morph {
   }
 
   createConnections () {
+    connect(this.targetMorph, 'name', this.ui.headline, 'textString', { converter: '() => {return `Inspecting ${targetMorph.toString()}`}', varMapping: { targetMorph: this.targetMorph } });
     this.displayedProperties.forEach(inspectedProperty => {
       const propType = this.propertiesToDisplay[inspectedProperty];
       connect(this.targetMorph, inspectedProperty, this, 'updateInInspector', { converter: '() => {return {property, propType}}', varMapping: { property: inspectedProperty, propType } });
