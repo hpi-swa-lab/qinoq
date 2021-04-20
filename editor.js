@@ -541,9 +541,7 @@ class Preview extends Morph {
   }
 
   showEmptyPreviewPlaceholder () {
-    this.withAllSubmorphsDo(submorph => {
-      if (submorph !== this) submorph.remove();
-    });
+    this.submorphs = [];
 
     const placeholderColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
 
