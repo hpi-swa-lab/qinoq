@@ -1,9 +1,10 @@
-import { Morph, VerticalLayout, Icon, Label } from 'lively.morphic';
+import { VerticalLayout, Icon, Label } from 'lively.morphic';
 import { CONSTANTS } from './constants.js';
 import { pt } from 'lively.graphics';
 import { COLOR_SCHEME } from '../colors.js';
+import { QinoqMorph } from '../qinoq-morph.js';
 
-export class TimelineLayerInfo extends Morph {
+export class TimelineLayerInfo extends QinoqMorph {
   static get properties () {
     return {
       timelineLayer: {
@@ -18,7 +19,6 @@ export class TimelineLayerInfo extends Morph {
           if (!this._deserializing) this.initialize();
         }
       },
-      _editor: { },
       height: {
         defaultValue: CONSTANTS.LAYER_HEIGHT
       }

@@ -1,4 +1,4 @@
-import { ProportionalLayout, config, HorizontalLayout, VerticalLayout, Icon, Label, Morph } from 'lively.morphic';
+import { ProportionalLayout, Morph, config, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
 import { connect, signal, disconnectAll, disconnect } from 'lively.bindings';
 import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
@@ -10,6 +10,7 @@ import { Sequence, Interactive, Layer } from './index.js';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
 import { Button } from 'lively.components';
 import { arrowRightPressed, arrowLeftPressed } from './keys.js';
+import { QinoqMorph } from './qinoq-morph.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -27,7 +28,7 @@ const CONSTANTS = {
 CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
 CONSTANTS.TIMELINE_HEIGHT = CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT - CONSTANTS.MENU_BAR_HEIGHT;
 
-export class InteractivesEditor extends Morph {
+export class InteractivesEditor extends QinoqMorph {
   static get properties () {
     return {
       interactive: {
@@ -47,11 +48,7 @@ export class InteractivesEditor extends Morph {
       extent: {
         defaultValue: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT)
       },
-      globalTimeline: {
-      },
       inspector: {
-      },
-      preview: {
       },
       interactiveScrollPosition: {
         defaultValue: 0
@@ -525,7 +522,7 @@ export class InteractivesEditor extends Morph {
   }
 }
 
-class Preview extends Morph {
+class Preview extends QinoqMorph {
   static get properties () {
     return {
       name: {
@@ -629,7 +626,7 @@ class Preview extends Morph {
   }
 }
 
-class MenuBar extends Morph {
+class MenuBar extends QinoqMorph {
   static get properties () {
     return {
       name: {
@@ -652,8 +649,7 @@ class MenuBar extends Morph {
         initialize () {
           if (!this._deserializing) { this.initializeUI(); }
         }
-      },
-      _editor: {}
+      }
     };
   }
 
@@ -890,7 +886,7 @@ class MenuBar extends Morph {
   }
 }
 
-class SequenceOverview extends Morph {
+class SequenceOverview extends QinoqMorph {
   static get properties () {
     return {
       name: {
@@ -904,8 +900,7 @@ class SequenceOverview extends Morph {
       },
       borderWidth: {
         defaultValue: CONSTANTS.BORDER_WIDTH
-      },
-      editor: {}
+      }
     };
   }
 }

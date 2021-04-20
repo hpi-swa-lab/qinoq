@@ -1,10 +1,11 @@
-import { Morph, HorizontalLayout, Label } from 'lively.morphic';
+import { HorizontalLayout, Morph, Label } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
 import { pt } from 'lively.graphics';
 import { arr } from 'lively.lang';
 import { disconnect, connect } from 'lively.bindings';
 import { CONSTANTS } from './constants.js';
-export class TimelineCursor extends Morph {
+import { QinoqMorph } from '../qinoq-morph.js';
+export class TimelineCursor extends QinoqMorph {
   static get properties () {
     return {
       isLayoutable: {

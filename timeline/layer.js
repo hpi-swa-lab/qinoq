@@ -1,4 +1,4 @@
-import { Morph } from 'lively.morphic';
+import { Icon, Morph, Label } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
 import { pt, Color } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';
@@ -6,7 +6,8 @@ import { connect, disconnect } from 'lively.bindings';
 import { Canvas } from 'lively.components/canvas.js';
 import { animatedProperties, getColorForProperty } from '../properties.js';
 import { KeyframeLine, TimelineKeyframe } from './keyframe.js';
-export class TimelineLayer extends Morph {
+import { QinoqMorph } from '../qinoq-morph.js';
+export class TimelineLayer extends QinoqMorph {
   static get properties () {
     return {
       layerInfo: {},
@@ -23,8 +24,7 @@ export class TimelineLayer extends Morph {
       },
       height: {
         defaultValue: CONSTANTS.LAYER_HEIGHT
-      },
-      _editor: {}
+      }
     };
   }
 
@@ -222,8 +222,8 @@ export class SequenceTimelineLayer extends TimelineLayer {
           this.fill = getColorForProperty(animation.property);
           this.inactiveArea.fill = this.fill;
           if (!this._deserializing) {
-          this.updateTooltip();
-          this.layerInfo.updateLabel();
+            this.updateTooltip();
+            this.layerInfo.updateLabel();
             this.redraw();
           }
         }

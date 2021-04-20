@@ -1,5 +1,5 @@
 import { pt } from 'lively.graphics';
-import { Morph, VerticalLayout } from 'lively.morphic';
+import { VerticalLayout, Morph } from 'lively.morphic';
 import { TimelineCursor } from './cursor.js';
 import { connect, disconnect } from 'lively.bindings';
 import { TimelineSequence } from './sequence.js';
@@ -14,8 +14,9 @@ import { singleSelectKeyPressed, zoomKeyPressed } from '../keys.js';
 import { Sequence, Keyframe } from '../index.js';
 import { getColorForProperty } from '../properties.js';
 import { EasingSelection } from '../components/easing-selection.js';
+import { QinoqMorph } from '../qinoq-morph.js';
 
-export class Timeline extends Morph {
+export class Timeline extends QinoqMorph {
   static get properties () {
     return {
       ui: {
@@ -603,7 +604,6 @@ export class GlobalTimeline extends Timeline {
     this.zoomFactor = factor;
   }
 }
-
 
 export class SequenceTimeline extends Timeline {
   static get properties () {

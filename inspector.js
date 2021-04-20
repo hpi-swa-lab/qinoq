@@ -1,4 +1,4 @@
-import { Morph, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
+import { HorizontalLayout, Morph, VerticalLayout, Icon, Label } from 'lively.morphic';
 import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
@@ -8,6 +8,7 @@ import { disconnect, connect } from 'lively.bindings';
 import { ColorPickerField } from 'lively.ide/styling/color-picker.js';
 import { Sequence, Keyframe } from './index.js';
 import { animatedPropertiesAndTypes, getColorForProperty } from './properties.js';
+import { QinoqMorph } from './qinoq-morph.js';
 
 const CONSTANTS = {
   LABEL_X: 10,
@@ -19,7 +20,7 @@ const CONSTANTS = {
   TARGET_PICKER_BORDER_RADIUS: 15
 };
 
-export class InteractiveMorphInspector extends Morph {
+export class InteractiveMorphInspector extends QinoqMorph {
   static get properties () {
     return {
       name: {
@@ -57,8 +58,7 @@ export class InteractiveMorphInspector extends Morph {
             this.createConnections();
           }
         }
-      },
-      _editor: {}
+      }
     };
   }
 
@@ -330,7 +330,7 @@ export class InteractiveMorphInspector extends Morph {
   }
 }
 
-class KeyframeButton extends Morph {
+class KeyframeButton extends QinoqMorph {
   static get properties () {
     return {
       extent: {
