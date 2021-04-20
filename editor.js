@@ -409,11 +409,10 @@ export class InteractivesEditor extends QinoqMorph {
 
   cutMorph (morphToCut) {
     this.copyMorph(morphToCut);
-    // TODO: what happens when there is special behavior on abandon?
-    this.removeMorphFromInteractive(morphToCut);
+    this.removeMorphFromInteractive(morphToCut, true);
   }
 
-  removeMorphFromInteractive (morph) {
+  removeMorphFromInteractive (morph, doNotAbandon = false) {
     disconnect(morph, 'onAbandon', this, 'removeMorphFromInteractive');
     const sequenceOfMorph = Sequence.getSequenceOfMorph(morph);
     const tab = this.getTabFor(sequenceOfMorph);
@@ -424,7 +423,8 @@ export class InteractivesEditor extends QinoqMorph {
     if (this.inspector.targetMorph == morph) {
       this.inspector.deselect();
     }
-    sequenceOfMorph.abandonMorph(morph);
+    if (doNotAbandon) morph.remove();
+    else sequenceOfMorph.abandonMorph(morph);
   }
 
   get inputFieldClasses () {
