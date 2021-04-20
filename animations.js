@@ -113,6 +113,14 @@ class Animation {
     }
     return values;
   }
+
+  copy () {
+    const copiedAnimation = createAnimationForPropertyType(this.type, this.target, this.property);
+    copiedAnimation.useRelativeValues = this.useRelativeValues;
+    const copiedKeyframes = this.keyframes.map(keyframe => keyframe.copy());
+    copiedAnimation.addKeyframes(copiedKeyframes);
+    return copiedAnimation;
+  }
 }
 
 export function createAnimationForPropertyType (propType, targetMorph, property) {
@@ -148,6 +156,10 @@ export class Keyframe {
 
   static get possibleEasings () {
     return Object.keys(easings);
+  }
+
+  copy () {
+    return new Keyframe(this.position, this.value, { name: this.name, easing: this.easingName });
   }
 }
 
