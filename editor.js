@@ -401,6 +401,18 @@ export class InteractivesEditor extends QinoqMorph {
     newLayer.redraw();
   }
 
+  copyMorph (morphToCopy) {
+    const sequenceOfMorph = Sequence.getSequenceOfMorph(morphToCopy);
+    const animationsToCopy = sequenceOfMorph.getAnimationsForMorph(morphToCopy);
+    this.clipboard = { morph: morphToCopy, animations: animationsToCopy };
+  }
+
+  cutMorph (morphToCut) {
+    this.copyMorph(morphToCut);
+    // TODO: what happens when there is special behavior on abandon?
+    this.removeMorphFromInteractive(morphToCut);
+  }
+
   removeMorphFromInteractive (morph) {
     disconnect(morph, 'onAbandon', this, 'removeMorphFromInteractive');
     const sequenceOfMorph = Sequence.getSequenceOfMorph(morph);
@@ -577,7 +589,6 @@ export class InteractivesEditor extends QinoqMorph {
       animation.target = copiedMorph;
       this.currentSequence.addAnimation(animation);
     });
-    debugger;
     const layer = this.displayedTimeline.getTimelineLayerForMorph(copiedMorph);
     this.displayedTimeline.addTimelineKeyframesForLayer(layer);
   }
