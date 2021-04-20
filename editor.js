@@ -561,13 +561,23 @@ export class InteractivesEditor extends QinoqMorph {
 
   pasteMorphFromClipboard () {
     const { morph, animations } = this.clipboard;
+
+    // morph.copy also copied connections
+    // this is undesirable for us which is why we copy the morph without connections
+    // and restore the original ones later
+    // TODO: only filter our connections, maybe some are wanted
+    const connections = morph.attributeConnections;
+    morph.attributeConnections = [];
     const copiedMorph = morph.copy();
+    morph.attributeConnections = connections;
+
     this.addMorphToInteractive(copiedMorph);
     const copiedAnimations = animations.map(animation => animation.copy());
     copiedAnimations.forEach((animation) => {
       animation.target = copiedMorph;
       this.currentSequence.addAnimation(animation);
     });
+    debugger;
     const layer = this.displayedTimeline.getTimelineLayerForMorph(copiedMorph);
     this.displayedTimeline.addTimelineKeyframesForLayer(layer);
   }
