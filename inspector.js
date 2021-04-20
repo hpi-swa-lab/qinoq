@@ -389,10 +389,10 @@ class KeyframeButton extends Morph {
     this.animation = this.sequence.getAnimationForMorphProperty(this.target, this.property);
   }
 
-  onMouseUp () {
+  async onMouseUp () {
     this.mode = 'activated';
     const newKeyframe = new Keyframe(this.sequence.progress, this.currentValue);
-    this.animation = this.sequence.addKeyframeForMorph(newKeyframe, this.target, this.property, this.propType);
+    this.animation = await this.sequence.addKeyframeForMorph(newKeyframe, this.target, this.property, this.propType);
     if (this.animation.useRelativeValues && this.propType == 'point') {
       newKeyframe.value = pt(this.currentValue.x / this.sequence.width, this.currentValue.y / this.sequence.height);
     }
