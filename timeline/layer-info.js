@@ -155,18 +155,6 @@ export class TimelineLayerInfo extends QinoqMorph {
     }
   }
 
-  copyMorph (morphToCopy) {
-    const sequenceOfMorph = Sequence.getSequenceOfMorph(morphToCopy);
-    const animationsToCopy = sequenceOfMorph.getAnimationsForMorph(morphToCopy);
-    this.editor.clipboard = { morph: morphToCopy, animations: animationsToCopy };
-  }
-
-  cutMorph (morphToCut) {
-    this.copyMorph(morphToCut);
-    // TODO: what happens when there is special behavior on abandon
-    this.editor.removeMorphFromInteractive(morphToCut);
-  }
-
   menuItems () {
     const menuOptions = [];
     if (this.isInGlobalTimeline) {
