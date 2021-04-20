@@ -1,11 +1,11 @@
-import { Morph } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
 import { pt } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';
 import { singleSelectKeyPressed } from '../keys.js';
 import { getColorForProperty } from '../properties.js';
+import { QinoqMorph } from '../qinoq-morph.js';
 
-export class TimelineKeyframe extends Morph {
+export class TimelineKeyframe extends QinoqMorph {
   static get properties () {
     return {
       extent: {
@@ -53,7 +53,6 @@ export class TimelineKeyframe extends Morph {
         defaultValue: true
       },
       layer: {},
-      _editor: {},
       _lockModelUpdate: {
         after: ['animation', '_editor', '_keyframe'],
         defaultValue: true,

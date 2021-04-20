@@ -1,11 +1,13 @@
-import { Morph, Polygon, Label } from 'lively.morphic';
+import { Polygon, Morph, Label } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
 import { pt, LinearGradient, rect } from 'lively.graphics';
 import { connect, disconnect, disconnectAll } from 'lively.bindings';
 import { CONSTANTS } from './constants.js';
 import { arr } from 'lively.lang';
 import { singleSelectKeyPressed, rangeSelectKeyPressed } from '../keys.js';
-export class TimelineSequence extends Morph {
+import { QinoqMorph } from '../qinoq-morph.js';
+
+export class TimelineSequence extends QinoqMorph {
   static get properties () {
     return {
       acceptsDrops: {
