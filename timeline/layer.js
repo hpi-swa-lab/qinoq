@@ -261,7 +261,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
   }
 
   onNumberOfKeyframesChanged () {
-    this.layerInfo.onNumberOfKeyframesInLayerChanged(this.numberOfKeyframes);
+    this.layerInfo.onNumberOfKeyframesInLayerChanged(this.containsKeyframes);
   }
 
   async redraw () {
