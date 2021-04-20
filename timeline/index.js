@@ -11,7 +11,7 @@ import { COLOR_SCHEME } from '../colors.js';
 import { arr } from 'lively.lang';
 import { ListPrompt } from 'lively.components/prompts.js';
 import { singleSelectKeyPressed, zoomKeyPressed } from '../keys.js';
-import { Keyframe, Sequence } from './index.js';
+import { Sequence, Keyframe } from '../index.js';
 
 export class Timeline extends Morph {
   static get properties () {
