@@ -183,7 +183,7 @@ export class InteractiveMorphInspector extends Morph {
 
   disbandConnections () {
     if (this.targetMorph) {
-      disconnect(this, 'targetMorph', this.ui.headline, 'textString');
+      disconnect(this.targetMorph, 'name', this.ui.headline, 'textString');
       const sequenceOfTarget = this.sequence;
       this.displayedProperties.forEach(inspectedProperty => {
         this.propertyControls[inspectedProperty].keyframe.remove();
