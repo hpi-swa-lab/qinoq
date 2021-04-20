@@ -181,9 +181,9 @@ export class TimelineLayerInfo extends QinoqMorph {
       menuOptions.push(['❌ Remove morph', async () => await this.abandonMorph()]);
       menuOptions.push(['✏️ Rename morph', async () => await this.promptMorphName()]);
       menuOptions.push(['▭ Show halo for morph', () => $world.showHaloFor(this.morph)]);
-      menuOptions.push(['🗐 Copy Morph', () => this.copyMorph(this.morph)]);
-      menuOptions.push(['✂️ Cut Morph', () => this.cutMorph(this.morph)]);
       if (this.timelineLayer.isOverviewLayer) {
+        menuOptions.push(['🗐 Copy Morph', () => this.editor.copyMorph(this.morph)]);
+        menuOptions.push(['✂️ Cut Morph', () => this.editor.cutMorph(this.morph)]);
         if (!this.timelineLayer.isExpanded) {
           menuOptions.push(['➕ Expand view', () => this.timelineLayer.isExpanded = true]);
         } else {
