@@ -51,7 +51,6 @@ export class InteractiveMorphInspector extends QinoqMorph {
           }
 
           if (morph && morph != this.targetMorph) {
-            debugger;
             this.disbandConnections();
             this.setProperty('targetMorph', morph);
             this.ui.headline.textString = `Inspecting ${morph.toString()}`;
