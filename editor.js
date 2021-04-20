@@ -201,6 +201,7 @@ export class InteractivesEditor extends Morph {
 
     disconnect(this.interactive, 'name', this.globalTab, 'caption');
     disconnect(this.interactive, 'onLengthChange', this.globalTimeline, '_activeAreaWidth');
+    disconnect(this.interactive, '_length', this.menuBar.ui.scrollPositionInput.max);
 
     disconnect(this.globalTab, 'caption', this.interactive, 'name');
 
