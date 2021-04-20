@@ -833,6 +833,13 @@ export class SequenceTimeline extends Timeline {
     this.zoomFactor = 1;
   }
 
+  menuItems () {
+    const menuItems = [];
+    // TODO: make clipboard class
+    if (this.editor.clipboard)menuItems.push(['✏️ Paste Morph', () => this.editor.pasteMorphFromClipboard()]);
+    return menuItems;
+  }
+
   abandon (bool) {
     disconnect(this.sequence, 'name', this, 'name');
     super.abandon(bool);

@@ -2,6 +2,7 @@ import { VerticalLayout, Icon, Label } from 'lively.morphic';
 import { CONSTANTS } from './constants.js';
 import { pt } from 'lively.graphics';
 import { COLOR_SCHEME } from '../colors.js';
+import { Sequence } from 'qinoq';
 import { QinoqMorph } from '../qinoq-morph.js';
 
 export class TimelineLayerInfo extends QinoqMorph {
@@ -154,6 +155,14 @@ export class TimelineLayerInfo extends QinoqMorph {
     }
   }
 
+  cutMorph (morphToCut) {
+    const sequenceOfMorph = Sequence.getSequenceOfMorph(morphToCut);
+    const animationsToCopy = sequenceOfMorph.getAnimationsForMorph(morphToCut);
+    this.editor.clipboard = { morph: morphToCut, animations: animationsToCopy };
+    // TODO: what happens when there is special behavior on abandon
+    this.editor.removeMorphFromInteractive(morphToCut);
+  }
+
   menuItems () {
     const menuOptions = [];
     if (this.isInGlobalTimeline) {
@@ -180,6 +189,8 @@ export class TimelineLayerInfo extends QinoqMorph {
       menuOptions.push(['❌ Remove morph', async () => await this.abandonMorph()]);
       menuOptions.push(['✏️ Rename morph', async () => await this.promptMorphName()]);
       menuOptions.push(['▭ Show halo for morph', () => $world.showHaloFor(this.morph)]);
+      // menuOptions.push(['🗐 Copy Morph', () => this.copyMorph(this.morph)]);
+      menuOptions.push(['✂️ Cut Morph', () => this.cutMorph(this.morph)]);
       if (this.timelineLayer.isOverviewLayer) {
         if (!this.timelineLayer.isExpanded) {
           menuOptions.push(['➕ Expand view', () => this.timelineLayer.isExpanded = true]);

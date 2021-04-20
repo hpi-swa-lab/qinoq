@@ -394,10 +394,11 @@ export class InteractivesEditor extends QinoqMorph {
     this.currentSequence.addMorph(morph);
     this.inspector.targetMorph = morph;
     this.displayedTimeline._createOverviewLayers = true;
-    this.displayedTimeline.createOverviewTimelineLayer(morph);
+    const newLayer = this.displayedTimeline.createOverviewTimelineLayer(morph);
     this.displayedTimeline._createOverviewLayers = false;
     this.displayedTimeline.onActiveAreaWidthChange();
     connect(morph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' });
+    newLayer.redraw();
   }
 
   removeMorphFromInteractive (morph) {
@@ -556,6 +557,14 @@ export class InteractivesEditor extends QinoqMorph {
 
   onHoverOut () {
     config.altClickDefinesThat = this._altClickDefinesThatStorage;
+  }
+
+  pasteMorphFromClipboard () {
+    const { morph, animations } = this.clipboard;
+    this.addMorphToInteractive(morph);
+    animations.forEach((animation) => this.currentSequence.addAnimation(animation));
+    const layer = this.displayedTimeline.getTimelineLayerForMorph(morph);
+    this.displayedTimeline.addTimelineKeyframesForLayer(layer);
   }
 
   __after_deserialize__ (snapshot, ref, pool) {
