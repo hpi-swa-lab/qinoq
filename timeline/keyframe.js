@@ -73,6 +73,7 @@ export class TimelineKeyframe extends Morph {
         defaultValue: 2
       },
       easing: {
+        after: ['layer'],
         set (easing) {
           this.setProperty('easing', easing);
           this.keyframe.setEasing(this.easing);

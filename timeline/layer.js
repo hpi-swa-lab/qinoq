@@ -283,10 +283,11 @@ export class SequenceTimelineLayer extends TimelineLayer {
       }));
     } else {
       animation.keyframes.forEach(keyframe => {
-        const timelineKeyframe = this.addMorph(new TimelineKeyframe({ _editor: this.editor, _keyframe: keyframe, animation }));
+        const timelineKeyframe = this.addMorph(new TimelineKeyframe({ _editor: this.editor, layer: this, _keyframe: keyframe, animation }));
         timelineKeyframe.updatePosition();
       });
     }
+    this.onNumberOfKeyframesChanged();
   }
 
   onNumberOfKeyframesChanged () {
@@ -489,6 +490,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
 
   updateTimelineKeyframes () {
     this.removeKeyframeLines();
+    this.onNumberOfKeyframesChanged();
     this.addTimelineKeyframes();
   }
 }
