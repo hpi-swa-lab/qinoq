@@ -13,7 +13,13 @@ const CONSTANTS = {
   PROMPT_BORDER_RADIUS: 5,
   HEAD_FONT_SIZE: 20,
   SECONDARY_FONT_SIZE: 15,
-  CURVE_WIDTH: 2
+  CURVE_WIDTH: 2,
+  SELECTION_PANE_HEIGHT_RATIO: 0.72,
+  SELECTION_PANE_BORDER_WIDTH: 1,
+  PROMPT_DEFAULT_EXTENT: pt(480, 630),
+  LIST_ITEM_HEIGHT: 70,
+  IMAGE_EXTENT: pt(50, 50),
+  LIST_ITEM_LABEL_EXTENT: pt(100, 20)
 };
 
 export class EasingSelection extends Morph {
@@ -32,7 +38,7 @@ export class EasingSelection extends Morph {
         defaultValue: new ShadowObject(true)
       },
       extent: {
-        defaultValue: pt(480, 630)
+        defaultValue: CONSTANTS.PROMPT_DEFAULT_EXTENT
       },
       selection: {},
       listItems: {
@@ -91,16 +97,20 @@ export class EasingSelection extends Morph {
       fill: COLOR_SCHEME.BACKGROUND,
       borderColor: COLOR_SCHEME.ON_BACKGROUND_VARIANT,
       borderStyle: 'solid',
-      borderWidth: 1,
+      borderWidth: CONSTANTS.SELECTION_PANE_BORDER_WIDTH,
       name: 'selection pane',
-      extent: pt(430, 464),
+      height: this.height * CONSTANTS.SELECTION_PANE_HEIGHT_RATIO,
       clipMode: 'auto'
     });
     this.ui.selectionPane.layout = new VerticalLayout(
       {
-        autoResize: false
+        autoResize: false,
+        resizeSubmorphs: true
       });
+
     this.addMorph(this.ui.selectionPane);
+    // The following line allows disabling of horizontal scroll bar
+    // this.env.renderer.getNodeForMorph(this).style.cssText += 'overflow-x: hidden !important;'
   }
 
   buildConfirmPane () {
@@ -312,8 +322,8 @@ export class EasingListItem extends Morph {
         defaultValue: 'linear'
       },
       browser: {},
-      extent: {
-        defaultValue: pt(430, 70)
+      height: {
+        defaultValue: CONSTANTS.LIST_ITEM_HEIGHT
       },
       ui: {
         after: ['easing'],
@@ -345,10 +355,10 @@ export class EasingListItem extends Morph {
       autoResize: false,
       align: 'center'
     });
-    this.ui.label = new Label({ textString: this.easing, fontSize: CONSTANTS.SECONDARY_FONT_SIZE, extent: pt(100, 20) });
+    this.ui.label = new Label({ textString: this.easing, fontSize: CONSTANTS.SECONDARY_FONT_SIZE, extent: CONSTANTS.LIST_ITEM_LABEL_EXTENT });
     this.addMorph(this.ui.label);
     this.ui.easingImage = EasingSelection.getImageForEasing(this.easing, {
-      extent: pt(50, 50)
+      extent: CONSTANTS.IMAGE_EXTENT
     });
     this.addMorph(await this.ui.easingImage);
     return this;
