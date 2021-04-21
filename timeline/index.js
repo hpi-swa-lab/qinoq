@@ -716,7 +716,6 @@ export class SequenceTimeline extends Timeline {
     const easingSelection = EasingSelection.init({ label: `Set Easing for the ${this.selectedTimelineKeyframes.length} selected Keyframe(s)` });
     if (!multipleKeyframesSelected) {
       const preselectIndex = Keyframe.possibleEasings.indexOf(this.selectedTimelineKeyframes[0].keyframe.easingName);
-      console.log(easingSelection);
       easingSelection.morph.selectByIndex(preselectIndex);
     }
     const result = await easingSelection.promise;

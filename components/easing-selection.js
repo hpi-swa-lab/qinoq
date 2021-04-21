@@ -7,12 +7,13 @@ import { Button } from 'lively.components';
 import { promise } from 'lively.lang';
 import { SearchField } from 'lively.components/widgets.js';
 import { connect } from 'lively.bindings';
+import { COLOR_SCHEME } from '../colors.js';
 
 export class EasingSelection extends Morph {
   static get properties () {
     return {
       fill: {
-        defaultValue: Color.rgb(236, 240, 241)
+        defaultValue: COLOR_SCHEME.PROMPT_BACKGROUND
       },
       borderRadius: {
         defaultValue: 4
@@ -52,15 +53,15 @@ export class EasingSelection extends Morph {
     this.ui = {};
     this.ui.headline = new Label({ textString: this.label, fontSize: 19 });
     this.addMorph(this.ui.headline);
-    this.ui.searchField = new SearchField({ fontColor: Color.black });
+    this.ui.searchField = new SearchField({ fontColor: COLOR_SCHEME.ON_BACKGROUND });
 
     connect(this.ui.searchField, 'onChange', this, 'onFilterChange');
 
     this.addMorph(this.ui.searchField);
     this.ui.selectionPane = new Morph({
       borderRadius: 4,
-      fill: Color.white,
-      borderColor: Color.rgb(131, 145, 146),
+      fill: COLOR_SCHEME.BACKGROUND,
+      borderColor: COLOR_SCHEME.ON_BACKGROUND_VARIANT,
       borderStyle: 'solid',
       borderWidth: 1,
       name: 'selection pane',
@@ -73,7 +74,7 @@ export class EasingSelection extends Morph {
       });
     this.addMorph(this.ui.selectionPane);
     this.initListItems();
-    this.ui.confirmPane = new Morph({ extent: pt(400, 100), fill: Color.transparent });
+    this.ui.confirmPane = new Morph({ extent: pt(400, 100), fill: COLOR_SCHEME.TRANSPARENT });
     this.addMorph(this.ui.confirmPane);
     this.ui.confirmPane.layout = new HorizontalLayout({ spacing: 20 });
     this.ui.okButton = new Button({ label: 'Ok', master: 'styleguide://SystemPrompts/green button' });
@@ -239,7 +240,7 @@ export class EasingSelection extends Morph {
     c.openInWorld();
     await c.whenRendered();
     const easing = stringToEasing(easings[easingName]);
-    const style = { color: Color.black };
+    const style = { width: 2, color: COLOR_SCHEME.SECONDARY };
 
     const values = [];
     const samples = 200;
@@ -271,9 +272,6 @@ export class EasingSelection extends Morph {
 export class EasingListItem extends Morph {
   static get properties () {
     return {
-      fill: {
-        defaultValue: Color.white
-      },
       borderRadius: {
         defaultValue: 4
       },
@@ -326,13 +324,13 @@ export class EasingListItem extends Morph {
   updateStyle () {
     switch (this.styleSet) {
       case 'default':
-        this.fill = Color.white;
+        this.fill = COLOR_SCHEME.BACKGROUND;
         break;
       case 'hover':
-        this.fill = Color.rgb(229, 231, 233);
+        this.fill = COLOR_SCHEME.SURFACE_VARIANT;
         break;
       case 'selected':
-        this.fill = Color.rgb(133, 193, 233);
+        this.fill = COLOR_SCHEME.PRIMARY_LIGHTER;
         break;
     }
   }

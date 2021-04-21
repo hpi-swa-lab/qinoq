@@ -3,6 +3,7 @@ import { string } from 'lively.lang';
 export const COLOR_SCHEME = {
   PRIMARY: Color.rgb(0, 176, 255),
   PRIMARY_VARIANT: Color.rgb(0, 72, 255),
+  PRIMARY_LIGHTER: Color.rgb(133, 193, 233),
   SECONDARY: Color.rgb(240, 100, 0),
   SECONDARY_VARIANT: Color.rgb(255, 160, 92),
   ON_SECONDARY: Color.white,
@@ -10,6 +11,7 @@ export const COLOR_SCHEME = {
   BACKGROUND_VARIANT: Color.rgb(200, 200, 200),
   ON_BACKGROUND: Color.black,
   ON_BACKGROUND_VARIANT: Color.rgb(220, 220, 220),
+  PROMPT_BACKGROUND: Color.rgb(236, 240, 241),
   SURFACE: Color.white,
   SURFACE_VARIANT: Color.rgb(220, 220, 220),
   ON_SURFACE: Color.black,
