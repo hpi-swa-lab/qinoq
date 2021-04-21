@@ -1,6 +1,6 @@
 /* global it, describe, beforeEach */
 import { expect } from 'mocha-es6';
-import { Layer } from 'qinoq';
+import { Layer, Interactive } from 'qinoq';
 
 describe('Layer object', () => {
   let layer;
@@ -16,5 +16,15 @@ describe('Layer object', () => {
   it('is not equal to another layer', () => {
     const anotherLayer = new Layer();
     expect(layer.equals(anotherLayer)).to.be.false;
+  });
+
+  it('hides sequences when hidden', () => {
+    const interactive = Interactive.base();
+    const sequenceInInteractive = interactive.sequences[0];
+    const layerInInteractive = sequenceInInteractive.layer;
+    expect(interactive.layers).to.include(layerInInteractive);
+    expect(sequenceInInteractive.isDisplayed()).to.be.ok;
+    layerInInteractive.hidden = true;
+    expect(sequenceInInteractive.isDisplayed()).to.not.be.ok;
   });
 });
