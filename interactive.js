@@ -555,7 +555,11 @@ export class Sequence extends Morph {
         }
       },
       hidden: {
-        defaultValue: false
+        defaultValue: false,
+        set (hidden) {
+          this.setProperty('hidden', hidden);
+          this.interactive.redraw();
+        }
       }
     };
   }

@@ -517,10 +517,9 @@ export class GlobalTimeline extends Timeline {
     const undo = this.undoStart('sequence-visibility');
     this.selectedSequences.forEach(timelineSequence => {
       undo.addTarget(timelineSequence);
-      timelineSequence.sequence.toggleHide();
+      timelineSequence.hidden = !timelineSequence.hidden;
     });
     this.undoStop('sequence-visibility');
-    this.editor.interactive.redraw();
   }
 
   async promptRenameForSelection () {
