@@ -7,33 +7,6 @@ import { COLOR_SCHEME } from './colors.js';
 import { arr } from 'lively.lang';
 
 export class Interactive extends Morph {
-  static async example () {
-    const interactive = new Interactive();
-
-    const foregroundLayer = Layer.exampleForegroundLayer();
-    const middleLayer = Layer.exampleMiddleLayer();
-    const backgroundLayer = Layer.exampleBackgroundLayer();
-
-    const { backgroundDayExample, backgroundNightExample, treeExample, skyExample } = await System.import('qinoq/example.js');
-    const day = backgroundDayExample();
-    day.layer = backgroundLayer;
-    const night = backgroundNightExample();
-    night.layer = backgroundLayer;
-    const tree = treeExample();
-    tree.layer = middleLayer;
-    const sky = skyExample();
-    sky.layer = foregroundLayer;
-    interactive.addLayer(backgroundLayer);
-    interactive.addLayer(middleLayer);
-    interactive.addLayer(foregroundLayer);
-    interactive.addSequence(day);
-    interactive.addSequence(night);
-    interactive.addSequence(tree);
-    interactive.addSequence(sky);
-    interactive.redraw();
-    return interactive;
-  }
-
   static base () {
     const interactive = new Interactive();
     const foregroundLayer = Layer.exampleForegroundLayer();
@@ -452,18 +425,6 @@ class InteractiveScrollHolder extends Morph {
 }
 
 export class Layer {
-  static exampleBackgroundLayer () {
-    return new Layer({ name: 'Background' });
-  }
-
-  static exampleMiddleLayer () {
-    return new Layer({ name: 'Middle', zIndex: 10 });
-  }
-
-  static exampleForegroundLayer () {
-    return new Layer({ name: 'Foreground', zIndex: 20 });
-  }
-
   set zIndex (zIndex) {
     this._zIndex = zIndex;
     if (this.interactive) {
