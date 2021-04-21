@@ -1,10 +1,12 @@
-import { Morph, HorizontalLayout, Text, Label, VerticalLayout, easings, stringToEasing } from 'lively.morphic';
+import { Morph, HorizontalLayout, Label, VerticalLayout, easings, stringToEasing } from 'lively.morphic';
 import { pt, Color } from 'lively.graphics';
-import { ListPrompt } from 'lively.components/prompts.js';
+
 import { Canvas } from 'lively.components/canvas.js';
 import { Keyframe } from 'qinoq';
 import { Button } from 'lively.components';
 import { promise } from 'lively.lang';
+import { ShadowObject } from '../../lively.morphic/rendering/morphic-default.js';
+import { SearchField } from 'lively.components/widgets.js';
 
 export class EasingBrowser extends Morph {
   static get properties () {
@@ -15,8 +17,14 @@ export class EasingBrowser extends Morph {
       borderRadius: {
         defaultValue: 4
       },
+      draggable: {
+        defaultValue: true
+      },
+      dropShadow: {
+        defaultValue: new ShadowObject(true)
+      },
       extent: {
-        defaultValue: pt(480, 600)
+        defaultValue: pt(480, 630)
       },
       selection: {},
       ui: {
@@ -37,6 +45,8 @@ export class EasingBrowser extends Morph {
     this.ui = {};
     this.ui.headline = new Label({ textString: 'Select Easing', fontSize: 19 });
     this.addMorph(this.ui.headline);
+    this.ui.searchField = new SearchField({ fontColor: Color.black });
+    this.addMorph(this.ui.searchField);
     this.ui.selectionPane = new Morph({
       borderRadius: 4,
       fill: Color.white,
