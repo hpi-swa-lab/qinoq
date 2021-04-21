@@ -604,7 +604,7 @@ export class InteractivesEditor extends QinoqMorph {
   }
 }
 
-class Clipboard {
+export class Clipboard {
   addMorph (morph, animations) {
     this.morph = morph;
     this.animations = animations;
@@ -612,6 +612,7 @@ class Clipboard {
 
   get content () {
     if (this.containsMorph) return { morph: this.morph, animations: this.animations };
+    return null;
   }
 
   get containsMorph () {
