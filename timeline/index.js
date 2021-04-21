@@ -9,10 +9,11 @@ import { CONSTANTS } from './constants.js';
 import { TimelineLayerInfo } from './layer-info.js';
 import { COLOR_SCHEME } from '../colors.js';
 import { arr } from 'lively.lang';
-import { ListPrompt } from 'lively.components/prompts.js';
+
 import { singleSelectKeyPressed, zoomKeyPressed } from '../keys.js';
 import { Sequence, Keyframe } from '../index.js';
 import { getColorForProperty } from '../properties.js';
+import { EasingSelection } from '../components/easing-selection.js';
 
 export class Timeline extends Morph {
   static get properties () {
@@ -712,16 +713,15 @@ export class SequenceTimeline extends Timeline {
   }
 
   async promptEasingForSelection (multipleKeyframesSelected) {
-    const possibleEasings = Keyframe.possibleEasings;
-    const listPrompt = new ListPrompt({ label: `Set Easing for the ${this.selectedTimelineKeyframes.length} selected Keyframe(s)`, items: possibleEasings, filterable: true });
-    listPrompt.preselect = false;
+    const easingSelection = EasingSelection.init({ label: `Set Easing for the ${this.selectedTimelineKeyframes.length} selected Keyframe(s)` });
     if (!multipleKeyframesSelected) {
-      const preselectIndex = possibleEasings.indexOf(this.selectedTimelineKeyframes[0].keyframe.easingName);
-      listPrompt.preselect = preselectIndex; // TODO: Make this work consistently (fails sometimes because building listprompt is not done yet (whenRendered is no option, this takes a few seconds))
+      const preselectIndex = Keyframe.possibleEasings.indexOf(this.selectedTimelineKeyframes[0].keyframe.easingName);
+      console.log(easingSelection);
+      easingSelection.morph.selectByIndex(preselectIndex);
     }
-    const result = await $world.openPrompt(listPrompt);
-    if (result.selected.length > 0) {
-      this.setEasingForSelection(result.selected[0]);
+    const result = await easingSelection.promise;
+    if (result) {
+      this.setEasingForSelection(result);
     }
   }
 

@@ -8,7 +8,7 @@ import { promise } from 'lively.lang';
 import { SearchField } from 'lively.components/widgets.js';
 import { connect } from 'lively.bindings';
 
-export class EasingBrowser extends Morph {
+export class EasingSelection extends Morph {
   static get properties () {
     return {
       fill: {
@@ -30,7 +30,11 @@ export class EasingBrowser extends Morph {
       listItems: {
 
       },
+      label: {
+        defaultValue: 'Select easing'
+      },
       ui: {
+        after: ['label'],
         initialize () {
           this.initialize();
         }
@@ -46,7 +50,7 @@ export class EasingBrowser extends Morph {
       resizeSubmorphs: true
     });
     this.ui = {};
-    this.ui.headline = new Label({ textString: 'Select Easing', fontSize: 19 });
+    this.ui.headline = new Label({ textString: this.label, fontSize: 19 });
     this.addMorph(this.ui.headline);
     this.ui.searchField = new SearchField({ fontColor: Color.black });
 
@@ -193,6 +197,10 @@ export class EasingBrowser extends Morph {
     item.styleSet = 'selected';
   }
 
+  selectByIndex (index) {
+    this.select(this.listItems[index]);
+  }
+
   itemIsVisible (item) {
     const visibleTop = this.ui.selectionPane.scroll.y;
     const visibleBottom = visibleTop + this.ui.selectionPane.height;
@@ -214,8 +222,8 @@ export class EasingBrowser extends Morph {
     return this.answer.resolve(arg);
   }
 
-  static async prompt () {
-    const e = new EasingBrowser();
+  static init () {
+    const e = new EasingSelection();
     e.openInWorld();
     e.answer = {};
     const promise = new Promise((resolve, reject) => {
@@ -223,7 +231,7 @@ export class EasingBrowser extends Morph {
       e.answer.reject = reject;
     });
     e.focus();
-    return promise;
+    return { morph: e, promise };
   }
 
   static async getImageForEasing (easingName, props = {}) {
@@ -307,7 +315,7 @@ export class EasingListItem extends Morph {
     });
     this.ui.label = new Label({ textString: this.easing, fontSize: 15, extent: pt(100, 20) });
     this.addMorph(this.ui.label);
-    this.ui.easingImage = EasingBrowser.getImageForEasing(this.easing, {
+    this.ui.easingImage = EasingSelection.getImageForEasing(this.easing, {
       extent: pt(50, 50),
       position: pt(200, 10)
     });
