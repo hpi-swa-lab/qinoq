@@ -44,13 +44,13 @@ export class EasingSelection extends Morph {
       ui: {
         after: ['label'],
         initialize () {
-          this.initialize();
+          this.initializeUI();
         }
       }
     };
   }
 
-  initialize () {
+  initializeUI () {
     this.layout = new VerticalLayout({
       spacing: 10,
       align: 'center',
@@ -58,11 +58,22 @@ export class EasingSelection extends Morph {
       resizeSubmorphs: true
     });
     this.ui = {};
+    this.buildHeadline();
+    this.buildSearchField();
+    this.buildSelectionPane();
+    this.initializeListItems();
+    this.buildConfirmPane();
+  }
+
+  buildHeadline () {
     this.ui.headline = new Label({
       textString: this.label,
       fontSize: CONSTANTS.HEAD_FONT_SIZE
     });
     this.addMorph(this.ui.headline);
+  }
+
+  buildSearchField () {
     this.ui.searchField = new SearchField({
       borderRadius: CONSTANTS.PROMPT_BORDER_RADIUS,
       fontColor: COLOR_SCHEME.ON_BACKGROUND,
@@ -72,6 +83,9 @@ export class EasingSelection extends Morph {
     connect(this.ui.searchField, 'onChange', this, 'onFilterChange');
 
     this.addMorph(this.ui.searchField);
+  }
+
+  buildSelectionPane () {
     this.ui.selectionPane = new Morph({
       borderRadius: CONSTANTS.PROMPT_BORDER_RADIUS,
       fill: COLOR_SCHEME.BACKGROUND,
@@ -87,7 +101,9 @@ export class EasingSelection extends Morph {
         autoResize: false
       });
     this.addMorph(this.ui.selectionPane);
-    this.initListItems();
+  }
+
+  buildConfirmPane () {
     this.ui.confirmPane = new Morph({
       extent: pt(400, 100),
       fill: COLOR_SCHEME.TRANSPARENT
@@ -102,7 +118,7 @@ export class EasingSelection extends Morph {
     this.ui.confirmPane.addMorph(this.ui.cancelButton);
   }
 
-  initListItems () {
+  initializeListItems () {
     const possibleEasings = this.selectionKeys;
     possibleEasings.forEach(easing => {
       const listItem = new EasingListItem({ easing, browser: this });
