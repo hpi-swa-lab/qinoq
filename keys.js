@@ -9,3 +9,11 @@ export function rangeSelectKeyPressed (event) {
 export function zoomKeyPressed (event) {
   return event.isCtrlDown();
 }
+
+export function arrowRightPressed (event) {
+  return event.key == 'Right';
+}
+
+export function arrowLeftPressed (event) {
+  return event.key == 'Left';
+}

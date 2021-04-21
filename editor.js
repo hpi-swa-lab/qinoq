@@ -9,6 +9,7 @@ import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
 import { Sequence, Interactive, Layer } from './index.js';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
 import { Button } from 'lively.components';
+import { arrowRightPressed, arrowLeftPressed } from './keys.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -251,6 +252,19 @@ export class InteractivesEditor extends Morph {
       { keys: 'Ctrl-A', command: 'select all sequences' },
       { keys: 'Delete', command: 'delete selected items' }
     ].concat(super.keybindings);
+  }
+
+  onKeyDown (event) {
+    super.onKeyDown(event);
+    if (arrowRightPressed(event) || arrowLeftPressed(event)) {
+      this.groupingUndo = this.env.undoManager.undoStart(this, 'group-sequence-movements');
+      this.env.undoManager.undoStop();
+    }
+  }
+
+  onKeyUp (event) {
+    if (arrowRightPressed(event) || arrowLeftPressed(event)) this.env.undoManager.group(this.groupingUndo);
+    this.groupingUndo = null;
   }
 
   get displayedTimeline () {
