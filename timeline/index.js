@@ -609,8 +609,8 @@ export class SequenceTimeline extends Timeline {
     return timelineLayer;
   }
 
-  createTimelineLayer (morph) {
-    const timelineLayer = super.createTimelineLayer(morph);
+  createTimelineLayer (morph, index = 0, name = undefined) {
+    const timelineLayer = super.createTimelineLayer(morph, index, name);
     this.ui.layerInfoContainer.submorphs[timelineLayer.index].onMouseUp = () => {
       if (morph.world()) morph.show();
       this.editor.inspector.targetMorph = morph;
@@ -647,32 +647,10 @@ export class SequenceTimeline extends Timeline {
           if (!submorph.isExpanded) {
             submorph.updateTimelineKeyframes();
           } else {
-            this.removePropertyLayers(submorph);
-            this.createPropertyLayers(submorph);
+            submorph.removePropertyLayers();
+            submorph.createPropertyLayers();
           }
         }
-      }
-    });
-  }
-
-  createPropertyLayers (timelineLayer) {
-    const morph = timelineLayer.morph;
-    const indexInLayerContainer = timelineLayer.index;
-    this.sequence.getAnimationsForMorph(morph).forEach(animation => {
-      // we assume that each sequence only holds one animation per morph per property
-      const animationLayer = super.createTimelineLayer(morph, indexInLayerContainer + 1, animation.property);
-      animationLayer.animation = animation;
-      animationLayer.addKeyframesForAnimation(animation);
-    });
-    this.onActiveAreaWidthChange();
-  }
-
-  removePropertyLayers (timelineLayer) {
-    const morph = timelineLayer.morph;
-    this.withAllSubmorphsDo(submorph => {
-      if (submorph.isTimelineLayer && submorph.morph === morph && !submorph.isOverviewLayer) {
-        submorph.layerInfo.remove();
-        submorph.remove();
       }
     });
   }

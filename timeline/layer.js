@@ -281,17 +281,30 @@ export class SequenceTimelineLayer extends TimelineLayer {
         layer: this,
         yPosition: CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * index
       }));
+      this.onNumberOfKeyframeLinesChanged();
     } else {
       animation.keyframes.forEach(keyframe => {
         const timelineKeyframe = this.addMorph(new TimelineKeyframe({ _editor: this.editor, layer: this, _keyframe: keyframe, animation }));
         timelineKeyframe.updatePosition();
       });
+      this.onNumberOfKeyframesChanged();
     }
-    this.onNumberOfKeyframesChanged();
   }
 
   onNumberOfKeyframesChanged () {
-    this.layerInfo.onNumberOfKeyframesInLayerChanged(this.containsKeyframes);
+    if (!this.containsKeyframes) {
+      this.layerInfo.abandon();
+      this.overviewLayer.onNumberOfKeyframeLinesChanged();
+      this.abandon();
+    }
+  }
+
+  get containsKeyframes () {
+    return this.numberOfKeyframes > 0;
+  }
+
+  get numberOfKeyframes () {
+    return this.keyframes.length;
   }
 
   async redraw () {
@@ -428,6 +441,9 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
             this.redraw();
           }
         }
+      },
+      propertyLayers: {
+        defaultValue: []
       }
     };
   }
@@ -453,7 +469,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     this.updateTooltip();
     this.reactsToPointer = true;
     this.addTimelineKeyframes();
-    this.timeline.removePropertyLayers(this);
+    this.removePropertyLayers();
   }
 
   async redraw () {
@@ -475,24 +491,45 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     this.updateTooltip();
     this.reactsToPointer = false;
     this.removeKeyframeLines();
-    this.timeline.createPropertyLayers(this);
+    this.createPropertyLayers();
+  }
+
+  createPropertyLayers () {
+    this.propertyLayers = this.sequence.getAnimationsForMorph(this.morph).map(animation => {
+      // we assume that each sequence only holds one animation per morph per property
+      const propertyLayer = this.timeline.createTimelineLayer(this.morph, this.index + 1, animation.property);
+      propertyLayer.animation = animation;
+      propertyLayer.overviewLayer = this;
+      propertyLayer.addKeyframesForAnimation(animation);
+      return propertyLayer;
+    });
+    this.timeline.onActiveAreaWidthChange();
+  }
+
+  removePropertyLayers () {
+    this.propertyLayers.forEach(propertyLayer => {
+      propertyLayer.layerInfo.abandon();
+      propertyLayer.abandon();
+    });
   }
 
   removeKeyframeLines () {
     this.keyframeLines.forEach(keyframeLine => keyframeLine.abandon());
   }
 
-  get containsKeyframes () {
-    return this.numberOfKeyframes > 0;
+  onNumberOfKeyframeLinesChanged () {
+    const containsKeyframes = this.containsKeyframeLines || this.propertyLayers.some(propertyLayer => propertyLayer.containsKeyframes);
+    if (!containsKeyframes) this.isExpanded = false;
+    this.layerInfo.onNumberOfKeyframeLinesInLayerChanged(containsKeyframes);
   }
 
-  get numberOfKeyframes () {
-    return this.keyframeLines.length;
+  get containsKeyframeLines () {
+    return this.keyframeLines.length > 0;
   }
 
   updateTimelineKeyframes () {
     this.removeKeyframeLines();
-    this.onNumberOfKeyframesChanged();
     this.addTimelineKeyframes();
+    this.onNumberOfKeyframeLinesChanged();
   }
 }
