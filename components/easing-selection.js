@@ -222,8 +222,8 @@ export class EasingSelection extends Morph {
     return this.answer.resolve(arg);
   }
 
-  static init () {
-    const e = new EasingSelection();
+  static init (props = {}) {
+    const e = new EasingSelection(props);
     e.openInWorld();
     e.answer = {};
     const promise = new Promise((resolve, reject) => {
