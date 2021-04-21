@@ -294,10 +294,6 @@ export class Timeline extends Morph {
     this.ui.scroller.extent = pt((visiblePortion * scrollbarWidth) - (2 * CONSTANTS.SCROLLBAR_MARGIN), this.ui.scroller.extent.y);
   }
 
-  get activeArea () {
-    return this.getSubmorphNamed('active area');
-  }
-
   get isDisplayed () {
     return this === this.editor.displayedTimeline;
   }
