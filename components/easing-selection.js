@@ -1,12 +1,12 @@
-import { Morph, HorizontalLayout, Label, VerticalLayout, easings, stringToEasing } from 'lively.morphic';
+import { Morph, ShadowObject, HorizontalLayout, Label, VerticalLayout, easings, stringToEasing } from 'lively.morphic';
 import { pt, Color } from 'lively.graphics';
 
 import { Canvas } from 'lively.components/canvas.js';
 import { Keyframe } from 'qinoq';
 import { Button } from 'lively.components';
 import { promise } from 'lively.lang';
-import { ShadowObject } from '../../lively.morphic/rendering/morphic-default.js';
 import { SearchField } from 'lively.components/widgets.js';
+import { connect } from 'lively.bindings';
 
 export class EasingBrowser extends Morph {
   static get properties () {
@@ -27,6 +27,9 @@ export class EasingBrowser extends Morph {
         defaultValue: pt(480, 630)
       },
       selection: {},
+      listItems: {
+
+      },
       ui: {
         initialize () {
           this.initialize();
@@ -46,6 +49,9 @@ export class EasingBrowser extends Morph {
     this.ui.headline = new Label({ textString: 'Select Easing', fontSize: 19 });
     this.addMorph(this.ui.headline);
     this.ui.searchField = new SearchField({ fontColor: Color.black });
+
+    connect(this.ui.searchField, 'onChange', this, 'onFilterChange');
+
     this.addMorph(this.ui.searchField);
     this.ui.selectionPane = new Morph({
       borderRadius: 4,
@@ -62,7 +68,7 @@ export class EasingBrowser extends Morph {
         autoResize: false
       });
     this.addMorph(this.ui.selectionPane);
-    this.initSelectionItems();
+    this.initListItems();
     this.ui.confirmPane = new Morph({ extent: pt(400, 100), fill: Color.transparent });
     this.addMorph(this.ui.confirmPane);
     this.ui.confirmPane.layout = new HorizontalLayout({ spacing: 20 });
@@ -74,20 +80,31 @@ export class EasingBrowser extends Morph {
     this.ui.confirmPane.addMorph(this.ui.cancelButton);
   }
 
-  initSelectionItems () {
+  initListItems () {
     const possibleEasings = this.selectionKeys;
     possibleEasings.forEach(easing => {
       const listItem = new EasingListItem({ easing, browser: this });
       this.ui.selectionPane.addMorph(listItem);
     });
+    this.listItems = this.ui.selectionPane.submorphs;
   }
 
-  get selectionItems () {
+  get visibleListItems () {
     return this.ui.selectionPane.submorphs;
   }
 
   get selectionKeys () {
     return Keyframe.possibleEasings;
+  }
+
+  onFilterChange () {
+    this.listItems.forEach(listItem => {
+      if (this.ui.searchField.matches(listItem.easing)) {
+        this.ui.selectionPane.addMorph(listItem);
+      } else {
+        listItem.remove();
+      }
+    });
   }
 
   onSelectionChange (changedItem) {
@@ -101,10 +118,10 @@ export class EasingBrowser extends Morph {
     } else {
       this.selection = null;
     }
-    this.selectionItems.forEach(selectionItem => {
-      if (selectionItem.easing != this.selection) {
-        selectionItem.isSelected = false;
-        selectionItem.styleSet = 'default';
+    this.listItems.forEach(listItem => {
+      if (listItem.easing != this.selection) {
+        listItem.isSelected = false;
+        listItem.styleSet = 'default';
       }
     });
     this._inOnSelectionChange = false;
@@ -134,7 +151,7 @@ export class EasingBrowser extends Morph {
           if (!this.selection) {
             this.execCommand('go to bottom');
           } else {
-            this.select(this.selectionItems[Math.max(0, this.selectionIndex - 1)]);
+            this.select(this.visibleListItems[Math.max(0, this.selectionIndexInVisibleListItems - 1)]);
           }
         }
       },
@@ -144,27 +161,31 @@ export class EasingBrowser extends Morph {
           if (!this.selection) {
             this.execCommand('go to top');
           } else {
-            this.select(this.selectionItems[Math.min(this.selectionItems.length - 1, this.selectionIndex + 1)]);
+            this.select(this.visibleListItems[Math.min(this.visibleListItems.length - 1, this.selectionIndexInVisibleListItems + 1)]);
           }
         }
       },
       {
         name: 'go to top',
         exec: () => {
-          this.select(this.selectionItems[0]);
+          this.select(this.visibleListItems[0]);
         }
       },
       {
         name: 'go to bottom',
         exec: () => {
-          this.select(this.selectionItems[this.selectionItems.length - 1]);
+          this.select(this.visibleListItems[this.visibleListItems.length - 1]);
         }
       }
     ];
   }
 
   get selectionIndex () {
-    return this.selectionItems.findIndex(item => item.isSelected);
+    return this.listItems.findIndex(item => item.isSelected);
+  }
+
+  get selectionIndexInVisibleListItems () {
+    return this.visibleListItems.findIndex(item => item.isSelected);
   }
 
   select (item) {
