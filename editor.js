@@ -150,8 +150,8 @@ export class InteractivesEditor extends Morph {
     this.extent = pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT);
   }
 
-  createInteractive () {
-    this.interactive = Interactive.base();
+  async createInteractive () {
+    this.interactive = await Interactive.base();
   }
 
   initializeInteractive (interactive) {

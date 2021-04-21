@@ -3,7 +3,6 @@ import { Morph, Image, Ellipse, Polygon } from 'lively.morphic';
 import { Color, pt } from 'lively.graphics';
 import { LottieMorph } from './interactive-morphs/lottie-morph.js';
 
-// Exampleinteractive
 export async function exampleInteractive () {
   const interactive = new Interactive();
 
@@ -30,7 +29,7 @@ export async function exampleInteractive () {
   return interactive;
 }
 
-// Examplelayer
+// Example Layers
 export function exampleBackgroundLayer () {
   return new Layer({ name: 'Background' });
 }
@@ -43,7 +42,7 @@ export function exampleForegroundLayer () {
   return new Layer({ name: 'Foreground', zIndex: 20 });
 }
 
-// Examplesequences
+// Example Sequences
 export function backgroundNightExample () {
   const backgroundSequence = new Sequence({ name: 'night background', start: 0, duration: 250 });
   const backgroundMorph = new Morph({ fill: Color.rgbHex('272a7c'), extent: pt(533, 300), name: 'night background' });

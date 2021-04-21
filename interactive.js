@@ -7,10 +7,11 @@ import { COLOR_SCHEME } from './colors.js';
 import { arr } from 'lively.lang';
 
 export class Interactive extends Morph {
-  static base () {
+  static async base () {
     const interactive = new Interactive();
-    const foregroundLayer = Layer.exampleForegroundLayer();
-    const backgroundLayer = Layer.exampleBackgroundLayer();
+    const { exampleForegroundLayer, exampleBackgroundLayer } = await System.import('qinoq/example.js');
+    const foregroundLayer = exampleForegroundLayer();
+    const backgroundLayer = exampleBackgroundLayer();
     interactive.addLayer(backgroundLayer);
     interactive.addLayer(foregroundLayer);
 
