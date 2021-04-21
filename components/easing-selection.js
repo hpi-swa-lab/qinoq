@@ -40,6 +40,9 @@ export class EasingSelection extends Morph {
       extent: {
         defaultValue: CONSTANTS.PROMPT_DEFAULT_EXTENT
       },
+      halosEnabled: {
+        defaultValue: false
+      },
       selection: {},
       listItems: {
 
@@ -100,7 +103,8 @@ export class EasingSelection extends Morph {
       borderWidth: CONSTANTS.SELECTION_PANE_BORDER_WIDTH,
       name: 'selection pane',
       height: this.height * CONSTANTS.SELECTION_PANE_HEIGHT_RATIO,
-      clipMode: 'auto'
+      clipMode: 'auto',
+      halosEnabled: false
     });
     this.ui.selectionPane.layout = new VerticalLayout(
       {
@@ -116,7 +120,8 @@ export class EasingSelection extends Morph {
   buildConfirmPane () {
     this.ui.confirmPane = new Morph({
       extent: pt(400, 100),
-      fill: COLOR_SCHEME.TRANSPARENT
+      fill: COLOR_SCHEME.TRANSPARENT,
+      halosEnabled: false
     });
     this.addMorph(this.ui.confirmPane);
     this.ui.confirmPane.layout = new HorizontalLayout({ spacing: 20 });
@@ -324,6 +329,10 @@ export class EasingListItem extends Morph {
       browser: {},
       height: {
         defaultValue: CONSTANTS.LIST_ITEM_HEIGHT
+      },
+
+      halosEnabled: {
+        defaultValue: false
       },
       ui: {
         after: ['easing'],
