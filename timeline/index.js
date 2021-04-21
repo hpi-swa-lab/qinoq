@@ -248,10 +248,6 @@ export class Timeline extends Morph {
     timelineLayer.abandon();
   }
 
-  getLayerInfoFor (timelineLayer) {
-    return this.ui.layerInfoContainer.submorphs[timelineLayer.index];
-  }
-
   arrangeLayerInfos () {
     this.ui.layerInfoContainer.removeAllMorphs();
     const layerInfos = new Array(this.timelineLayers.length);
@@ -641,17 +637,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   getTimelineKeyframe (keyframe) {
-    return this.keyframes.find(timelineKeyframe => {
-      const timelineLayer = timelineKeyframe.layer;
-      if (timelineLayer.isOverviewLayer) {
-        if (!timelineLayer.isExpanded) {
-          return timelineKeyframe.keyframe == keyframe;
-        }
-        return false;
-      } else {
-        return timelineKeyframe.keyframe == keyframe;
-      }
-    });
+    return this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe === keyframe);
   }
 
   updateLayers () {
@@ -825,6 +811,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   scrollToTimelineKeyframe (timelineKeyframe) {
+    if (timelineKeyframe.layer.isOverviewLayer) timelineKeyframe.layer.expand();
     const scrollToX = timelineKeyframe.position.x - this.ui.layerContainer.extent.x / 2;
     this.scrollHorizontallyTo(scrollToX);
 
