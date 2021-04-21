@@ -17,7 +17,7 @@ const CONSTANTS = {
   SELECTION_PANE_HEIGHT_RATIO: 0.72,
   SELECTION_PANE_BORDER_WIDTH: 1,
   PROMPT_DEFAULT_EXTENT: pt(480, 630),
-  LIST_ITEM_HEIGHT: 70,
+  LIST_ITEM_EXTENT: pt(444, 70),
   IMAGE_EXTENT: pt(50, 50),
   LIST_ITEM_LABEL_EXTENT: pt(100, 20)
 };
@@ -108,13 +108,10 @@ export class EasingSelection extends Morph {
     });
     this.ui.selectionPane.layout = new VerticalLayout(
       {
-        autoResize: false,
-        resizeSubmorphs: true
+        autoResize: false
       });
 
     this.addMorph(this.ui.selectionPane);
-    // The following line allows disabling of horizontal scroll bar
-    // this.env.renderer.getNodeForMorph(this).style.cssText += 'overflow-x: hidden !important;'
   }
 
   buildConfirmPane () {
@@ -327,10 +324,9 @@ export class EasingListItem extends Morph {
         defaultValue: 'linear'
       },
       browser: {},
-      height: {
-        defaultValue: CONSTANTS.LIST_ITEM_HEIGHT
+      extent: {
+        defaultValue: CONSTANTS.LIST_ITEM_EXTENT
       },
-
       halosEnabled: {
         defaultValue: false
       },
