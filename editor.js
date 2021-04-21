@@ -465,7 +465,6 @@ export class InteractivesEditor extends Morph {
       tab.selected = true;
       const timeline = this.getTimelineFor(tab);
       const timelineKeyframe = timeline.getTimelineKeyframe(item);
-
       // If this line is removed, the scroll does not happen (Race issue)
       await new Promise(r => setTimeout(r, 20));
 

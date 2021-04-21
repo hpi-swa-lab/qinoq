@@ -279,7 +279,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
         _editor: this.editor,
         animation,
         layer: this,
-        y: CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * index
+        yPosition: CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * index
       }));
     } else {
       animation.keyframes.forEach(keyframe => {

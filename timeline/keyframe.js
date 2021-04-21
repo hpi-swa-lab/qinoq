@@ -173,7 +173,7 @@ export class TimelineKeyframe extends Morph {
   }
 
   onMouseUp (event) {
-    if (!this._dragged && !event.isShiftDown()) {
+    if (!this._dragged && !singleSelectKeyPressed(event)) {
       this.timeline.deselectAllTimelineKeyframesExcept(this);
     } else {
       this._dragged = false;
@@ -262,10 +262,10 @@ export class KeyframeLine extends Morph {
           this.setTooltip();
         }
       },
-      y: {
+      yPosition: {
         after: ['animation', 'layer'],
-        set (y) {
-          this.setProperty('y', y);
+        set (yPosition) {
+          this.setProperty('yPosition', yPosition);
           this.updatePosition();
         }
       },
@@ -309,6 +309,6 @@ export class KeyframeLine extends Morph {
     const start = Math.min(...this.animation.keyframes.map(keyframe => this.timeline.getPositionFromKeyframe(keyframe)));
     const end = Math.max(...this.animation.keyframes.map(keyframe => this.timeline.getPositionFromKeyframe(keyframe)));
     this.width = end - start;
-    this.position = pt(start, this.y);
+    this.position = pt(start, this.yPosition);
   }
 }
