@@ -85,6 +85,9 @@ export class EasingBrowser extends Morph {
     this._inOnSelectionChange = true;
     if (changedItem.isSelected) {
       this.selection = changedItem.easing;
+      if (!this.itemIsVisible(changedItem)) {
+        this.ui.selectionPane.scroll = pt(0, changedItem.top);
+      }
     } else {
       this.selection = null;
     }
@@ -157,6 +160,12 @@ export class EasingBrowser extends Morph {
   select (item) {
     item.isSelected = true;
     item.styleSet = 'selected';
+  }
+
+  itemIsVisible (item) {
+    const visibleTop = this.ui.selectionPane.scroll.y;
+    const visibleBottom = visibleTop + this.ui.selectionPane.height;
+    return item.top >= visibleTop && item.bottom <= visibleBottom;
   }
 
   get keybindings () {
