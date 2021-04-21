@@ -32,6 +32,7 @@ export class TimelineSequence extends QinoqMorph {
         defaultValue: 3
       },
       caption: {
+        after: ['submorphs'],
         set (caption) {
           if (!caption) return;
           this.setProperty('caption', caption);
