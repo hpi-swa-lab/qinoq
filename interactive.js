@@ -554,10 +554,10 @@ export class Sequence extends Morph {
           this.layout = new ProportionalLayout({ lastExtent: this.extent });
         }
       },
-      hidden: {
+      isHidden: {
         defaultValue: false,
-        set (hidden) {
-          this.setProperty('hidden', hidden);
+        set (isHidden) {
+          this.setProperty('isHidden', isHidden);
           if (this.interactive) this.interactive.redraw();
         }
       }
@@ -667,12 +667,8 @@ export class Sequence extends Morph {
     return this.progress >= 0 && this.progress < 1 && !this.layer.hidden && !this.isHidden;
   }
 
-  get isHidden () {
-    return this.hidden === true;
-  }
-
   toggleHide () {
-    this.hidden = !this.hidden;
+    this.isHidden = !this.isHidden;
   }
 
   get isSequence () {
