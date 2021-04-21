@@ -89,6 +89,15 @@ export class TimelineSequence extends Morph {
           this.setProperty('_editor', editor);
           this.initialize(); // _editor should be set only once
         }
+      },
+      hidden: {
+        defaultValue: false,
+        set (hidden) {
+          this.setProperty('hidden', hidden);
+          this.sequence.hidden = hidden;
+          if (hidden) this.fill = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
+          if (!hidden) this.fill = COLOR_SCHEME.BACKGROUND;
+        }
       }
     };
   }
