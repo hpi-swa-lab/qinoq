@@ -330,7 +330,7 @@ export class Timeline extends Morph {
   }
 
   zoomToFit () {
-    $world.setStatusMessage('hello');
+    throw new Error('Subclass responsibility');
   }
 }
 
@@ -582,6 +582,10 @@ export class GlobalTimeline extends Timeline {
       timelineSequence.position = pt(newPositionX, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     });
     this.undoStop();
+  }
+
+  zoomToFit () {
+
   }
 }
 
@@ -869,5 +873,9 @@ export class SequenceTimeline extends Timeline {
     if (!scrollableContainerNode) return;
     scrollableContainerNode.scrollTop = scrollTop;
     this.ui.scrollableContainer.setProperty('scroll', pt(0, scrollTop));
+  }
+
+  zoomToFit () {
+    this.zoomFactor = 1;
   }
 }
