@@ -1,7 +1,49 @@
-import { Sequence, PointAnimation, NumberAnimation, ColorAnimation, Keyframe } from './index.js';
+import { Sequence, Interactive, Layer, PointAnimation, NumberAnimation, ColorAnimation, Keyframe } from './index.js';
 import { Morph, Image, Ellipse, Polygon } from 'lively.morphic';
 import { Color, pt } from 'lively.graphics';
 import { LottieMorph } from './interactive-morphs/lottie-morph.js';
+
+// Exampleinteractive
+export async function exampleInteractive () {
+  const interactive = new Interactive();
+
+  const foregroundLayer = exampleForegroundLayer();
+  const middleLayer = exampleMiddleLayer();
+  const backgroundLayer = exampleBackgroundLayer();
+
+  const day = backgroundDayExample();
+  day.layer = backgroundLayer;
+  const night = backgroundNightExample();
+  night.layer = backgroundLayer;
+  const tree = treeExample();
+  tree.layer = middleLayer;
+  const sky = skyExample();
+  sky.layer = foregroundLayer;
+  interactive.addLayer(backgroundLayer);
+  interactive.addLayer(middleLayer);
+  interactive.addLayer(foregroundLayer);
+  interactive.addSequence(day);
+  interactive.addSequence(night);
+  interactive.addSequence(tree);
+  interactive.addSequence(sky);
+  interactive.redraw();
+  return interactive;
+}
+
+// Examplelayer
+export function exampleBackgroundLayer () {
+  return new Layer({ name: 'Background' });
+}
+
+export function exampleMiddleLayer () {
+  return new Layer({ name: 'Middle', zIndex: 10 });
+}
+
+export function exampleForegroundLayer () {
+  return new Layer({ name: 'Foreground', zIndex: 20 });
+}
+
+// Examplesequences
 export function backgroundNightExample () {
   const backgroundSequence = new Sequence({ name: 'night background', start: 0, duration: 250 });
   const backgroundMorph = new Morph({ fill: Color.rgbHex('272a7c'), extent: pt(533, 300), name: 'night background' });
