@@ -558,7 +558,7 @@ export class Sequence extends Morph {
         defaultValue: false,
         set (hidden) {
           this.setProperty('hidden', hidden);
-          this.interactive.redraw();
+          if (this.interactive) this.interactive.redraw();
         }
       }
     };

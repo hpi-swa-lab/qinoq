@@ -6,7 +6,6 @@ import { Keyframe, NumberAnimation } from '../animations.js';
 import { pt } from 'lively.graphics';
 
 describe('Sequence object', () => {
-  // TODO: test functions regarding animations
   // TODO: test focusedEffect and its setting logic
 
   let sequence;
@@ -37,6 +36,15 @@ describe('Sequence object', () => {
     expect(sequence.isDisplayed()).to.be.false;
     sequence.layer.hidden = true;
     sequence.updateProgress(0);
+    expect(sequence.isDisplayed()).to.be.false;
+  });
+
+  it('is never dispayed when hidden', () => {
+    sequence.hidden = true;
+    expect(sequence.isHidden).to.be.true;
+    sequence.updateProgress(0);
+    expect(sequence.isDisplayed()).to.be.false;
+    sequence.updateProgress(10);
     expect(sequence.isDisplayed()).to.be.false;
   });
 
