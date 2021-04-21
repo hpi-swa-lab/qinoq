@@ -581,7 +581,10 @@ export class GlobalTimeline extends Timeline {
   }
 
   zoomToFit () {
-
+    const widthToFit = this.editor.interactive.length + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + CONSTANTS.INACTIVE_AREA_WIDTH;
+    const widthAvailable = this.ui.layerContainer.width;
+    const factor = widthAvailable / widthToFit;
+    this.zoomFactor = factor;
   }
 }
 
