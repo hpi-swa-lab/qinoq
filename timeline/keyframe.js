@@ -106,16 +106,8 @@ export class TimelineKeyframe extends Morph {
     this._lockModelUpdate = false;
   }
 
-  get inOverviewLayer () {
-    return this.layer.isOverviewLayer;
-  }
-
   setTooltip () {
-    if (this.inOverviewLayer) {
-      this.tooltip = this.animation ? `${this.name}\nProperty: ${this.animation.property}` : this.name;
-    } else {
-      this.tooltip = this.keyframe ? `${this.name}\nEasing: ${this.keyframe.easingName}` : this.name;
-    }
+    this.tooltip = this.keyframe ? `${this.name}\nEasing: ${this.keyframe.easingName}` : this.name;
   }
 
   async promptRename () {
