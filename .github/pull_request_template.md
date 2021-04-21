@@ -77,12 +77,13 @@ Closes [fill in your issues here]
 ### Sequence View
 
 - [ ] there are three OverviewLayers (one per Morph in the sky sequence)
-- [ ] they hold four to six keyframes each
+- [ ] they hold two to three keyframelines each
+  - [ ] a keyframeline consists of small keyframes and a colored line for the respective property
+- [ ] clicking on the triangle expands those into two new layers with two keyframes each
 - [ ] right-clicking a keyframe shows a context menu
   - [ ] right-clicking on the last keyframe of the sun's position animation, an option to select easing is shown
   - [ ] when clicked, a list of easings appears
   - [ ] when outBack is selected as the easing, the sun moves a little back at the end of the animation
-- [ ] clicking on the triangle expands those into two new layers with two keyframes each
 - [ ] when expanding both morphs the cursor is still visible over all layers
 - [ ] creating a new keyframe (with the inspector) will update the layers accordingly
 - [ ] clicking on a layer will select the corresponding morph in the inspector
