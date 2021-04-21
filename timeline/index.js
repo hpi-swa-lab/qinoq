@@ -508,6 +508,8 @@ export class GlobalTimeline extends Timeline {
 
   clear () {
     this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences).forEach(timelineSequence => timelineSequence.disbandInteractiveConnections());
+    this.ui.layerInfoContainer.submorphs = [];
+    this.ui.layerContainer.submorphs = [];
   }
 
   deleteSelectedItems () {
