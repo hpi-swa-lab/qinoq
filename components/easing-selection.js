@@ -57,7 +57,7 @@ export class EasingBrowser extends Morph {
     this.addMorph(this.ui.confirmPane);
     this.ui.confirmPane.layout = new HorizontalLayout({ spacing: 20 });
     this.ui.okButton = new Button({ label: 'Ok', master: 'styleguide://SystemPrompts/green button' });
-    this.ui.okButton.action = () => this.execCommand('ok');
+    this.ui.okButton.action = () => this.execCommand('confirm');
     this.ui.confirmPane.addMorph(this.ui.okButton);
     this.ui.cancelButton = new Button({ label: 'Cancel', master: 'styleguide://SystemPrompts/red button' });
     this.ui.cancelButton.action = () => this.execCommand('cancel');
@@ -65,7 +65,7 @@ export class EasingBrowser extends Morph {
   }
 
   initSelectionItems () {
-    const possibleEasings = Keyframe.possibleEasings;
+    const possibleEasings = this.selectionKeys;
     possibleEasings.forEach(easing => {
       const listItem = new EasingListItem({ easing, browser: this });
       this.ui.selectionPane.addMorph(listItem);
@@ -74,6 +74,10 @@ export class EasingBrowser extends Morph {
 
   get selectionItems () {
     return this.ui.selectionPane.submorphs;
+  }
+
+  get selectionKeys () {
+    return Keyframe.possibleEasings;
   }
 
   onSelectionChange (changedItem) {
@@ -96,10 +100,12 @@ export class EasingBrowser extends Morph {
   get commands () {
     return [
       {
-        name: 'ok',
+        name: 'confirm',
         exec: () => {
-          this.resolve(this.selection);
-          this.abandon(true);
+          if (this.selection) {
+            this.resolve(this.selection);
+            this.abandon(true);
+          }
         }
       },
       {
@@ -108,17 +114,59 @@ export class EasingBrowser extends Morph {
           this.resolve(null);
           this.abandon(true);
         }
+      },
+      {
+        name: 'up',
+        exec: () => {
+          if (!this.selection) {
+            this.execCommand('go to bottom');
+          } else {
+            this.select(this.selectionItems[Math.max(0, this.selectionIndex - 1)]);
+          }
+        }
+      },
+      {
+        name: 'down',
+        exec: () => {
+          if (!this.selection) {
+            this.execCommand('go to top');
+          } else {
+            this.select(this.selectionItems[Math.min(this.selectionItems.length - 1, this.selectionIndex + 1)]);
+          }
+        }
+      },
+      {
+        name: 'go to top',
+        exec: () => {
+          this.select(this.selectionItems[0]);
+        }
+      },
+      {
+        name: 'go to bottom',
+        exec: () => {
+          this.select(this.selectionItems[this.selectionItems.length - 1]);
+        }
       }
-
     ];
+  }
+
+  get selectionIndex () {
+    return this.selectionItems.findIndex(item => item.isSelected);
+  }
+
+  select (item) {
+    item.isSelected = true;
+    item.styleSet = 'selected';
   }
 
   get keybindings () {
     return [
-      { keys: 'Enter', command: 'ok' },
+      { keys: 'Enter', command: 'confirm' },
       { keys: 'Escape', command: 'cancel' },
       { keys: 'Up', command: 'up' },
-      { keys: 'Down', command: 'down' }
+      { keys: 'Down', command: 'down' },
+      { keys: 'Ctrl-Up', command: 'go to top' },
+      { keys: 'Ctrl-Down', command: 'go to bottom' }
     ].concat(super.keybindings);
   }
 
@@ -134,6 +182,7 @@ export class EasingBrowser extends Morph {
       e.answer.resolve = resolve;
       e.answer.reject = reject;
     });
+    e.focus();
     return promise;
   }
 
