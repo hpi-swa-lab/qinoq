@@ -39,9 +39,8 @@ describe('Sequence object', () => {
     expect(sequence.isDisplayed()).to.be.false;
   });
 
-  it('is never dispayed when hidden', () => {
-    sequence.hidden = true;
-    expect(sequence.isHidden).to.be.true;
+  it('is never displayed when hidden', () => {
+    sequence.isHidden = true;
     sequence.updateProgress(0);
     expect(sequence.isDisplayed()).to.be.false;
     sequence.updateProgress(10);
