@@ -757,6 +757,14 @@ class MenuBar extends Morph {
     });
 
     this.buildIconButton({
+      tooltip: 'Zoom to fit timeline',
+      action: () => this.editor.displayedTimeline.zoomToFit(),
+      icon: 'compress',
+      name: 'fitZoomButton',
+      container: 'rightContainer'
+    });
+
+    this.buildIconButton({
       tooltip: 'Find keyframe',
       action: () => this.editor.execCommand('find keyframe'),
       icon: 'search-location',

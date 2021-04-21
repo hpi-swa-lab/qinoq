@@ -329,6 +329,10 @@ export class Timeline extends Morph {
   renameSelection (newName) {
     throw new Error('Subclass responsibility');
   }
+
+  zoomToFit () {
+    $world.setStatusMessage('hello');
+  }
 }
 
 export class GlobalTimeline extends Timeline {
