@@ -9,6 +9,13 @@ import { SearchField } from 'lively.components/widgets.js';
 import { connect } from 'lively.bindings';
 import { COLOR_SCHEME } from '../colors.js';
 
+const CONSTANTS = {
+  PROMPT_BORDER_RADIUS: 5,
+  HEAD_FONT_SIZE: 20,
+  SECONDARY_FONT_SIZE: 15,
+  CURVE_WIDTH: 2
+};
+
 export class EasingSelection extends Morph {
   static get properties () {
     return {
@@ -16,7 +23,7 @@ export class EasingSelection extends Morph {
         defaultValue: COLOR_SCHEME.PROMPT_BACKGROUND
       },
       borderRadius: {
-        defaultValue: 4
+        defaultValue: CONSTANTS.PROMPT_BORDER_RADIUS
       },
       draggable: {
         defaultValue: true
@@ -51,15 +58,22 @@ export class EasingSelection extends Morph {
       resizeSubmorphs: true
     });
     this.ui = {};
-    this.ui.headline = new Label({ textString: this.label, fontSize: 19 });
+    this.ui.headline = new Label({
+      textString: this.label,
+      fontSize: CONSTANTS.HEAD_FONT_SIZE
+    });
     this.addMorph(this.ui.headline);
-    this.ui.searchField = new SearchField({ fontColor: COLOR_SCHEME.ON_BACKGROUND });
+    this.ui.searchField = new SearchField({
+      borderRadius: CONSTANTS.PROMPT_BORDER_RADIUS,
+      fontColor: COLOR_SCHEME.ON_BACKGROUND,
+      fontSize: CONSTANTS.SECONDARY_FONT_SIZE
+    });
 
     connect(this.ui.searchField, 'onChange', this, 'onFilterChange');
 
     this.addMorph(this.ui.searchField);
     this.ui.selectionPane = new Morph({
-      borderRadius: 4,
+      borderRadius: CONSTANTS.PROMPT_BORDER_RADIUS,
       fill: COLOR_SCHEME.BACKGROUND,
       borderColor: COLOR_SCHEME.ON_BACKGROUND_VARIANT,
       borderStyle: 'solid',
@@ -74,7 +88,10 @@ export class EasingSelection extends Morph {
       });
     this.addMorph(this.ui.selectionPane);
     this.initListItems();
-    this.ui.confirmPane = new Morph({ extent: pt(400, 100), fill: COLOR_SCHEME.TRANSPARENT });
+    this.ui.confirmPane = new Morph({
+      extent: pt(400, 100),
+      fill: COLOR_SCHEME.TRANSPARENT
+    });
     this.addMorph(this.ui.confirmPane);
     this.ui.confirmPane.layout = new HorizontalLayout({ spacing: 20 });
     this.ui.okButton = new Button({ label: 'Ok', master: 'styleguide://SystemPrompts/green button' });
@@ -240,7 +257,7 @@ export class EasingSelection extends Morph {
     c.openInWorld();
     await c.whenRendered();
     const easing = stringToEasing(easings[easingName]);
-    const style = { width: 2, color: COLOR_SCHEME.SECONDARY };
+    const style = { width: CONSTANTS.CURVE_WIDTH, color: COLOR_SCHEME.SECONDARY };
 
     const values = [];
     const samples = 200;
@@ -273,7 +290,7 @@ export class EasingListItem extends Morph {
   static get properties () {
     return {
       borderRadius: {
-        defaultValue: 4
+        defaultValue: CONSTANTS.PROMPT_BORDER_RADIUS
       },
       easing: {
         defaultValue: 'linear'
@@ -309,13 +326,13 @@ export class EasingListItem extends Morph {
     this.ui = {};
     this.layout = new HorizontalLayout({
       spacing: 20,
-      autoResize: false
+      autoResize: false,
+      align: 'center'
     });
-    this.ui.label = new Label({ textString: this.easing, fontSize: 15, extent: pt(100, 20) });
+    this.ui.label = new Label({ textString: this.easing, fontSize: CONSTANTS.SECONDARY_FONT_SIZE, extent: pt(100, 20) });
     this.addMorph(this.ui.label);
     this.ui.easingImage = EasingSelection.getImageForEasing(this.easing, {
-      extent: pt(50, 50),
-      position: pt(200, 10)
+      extent: pt(50, 50)
     });
     this.addMorph(await this.ui.easingImage);
     return this;
