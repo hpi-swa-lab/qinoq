@@ -684,13 +684,19 @@ export class TimelineSequence extends Morph {
     return overlappingSequences.filter(sequence => sequence != this);
   }
 
+  sequenceVisbilityMenuString () {
+    if (this.timeline.selectedSequences.every(sequence => sequence.isHidden == false)) return '🙈 Hide Selected Sequences';
+    if (this.timeline.selectedSequences.every(sequence => sequence.isHidden != false)) return '🐵 Show Selected Sequences';
+    return (this.isHidden ? '🐵' : '🙈').concat('Toggle Visbility of Selected Sequences');
+  }
+
   menuItems () {
     let items = [
       ['✏️ Rename Sequence', async () => await this.timeline.promptRenameForSelection()],
       ['❌ Delete Sequence', () => this.timeline.deleteSelectedItems()],
       ['↔️ Edit duration', async () => await this.timeline.promptDurationForSelection()],
       ['🏁 Edit start position', async () => await this.timeline.promptStartForSelection()],
-      [(this.sequence.isHidden ? '🐵' : '🙈').concat(' Toggle sequence visibility'), () => this.timeline.toggleVisbilityForSelection()]];
+      [this.sequenceVisbilityMenuString(), () => this.timeline.toggleVisbilityForSelection()]];
     if (this.timeline.getSelectedSequences().length === 1) {
       items = items.concat([{ isDivider: true },
         ['🔍 View sequence', () => this.openSequenceView()],
