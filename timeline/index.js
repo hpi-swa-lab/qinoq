@@ -811,7 +811,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   scrollToTimelineKeyframe (timelineKeyframe) {
-    if (timelineKeyframe.layer.isOverviewLayer) timelineKeyframe.layer.expand();
+    if (timelineKeyframe.layer.isOverviewLayer) timelineKeyframe.layer.isExpanded = true;
     const scrollToX = timelineKeyframe.position.x - this.ui.layerContainer.extent.x / 2;
     this.scrollHorizontallyTo(scrollToX);
 

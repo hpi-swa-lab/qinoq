@@ -296,6 +296,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
 
   async redraw () {
     await this.activeArea.whenRendered();
+    if (this.keyframes.length == 0) return;
     this.keyframes.forEach(timelineKeyframe => {
       timelineKeyframe._lockModelUpdate = true;
       timelineKeyframe.position = pt(this.timeline.getPositionFromKeyframe(timelineKeyframe.keyframe), timelineKeyframe.position.y);
@@ -455,13 +456,14 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     this.timeline.removePropertyLayers(this);
   }
 
-  redraw () {
-    super.redraw();
-
+  async redraw () {
     this.layerInfo.height = this.height;
     this.activeArea.height = this.height;
     this.inactiveArea.height = this.height;
     this.keyframeLines.forEach(keyframeLine => keyframeLine.updatePosition());
+
+    await this.activeArea.whenRendered();
+    this.redrawActiveArea();
   }
 
   expand () {
