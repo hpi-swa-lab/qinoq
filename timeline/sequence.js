@@ -680,7 +680,8 @@ export class TimelineSequence extends Morph {
       ['✏️ Rename Sequence', async () => await this.timeline.promptRenameForSelection()],
       ['❌ Delete Sequence', () => this.timeline.deleteSelectedItems()],
       ['↔️ Edit duration', async () => await this.timeline.promptDurationForSelection()],
-      ['🏁 Edit start position', async () => await this.timeline.promptStartForSelection()]];
+      ['🏁 Edit start position', async () => await this.timeline.promptStartForSelection()],
+      [(this.sequence.isHidden ? '🐵' : '🙈').concat(' Toggle sequence visibility'), () => this.timeline.toggleVisbilityForSelection()]];
     if (this.timeline.getSelectedSequences().length === 1) {
       items = items.concat([{ isDivider: true },
         ['🔍 View sequence', () => this.openSequenceView()],

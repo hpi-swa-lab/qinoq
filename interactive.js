@@ -553,6 +553,9 @@ export class Sequence extends Morph {
           this.extent = interactive.extent;
           this.layout = new ProportionalLayout({ lastExtent: this.extent });
         }
+      },
+      hidden: {
+        defaultValue: false
       }
     };
   }
@@ -657,7 +660,15 @@ export class Sequence extends Morph {
   }
 
   isDisplayed () {
-    return this.progress >= 0 && this.progress < 1 && !this.layer.hidden;
+    return this.progress >= 0 && this.progress < 1 && !this.layer.hidden && !this.isHidden;
+  }
+
+  get isHidden () {
+    return this.hidden === true;
+  }
+
+  toggleHide () {
+    this.hidden = !this.hidden;
   }
 
   get isSequence () {
