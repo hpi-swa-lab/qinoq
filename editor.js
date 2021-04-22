@@ -162,7 +162,7 @@ export class InteractivesEditor extends Morph {
     this.globalTimeline.loadContent(interactive);
 
     this.tabContainer.visible = true;
-    interactive.withAllSubmorphsDo(submorph => { if (!submorph.isSequence) connect(submorph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' }); });
+    interactive.withAllSubmorphsDo(submorph => { if (!submorph.isSequence && !submorph.isInteractive) connect(submorph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' }); });
 
     connect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
     connect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
@@ -193,7 +193,7 @@ export class InteractivesEditor extends Morph {
     if (!this.interactive) return;
     this.interactiveInEditMode = false;
 
-    this.interactive.withAllSubmorphsDo(submorph => { if (!submorph.isSequence) disconnect(submorph, 'onAbandon', this, 'removeMorphFromInteractive'); });
+    this.interactive.withAllSubmorphsDo(submorph => { if (!submorph.isSequence && !submorph.isInteractive) disconnect(submorph, 'onAbandon', this, 'removeMorphFromInteractive'); });
 
     disconnect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
     disconnect(this.interactive, 'name', this.globalTimeline, 'name');
