@@ -34,9 +34,7 @@ Closes [fill in your issues here]
   - [ ] toggling the button again enables snapping
 - [ ] the day sequence can be dragged to the middle layer onto a free spot
 - [ ] the night sequence can't be dragged or resized beyond the left timeline bounds
-- [ ] using left click on a sequence selects it (blue border shown)
-- [ ] the selected sequence can be moved by one scroll unit with the left/right arrows and by 10 scroll units when holding shift simultaneously
-- [ ] when clicking the "+" button a sequence is in the hand, which can only be dropped on a timelinelayer and changes color when you are not able to place the sequence
+- [ ] when clicking the "Add Sequence" button a sequence is in the hand, which can only be dropped on a timelinelayer and changes color when you are not able to place the sequence
   - [ ] this can be cancelled by pressing ESC
 - [ ] right clicking on a sequence brings up a context menu
 - [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the interactive/beginning of the next/previous sequence
@@ -47,6 +45,7 @@ Closes [fill in your issues here]
 #### Selection of sequences
 
 - [ ] an unselected (default) sequence can be selected by clicking on it
+- [ ] the selected sequence can be moved by one scroll unit with the left/right arrows and by 10 scroll units when holding shift simultaneously
 - [ ] when clicking another sequence, the first sequence is no longer selected, but the second one is
 - [ ] when selecting a sequence with the `Alt` key pressed, the previous selection is not removed
 - [ ] when clicking while pressing `Alt` on a selected sequence, the sequence is deselected
@@ -94,7 +93,7 @@ Closes [fill in your issues here]
 - [ ] When making the zoom factor higher/lower with the input field, the length of the active area adapt accordingly as well as the position of the keyframes and the cursor updates its position
 - [ ] it is possible to select more than one keyframe using `Alt`
 - [ ] when more than two keyframes are selected, the context menu allows changing of relative positions, where entering a relative position changes the position of all selected keyframes - this works with all menu items and is undoable as expected (one undo for all selected keyframes)
-- [ ] having more than one keyframe selected and dragging one with shift pressed moves all keyframes, this is undoable
+- [ ] having more than one keyframe selected and dragging one moves all keyframes, this is undoable
 - [ ] it is possible to add a new morph to the interactive using the top bar
   - [ ] the newly created morph is also added to the timeline as an own layer
 - [ ] it is possible to add a new morph to the interactive by grab-and-drop
@@ -102,7 +101,7 @@ Closes [fill in your issues here]
 - [ ] it is possible to rename a morph
   - [ ] using the halo
   - [ ] using the context menu on the layer info (both these options affect labels and tooltips)
-- [ ] when leaving the sequence view, the topbar does not draw on the interactive anymore but it is again possible to add morphs to the world
+- [ ] it is still possible to draw morphs in the world
 
 ### Inspector
 
@@ -125,7 +124,7 @@ Closes [fill in your issues here]
 
 - [ ] when scrolling in the interactive, the cursor indicator in the scrollbar of the timeline moves accordingly
 - [ ] when the zoom factor of a timeline is changed, the scroller in the scrollbar changes its width accordingly
-- [ ] moving in the scrolled timeline with `Shift+Wheel` changes the scroller position
+- [ ] moving in the scrolled timeline with `Alt+Wheel` changes the scroller position
 - [ ] in a scrollable timeline normal scrolling will always move the layers and their information and nothing else
 
 ### Search
