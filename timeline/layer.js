@@ -5,7 +5,7 @@ import { CONSTANTS } from './constants.js';
 import { connect, disconnect } from 'lively.bindings';
 import { Canvas } from 'lively.components/canvas.js';
 import { animatedProperties, getColorForProperty } from '../properties.js';
-import { KeyframeLine, TimelineKeyframe } from './keyframe.js';
+import { TimelineKeyframe, KeyframeLine } from './keyframe.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 export class TimelineLayer extends QinoqMorph {
   static get properties () {

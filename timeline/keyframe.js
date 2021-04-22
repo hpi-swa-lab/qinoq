@@ -248,7 +248,7 @@ export class TimelineKeyframe extends QinoqMorph {
   }
 }
 
-export class KeyframeLine extends Morph {
+export class KeyframeLine extends QinoqMorph {
   static get properties () {
     return {
       animation: {
@@ -289,7 +289,7 @@ export class KeyframeLine extends Morph {
     this.animation.keyframes.forEach(keyframe => {
       const position = pt(this.timeline.getPositionFromKeyframe(keyframe) - this.position.x,
         -CONSTANTS.KEYFRAME_EXTENT.scaleBy(CONSTANTS.KEYFRAME_LINE_KEYFRAME_SCALE).x / 2 / Math.sqrt(2));
-      this.addMorph(new Morph({
+      this.addMorph(new QinoqMorph({
         position,
         extent: CONSTANTS.KEYFRAME_EXTENT.scaleBy(CONSTANTS.KEYFRAME_LINE_KEYFRAME_SCALE),
         fill: COLOR_SCHEME.KEYFRAME_BORDER,
