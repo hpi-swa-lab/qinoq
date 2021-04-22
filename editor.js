@@ -157,14 +157,16 @@ export class InteractivesEditor extends Morph {
         { fontWeight: 'normal' }], {
         width: 400,
         hasFixedPosition: true,
-        confirmLabel: 'CREATE INTERACTIVE'
+        confirmLabel: 'CREATE INTERACTIVE',
+        validate: (name) => !!name,
+        errorMessage: 'Please enter a Name'
       }
       )
     );
   }
 
   async createInteractive (name) {
-    this.interactive = await Interactive.base();
+    this.interactive = await Interactive.base(name);
   }
 
   initializeInteractive (interactive) {
