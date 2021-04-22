@@ -759,7 +759,7 @@ class MenuBar extends Morph {
     this.buildIconButton({
       tooltip: 'Zoom to fit timeline',
       action: () => this.editor.displayedTimeline.zoomToFit(),
-      icon: 'compress',
+      icon: 'expand-arrows-alt',
       name: 'fitZoomButton',
       container: 'rightContainer'
     });
