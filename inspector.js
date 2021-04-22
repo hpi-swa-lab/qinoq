@@ -15,10 +15,13 @@ const CONSTANTS = {
   WIDGET_X: 65,
   WIDGET_ONE_Y: 0,
   WIDGET_TWO_Y: 27,
-  KEYFRAME_BUTTON_X: 165,
+  KEYFRAME_BUTTON_X: 185,
   TARGET_PICKER_DIAMETER: 25,
-  TARGET_PICKER_BORDER_RADIUS: 15
+  TARGET_PICKER_BORDER_RADIUS: 15,
+  WIDGET_WIDTH: 100,
+  WIDGET_HEIGHT: 25
 };
+CONSTANTS.WIDGET_EXTENT = pt(CONSTANTS.WIDGET_WIDTH, CONSTANTS.WIDGET_HEIGHT);
 
 export class InteractiveMorphInspector extends QinoqMorph {
   static get properties () {
@@ -150,11 +153,27 @@ export class InteractiveMorphInspector extends QinoqMorph {
       max = 100;
     }
 
-    this.propertyControls[property].number = new NumberWidget({ position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y), floatingPoint, unit, min, max });
+    this.propertyControls[property].number = new NumberWidget({
+      position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
+      floatingPoint,
+      unit,
+      min,
+      max
+    });
   }
 
   buildStringPropertyControl (property) {
-    this.propertyControls[property].string = new StringWidget({ position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y), fixedWidth: true, fixedHeight: true, width: 75, height: 25, fill: COLOR_SCHEME.SURFACE, dropShadow: new ShadowObject(true) });
+    this.propertyControls[property].string = new StringWidget({
+      position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
+      fixedWidth: true,
+      fixedHeight: true,
+      extent: CONSTANTS.WIDGET_EXTENT,
+      fontFamilty: 'Sans-Serif',
+      fontSize: 16,
+      fill: COLOR_SCHEME.SURFACE,
+      dropShadow: new ShadowObject(true)
+    })
+    ;
   }
 
   buildTargetPicker () {
@@ -250,7 +269,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
         }
         break;
       case 'string':
-        this.propertyControls[property].string.stringValue = this.targetMorph[property];
+        if (this.propertyControls[property].string.stringValue != this.targetMorph[property]) { this.propertyControls[property].string.stringValue = this.targetMorph[property]; }
         break;
     }
     this._updatingInspector = false;
