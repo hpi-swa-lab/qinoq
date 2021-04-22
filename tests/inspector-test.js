@@ -1,7 +1,7 @@
 /* global it, describe, before, after */
 import { expect } from 'mocha-es6';
 import { Morph } from 'lively.morphic';
-import { Interactive, InteractivesEditor } from 'qinoq';
+import { Interactive, exampleInteractive, InteractivesEditor } from 'qinoq';
 
 class InspectorTestMorph extends Morph {
   static get properties () {
@@ -21,7 +21,7 @@ describe('Inspector', () => {
   let morph, editor, interactive, inspector;
   before(async () => {
     editor = await new InteractivesEditor().initialize();
-    interactive = Interactive.example();
+    interactive = await exampleInteractive();
     editor.interactive = interactive;
     morph = new InspectorTestMorph();
     inspector = editor.inspector;
