@@ -110,10 +110,6 @@ export class TimelineSequence extends QinoqMorph {
     };
   }
 
-  get editor () {
-    return this._editor;
-  }
-
   // Is automatically called on creation when "_editor" is set
   initialize () {
     const startPosition = this.timelineLayer.timeline.getPositionFromScroll(this.sequence.start);
@@ -588,10 +584,6 @@ export class TimelineSequence extends QinoqMorph {
 
   get timeline () {
     return this.timelineLayer.timeline;
-  }
-
-  get interactive () {
-    return this.timeline.interactive;
   }
 
   setWidthAndUpdateResizers (width) {
