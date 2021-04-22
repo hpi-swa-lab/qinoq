@@ -111,7 +111,7 @@ export class Timeline extends QinoqMorph {
       draggable: true
     }));
 
-    connect(this.ui.scroller, 'onDrag', this, 'ensureValidPosition');
+    connect(this.ui.scroller, 'onDrag', this, 'ensureValidScrollerPosition');
   }
 
   initializeScrollbarCursorIndicator () {
@@ -239,7 +239,7 @@ export class Timeline extends QinoqMorph {
     this.ui.layerInfoContainer.submorphs = layerInfos;
   }
 
-  ensureValidPosition () {
+  ensureValidScrollerPosition () {
     let positionX = this.ui.scroller.position.x;
     if (this.ui.scroller.position.x < CONSTANTS.SCROLLBAR_MARGIN) {
       positionX = CONSTANTS.SCROLLBAR_MARGIN;
