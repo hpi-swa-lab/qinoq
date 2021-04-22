@@ -1,9 +1,9 @@
 /* global it, describe, beforeEach */
 import { expect } from 'mocha-es6';
-import { Interactive, Layer, Sequence } from 'qinoq';
+import { Interactive, Layer, Sequence } from '../index.js';
 import { pt } from 'lively.graphics';
-import { NumberAnimation } from 'qinoq';
-import { Keyframe } from 'qinoq';
+import { NumberAnimation } from '../index.js';
+import { Keyframe } from '../index.js';
 import { Morph } from 'lively.morphic';
 
 describe('Interactive object', () => {
