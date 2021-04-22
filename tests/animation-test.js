@@ -1,7 +1,7 @@
 /* global it, describe, beforeEach */
 import { expect } from 'mocha-es6';
 import { Morph } from 'lively.morphic';
-import { NumberAnimation, Keyframe } from '../animations.js';
+import { NumberAnimation, TypeWriterAnimation, Keyframe } from '../animations.js';
 
 // TODO:
 // PointAnimation concrete implementation
@@ -49,5 +49,30 @@ describe('Animation object', () => {
     expect(animation.lerp(keyFrameOne, keyFrameTwo, 0)).equals(0);
     expect(animation.lerp(keyFrameOne, keyFrameTwo, 5)).equals(0.5);
     expect(animation.lerp(keyFrameOne, keyFrameTwo, 10)).equals(1);
+  });
+});
+
+describe('Typewriter animation', () => {
+  let stringAnimation;
+  const string1 = 'Hello';
+  const string2 = 'Hello World';
+  let mockMorph;
+  beforeEach(() => {
+    mockMorph = {
+      textString: 'Something'
+    };
+    stringAnimation = new TypeWriterAnimation(mockMorph, 'textString');
+  });
+
+  it('interpolates between strings', () => {
+    const keyframe1 = new Keyframe(0, string1, { name: 'Keyframe 1' });
+    const keyframe2 = new Keyframe(1, string2, { name: 'Keyframe 2' });
+    stringAnimation.addKeyframes([keyframe1, keyframe2]);
+    stringAnimation.progress = 0;
+    expect(mockMorph.textString).to.be.equal('Hello');
+    stringAnimation.progress = 0.5;
+    expect(mockMorph.textString).to.be.equal('Hello Wo');
+    stringAnimation.progress = 1;
+    expect(mockMorph.textString).to.be.equal('Hello World');
   });
 });
