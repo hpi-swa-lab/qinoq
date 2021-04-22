@@ -44,9 +44,7 @@ export class EasingSelection extends Morph {
         defaultValue: false
       },
       selection: {},
-      listItems: {
-
-      },
+      listItems: {},
       label: {
         defaultValue: 'Select easing'
       },
