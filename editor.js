@@ -589,9 +589,7 @@ class Preview extends Morph {
       acceptsDrops: false,
       padding: rect(8, 5, 0, -2)
     });
-    newInteractiveButton.onMouseUp = () => {
-      this.editor.createInteractiveWithNamePrompt();
-    };
+    newInteractiveButton.onMouseUp = () => this.editor.createInteractiveWithNamePrompt();
 
     const container = new Morph({
       acceptsDrops: false,
