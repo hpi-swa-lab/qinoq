@@ -232,12 +232,12 @@ export class ColorAnimation extends Animation {
 export class TypeWriterAnimation extends Animation {
   interpolate (progress, start, end) {
     const factor = end.easing(this.lerp(start, end, progress));
-    if (!end.startsWith(start)) {
+    if (!end.value.startsWith(start.value)) {
       throw new Error('Can not animate between strings start and end when end does not begin with start');
     }
-    const lengthDifference = end.length - start.length;
+    const lengthDifference = end.value.length - start.value.length;
     const shownChars = Math.round(lengthDifference * factor);
-    return `${start}${end.slice(0, shownChars)}`;
+    return `${start.value}${end.value.slice(0, shownChars)}`;
   }
 
   get type () {

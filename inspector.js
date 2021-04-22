@@ -1,7 +1,7 @@
-import { HorizontalLayout, Morph, VerticalLayout, Icon, Label } from 'lively.morphic';
+import { Morph, ShadowObject, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
 import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
-import { NumberWidget } from 'lively.ide/value-widgets.js';
+import { NumberWidget, StringWidget } from 'lively.ide/value-widgets.js';
 import { Button } from 'lively.components';
 import { InteractiveMorphSelector } from 'lively.halos';
 import { disconnect, connect } from 'lively.bindings';
@@ -120,6 +120,8 @@ export class InteractiveMorphInspector extends QinoqMorph {
       case 'number':
         this.buildNumberPropertyControl(property);
         break;
+      case 'string':
+        this.buildStringPropertyControl(property);
     }
     this.propertyControls[property].keyframe = new KeyframeButton({
       position: pt(CONSTANTS.KEYFRAME_BUTTON_X, CONSTANTS.WIDGET_ONE_Y),
@@ -149,6 +151,10 @@ export class InteractiveMorphInspector extends QinoqMorph {
     }
 
     this.propertyControls[property].number = new NumberWidget({ position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y), floatingPoint, unit, min, max });
+  }
+
+  buildStringPropertyControl (property) {
+    this.propertyControls[property].string = new StringWidget({ position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y), fixedWidth: true, fixedHeight: true, width: 75, height: 25, fill: COLOR_SCHEME.SURFACE, dropShadow: new ShadowObject(true) });
   }
 
   buildTargetPicker () {
@@ -194,6 +200,9 @@ export class InteractiveMorphInspector extends QinoqMorph {
           case 'number':
             disconnect(this.propertyControls[inspectedProperty].number, 'number', this, 'updateInMorph');
             break;
+          case 'string':
+            disconnect(this.propertyControls[inspectedProperty].string, 'inputAccepted', this, 'updateInMorph');
+            break;
         }
         delete this.propertyControls[inspectedProperty];
       });
@@ -216,6 +225,9 @@ export class InteractiveMorphInspector extends QinoqMorph {
         case 'number':
           connect(this.propertyControls[inspectedProperty].number, 'number', this, 'updateInMorph');
           break;
+        case 'string':
+          connect(this.propertyControls[inspectedProperty].string, 'inputAccepted', this, 'updateInMorph');
+          break;
       }
     });
   }
@@ -236,6 +248,9 @@ export class InteractiveMorphInspector extends QinoqMorph {
         } else {
           this.propertyControls[property].number.number = this.targetMorph[property];
         }
+        break;
+      case 'string':
+        this.propertyControls[property].string.stringValue = this.targetMorph[property];
         break;
     }
     this._updatingInspector = false;
@@ -284,6 +299,9 @@ export class InteractiveMorphInspector extends QinoqMorph {
           } else {
             this.targetMorph[property] = this.propertyControls[property].number.number;
           }
+          break;
+        case 'string':
+          this.targetMorph[property] = this.propertyControls[property].string.stringValue;
           break;
       }
     });
