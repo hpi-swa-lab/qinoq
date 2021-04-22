@@ -237,7 +237,7 @@ export class TypeWriterAnimation extends Animation {
     }
     const lengthDifference = end.value.length - start.value.length;
     const shownChars = Math.round(lengthDifference * factor);
-    return `${start.value}${end.value.slice(0, shownChars)}`;
+    return `${start.value}${end.value.slice(start.value.length, start.value.length + shownChars)}`;
   }
 
   get type () {
