@@ -90,10 +90,6 @@ export class TimelineKeyframe extends QinoqMorph {
     return this._keyframe;
   }
 
-  get editor () {
-    return this._editor;
-  }
-
   get timeline () {
     return this.layer.timeline;
   }

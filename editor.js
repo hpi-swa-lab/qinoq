@@ -552,10 +552,6 @@ class Preview extends QinoqMorph {
     };
   }
 
-  get editor () {
-    return this._editor;
-  }
-
   onDrop (event) {
     if (event.type != 'morphicdrop') return;
     const grabbedMorph = arr.first(event.hand.grabbedMorphs);
@@ -651,10 +647,6 @@ class MenuBar extends QinoqMorph {
         }
       }
     };
-  }
-
-  get editor () {
-    return this._editor;
   }
 
   initializeUI () {

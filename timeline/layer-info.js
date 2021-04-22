@@ -45,14 +45,6 @@ export class TimelineLayerInfo extends QinoqMorph {
     return !this.isInGlobalTimeline;
   }
 
-  get interactive () {
-    return this.editor.interactive;
-  }
-
-  get editor () {
-    return this._editor;
-  }
-
   initialize () {
     this.ui = {};
     this.ui.label = new Label({
