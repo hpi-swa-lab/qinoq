@@ -490,10 +490,15 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
       this.drawPointCurves();
       return true;
     }
+    if (this.animation.type == 'string') {
+      this.drawStringVisualization();
+      return true;
+    }
   }
 
+  keyframePositionToActiveAreaPosition (x) { return this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET; }
+
   drawNumberCurve () {
-    const keyframePositionToActiveAreaPosition = x => { return this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET; };
     const style = { color: COLOR_SCHEME.KEYFRAME_FILL };
 
     const minValue = this.animation.min;
@@ -507,7 +512,7 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     let previousValue = valueToDrawPosition(this.animation.keyframes[0].value);
 
     values.forEach(positionValuePair => {
-      const position = keyframePositionToActiveAreaPosition(positionValuePair[0]);
+      const position = this.keyframePositionToActiveAreaPosition(positionValuePair[0]);
       const value = valueToDrawPosition(positionValuePair[1]);
       this.activeArea.line(pt(previousPosition, previousValue), pt(position, value), style);
       previousPosition = position;
@@ -519,8 +524,6 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
   }
 
   drawColorVisualization () {
-    const keyframePositionToActiveAreaPosition = x => { return this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET; };
-
     const sampling = 0.01;
     const values = Object.entries(this.animation.getValues(sampling));
 
@@ -530,7 +533,7 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     const rectHeight = this.activeArea.height / 5;
 
     values.forEach(positionValuePair => {
-      const position = keyframePositionToActiveAreaPosition(positionValuePair[0]);
+      const position = this.keyframePositionToActiveAreaPosition(positionValuePair[0]);
       this.activeArea.rect(pt(position, rectStartY), pt(samplingWidth * 2, rectHeight), { fill: true, fillColor: positionValuePair[1], color: COLOR_SCHEME.TRANSPARENT });
     });
   }
@@ -538,8 +541,6 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
   drawPointCurves () {
     const xStyle = { color: COLOR_SCHEME.KEYFRAME_FILL };
     const yStyle = { color: COLOR_SCHEME.KEYFRAME_BORDER };
-
-    const keyframePositionToActiveAreaPosition = x => { return this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET; };
 
     const flipCurve = animatedProperties[this.animation.property] && animatedProperties[this.animation.property].flipCurve;
 
@@ -558,7 +559,7 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     let previousYValue = YvalueToDrawPosition(this.animation.keyframes[0].value.y);
 
     values.forEach(positionValuePair => {
-      const position = keyframePositionToActiveAreaPosition(positionValuePair[0]);
+      const position = this.keyframePositionToActiveAreaPosition(positionValuePair[0]);
       const Xvalue = XvalueToDrawPosition(positionValuePair[1].x);
       const Yvalue = YvalueToDrawPosition(positionValuePair[1].y);
       this.activeArea.line(pt(previousPosition, previousXValue), pt(position, Xvalue), xStyle);
@@ -571,6 +572,29 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     // final lines
     this.activeArea.line(pt(previousPosition, previousXValue), pt(this.activeArea.width, previousXValue), xStyle);
     this.activeArea.line(pt(previousPosition, previousYValue), pt(this.activeArea.width, previousYValue), yStyle);
+  }
+
+  drawStringVisualization () {
+    const sampling = 0.01;
+    const values = Object.entries(this.animation.getValues(sampling));
+
+    const fontSize = 12;
+    const style = { color: COLOR_SCHEME.ON_BACKGROUND, font: '12px monospace' };
+
+    const textY = this.activeArea.height / 2;
+
+    let currentText = this.animation.keyframes[0].value;
+    let newChar;
+
+    values.forEach(positionValuePair => {
+      const position = this.keyframePositionToActiveAreaPosition(positionValuePair[0]);
+      const value = positionValuePair[1];
+      if (currentText != value) {
+        newChar = value[value.length - 1];
+        currentText = value;
+        this.activeArea.text(newChar, pt(position, textY), style);
+      }
+    });
   }
 
   async scrollToKeyframe (keyframe) {
