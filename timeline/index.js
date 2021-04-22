@@ -118,23 +118,7 @@ export class Timeline extends QinoqMorph {
       draggable: true
     }));
 
-    this.ui.scroller.ensureValidPosition = () => {
-      let positionX = this.ui.scroller.position.x;
-      if (this.ui.scroller.position.x < CONSTANTS.SCROLLBAR_MARGIN) {
-        positionX = CONSTANTS.SCROLLBAR_MARGIN;
-      }
-      if (this.ui.scroller.extent.x + this.ui.scroller.position.x + CONSTANTS.SCROLLBAR_MARGIN > this.ui.scrollBar.extent.x) {
-        positionX = this.ui.scrollBar.extent.x - CONSTANTS.SCROLLBAR_MARGIN - this.ui.scroller.extent.x;
-      }
-      this.ui.scroller.position = pt(positionX, CONSTANTS.SCROLLBAR_MARGIN);
-
-      const relative = (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x) / (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN));
-      const layerContainerNode = this.ui.layerContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
-      layerContainerNode.scrollLeft = this.ui.scroller.position.x * relative + CONSTANTS.SCROLLBAR_MARGIN;
-      this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
-    };
-
-    connect(this.ui.scroller, 'onDrag', this.ui.scroller, 'ensureValidPosition');
+    connect(this.ui.scroller, 'onDrag', this, 'ensureValidPosition');
   }
 
   initializeScrollbarCursorIndicator () {
@@ -260,6 +244,22 @@ export class Timeline extends QinoqMorph {
       layerInfos[timelineLayer.index] = timelineLayer.layerInfo;
     });
     this.ui.layerInfoContainer.submorphs = layerInfos;
+  }
+
+  ensureValidPosition () {
+    let positionX = this.ui.scroller.position.x;
+    if (this.ui.scroller.position.x < CONSTANTS.SCROLLBAR_MARGIN) {
+      positionX = CONSTANTS.SCROLLBAR_MARGIN;
+    }
+    if (this.ui.scroller.extent.x + this.ui.scroller.position.x + CONSTANTS.SCROLLBAR_MARGIN > this.ui.scrollBar.extent.x) {
+      positionX = this.ui.scrollBar.extent.x - CONSTANTS.SCROLLBAR_MARGIN - this.ui.scroller.extent.x;
+    }
+    this.ui.scroller.position = pt(positionX, CONSTANTS.SCROLLBAR_MARGIN);
+
+    const relative = (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x) / (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN));
+    const layerContainerNode = this.ui.layerContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
+    layerContainerNode.scrollLeft = this.ui.scroller.position.x * relative + CONSTANTS.SCROLLBAR_MARGIN;
+    this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
   }
 
   redraw () {
