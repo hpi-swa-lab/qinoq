@@ -70,17 +70,17 @@ describe('Sequence object', () => {
       expect(sequence.getAnimationForMorphProperty(morph, 'opacity')).to.deep.equal(opacityAnimation);
     });
 
-    it('adds a new keyframe to an existing animation', () => {
+    it('adds a new keyframe to an existing animation', async () => {
       sequence.addAnimation(opacityAnimation);
       const newKeyframe = new Keyframe(0.8, 0.8);
-      sequence.addKeyframeForMorph(newKeyframe, morph, 'opacity', 'number');
+      await sequence.addKeyframeForMorph(newKeyframe, morph, 'opacity', 'number');
       expect(sequence.getAnimationsForMorph(morph)).to.have.length(1);
     });
 
-    it('adds a new keyframe to a new animation', () => {
+    it('adds a new keyframe to a new animation', async () => {
       sequence.addAnimation(opacityAnimation);
       const newKeyframe = new Keyframe(0.8, 0.8);
-      sequence.addKeyframeForMorph(newKeyframe, morph, 'rotation', 'number');
+      await sequence.addKeyframeForMorph(newKeyframe, morph, 'rotation', 'number');
       expect(sequence.getAnimationsForMorph(morph)).to.have.length(2);
     });
 

@@ -9,7 +9,7 @@ import { arr } from 'lively.lang';
 export class Interactive extends Morph {
   static async base () {
     const interactive = new Interactive();
-    const { exampleForegroundLayer, exampleBackgroundLayer } = await System.import('qinoq/example.js');
+    const { exampleForegroundLayer, exampleBackgroundLayer } = await System.import('qinoq/examples.js');
     const foregroundLayer = exampleForegroundLayer();
     const backgroundLayer = exampleBackgroundLayer();
     interactive.addLayer(backgroundLayer);
