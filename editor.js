@@ -10,6 +10,7 @@ import { Sequence, Interactive, Layer } from './index.js';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
 import { Button } from 'lively.components';
 import { arrowRightPressed, arrowLeftPressed } from './keys.js';
+import { Clipboard } from './utilities/clipboard.js';
 import { QinoqMorph } from './qinoq-morph.js';
 
 const CONSTANTS = {
@@ -601,27 +602,6 @@ export class InteractivesEditor extends QinoqMorph {
     super.__after_deserialize__(snapshot, ref, pool);
     // Required to position the scrollOverlay correctly. Otherwise the scroll Overlay will be in the center of the screen and possibly misaligned with the interactive/ preview
     this.interactive.scrollOverlay.globalPosition = this.preview.globalPosition;
-  }
-}
-
-export class Clipboard {
-  addMorph (morph, animations) {
-    this.morph = morph;
-    this.animations = animations;
-  }
-
-  get content () {
-    if (this.containsMorph) return { morph: this.morph, animations: this.animations };
-    return null;
-  }
-
-  get containsMorph () {
-    return (this.morph && this.animations);
-  }
-
-  clear () {
-    this.morph = null;
-    this.animations = null;
   }
 }
 

@@ -2,7 +2,7 @@
 import { expect } from 'mocha-es6';
 import { Interactive, exampleInteractive, InteractivesEditor } from '../index.js';
 import { pt } from 'lively.graphics';
-import { Clipboard } from '../editor.js';
+import { Clipboard } from '../utilities/clipboard.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 
 describe('Editor', () => {
