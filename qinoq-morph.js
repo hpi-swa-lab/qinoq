@@ -10,6 +10,14 @@ export class QinoqMorph extends Morph {
     };
   }
 
+  get isQinoqMorph () {
+    return true;
+  }
+
+  get editor () {
+    return this._editor;
+  }
+
   __deserialize__ (snapshot, objRef, serializedMap, pool) {
     this._deserializing = true;
     super.__deserialize__(snapshot, objRef, serializedMap, pool);
