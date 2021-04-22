@@ -5,6 +5,7 @@ import { resource } from 'lively.resources';
 
 import Lottie from 'https://jspm.dev/lottie-web';
 import { Sequence, Keyframe, NumberAnimation } from 'qinoq';
+import { Color } from 'lively.graphics';
 
 export class LottieMorph extends HTMLMorph {
   static get properties () {
@@ -104,6 +105,7 @@ export class LottieMorph extends HTMLMorph {
     animation.addKeyframes([new Keyframe(0, 0, { name: 'animation start' }), new Keyframe(1, 1, { name: 'animation end', easing: 'linear' })]);
     sequence.addAnimation(animation);
     this.hasGeneratedProgressAnimation = true;
+    $world.setStatusMessage('Animation generated', Color.green);
     // -> notify editor...
   }
 
