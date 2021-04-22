@@ -1,6 +1,6 @@
 /* global it, describe, before, after */
 import { expect } from 'mocha-es6';
-import { Interactive, exampleInteractive, InteractivesEditor } from 'qinoq';
+import { Interactive, exampleInteractive, InteractivesEditor } from '../index.js';
 import { pt } from 'lively.graphics';
 
 describe('Editor', () => {

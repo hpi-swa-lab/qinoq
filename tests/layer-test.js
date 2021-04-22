@@ -1,6 +1,6 @@
 /* global it, describe, beforeEach */
 import { expect } from 'mocha-es6';
-import { Layer, Interactive } from 'qinoq';
+import { Layer, Interactive } from '../index.js';
 
 describe('Layer object', () => {
   let layer;
