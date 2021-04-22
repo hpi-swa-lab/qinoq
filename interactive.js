@@ -7,8 +7,8 @@ import { COLOR_SCHEME } from './colors.js';
 import { arr } from 'lively.lang';
 
 export class Interactive extends Morph {
-  static async base (name = 'anInteractive') {
-    const interactive = new Interactive({ name: name });
+  static async base (props = {}) {
+    const interactive = new Interactive(props);
     const { exampleForegroundLayer, exampleBackgroundLayer } = await System.import('qinoq/examples.js');
     const foregroundLayer = exampleForegroundLayer();
     const backgroundLayer = exampleBackgroundLayer();
