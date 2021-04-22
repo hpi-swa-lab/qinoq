@@ -151,8 +151,12 @@ export class InteractivesEditor extends Morph {
     this.extent = pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT);
   }
 
-  async createInteractive () {
-    this.interactive = await Interactive.base();
+  async createInteractiveWithNamePrompt () {
+    await this.createInteractive(await $world.prompt('Name of new Interactive', { confirmLabel: 'CREATE' }));
+  }
+
+  async createInteractive (name) {
+    this.interactive = await Interactive.base(name);
   }
 
   initializeInteractive (interactive) {
@@ -577,7 +581,9 @@ class Preview extends Morph {
       acceptsDrops: false,
       padding: rect(8, 5, 0, -2)
     });
-    newInteractiveButton.onMouseUp = () => this.editor.createInteractive();
+    newInteractiveButton.onMouseUp = () => {
+      this.editor.createInteractiveWithNamePrompt();
+    };
 
     const container = new Morph({
       acceptsDrops: false,
