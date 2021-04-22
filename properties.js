@@ -1,5 +1,5 @@
 import { getColorForString, COLOR_SCHEME } from './colors.js';
-import { Color } from 'lively.graphics';
+
 export const animatedProperties = {
   extent: {
     type: 'point',
