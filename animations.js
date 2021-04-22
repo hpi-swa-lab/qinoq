@@ -133,6 +133,8 @@ export function createAnimationForPropertyType (propType, targetMorph, property)
       return new ColorAnimation(targetMorph, property);
     case 'number':
       return new NumberAnimation(targetMorph, property);
+    case 'string':
+      return new TypeWriterAnimation(targetMorph, property);
   }
   $world.setStatusMessage('Could not match property type');
 }
@@ -227,4 +229,18 @@ export class ColorAnimation extends Animation {
   }
 }
 
-// TODO: Add String, Number
+export class TypeWriterAnimation extends Animation {
+  interpolate (progress, start, end) {
+    const factor = end.easing(this.lerp(start, end, progress));
+    if (!end.startsWith(start)) {
+      throw new Error('Can not animate between strings start and end when end does not begin with start');
+    }
+    const lengthDifference = end.length - start.length;
+    const shownChars = Math.round(lengthDifference * factor);
+    return `${start}${end.slice(0, shownChars)}`;
+  }
+
+  get type () {
+    return 'typewriter';
+  }
+}
