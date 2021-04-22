@@ -62,16 +62,8 @@ export class InteractiveMorphInspector extends QinoqMorph {
     };
   }
 
-  get editor () {
-    return this._editor;
-  }
-
   get displayedProperties () {
     return Object.keys(this.propertyControls);
-  }
-
-  get interactive () {
-    return this.editor.interactive;
   }
 
   get sequence () {
@@ -378,10 +370,6 @@ class KeyframeButton extends QinoqMorph {
       },
       propType: {}
     };
-  }
-
-  get editor () {
-    return this._editor;
   }
 
   get target () {

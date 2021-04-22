@@ -18,6 +18,10 @@ export class QinoqMorph extends Morph {
     return this._editor;
   }
 
+  get interactive () {
+    return this.editor.interactive;
+  }
+
   __deserialize__ (snapshot, objRef, serializedMap, pool) {
     this._deserializing = true;
     super.__deserialize__(snapshot, objRef, serializedMap, pool);

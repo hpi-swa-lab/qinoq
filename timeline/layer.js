@@ -28,10 +28,6 @@ export class TimelineLayer extends QinoqMorph {
     };
   }
 
-  get editor () {
-    return this._editor;
-  }
-
   get isTimelineLayer () {
     return true;
   }

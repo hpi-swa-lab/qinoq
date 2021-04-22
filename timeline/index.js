@@ -66,10 +66,6 @@ export class Timeline extends QinoqMorph {
     };
   }
 
-  get editor () {
-    return this._editor;
-  }
-
   // Is automatically called by editor setter
   initialize () {
     this.ui.scrollableContainer = new Morph(
