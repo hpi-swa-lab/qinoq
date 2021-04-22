@@ -207,27 +207,33 @@ export class InteractivesEditor extends Morph {
 
     this.interactive.withAllSubmorphsDo(submorph => { if (!submorph.isSequence && !submorph.isInteractive) disconnect(submorph, 'onAbandon', this, 'removeMorphFromInteractive'); });
 
-    disconnect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
     disconnect(this.interactive, 'name', this.globalTimeline, 'name');
     disconnect(this.interactive, 'remove', this, 'reset');
 
     disconnect(this.interactive, 'scrollPosition', this.globalTimeline, 'interactiveScrollPosition');
     disconnect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
-    disconnect(this.preview, 'extent', this.interactive, 'extent');
 
     disconnect(this.interactive, 'name', this.globalTab, 'caption');
     disconnect(this.interactive, 'onLengthChange', this.globalTimeline, '_activeAreaWidth');
     disconnect(this.interactive, '_length', this.menuBar.ui.scrollPositionInput, 'max');
 
-    disconnect(this.globalTab, 'caption', this.interactive, 'name');
-
     disconnect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
+
+    this.withAllSubmorphsDo(submorph => {
+      if (submorph.attributeConnections) {
+        submorph.attributeConnections.forEach(attributeConnection => {
+          if (attributeConnection.targetObj === this.interactive) {
+            disconnect(submorph, attributeConnection.sourceAttrName, attributeConnection.targetObj, attributeConnection.targetMethodName);
+          }
+        });
+      }
+    });
 
     this.globalTimeline.clear();
     this.tabs.forEach(tab => { if (tab !== this.globalTab) tab.close(); });
 
     this.inspector.deselect();
-    this.withAllSubmorphsDo(submorph => { if (submorph !== this.globalTab)disconnectAll(submorph); });
+
     this.preview.showEmptyPreviewPlaceholder();
   }
 
