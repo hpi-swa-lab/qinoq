@@ -105,8 +105,6 @@ export class LottieMorph extends HTMLMorph {
     animation.addKeyframes([new Keyframe(0, 0, { name: 'animation start' }), new Keyframe(1, 1, { name: 'animation end', easing: 'linear' })]);
     sequence.addAnimation(animation);
     this.hasGeneratedProgressAnimation = true;
-    $world.setStatusMessage('Animation generated', Color.green);
-    // -> notify editor...
   }
 
   onOwnerChanged (newOwner) {

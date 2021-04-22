@@ -400,6 +400,7 @@ export class InteractivesEditor extends QinoqMorph {
     this.displayedTimeline._createOverviewLayers = true;
     const newLayer = this.displayedTimeline.createOverviewTimelineLayer(morph);
     this.displayedTimeline._createOverviewLayers = false;
+    this.displayedTimeline.updateLayers();
     this.displayedTimeline.onActiveAreaWidthChange();
     connect(morph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' });
     newLayer.redraw();
