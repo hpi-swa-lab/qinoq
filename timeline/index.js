@@ -4,15 +4,12 @@ import { TimelineCursor } from './cursor.js';
 import { connect, disconnect } from 'lively.bindings';
 import { TimelineSequence } from './sequence.js';
 import { GlobalTimelineLayer, OverviewSequenceTimelineLayer, SequenceTimelineLayer } from './layer.js';
-import { TimelineKeyframe, KeyframeLine } from './keyframe.js';
 import { CONSTANTS } from './constants.js';
 import { TimelineLayerInfo } from './layer-info.js';
 import { COLOR_SCHEME } from '../colors.js';
 import { arr } from 'lively.lang';
-
 import { singleSelectKeyPressed, zoomKeyPressed } from '../keys.js';
 import { Sequence, Keyframe } from '../index.js';
-import { getColorForProperty } from '../properties.js';
 import { EasingSelection } from '../components/easing-selection.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 
