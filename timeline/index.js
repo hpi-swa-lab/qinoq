@@ -320,7 +320,7 @@ export class Timeline extends Morph {
   abandon () {
     super.abandon();
     disconnect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange');
-    disconnect(this.editor.interactive, 'name', this, 'name');
+    if (this.editor.interactive) disconnect(this.editor.interactive, 'name', this, 'name');
   }
 
   renameSelection (newName) {
