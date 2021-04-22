@@ -56,6 +56,7 @@ describe('Typewriter animation', () => {
   let stringAnimation;
   const string1 = 'Hello';
   const string2 = 'Hello World';
+  const string3 = 'Something else';
   let mockMorph;
   beforeEach(() => {
     mockMorph = {
@@ -64,7 +65,7 @@ describe('Typewriter animation', () => {
     stringAnimation = new TypeWriterAnimation(mockMorph, 'textString');
   });
 
-  it('interpolates between strings', () => {
+  it('interpolates between strings forward', () => {
     const keyframe1 = new Keyframe(0, string1, { name: 'Keyframe 1' });
     const keyframe2 = new Keyframe(1, string2, { name: 'Keyframe 2' });
     stringAnimation.addKeyframes([keyframe1, keyframe2]);
@@ -74,5 +75,29 @@ describe('Typewriter animation', () => {
     expect(mockMorph.textString).to.be.equal('Hello Wo');
     stringAnimation.progress = 1;
     expect(mockMorph.textString).to.be.equal('Hello World');
+  });
+
+  it('interpolates between strings in reverse', () => {
+    const keyframe1 = new Keyframe(0, string2, { name: 'Keyframe 1' });
+    const keyframe2 = new Keyframe(1, string1, { name: 'Keyframe 2' });
+    stringAnimation.addKeyframes([keyframe1, keyframe2]);
+    stringAnimation.progress = 1;
+    expect(mockMorph.textString).to.be.equal('Hello');
+    stringAnimation.progress = 0.5;
+    expect(mockMorph.textString).to.be.equal('Hello Wo');
+    stringAnimation.progress = 0;
+    expect(mockMorph.textString).to.be.equal('Hello World');
+  });
+
+  it('can not interpolate between strings with no matching starts or ends', () => {
+    const keyframe1 = new Keyframe(0.1, string1, { name: 'Keyframe 1' });
+    const keyframe2 = new Keyframe(0.9, string3, { name: 'Keyframe 2' });
+    stringAnimation.addKeyframes([keyframe1, keyframe2]);
+    stringAnimation.progress = 0;
+    expect(mockMorph.textString).to.be.equal(string1);
+    stringAnimation.progress = 0.5;
+    expect(mockMorph.textString).to.be.undefined;
+    stringAnimation.progress = 1;
+    expect(mockMorph.textString).to.be.equal(string3);
   });
 });
