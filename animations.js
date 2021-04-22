@@ -241,6 +241,6 @@ export class TypeWriterAnimation extends Animation {
   }
 
   get type () {
-    return 'typewriter';
+    return 'string';
   }
 }
