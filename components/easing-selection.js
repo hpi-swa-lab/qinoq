@@ -1,5 +1,5 @@
 import { Morph, ShadowObject, HorizontalLayout, Label, VerticalLayout, easings, stringToEasing } from 'lively.morphic';
-import { pt, Color } from 'lively.graphics';
+import { pt } from 'lively.graphics';
 
 import { Canvas } from 'lively.components/canvas.js';
 import { Keyframe } from 'qinoq';
