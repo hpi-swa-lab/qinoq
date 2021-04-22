@@ -1,13 +1,13 @@
 /* global it, describe, before, after */
 import { expect } from 'mocha-es6';
-import { Interactive, InteractivesEditor } from 'qinoq';
+import { Interactive, exampleInteractive, InteractivesEditor } from 'qinoq';
 import { pt } from 'lively.graphics';
 
 describe('Editor', () => {
   let editor, interactive;
   before(async () => {
     editor = await new InteractivesEditor().initialize();
-    interactive = Interactive.example();
+    interactive = await exampleInteractive();
     editor.interactive = interactive;
   });
 

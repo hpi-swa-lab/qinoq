@@ -18,8 +18,8 @@ describe('Layer object', () => {
     expect(layer.equals(anotherLayer)).to.be.false;
   });
 
-  it('hides sequences when hidden', () => {
-    const interactive = Interactive.base();
+  it('hides sequences when hidden', async () => {
+    const interactive = await Interactive.base();
     const sequenceInInteractive = interactive.sequences[0];
     const layerInInteractive = sequenceInInteractive.layer;
     expect(interactive.layers).to.include(layerInInteractive);
