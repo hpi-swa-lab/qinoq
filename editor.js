@@ -62,6 +62,9 @@ export class InteractivesEditor extends QinoqMorph {
           }
         }
       },
+      clipboard: {
+        defaultValue: new Clipboard()
+      },
       debug: {
         defaultValue: false,
         set (bool) {
@@ -404,7 +407,7 @@ export class InteractivesEditor extends QinoqMorph {
   copyMorph (morphToCopy) {
     const sequenceOfMorph = Sequence.getSequenceOfMorph(morphToCopy);
     const animationsToCopy = sequenceOfMorph.getAnimationsForMorph(morphToCopy);
-    this.clipboard = { morph: morphToCopy, animations: animationsToCopy };
+    this.clipboard.addMorph(morphToCopy, animationsToCopy);
   }
 
   cutMorph (morphToCut) {
@@ -555,6 +558,7 @@ export class InteractivesEditor extends QinoqMorph {
 
   abandon () {
     config.altClickDefinesThat = this._altClickDefinesThatStorage;
+    this.clipboard.clear();
     this.clearInteractive();
     super.abandon();
   }
@@ -572,7 +576,7 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   pasteMorphFromClipboard () {
-    const { morph, animations } = this.clipboard;
+    const { morph, animations } = this.clipboard.content;
 
     // morph.copy also copied connections
     // this is undesirable for us which is why we copy the morph without connections
@@ -597,6 +601,26 @@ export class InteractivesEditor extends QinoqMorph {
     super.__after_deserialize__(snapshot, ref, pool);
     // Required to position the scrollOverlay correctly. Otherwise the scroll Overlay will be in the center of the screen and possibly misaligned with the interactive/ preview
     this.interactive.scrollOverlay.globalPosition = this.preview.globalPosition;
+  }
+}
+
+class Clipboard {
+  addMorph (morph, animations) {
+    this.morph = morph;
+    this.animations = animations;
+  }
+
+  get content () {
+    if (this.containsMorph) return { morph: this.morph, animations: this.animations };
+  }
+
+  get containsMorph () {
+    return (this.morph && this.animations);
+  }
+
+  clear () {
+    this.morph = null;
+    this.animations = null;
   }
 }
 

@@ -835,8 +835,7 @@ export class SequenceTimeline extends Timeline {
 
   menuItems () {
     const menuItems = [];
-    // TODO: make clipboard a class when more than one type of thing can be in clipboard
-    if (this.editor.clipboard) menuItems.push(['✏️ Paste Morph', () => this.editor.pasteMorphFromClipboard()]);
+    if (this.editor.clipboard.containsMorph) menuItems.push(['✏️ Paste Morph', () => this.editor.pasteMorphFromClipboard()]);
     return menuItems;
   }
 
