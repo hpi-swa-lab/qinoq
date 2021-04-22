@@ -2,7 +2,7 @@ import { VerticalLayout, Icon, Label } from 'lively.morphic';
 import { CONSTANTS } from './constants.js';
 import { pt } from 'lively.graphics';
 import { COLOR_SCHEME } from '../colors.js';
-import { Sequence } from 'qinoq';
+import { Sequence } from '../index.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 
 export class TimelineLayerInfo extends QinoqMorph {
