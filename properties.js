@@ -43,6 +43,9 @@ export const animatedProperties = {
   },
   progress: {
     type: 'number'
+  },
+  textString: {
+    type: 'string'
   }
 };
 
