@@ -4,6 +4,7 @@ import { Sequence, Interactive, Layer } from '../index.js';
 import { Morph } from 'lively.morphic';
 import { Keyframe, NumberAnimation } from '../animations.js';
 import { pt } from 'lively.graphics';
+import { LottieMorph } from '../interactive-morphs/lottie-morph.js';
 
 describe('Sequence object', () => {
   // TODO: test focusedEffect and its setting logic
@@ -110,6 +111,16 @@ describe('Sequence object', () => {
       expect(sequence.getNextKeyframePosition(0.75)).to.equal(0.8);
       expect(sequence.getNextKeyframePosition(0.5)).to.be.equal(0.7);
       expect(sequence.getPrevKeyframePosition(0.5)).to.be.equal(0.1);
+    });
+
+    it('when a lottie morph is added, a new animation is created', () => {
+      const lm = new LottieMorph();
+      expect(sequence.animations.length).to.be.equal(0);
+      sequence.addMorph(lm);
+      expect(sequence.animations.length).to.be.equal(1);
+      const newAnimation = sequence.animations[0];
+      expect(newAnimation.property).to.be.equal('progress');
+      expect(newAnimation.keyframes.length).to.be.equal(2);
     });
   });
 
