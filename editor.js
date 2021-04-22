@@ -164,7 +164,7 @@ export class InteractivesEditor extends Morph {
   }
 
   async createInteractive (name) {
-    this.interactive = await Interactive.base(name);
+    this.interactive = await Interactive.base({name});
   }
 
   initializeInteractive (interactive) {
