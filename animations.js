@@ -230,14 +230,29 @@ export class ColorAnimation extends Animation {
 }
 
 export class TypeWriterAnimation extends Animation {
+  getTypewriterType (start, end) {
+    if (end.value.startsWith(start.value)) {
+      return 'forward';
+    }
+    if (start.value.startsWith(end.value)) {
+      return 'reverse';
+    }
+    $world.setStatusMessage('Can not animate the string transition');
+  }
+
   interpolate (progress, start, end) {
     const factor = end.easing(this.lerp(start, end, progress));
-    if (!end.value.startsWith(start.value)) {
-      throw new Error('Can not animate between strings start and end when end does not begin with start');
-    }
-    const lengthDifference = end.value.length - start.value.length;
+    const typeWriterType = this.getTypewriterType(start, end);
+
+    const lengthDifference = Math.abs(end.value.length - start.value.length);
     const shownChars = Math.round(lengthDifference * factor);
-    return `${start.value}${end.value.slice(start.value.length, start.value.length + shownChars)}`;
+    let result;
+    switch (typeWriterType) {
+      case 'forward':
+        return `${start.value}${end.value.slice(start.value.length, start.value.length + shownChars)}`;
+      case 'reverse':
+        return `${end.value}${start.value.slice(end.value.length, start.value.length - shownChars)}`;
+    }
   }
 
   get type () {
