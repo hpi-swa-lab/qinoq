@@ -171,10 +171,12 @@ export class TimelineKeyframe extends Morph {
   }
 
   onMouseUp (event) {
-    if (!this._dragged && !singleSelectKeyPressed(event)) {
-      this.timeline.deselectAllTimelineKeyframesExcept(this);
-    } else {
-      this._dragged = false;
+    if (event.leftMouseButtonPressed()) {
+      if (!this._dragged && !singleSelectKeyPressed(event)) {
+        this.timeline.deselectAllTimelineKeyframesExcept(this);
+      } else {
+        this._dragged = false;
+      }
     }
   }
 
