@@ -134,7 +134,7 @@ export function createAnimationForPropertyType (propType, targetMorph, property)
     case 'number':
       return new NumberAnimation(targetMorph, property);
     case 'string':
-      return new TypeWriterAnimation(targetMorph, property);
+      return new TypewriterAnimation(targetMorph, property);
   }
   $world.setStatusMessage('Could not match property type');
 }
@@ -229,7 +229,7 @@ export class ColorAnimation extends Animation {
   }
 }
 
-export class TypeWriterAnimation extends Animation {
+export class TypewriterAnimation extends Animation {
   getTypewriterType (start, end) {
     if (end.value.startsWith(start.value)) {
       return 'forward';
