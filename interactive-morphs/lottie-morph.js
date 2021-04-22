@@ -4,6 +4,7 @@ import { HTMLMorph } from 'lively.morphic';
 import { resource } from 'lively.resources';
 
 import Lottie from 'https://jspm.dev/lottie-web';
+import { Sequence, Keyframe, NumberAnimation } from 'qinoq';
 
 export class LottieMorph extends HTMLMorph {
   static get properties () {
@@ -38,6 +39,9 @@ export class LottieMorph extends HTMLMorph {
       },
       animationData: {
         serialize: false
+      },
+      hasGeneratedProgressAnimation: {
+        defaultValue: false
       }
     };
   }
@@ -91,5 +95,21 @@ export class LottieMorph extends HTMLMorph {
   isReady () {
     if (!this.lottieAnimation) return false;
     return this.lottieAnimation.isLoaded;
+  }
+
+  generateProgressAnimation () {
+    const sequence = Sequence.getSequenceOfMorph(this);
+    if (sequence.getAnimationForMorphProperty(this, 'progress')) return;
+    const animation = new NumberAnimation(this, 'progress');
+    animation.addKeyframes([new Keyframe(0, 0, { name: 'animation start' }), new Keyframe(1, 1, { name: 'animation end', easing: 'linear' })]);
+    sequence.addAnimation(animation);
+    this.hasGeneratedProgressAnimation = true;
+    // -> notify editor...
+  }
+
+  onOwnerChanged (newOwner) {
+    if (newOwner && newOwner.isSequence && !this.hasGeneratedProgressAnimation) {
+      this.generateProgressAnimation();
+    }
   }
 }
