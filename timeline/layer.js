@@ -578,7 +578,6 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     const sampling = 0.01;
     const values = Object.entries(this.animation.getValues(sampling));
 
-    const fontSize = 12;
     const style = { color: COLOR_SCHEME.ON_BACKGROUND, font: '12px monospace' };
 
     const textY = this.activeArea.height / 2;
