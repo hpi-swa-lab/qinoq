@@ -35,18 +35,22 @@ export const animatedProperties = {
   scale: {
     type: 'number'
   },
+  textString: {
+    type: 'string'
+  },
   fontSize: {
     type: 'number'
   },
   lineHeight: {
     type: 'number'
   },
+  fontColor: {
+    type: 'color'
+  },
   progress: {
     type: 'number'
-  },
-  textString: {
-    type: 'string'
   }
+
 };
 
 // Get a direct mapping property -> type
