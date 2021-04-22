@@ -550,7 +550,7 @@ export class TimelineSequence extends Morph {
   onBeingDroppedOn (hand, recipient) {
     if (recipient.isTimelineLayer) {
       recipient.addMorph(this);
-      const xPosition = Math.max(this.position.x, CONSTANTS.SEQUENCE_INITIAL_X_OFFSET);
+      const xPosition = Math.round(Math.max(this.position.x, CONSTANTS.SEQUENCE_INITIAL_X_OFFSET));
       this.position = pt(xPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       this.timelineLayer = this.owner;
       if (this.isOverlappingOtherSequence()) {
