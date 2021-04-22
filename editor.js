@@ -152,17 +152,15 @@ export class InteractivesEditor extends Morph {
   }
 
   async createInteractiveWithNamePrompt () {
-    await this.createInteractive(
-      await $world.prompt(['New Interactive\n', {}, 'Enter a name for this Interactive:',
+    const name = await $world.prompt(
+      ['New Interactive\n', {}, 'Enter a name for this Interactive:',
         { fontWeight: 'normal' }], {
         width: 400,
-        hasFixedPosition: true,
         confirmLabel: 'CREATE INTERACTIVE',
         validate: (name) => !!name,
         errorMessage: 'Please enter a Name'
-      }
-      )
-    );
+      });
+    if (name) await this.createInteractive(name);
   }
 
   async createInteractive (name) {
