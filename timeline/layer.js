@@ -423,6 +423,15 @@ export class SequenceTimelineLayer extends TimelineLayer {
     this.activeArea.line(pt(previousPosition, previousYValue), pt(this.activeArea.width, previousYValue), yStyle);
   }
 
+  async scrollToKeyframe (keyframe) {
+    const timelineKeyframe = this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe === keyframe);
+    this.timeline.scrollToTimelineKeyframe(timelineKeyframe);
+
+    // If this line is removed, the scroll does not happen (Race issue)
+    await new Promise(r => setTimeout(r, 20));
+    timelineKeyframe.show();
+  }
+
   abandon () {
     disconnect(this.morph, 'name', this, 'onMorphNameChange');
     super.abandon();
@@ -492,6 +501,15 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     this.reactsToPointer = false;
     this.removeKeyframeLines();
     this.createPropertyLayers();
+  }
+
+  getPropertyLayerFor (animation) {
+    return this.propertyLayers.find(propertyLayer => propertyLayer.animation === animation);
+  }
+
+  scrollToKeyframe (keyframe, animation) {
+    this.isExpanded = true;
+    this.getPropertyLayerFor(animation).scrollToKeyframe(keyframe);
   }
 
   createPropertyLayers () {
