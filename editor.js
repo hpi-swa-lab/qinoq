@@ -164,7 +164,7 @@ export class InteractivesEditor extends Morph {
   }
 
   async createInteractive (name) {
-    this.interactive = await Interactive.base({name});
+    this.interactive = await Interactive.base({ name });
   }
 
   initializeInteractive (interactive) {
@@ -475,14 +475,8 @@ export class InteractivesEditor extends Morph {
       const { animation, sequence } = findResult;
       const tab = this.getTabFor(sequence) || await this.initializeSequenceView(sequence);
       tab.selected = true;
-      const timeline = this.getTimelineFor(tab);
-      const timelineKeyframe = timeline.getTimelineKeyframe(item);
-      // If this line is removed, the scroll does not happen (Race issue)
-      await new Promise(r => setTimeout(r, 20));
-
-      timeline.scrollToTimelineKeyframe(timelineKeyframe);
-      timelineKeyframe.show();
-      return timelineKeyframe;
+      const timelineLayer = this.getTimelineFor(tab).timelineLayers.find(timelineLayer => timelineLayer.morph === animation.target);
+      timelineLayer.scrollToKeyframe(item, animation);
     }
   }
 
