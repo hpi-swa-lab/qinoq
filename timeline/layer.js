@@ -103,6 +103,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
           if (!this._deserializing) {
             this.setProperty('layer', layer);
             this.tooltip = layer.name;
+            this.name = layer.name;
           }
         }
       }
@@ -111,10 +112,6 @@ export class GlobalTimelineLayer extends TimelineLayer {
 
   get timelineSequences () {
     return this.submorphs.filter(submorph => !!submorph.isTimelineSequence);
-  }
-
-  get name () {
-    return this.layer.name;
   }
 
   updateTooltip () {
@@ -217,9 +214,10 @@ export class SequenceTimelineLayer extends TimelineLayer {
       animation: {
         set (animation) {
           this.setProperty('animation', animation);
-          this.fill = getColorForProperty(animation.property);
-          this.inactiveArea.fill = this.fill;
+
           if (!this._deserializing) {
+            this.fill = getColorForProperty(animation.property);
+            this.inactiveArea.fill = this.fill;
             this.updateTooltip();
             this.layerInfo.updateLabel();
             this.redraw();
