@@ -250,15 +250,19 @@ export class KeyframeLine extends QinoqMorph {
       animation: {
         set (animation) {
           this.setProperty('animation', animation);
-          this.fill = getColorForProperty(animation.property);
-          this.setTooltip();
+          if (!this._deserializing) {
+            this.fill = getColorForProperty(animation.property);
+            this.setTooltip();
+          }
         }
       },
       yPosition: {
         after: ['animation', 'layer'],
         set (yPosition) {
           this.setProperty('yPosition', yPosition);
-          this.updatePosition();
+          if (!this._deserializing) {
+            this.updatePosition();
+          }
         }
       },
       layer: {},

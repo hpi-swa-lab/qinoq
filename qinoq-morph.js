@@ -5,7 +5,7 @@ export class QinoqMorph extends Morph {
     return {
       _editor: {},
       halosEnabled: {
-        default: false
+        defaultValue: false
       }
     };
   }
