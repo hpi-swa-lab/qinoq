@@ -164,7 +164,7 @@ export class InteractivesEditor extends Morph {
   }
 
   async createInteractive (name) {
-    this.interactive = await Interactive.base({name});
+    this.interactive = await Interactive.base({ name });
   }
 
   initializeInteractive (interactive) {
@@ -212,6 +212,7 @@ export class InteractivesEditor extends Morph {
 
     disconnect(this.interactive, 'scrollPosition', this.globalTimeline, 'interactiveScrollPosition');
     disconnect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
+    disconnect(this.preview, 'extent', this.interactive, 'extent');
 
     disconnect(this.interactive, 'name', this.globalTab, 'caption');
     disconnect(this.interactive, 'onLengthChange', this.globalTimeline, '_activeAreaWidth');
@@ -219,16 +220,18 @@ export class InteractivesEditor extends Morph {
 
     disconnect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
 
-    this.withAllSubmorphsDo(submorph => {
-      if (submorph.attributeConnections) {
-        submorph.attributeConnections.forEach(attributeConnection => {
-          const target = attributeConnection.targetObj;
-          if (target === this.interactive || Interactive.isMorphInInteractive(target)) {
-            disconnect(submorph, attributeConnection.sourceAttrName, attributeConnection.targetObj, attributeConnection.targetMethodName);
-          }
-        });
-      }
-    });
+    const morphsToClear = [this.tabContainer, this.menuBar, this.inspector, this.sequenceOverview];
+    morphsToClear.forEach(morph =>
+      morph.withAllSubmorphsDo(submorph => {
+        if (submorph.attributeConnections) {
+          submorph.attributeConnections.forEach(attributeConnection => {
+            const target = attributeConnection.targetObj;
+            if (target === this.interactive || Interactive.isMorphInInteractive(target)) {
+              disconnect(submorph, attributeConnection.sourceAttrName, attributeConnection.targetObj, attributeConnection.targetMethodName);
+            }
+          });
+        }
+      }));
 
     this.globalTimeline.clear();
     this.tabs.forEach(tab => { if (tab !== this.globalTab) tab.close(); });
