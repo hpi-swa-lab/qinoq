@@ -390,7 +390,7 @@ class InteractiveScrollHolder extends Morph {
   onHoverOut (event) {
     disconnect(event.hand, 'position', this, 'onMouseMoving');
 
-    if (this.passThroughMorph) {
+    if (this.passThroughMorph && $world.get('lively top bar')) {
       $world.get('lively top bar').attachToTarget($world);
       // should not be neccessary, this is a bug in upstream lively
       $world.get('lively top bar').setEditMode($world.get('lively top bar').editMode);
