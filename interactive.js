@@ -21,6 +21,10 @@ export class Interactive extends Morph {
     return interactive;
   }
 
+  static isMorphInInteractive (morph) {
+    return morph.isSequence || Sequence.getSequenceOfMorph(morph);
+  }
+
   static get properties () {
     return {
       _length: {
@@ -528,6 +532,10 @@ export class Sequence extends Morph {
     return new Sequence({ name: 'first sequence', start: 0, duration: 250, ...props });
   }
 
+  get isSequence () {
+    return true;
+  }
+
   get end () {
     return this.start + this.duration;
   }
@@ -538,10 +546,6 @@ export class Sequence extends Morph {
 
   isDisplayed () {
     return this.progress >= 0 && this.progress < 1 && !this.layer.hidden;
-  }
-
-  get isSequence () {
-    return true;
   }
 
   /**
