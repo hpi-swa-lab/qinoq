@@ -208,7 +208,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
       morph: {
         set (morph) {
           this.setProperty('morph', morph);
-          connect(morph, 'name', this, 'onMorphNameChange').update();
+          if (!this._deserializing)connect(morph, 'name', this, 'onMorphNameChange').update();
         }
       },
       animation: {
