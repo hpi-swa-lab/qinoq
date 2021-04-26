@@ -876,6 +876,12 @@ class MenuBar extends QinoqMorph {
     this.ui.gotoNextButton.tooltip = 'Go to next keyframe';
     this.ui.gotoPrevButton.tooltip = 'Go to previous keyframe';
   }
+
+  __after_deserialize__ (snapshot, ref, pool) {
+    this.ui.zoomInput.floatingPoint = false;
+    this.ui.scrollPositionInput.floatingPoint = false;
+    super.__after_deserialize__(snapshot, ref, pool);
+  }
 }
 
 class SequenceOverview extends QinoqMorph {
