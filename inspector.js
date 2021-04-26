@@ -125,9 +125,9 @@ export class InteractiveMorphInspector extends QinoqMorph {
       inspector: this,
       property,
       propType,
-      sequence: this.sequence
+      sequence: this.sequence,
+      _editor: this.editor
     });
-    this.propertyControls[property].keyframe.initialize(this.editor);
     this.ui[property] = new Morph();
     Object.values(this.propertyControls[property]).forEach(morph => this.ui[property].addMorph(morph));
     this.ui.propertyPane.addMorph(this.ui[property]);
@@ -345,10 +345,18 @@ class KeyframeButton extends QinoqMorph {
       mode: {
         defaultValue: 'default',
         type: 'Enum',
-        values: ['default', 'activated']
+        values: ['default', 'activated'],
+        initialize () {
+          this.setDefaultStyle();
+        }
       },
       inspector: { },
-      animation: { },
+      animation: {
+        after: ['sequence', 'property', 'inspector'],
+        initialize () {
+          if (!this._deserializing) { this.animation = this.sequence.getAnimationForMorphProperty(this.target, this.property); }
+        }
+      },
       _editor: {
         set (_editor) {
           if (!this._deserializing) { connect(_editor, 'interactiveScrollPosition', this, 'updateStyle'); }
@@ -361,7 +369,6 @@ class KeyframeButton extends QinoqMorph {
         set (property) {
           this.setProperty('property', property);
           this.tooltip = `Create a keyframe for the ${property} property`;
-          this.fill = getColorForProperty(property);
         }
       },
       propType: {}
@@ -374,12 +381,6 @@ class KeyframeButton extends QinoqMorph {
 
   get currentValue () {
     return this.target[this.property];
-  }
-
-  initialize (editor) {
-    this._editor = editor;
-    this.setDefaultStyle();
-    this.animation = this.sequence.getAnimationForMorphProperty(this.target, this.property);
   }
 
   async onMouseUp () {
