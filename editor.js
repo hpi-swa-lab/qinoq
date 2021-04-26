@@ -520,6 +520,11 @@ export class InteractivesEditor extends QinoqMorph {
   onHoverOut () {
     config.altClickDefinesThat = this._altClickDefinesThatStorage;
   }
+
+  __after_deserialize__ (snapshot, ref, pool) {
+    super.__after_deserialize__(snapshot, ref, pool);
+    this.interactive.scrollOverlay.globalPosition = this.preview.globalPosition;
+  }
 }
 
 class Preview extends QinoqMorph {
