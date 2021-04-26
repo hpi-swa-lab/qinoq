@@ -80,6 +80,13 @@ export class TimelineLayer extends QinoqMorph {
     connect(activeArea, 'extent', inactiveArea, 'position', { converter: '() => source.topRight' });
   }
 
+  __after_deserialize__ (snapshot, ref, pool) {
+    this.inactiveArea.onDragStart = event => this.onDragStart(event);
+    this.inactiveArea.onDrag = event => this.onDrag(event);
+    this.inactiveArea.onDragEnd = event => this.onDragEnd(event);
+    super.__after_deserialize__(snapshot, ref, pool);
+  }
+
   get inactiveArea () {
     return this.getSubmorphNamed('inactive area');
   }
@@ -100,8 +107,8 @@ export class GlobalTimelineLayer extends TimelineLayer {
       },
       layer: {
         set (layer) {
+          this.setProperty('layer', layer);
           if (!this._deserializing) {
-            this.setProperty('layer', layer);
             this.tooltip = layer.name;
             this.name = layer.name;
           }
