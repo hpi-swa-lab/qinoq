@@ -33,12 +33,21 @@ export class InteractiveMorphInspector extends QinoqMorph {
         defaultValue: 'auto'
       },
       ui: {
-        defaultValue: {}
+        initialize () {
+          if (!this._deserializing) {
+            this.ui = {};
+          }
+        }
       },
       propertyControls: {
-        defaultValue: {}
+        initialize () {
+          if (!this._deserializing) {
+            this.propertyControls = {};
+          }
+        }
       },
       targetMorph: {
+        after: ['propertyControls'],
         set (morph) {
           if (this._deserializing) {
             this.setProperty('targetMorph', morph);
@@ -63,7 +72,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
   }
 
   get displayedProperties () {
-    return Object.keys(this.propertyControls);
+    return Object.keys(this.propertyControls).filter(property => property !== '_rev');
   }
 
   get sequence () {
@@ -361,8 +370,8 @@ class KeyframeButton extends QinoqMorph {
       },
       sequence: {},
       property: {
-	after:['tooltip'],
-	set (property) {
+        after: ['tooltip'],
+        set (property) {
           this.setProperty('property', property);
           this.tooltip = `Create a keyframe for the ${property} property`;
           this.fill = getColorForProperty(property);
