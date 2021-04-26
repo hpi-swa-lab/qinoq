@@ -61,7 +61,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
 
             this.buildPropertyControls();
             this.refreshAllPropertiesInInspector();
-            for (const property in this.propertyControls) {
+            for (const property of this.displayedProperties) {
               this.propertyControls[property].keyframe.updateStyle();
             }
             this.createConnections();
@@ -151,20 +151,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
   }
 
   buildTargetPicker () {
-    this.ui.targetPicker = new Button({
-      name: 'targetPicker',
-      padding: rect(2, 2, 0, 0),
-      borderRadius: CONSTANTS.TARGET_PICKER_BORDER_RADIUS,
-      master: {
-        auto: 'styleguide://System/buttons/light'
-      },
-      tooltip: 'Choose Inspection Target',
-      label: Icon.textAttribute('crosshairs'),
-      extent: pt(CONSTANTS.TARGET_PICKER_DIAMETER, CONSTANTS.TARGET_PICKER_DIAMETER)
-    });
-    this.ui.targetPicker.onMouseDown = async (event) => {
-      this.targetMorph = await InteractiveMorphSelector.selectMorph($world, null, morph => Sequence.getSequenceOfMorph(morph) && Sequence.getSequenceOfMorph(morph).focused);
-    };
+    this.ui.targetPicker = new TargetPicker({ inspector: this });
   }
 
   build () {
@@ -364,7 +351,7 @@ class KeyframeButton extends QinoqMorph {
       animation: { },
       _editor: {
         set (_editor) {
-          if (this._deserializing) { connect(_editor, 'interactiveScrollPosition', this, 'updateStyle'); }
+          if (!this._deserializing) { connect(_editor, 'interactiveScrollPosition', this, 'updateStyle'); }
           this.setProperty('_editor', _editor);
         }
       },
@@ -465,5 +452,39 @@ class KeyframeButton extends QinoqMorph {
   remove () {
     if (this.editor) disconnect(this.editor, 'interactiveScrollPosition', this, 'updateStyle');
     super.remove();
+  }
+}
+
+class TargetPicker extends Button {
+  static get properties () {
+    return {
+      name: {
+        defaultValue: 'target picker'
+      },
+      padding: {
+        defaultValue: rect(2, 2, 0, 0)
+      },
+      tooltip: {
+        defaultValue: 'Choose Inspection Target'
+      },
+      label: {
+        initialize () {
+          this.label = Icon.textAttribute('crosshairs');
+        }
+      },
+      inspector: {
+        async initialize () {
+          this.master = { auto: 'styleguide://System/buttons/light' };
+          await this.whenRendered();
+          this.extent = pt(CONSTANTS.TARGET_PICKER_DIAMETER, CONSTANTS.TARGET_PICKER_DIAMETER);
+          this.borderRadius = CONSTANTS.TARGET_PICKER_BORDER_RADIUS;
+        }
+      }
+    };
+  }
+
+  async onMouseDown (event) {
+    super.onMouseDown(event);
+    this.inspector.targetMorph = await InteractiveMorphSelector.selectMorph($world, null, morph => Sequence.getSequenceOfMorph(morph) && Sequence.getSequenceOfMorph(morph).focused);
   }
 }
