@@ -78,9 +78,11 @@ export class TimelineKeyframe extends QinoqMorph {
         after: ['_keyframe', 'layer'],
         set (easing) {
           this.setProperty('easing', easing);
-          this.keyframe.setEasing(this.easing);
-          this.setTooltip();
-          if (this.layer) this.layer.redraw();
+          if (!this._deserializing) {
+            this.keyframe.setEasing(this.easing);
+            this.setTooltip();
+            if (this.layer) this.layer.redraw();
+          }
         }
       }
     };
