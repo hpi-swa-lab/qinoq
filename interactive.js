@@ -92,6 +92,10 @@ export class Interactive extends Morph {
 
   // this is to be called if the scrollposition is changed via any means that are not natural scrolling
   onExternalScrollChange (scrollPosition) {
+    // this is necessary since the actual change of this.scrollPosition will only be done after onScroll on the InteractiveScrollHolder was executed
+    // the scrollEvent for that is not handled synchronously
+    // this will not result in an invalid state
+    this.scrollPosition = scrollPosition;
     this.blockScrollEvents = true;
     const scrollOverlayNode = this.scrollOverlay.env.renderer.getNodeForMorph(this.scrollOverlay);
     if (scrollOverlayNode) {

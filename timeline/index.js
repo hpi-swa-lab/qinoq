@@ -1,7 +1,7 @@
 import { pt } from 'lively.graphics';
 import { VerticalLayout, Morph } from 'lively.morphic';
 import { TimelineCursor } from './cursor.js';
-import { connect, disconnect } from 'lively.bindings';
+import { connect, signal, disconnect } from 'lively.bindings';
 import { TimelineSequence } from './sequence.js';
 import { GlobalTimelineLayer, OverviewSequenceTimelineLayer, SequenceTimelineLayer } from './layer.js';
 import { CONSTANTS } from './constants.js';
@@ -123,7 +123,7 @@ export class Timeline extends QinoqMorph {
       borderRadius: 10
     }));
 
-    connect(this.editor, 'interactiveScrollPosition', this.ui.scrollbarCursor, 'position', {
+    connect(this.editor, 'onScrollChange', this.ui.scrollbarCursor, 'position', {
       converter: `(scrollPosition) => {
       return pt(
         (source.displayedTimeline.getPositionFromScroll(scrollPosition) - initialXOffset) * (scrollbar.width - (2 * scrollbarMargin + target.extent.x)) / source.displayedTimeline._activeAreaWidth + scrollbarMargin, 
@@ -259,7 +259,7 @@ export class Timeline extends QinoqMorph {
   }
 
   redraw () {
-    this.editor.triggerInteractiveScrollPositionConnections();
+    // TODO
   }
 
   get timelineLayers () {
@@ -274,9 +274,10 @@ export class Timeline extends QinoqMorph {
     this._createOverviewLayers = true;
     this.onLoadContent(content);
     this.initializeCursor();
-    connect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange', {
+    this.onScrollChange(this.editor.interactive.scrollPosition);
+    /* connect(this.editor, 'onScrollChange', this, 'onScrollChange', {
       updater: '($update, scrollPosition) => { if (target.isDisplayed) $update(scrollPosition); }'
-    }).update(this.editor.interactiveScrollPosition);
+    }).update(this.editor.interactive.scrollPosition); */
     connect(content, 'name', this, 'name', { converter: newName => `${newName.toLowerCase()} timeline` }).update(content.name);
     this._createOverviewLayers = false;
   }
@@ -319,7 +320,7 @@ export class Timeline extends QinoqMorph {
 
   abandon (bool) {
     super.abandon(bool);
-    disconnect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange');
+    disconnect(this.editor, 'onScrollChange', this, 'onScrollChange');
     if (this.editor.interactive) disconnect(this.editor.interactive, 'name', this, 'name');
   }
 

@@ -50,8 +50,7 @@ export class InteractivesEditor extends QinoqMorph {
       },
       inspector: {
       },
-      interactiveScrollPosition: {
-        defaultValue: 0
+      preview: {
       },
       interactiveInEditMode: {
         defaultValue: false,
@@ -183,7 +182,6 @@ export class InteractivesEditor extends QinoqMorph {
 
   initializeInteractive (interactive) {
     if (!interactive) return;
-    this.interactiveScrollPosition = interactive.scrollPosition; // make sure the scrollPosition is up to date when loading content to preview and globalTimeline
     this.preview.loadContent(interactive);
     this.globalTimeline.loadContent(interactive);
 
@@ -191,6 +189,7 @@ export class InteractivesEditor extends QinoqMorph {
     interactive.withAllSubmorphsDo(submorph => { if (!submorph.isSequence && !submorph.isInteractive) connect(submorph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' }); });
 
     connect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
+    connect(this, 'onInternalScrollChange', this.interactive, 'onExternalScrollChange');
 
     connect(this.interactive, 'name', this.globalTab, 'caption').update(this.interactive.name);
     connect(this.interactive, 'remove', this, 'reset');
@@ -209,10 +208,15 @@ export class InteractivesEditor extends QinoqMorph {
   onInternalScrollChange (scrollPosition) {
     if (!this.interactive) return;
     this.interactive.onExternalScrollChange(scrollPosition);
+    this.onScrollChange(scrollPosition);
   }
 
   // listens for actual scrolling happening on the Interactive
-  onExternalScrollChange (scrollPosition) {}
+  onExternalScrollChange (scrollPosition) {
+    this.onScrollChange(scrollPosition);
+  }
+
+  onScrollChange (scrollPosition) {}
 
   onTabClose (tab) {
     disconnectAll(tab);
@@ -230,11 +234,12 @@ export class InteractivesEditor extends QinoqMorph {
 
     this.interactive.withAllSubmorphsDo(submorph => { if (!submorph.isSequence && !submorph.isInteractive) disconnect(submorph, 'onAbandon', this, 'removeMorphFromInteractive'); });
 
+    disconnect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
+    disconnect(this, 'onInternalScrollChange', this.interactive, 'onExternalScrollChange');
+
     disconnect(this.interactive, 'name', this.globalTimeline, 'name');
     disconnect(this.interactive, 'remove', this, 'reset');
 
-    disconnect(this.interactive, 'scrollPosition', this.globalTimeline, 'interactiveScrollPosition');
-    disconnect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
     disconnect(this.preview, 'extent', this.interactive, 'extent');
 
     disconnect(this.interactive, 'name', this.globalTab, 'caption');
@@ -276,8 +281,8 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   async initializeSequenceView (sequence) {
-    this.interactiveScrollPosition = sequence.start;
-
+    this.onInternalScrollChange(sequence.start);
+    this.menuBar.ui.scrollPositionInput.number = sequence.start;
     const sequenceTab = this.getTabFor(sequence);
     if (sequenceTab) {
       sequenceTab.selected = true;
@@ -422,19 +427,16 @@ export class InteractivesEditor extends QinoqMorph {
     if (previouslyDisplayedTimeline) {
       disconnect(this.window, 'extent', previouslyDisplayedTimeline, 'relayout');
       disconnect(previouslyDisplayedTimeline, 'zoomFactor', this.menuBar.ui.zoomInput, 'number');
+      disconnect(this, 'onScrollChange', displayedTimeline, 'onScrollChange');
     }
     connect(displayedTimeline, 'zoomFactor', this.menuBar.ui.zoomInput, 'number', { converter: '(zoomFactor) => zoomFactor * 100' }).update(displayedTimeline.zoomFactor);
     connect(this.window, 'extent', displayedTimeline, 'relayout').update(this.window.extent);
-    displayedTimeline.onScrollChange(this.interactiveScrollPosition);
+    connect(this, 'onScrollChange', displayedTimeline, 'onScrollChange').update(this.interactive.scrollPosition);
     return displayedTimeline;
   }
 
   onZoomChange (newZoom) {
     this.displayedTimeline.zoomFactor = newZoom;
-  }
-
-  triggerInteractiveScrollPositionConnections () {
-    signal(this, 'interactiveScrollPosition', this.interactiveScrollPosition);
   }
 
   get snappingEnabled () {
@@ -751,7 +753,7 @@ class MenuBar extends QinoqMorph {
     this.buildIconButton({
       tooltip: 'Go to start',
       action: () => {
-        this.editor.interactiveScrollPosition = this.editor.currentSequence ? this.editor.currentSequence.start : 0;
+        this.editor.onInternalScrollChange(this.editor.currentSequence ? this.editor.currentSequence.start : 0);
       },
       icon: 'fast-backward',
       name: 'gotoStartButton',
@@ -762,9 +764,10 @@ class MenuBar extends QinoqMorph {
       tooltip: 'Go to previous sequence',
       action: () => {
         const sequence = this.editor.currentSequence;
-        const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getPrevKeyframePosition(sequence.progress)) : this.editor.interactive.getPrevSequenceStart(this.editor.interactiveScrollPosition);
+        // TODO: flexibility of getPrevSequenceStart needed?
+        const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getPrevKeyframePosition(sequence.progress)) : this.editor.interactive.getPrevSequenceStart(this.editor.interactive.scrollPosition);
         if (nextPosition == undefined || isNaN(nextPosition)) return;
-        this.editor.interactiveScrollPosition = nextPosition;
+        this.editor.onInternalScrollChange(nextPosition);
       },
       icon: 'step-backward',
       name: 'gotoPrevButton',
@@ -777,9 +780,10 @@ class MenuBar extends QinoqMorph {
       tooltip: 'Go to next sequence',
       action: () => {
         const sequence = this.editor.currentSequence;
-        const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getNextKeyframePosition(sequence.progress)) : this.editor.interactive.getNextSequenceStart(this.editor.interactiveScrollPosition);
+        // TODO: see above
+        const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getNextKeyframePosition(sequence.progress)) : this.editor.interactive.getNextSequenceStart(this.editor.interactive.scrollPosition);
         if (nextPosition == undefined || isNaN(nextPosition)) return;
-        this.editor.interactiveScrollPosition = nextPosition;
+        this.editor.onInternalScrollChange(nextPosition);
       },
       icon: 'step-forward',
       name: 'gotoNextButton',
@@ -789,7 +793,7 @@ class MenuBar extends QinoqMorph {
     this.buildIconButton({
       tooltip: 'Go to end',
       action: () => {
-        this.editor.interactiveScrollPosition = this.editor.currentSequence ? this.editor.currentSequence.end : this.editor.interactive.length;
+        this.editor.onInternalScrollChange(this.editor.currentSequence ? this.editor.currentSequence.end : this.editor.interactive.length);
       },
       icon: 'fast-forward',
       name: 'gotoEndButton',
