@@ -28,6 +28,10 @@ export class Interactive extends Morph {
 
   static get properties () {
     return {
+      // if this is true, changes to the scrollposition of the interactive will not be propagated to the scroll overlay
+      blockScrollEvents: {
+        defaultValue: false
+      },
       _length: {
         type: 'Number',
         isFloat: false,
@@ -44,11 +48,6 @@ export class Interactive extends Morph {
         set (scrollPosition) {
           if (Math.abs(scrollPosition - this.scrollPosition) < 0.5) return; // redraw may be costly! If you want to redraw use redraw explicitly
           this.setProperty('scrollPosition', scrollPosition);
-          const scrollOverlayNode = this.scrollOverlay.env.renderer.getNodeForMorph(this.scrollOverlay);
-          if (scrollOverlayNode) {
-            scrollOverlayNode.scrollTop = scrollPosition;
-            this.scrollOverlay.setProperty('scroll', pt(scrollOverlayNode.scrollLeft, scrollOverlayNode.scrollTop));
-          }
           this.redraw();
         }
       },
@@ -90,6 +89,19 @@ export class Interactive extends Morph {
       }
     };
   }
+
+  // this is to be called if the scrollposition is changed via any means that are not natural scrolling
+  onExternalScrollChange (scrollPosition) {
+    this.blockScrollEvents = true;
+    const scrollOverlayNode = this.scrollOverlay.env.renderer.getNodeForMorph(this.scrollOverlay);
+    if (scrollOverlayNode) {
+      scrollOverlayNode.scrollTop = scrollPosition;
+      this.scrollOverlay.setProperty('scroll', pt(scrollOverlayNode.scrollLeft, scrollOverlayNode.scrollTop));
+    }
+  }
+
+  // this can be listened to to get changed to the scrollposition due to natural scrolling
+  onInternalScrollChange (scrollPosition) {}
 
   get scrollOverlay () {
     return this._scrollOverlay;
@@ -335,6 +347,10 @@ class InteractiveScrollHolder extends Morph {
 
   onScroll () {
     this.interactive.scrollPosition = this.scroll.y;
+    if (!this.interactive.blockScrollEvents) {
+      this.interactive.onInternalScrollChange(this.interactive.scrollPosition);
+    }
+    this.interactive.blockScrollEvents = false;
   }
 
   onDrag (event) {
