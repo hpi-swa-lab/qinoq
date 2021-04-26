@@ -190,8 +190,8 @@ export class InteractivesEditor extends QinoqMorph {
     this.tabContainer.visible = true;
     interactive.withAllSubmorphsDo(submorph => { if (!submorph.isSequence && !submorph.isInteractive) connect(submorph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' }); });
 
-    connect(this.interactive, 'scrollPosition', this, 'interactiveScrollPosition');
-    connect(this, 'interactiveScrollPosition', this.interactive, 'scrollPosition');
+    connect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
+
     connect(this.interactive, 'name', this.globalTab, 'caption').update(this.interactive.name);
     connect(this.interactive, 'remove', this, 'reset');
     connect(this.interactive, '_length', this.menuBar.ui.scrollPositionInput, 'max');
@@ -204,6 +204,15 @@ export class InteractivesEditor extends QinoqMorph {
     // trigger update of timeline dependents
     this.onDisplayedTimelineChange(this.globalTimeline);
   }
+
+  // call this to propagate changes to the scrollposition to the actual interactive
+  onInternalScrollChange (scrollPosition) {
+    if (!this.interactive) return;
+    this.interactive.onExternalScrollChange(scrollPosition);
+  }
+
+  // listens for actual scrolling happening on the Interactive
+  onExternalScrollChange (scrollPosition) {}
 
   onTabClose (tab) {
     disconnectAll(tab);
@@ -841,8 +850,8 @@ class MenuBar extends QinoqMorph {
       borderColor: COLOR_SCHEME.SECONDARY
     });
     this.ui.scrollPositionInput.getSubmorphNamed('value').fontColor = COLOR_SCHEME.ON_SURFACE;
-    connect(this.ui.scrollPositionInput, 'number', this, 'onScrollPositionInputChange');
-    connect(this.editor, 'interactiveScrollPosition', this, 'onInteractiveScrollPositionChange');
+    connect(this.ui.scrollPositionInput, 'number', this.editor, 'onInternalScrollChange');
+    connect(this.editor, 'onExternalScrollChange', this.ui.scrollPositionInput, 'number');
     this.ui.scrollPositionToolbar.addMorph(this.ui.scrollPositionInput);
   }
 
@@ -859,22 +868,6 @@ class MenuBar extends QinoqMorph {
     this.ui[name].onMouseUp = action;
     Icon.setIcon(this.ui[name], icon);
     this.ui[container].addMorph(this.ui[name]);
-  }
-
-  onScrollPositionInputChange (number) {
-    if (!this._updatingFromScroll) {
-      this._updatingFromInput = true;
-      this.editor.interactiveScrollPosition = number;
-      this._updatingFromInput = false;
-    }
-  }
-
-  onInteractiveScrollPositionChange (scrollPosition) {
-    if (!this._updatingFromInput) {
-      this._updatingFromScroll = true;
-      this.ui.scrollPositionInput.number = scrollPosition;
-      this._updatingFromScroll = false;
-    }
   }
 
   onGlobalTimelineTab () {
