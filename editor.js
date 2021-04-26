@@ -19,7 +19,7 @@ const CONSTANTS = {
   PREVIEW_WIDTH: 533,
   SUBWINDOW_HEIGHT: 300,
   BORDER_WIDTH: 3,
-  MENU_BAR_HEIGHT: 32,
+  MENU_BAR_HEIGHT: 35,
   NEW_SEQUENCE_LENGTH: 125,
   SPACING: 3,
   SCROLL_POSITION_TOOLBAR_X_OFFSET: 360,
@@ -800,9 +800,8 @@ class MenuBar extends QinoqMorph {
 
     await this.buildIconButton({
       tooltip: 'Create a new sequence',
-      action: () => {
-        this.editor.createNewSequence();
-      },
+      target: this.editor,
+      action: 'createNewSequence',
       icon: 'ticket-alt',
       label: 'New Sequence',
       name: 'addSequenceButton',
@@ -811,9 +810,8 @@ class MenuBar extends QinoqMorph {
 
     await this.buildIconButton({
       tooltip: 'Create a new layer',
-      action: () => {
-        this.editor.createNewLayer();
-      },
+      target: this.editor,
+      action: 'createNewLayer',
       icon: 'layer-group',
       label: 'New Layer',
       name: 'addLayerButton',
@@ -878,7 +876,8 @@ class MenuBar extends QinoqMorph {
 
     await this.buildIconButton({
       tooltip: 'Toggle Snapping',
-      action: () => this.editor.execCommand('toggle snapping'),
+      target: this.editor,
+      command: 'toggle snapping',
       icon: 'magnet',
       label: 'Toggle Snapping',
       name: 'toggleSnappingButton',
@@ -943,28 +942,34 @@ class MenuBar extends QinoqMorph {
 
   async buildIconButton (options = {}) {
     const {
-      action, tooltip, name, morphName = 'anIconButton',
-      icon, label = '', container, collapsed = false, autoResize = true
+      target, action, args, command = undefined, tooltip, name,
+      morphName = 'anIconButton', icon, label = '', container, collapsed = true,
+      autoResize = true
     } = options;
 
     this.ui[name] = await resource('part://QinoqWidgets/icon button').read();
 
     Object.assign(this.ui[name], {
-      icon: icon,
-      label: label,
-      name: morphName,
-      longTooltip: tooltip,
+      master: {
+        auto: 'styleguide://QinoqWidgets/icon button/default/light',
+        hover: 'styleguide://QinoqWidgets/icon button/hover/light',
+        click: 'styleguide://QinoqWidgets/icon button/active/light'
+      },
+      target: target,
       action: action,
-      fontColor: COLOR_SCHEME.ON_SURFACE,
-      fontSize: 12,
-      collapsed: collapsed
+      args: args,
+      masterButtonDeactivated: 'styleguide://QinoqWidgets/icon button/disabled/light',
+      collapsed: collapsed,
+      autoResize: autoResize,
+      name: morphName,
+      description: tooltip,
+      icon: icon,
+      label: label
     });
+
+    if (command) this.ui[name].command = command;
 
     this.ui[container].addMorph(this.ui[name]);
-
-    $world.whenRendered().then(() => {
-      this.ui[name].autoResize = autoResize;
-    });
   }
 
   onGlobalTimelineTab () {
