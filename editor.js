@@ -222,7 +222,8 @@ export class InteractivesEditor extends Morph {
     this.withAllSubmorphsDo(submorph => {
       if (submorph.attributeConnections) {
         submorph.attributeConnections.forEach(attributeConnection => {
-          if (attributeConnection.targetObj === this.interactive) {
+          const target = attributeConnection.targetObj;
+          if (target === this.interactive || Interactive.isMorphInInteractive(target)) {
             disconnect(submorph, attributeConnection.sourceAttrName, attributeConnection.targetObj, attributeConnection.targetMethodName);
           }
         });
