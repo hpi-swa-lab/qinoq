@@ -94,7 +94,6 @@ export class Interactive extends Morph {
   onExternalScrollChange (scrollPosition) {
     // this is necessary since the actual change of this.scrollPosition will only be done after onScroll on the InteractiveScrollHolder was executed
     // the scrollEvent for that is not handled synchronously
-    // this will not result in an invalid state
     this.scrollPosition = scrollPosition;
     this.blockScrollEvents = true;
     const scrollOverlayNode = this.scrollOverlay.env.renderer.getNodeForMorph(this.scrollOverlay);
@@ -350,8 +349,8 @@ class InteractiveScrollHolder extends Morph {
   }
 
   onScroll () {
-    this.interactive.scrollPosition = this.scroll.y;
     if (!this.interactive.blockScrollEvents) {
+      this.interactive.scrollPosition = this.scroll.y;
       this.interactive.onInternalScrollChange(this.interactive.scrollPosition);
     }
     this.interactive.blockScrollEvents = false;
