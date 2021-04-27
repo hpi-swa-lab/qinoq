@@ -427,10 +427,9 @@ export class InteractivesEditor extends QinoqMorph {
     }
     if (previouslyDisplayedTimeline) {
       disconnect(this.window, 'extent', previouslyDisplayedTimeline, 'relayout');
-      disconnect(previouslyDisplayedTimeline, 'zoomFactor', this.menuBar.ui.zoomInput, 'number');
       disconnect(this, 'onScrollChange', displayedTimeline, 'onScrollChange');
     }
-    connect(displayedTimeline, 'zoomFactor', this.menuBar.ui.zoomInput, 'number', { converter: '(zoomFactor) => zoomFactor * 100' }).update(displayedTimeline.zoomFactor);
+    this.menuBar.ui.zoomInput.number = displayedTimeline.zoomFactor * 100;
     connect(this.window, 'extent', displayedTimeline, 'relayout').update(this.window.extent);
     connect(this, 'onScrollChange', displayedTimeline, 'onScrollChange').update(this.interactive.scrollPosition);
     return displayedTimeline;
