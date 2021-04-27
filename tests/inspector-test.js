@@ -52,6 +52,19 @@ describe('Inspector', () => {
     anotherMorph.abandon();
   });
 
+  it('does not target a morph in another interactive when a halo is shown', async () => {
+    const anotherMorph = new Morph({ name: 'morph in interactive' });
+    const anotherInteractive = await exampleInteractive();
+    anotherInteractive.sequences[0].addMorph(anotherMorph);
+    anotherInteractive.openInWorld();
+    $world.showHaloFor(anotherMorph);
+
+    expect(inspector.targetMorph).to.not.be.equal(anotherMorph);
+
+    anotherMorph.abandon();
+    anotherInteractive.abandon();
+  });
+
   it('does not target a morph outside the interactive when a halo is shown', () => {
     const anotherMorph = new Morph();
     $world.showHaloFor(anotherMorph);
