@@ -104,6 +104,10 @@ describe('Editor', () => {
     });
   });
 
+  it('changes scroll position when changing tab', () => {
+    // TODO adjust as soon as #537 is merged
+  });
+  
   after(() => {
     editor.window.close();
   });
