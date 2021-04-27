@@ -501,14 +501,14 @@ export class Sequence extends Morph {
         defaultValue: 1,
         set (opacity) {
           this.setProperty('opacity', opacity);
-          if (!this._lockEffect) this._originalOpacity = opacity;
+          if (!this._lockEffect && !this._deserializing) this._originalOpacity = opacity;
         }
       },
       grayScale: {
         defaultValue: 0,
         set (grayscale) {
           this.setProperty('grayscale', grayscale);
-          if (!this._lockEffect) this._originalGrayscale = grayscale;
+          if (!this._lockEffect && !this._deserializing) this._originalGrayscale = grayscale;
         }
       },
       animations: {
@@ -631,5 +631,15 @@ export class Sequence extends Morph {
   onLoad () {
     // while savings the easings itself get lost and we need to recreate them
     this.animations.forEach(animation => animation.keyframes.forEach(keyframe => keyframe.setEasing(keyframe.easingName)));
+  }
+
+  __deserialize__ (snapshot, objRef, serializedMap, pool) {
+    this._deserializing = true;
+    super.__deserialize__(snapshot, objRef, serializedMap, pool);
+  }
+
+  __after_deserialize__ (snapshot, ref, pool) {
+    delete this._deserializing;
+    super.__after_deserialize__(snapshot, ref, pool);
   }
 }
