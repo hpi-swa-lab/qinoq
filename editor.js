@@ -84,15 +84,8 @@ export class InteractivesEditor extends QinoqMorph {
     await this.initializePanels();
     connect(this.window, 'close', this, 'abandon');
     connect(this.window, 'position', this, 'positionChanged');
+    connect(this.window, 'minimized', this, 'onWindowMinimizedChange');
     return this;
-  }
-
-  positionChanged () {
-    if (this.interactive) {
-      // interactive has a fixed position in the editor
-      // we need to manually keep the scrolloverlay at the correct position
-      this.interactive.scrollOverlay.globalPosition = this.interactive.globalPosition;
-    }
   }
 
   async initializePanels () {
@@ -168,6 +161,20 @@ export class InteractivesEditor extends QinoqMorph {
         errorMessage: 'Please enter a Name'
       });
     if (name) await this.createInteractive(name);
+  }
+
+  onWindowMinimizedChange (minimized) {
+    if (!this.interactive) return;
+    if (minimized) this.interactive.scrollOverlay.remove();
+    else $world.addMorph(this.interactive.scrollOverlay);
+  }
+
+  positionChanged () {
+    if (this.interactive) {
+      // interactive has a fixed position in the editor
+      // we need to manually keep the scrolloverlay at the correct position
+      this.interactive.scrollOverlay.globalPosition = this.interactive.globalPosition;
+    }
   }
 
   async createInteractive (name) {
