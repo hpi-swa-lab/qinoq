@@ -125,7 +125,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
       sequence: this.sequence,
       _editor: this.editor
     });
-    this.ui[property] = new Morph();
+    this.ui[property] = new QinoqMorph();
     Object.values(this.propertyControls[property]).forEach(morph => this.ui[property].addMorph(morph));
     this.ui.propertyPane.addMorph(this.ui[property]);
   }
@@ -154,13 +154,13 @@ export class InteractiveMorphInspector extends QinoqMorph {
   build () {
     this.buildTargetPicker();
 
-    this.ui.headlinePane = new Morph({ name: 'headline pane' });
+    this.ui.headlinePane = new QinoqMorph({ name: 'headline pane' });
     this.ui.headline = new Label({ name: 'headline', textString: 'No morph selected', fontWeight: 'bold' });
     this.ui.headlinePane.layout = new HorizontalLayout({ spacing: 5, align: 'center' });
     this.ui.headlinePane.addMorph(this.ui.headline);
     this.ui.headlinePane.addMorph(this.ui.targetPicker);
 
-    this.ui.propertyPane = new Morph({ name: 'property pane' });
+    this.ui.propertyPane = new QinoqMorph({ name: 'property pane' });
     this.ui.propertyPane.layout = new VerticalLayout({ spacing: 2 });
 
     this.addMorph(this.ui.headlinePane);

@@ -64,7 +64,7 @@ export class TimelineLayer extends QinoqMorph {
       borderStyle: { bottom: 'solid', left: 'none', right: 'none', top: 'solid' },
       acceptsDrops: false
     }));
-    const inactiveArea = this.addMorph(new Morph({
+    const inactiveArea = this.addMorph(new QinoqMorph({
       draggable: true,
       extent: pt(CONSTANTS.INACTIVE_AREA_WIDTH, CONSTANTS.LAYER_HEIGHT),
       fill: this.fill,
