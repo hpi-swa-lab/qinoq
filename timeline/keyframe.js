@@ -161,7 +161,7 @@ export class TimelineKeyframe extends QinoqMorph {
 
   onDoubleMouseDown () {
     const scrollPosition = this.layer.timeline.getScrollFromKeyframe(this.keyframe);
-    this.editor.interactiveScrollPosition = scrollPosition;
+    this.editor.internalScrollChangeWithGUIUpdate(scrollPosition);
   }
 
   onMouseUp (event) {
