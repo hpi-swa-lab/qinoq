@@ -317,8 +317,8 @@ export class Timeline extends QinoqMorph {
     throw new Error('Subclass resposibility');
   }
 
-  abandon () {
-    super.abandon();
+  abandon (bool) {
+    super.abandon(bool);
     disconnect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange');
     if (this.editor.interactive) disconnect(this.editor.interactive, 'name', this, 'name');
   }
@@ -834,5 +834,10 @@ export class SequenceTimeline extends Timeline {
 
   zoomToFit () {
     this.zoomFactor = 1;
+  }
+
+  abandon (bool) {
+    disconnect(this.sequence, 'name', this, 'name');
+    super.abandon(bool);
   }
 }
