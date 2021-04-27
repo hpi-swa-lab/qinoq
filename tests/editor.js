@@ -24,12 +24,12 @@ describe('Editor', () => {
     });
 
     it('can change interactive scroll position via arrow keys', () => {
-      editor.interactiveScrollPosition = 50;
+      editor.internalScrollChangeWithGUIUpdate(50);
       editor.simulateKeys('Left');
-      expect(editor.interactiveScrollPosition).to.be.equal(49);
+      expect(editor.interactive.scrollPosition).to.be.equal(49);
       editor.simulateKeys('Right');
       editor.simulateKeys('Right');
-      expect(editor.interactiveScrollPosition).to.be.equal(51);
+      expect(editor.interactive.scrollPosition).to.be.equal(51);
     });
 
     it('can delete a sequence via Delete key', () => {
