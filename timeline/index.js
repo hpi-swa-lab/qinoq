@@ -320,9 +320,9 @@ export class Timeline extends QinoqMorph {
   abandon () {
     super.abandon();
     disconnect(this.editor, 'interactiveScrollPosition', this, 'onScrollChange');
-    if (this.editor.interactive) {disconnect(this.editor.interactive, 'name', this, 'name'); }
+    if (this.editor.interactive) disconnect(this.editor.interactive, 'name', this, 'name');
   }
-  
+
   renameSelection (newName) {
     throw new Error('Subclass responsibility');
   }

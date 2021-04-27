@@ -648,7 +648,7 @@ class MenuBar extends QinoqMorph {
       ui: {
         after: ['_editor'],
         initialize () {
-          if (!this._deserializing) { this.initializeUI(); }
+          if (!this._deserializing) this.initializeUI();
         }
       }
     };
