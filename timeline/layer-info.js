@@ -181,7 +181,7 @@ export class TimelineLayerInfo extends QinoqMorph {
       menuOptions.push(['✏️ Rename morph', async () => await this.promptMorphName()]);
       menuOptions.push(['▭ Show halo for morph', () => $world.showHaloFor(this.morph)]);
       if (this.timelineLayer.isOverviewLayer) {
-        if (!this.timelineLayer.isExpanded && this.timelineLayer.mayBeExpanded) {
+        if (!this.timelineLayer.isExpanded && !this.timelineLayer.isExpanded) {
           menuOptions.push(['➕ Expand view', () => this.timelineLayer.isExpanded = true]);
         } else if (this.timelineLayer.isExpanded) {
           menuOptions.push(['➖ Collapse view', () => this.timelineLayer.isExpanded = false]);
