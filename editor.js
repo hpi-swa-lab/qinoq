@@ -211,6 +211,11 @@ export class InteractivesEditor extends QinoqMorph {
     this.onScrollChange(scrollPosition);
   }
 
+  internalScrollChangeWithGUIUpdate (scrollPosition) {
+    this.onInternalScrollChange(scrollPosition);
+    this.menuBar.ui.scrollPositionInput.number = scrollPosition;
+  }
+
   // listens for actual scrolling happening on the Interactive
   onExternalScrollChange (scrollPosition) {
     this.onScrollChange(scrollPosition);
@@ -281,8 +286,7 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   async initializeSequenceView (sequence) {
-    this.onInternalScrollChange(sequence.start);
-    this.menuBar.ui.scrollPositionInput.number = sequence.start;
+    this.internalScrollChangeWithGUIUpdate(sequence.start);
     const sequenceTab = this.getTabFor(sequence);
     if (sequenceTab) {
       sequenceTab.selected = true;
@@ -455,9 +459,9 @@ export class InteractivesEditor extends QinoqMorph {
             return;
           }
           if (this.interactive.scrollPosition + args.stepSize <= this.interactive.length) {
-            this.interactive.scrollPosition += args.stepSize;
+            this.internalScrollChangeWithGUIUpdate(this.interactive.scrollPosition + args.stepSize);
           } else {
-            this.interactive.scrollPosition = this.interactive.length;
+            this.internalScrollChangeWithGUIUpdate(this.interactive.length);
           }
         }
       },
@@ -471,9 +475,9 @@ export class InteractivesEditor extends QinoqMorph {
             return;
           }
           if (this.interactive.scrollPosition - args.stepSize >= 0) {
-            this.interactive.scrollPosition -= args.stepSize;
+            this.internalScrollChangeWithGUIUpdate(this.interactive.scrollPosition - args.stepSize);
           } else {
-            this.interactive.scrollPosition = 0;
+            this.internalScrollChangeWithGUIUpdate(0);
           }
         }
       },
