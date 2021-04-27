@@ -259,7 +259,7 @@ export class Timeline extends QinoqMorph {
   }
 
   redraw () {
-    // TODO
+    throw new Error('Subclass resposibility');
   }
 
   get timelineLayers () {
@@ -364,7 +364,6 @@ export class GlobalTimeline extends Timeline {
   }
 
   redraw () {
-    super.redraw();
     this.timelineSequences.forEach(timelineSequence => {
       timelineSequence._lockModelUpdate = true;
       timelineSequence.setWidthAndUpdateResizers(this.getWidthFromDuration(timelineSequence.sequence.duration));
@@ -645,7 +644,6 @@ export class SequenceTimeline extends Timeline {
   }
 
   redraw () {
-    super.redraw();
     this._activeAreaWidth = CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor;
     this.timelineLayers.forEach(timelineLayer => timelineLayer.redraw());
   }
