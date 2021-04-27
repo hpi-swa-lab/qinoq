@@ -883,6 +883,7 @@ class MenuBar extends QinoqMorph {
   }
 
   __after_deserialize__ (snapshot, ref, pool) {
+    // floatingPoint property is not properly serialized and needs to be set here again
     this.ui.zoomInput.floatingPoint = false;
     this.ui.scrollPositionInput.floatingPoint = false;
     super.__after_deserialize__(snapshot, ref, pool);
