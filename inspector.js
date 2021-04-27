@@ -358,10 +358,8 @@ class KeyframeButton extends QinoqMorph {
       },
       _editor: {
         set (_editor) {
-          if (!this._deserializing) {
-            connect(_editor, 'interactiveScrollPosition', this, 'updateStyle');
-          }
           this.setProperty('_editor', _editor);
+          connect(this.editor, 'onScrollChange', this, 'updateStyle');
         }
       },
       sequence: {},
@@ -452,7 +450,7 @@ class KeyframeButton extends QinoqMorph {
   }
 
   remove () {
-    if (this.editor) disconnect(this.editor, 'interactiveScrollPosition', this, 'updateStyle');
+    if (this.editor) disconnect(this.editor, 'onScrollChange', this, 'updateStyle');
     super.remove();
   }
 }

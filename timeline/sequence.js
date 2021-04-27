@@ -700,7 +700,7 @@ export class TimelineSequence extends QinoqMorph {
     if (this.timeline.getSelectedSequences().length === 1) {
       items = items.concat([{ isDivider: true },
         ['🔍 View sequence', () => this.openSequenceView()],
-        ['▶️ Go to start', () => this.editor.interactiveScrollPosition = this.sequence.start]
+        ['▶️ Go to start', () => this.editor.internalScrollChangeWithGUIUpdate(this.sequence.start)]
       ]);
     }
     return items;
