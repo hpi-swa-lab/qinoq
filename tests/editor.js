@@ -1,7 +1,8 @@
-/* global it, describe, before, after */
+/* global it, describe, before, beforeEach, after, afterEach */
 import { expect } from 'mocha-es6';
 import { Interactive, exampleInteractive, InteractivesEditor } from '../index.js';
 import { pt } from 'lively.graphics';
+import { QinoqMorph } from '../qinoq-morph.js';
 
 describe('Editor', () => {
   let editor, interactive;
@@ -54,6 +55,53 @@ describe('Editor', () => {
     expect(interactive.scrollOverlay.world()).to.not.be.ok;
     editor.window.toggleMinimize();
     expect(interactive.scrollOverlay.world()).to.be.ok;
+  });
+
+  describe('with qinoq morph', () => {
+    let qinoqMorph;
+
+    beforeEach(() => {
+      qinoqMorph = new QinoqMorph({ _editor: editor, name: 'Qinoq test morph' });
+      editor.addMorph(qinoqMorph);
+    });
+
+    it('is qinoq morph', () => {
+      expect(qinoqMorph.isQinoqMorph).to.be.ok;
+    });
+
+    it('has no menu items', () => {
+      expect(qinoqMorph.menuItems().length).to.be.equal(0);
+    });
+
+    it('has halos disabled', () => {
+      expect(qinoqMorph.halosEnabled).to.not.be.ok;
+    });
+
+    it('has reference to interactive', () => {
+      expect(qinoqMorph.interactive).to.be.equal(interactive);
+    });
+
+    describe('in editor debug mode', () => {
+      beforeEach(() => {
+        editor.debug = true;
+      });
+
+      it('has menu items', () => {
+        expect(qinoqMorph.menuItems().length).to.be.greaterThan(0);
+      });
+
+      it('has halos enabled', () => {
+        expect(qinoqMorph.halosEnabled).to.be.ok;
+      });
+
+      afterEach(() => {
+        editor.debug = false;
+      });
+    });
+
+    afterEach(() => {
+      qinoqMorph.abandon();
+    });
   });
 
   after(() => {

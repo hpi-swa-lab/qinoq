@@ -65,8 +65,8 @@ export class InteractivesEditor extends QinoqMorph {
       debug: {
         defaultValue: false,
         set (bool) {
-          this.setHalosEnabledForEditorElements(bool);
           this.setProperty('debug', bool);
+          this.setHalosEnabledForEditorElements(bool);
         }
       },
       menuBar: {},
@@ -453,7 +453,7 @@ export class InteractivesEditor extends QinoqMorph {
     return !this._snappingDisabled;
   }
 
-  setHalosEnabledForEditorElements (halosEnabled = true) {
+  setHalosEnabledForEditorElements (halosEnabled) {
     this.withAllSubmorphsDo(submorph => { if (submorph.isQinoqMorph) submorph.halosEnabled = halosEnabled; });
   }
 
