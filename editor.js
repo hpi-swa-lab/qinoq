@@ -757,7 +757,7 @@ class MenuBar extends QinoqMorph {
     this.buildIconButton({
       tooltip: 'Go to start',
       action: () => {
-        this.editor.onInternalScrollChange(this.editor.currentSequence ? this.editor.currentSequence.start : 0);
+        this.editor.internalScrollChangeWithGUIUpdate(this.editor.currentSequence ? this.editor.currentSequence.start : 0);
       },
       icon: 'fast-backward',
       name: 'gotoStartButton',
@@ -771,7 +771,7 @@ class MenuBar extends QinoqMorph {
         // TODO: flexibility of getPrevSequenceStart needed?
         const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getPrevKeyframePosition(sequence.progress)) : this.editor.interactive.getPrevSequenceStart(this.editor.interactive.scrollPosition);
         if (nextPosition == undefined || isNaN(nextPosition)) return;
-        this.editor.onInternalScrollChange(nextPosition);
+        this.editor.internalScrollChangeWithGUIUpdate(nextPosition);
       },
       icon: 'step-backward',
       name: 'gotoPrevButton',
@@ -787,7 +787,7 @@ class MenuBar extends QinoqMorph {
         // TODO: see above
         const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getNextKeyframePosition(sequence.progress)) : this.editor.interactive.getNextSequenceStart(this.editor.interactive.scrollPosition);
         if (nextPosition == undefined || isNaN(nextPosition)) return;
-        this.editor.onInternalScrollChange(nextPosition);
+        this.editor.internalScrollChangeWithGUIUpdate(nextPosition);
       },
       icon: 'step-forward',
       name: 'gotoNextButton',
@@ -797,7 +797,7 @@ class MenuBar extends QinoqMorph {
     this.buildIconButton({
       tooltip: 'Go to end',
       action: () => {
-        this.editor.onInternalScrollChange(this.editor.currentSequence ? this.editor.currentSequence.end : this.editor.interactive.length);
+        this.editor.internalScrollChangeWithGUIUpdate(this.editor.currentSequence ? this.editor.currentSequence.end : this.editor.interactive.length);
       },
       icon: 'fast-forward',
       name: 'gotoEndButton',
