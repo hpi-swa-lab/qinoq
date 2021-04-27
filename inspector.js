@@ -57,9 +57,9 @@ export class InteractiveMorphInspector extends QinoqMorph {
 
             this.buildPropertyControls();
             this.refreshAllPropertiesInInspector();
-            for (const property of this.displayedProperties) {
+            this.displayedProperties.forEach(property => {
               this.propertyControls[property].keyframe.updateStyle();
-            }
+            });
             this.createConnections();
           }
         }
