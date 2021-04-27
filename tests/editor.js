@@ -48,6 +48,14 @@ describe('Editor', () => {
     expect(interactive.scrollOverlay.globalPosition.equals(editor.preview.globalPosition)).to.be.ok;
   });
 
+  it('removes scrollholder from world when minimized', () => {
+    expect(interactive.scrollOverlay.world()).to.be.ok;
+    editor.window.toggleMinimize();
+    expect(interactive.scrollOverlay.world()).to.not.be.ok;
+    editor.window.toggleMinimize();
+    expect(interactive.scrollOverlay.world()).to.be.ok;
+  });
+
   after(() => {
     editor.window.close();
   });
