@@ -127,7 +127,7 @@ export class TimelineCursor extends QinoqMorph {
   }
 
   get timeline () {
-    if (!this.owner || !this.owner.owner) return undefined;
+    if (!this.owner || !this.owner.owner) return null;
     return this.owner.owner.owner;
   }
 

@@ -72,6 +72,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
   }
 
   get displayedProperties () {
+    // serialized objects might contain a _rev key that is not removed after deserialization
     return Object.keys(this.propertyControls).filter(property => property !== '_rev');
   }
 
