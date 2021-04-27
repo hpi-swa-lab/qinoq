@@ -65,7 +65,7 @@ export class Timeline extends QinoqMorph {
 
   // Is automatically called by editor setter
   initialize () {
-    this.ui.scrollableContainer = new Morph(
+    this.ui.scrollableContainer = new QinoqMorph(
       {
         name: 'scrollable container',
         extent: pt(this.extent.x, this.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
@@ -87,7 +87,7 @@ export class Timeline extends QinoqMorph {
   }
 
   initializeScrollBar () {
-    this.ui.scrollBar = new Morph({
+    this.ui.scrollBar = new QinoqMorph({
       name: 'scrollbar',
       position: pt(CONSTANTS.LAYER_INFO_WIDTH, this.height - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
       extent: pt(this.width - CONSTANTS.LAYER_INFO_WIDTH - this.scrollbarOffset.x, CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
@@ -102,7 +102,7 @@ export class Timeline extends QinoqMorph {
   }
 
   initializeScrollbarScroller () {
-    this.ui.scroller = this.ui.scrollBar.addMorph(new Morph({
+    this.ui.scroller = this.ui.scrollBar.addMorph(new QinoqMorph({
       name: 'scroller',
       fill: COLOR_SCHEME.BACKGROUND_VARIANT,
       position: pt(CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN),
@@ -115,7 +115,7 @@ export class Timeline extends QinoqMorph {
   }
 
   initializeScrollbarCursorIndicator () {
-    this.ui.scrollbarCursor = this.ui.scrollBar.addMorph(new Morph({
+    this.ui.scrollbarCursor = this.ui.scrollBar.addMorph(new QinoqMorph({
       name: 'scrollbar cursor',
       fill: COLOR_SCHEME.SECONDARY,
       position: pt(0, 0),
@@ -141,7 +141,7 @@ export class Timeline extends QinoqMorph {
   }
 
   initializeLayerContainer () {
-    this.ui.layerContainer = new Morph({
+    this.ui.layerContainer = new QinoqMorph({
       name: 'layer container',
       clipMode: 'hidden',
       position: pt(CONSTANTS.LAYER_INFO_WIDTH, 0),
@@ -195,7 +195,7 @@ export class Timeline extends QinoqMorph {
   }
 
   initializeLayerInfoContainer () {
-    this.ui.layerInfoContainer = new Morph({
+    this.ui.layerInfoContainer = new QinoqMorph({
       name: 'layer info container',
       position: pt(0, 0),
       extent: pt(CONSTANTS.LAYER_INFO_WIDTH, this.height - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),

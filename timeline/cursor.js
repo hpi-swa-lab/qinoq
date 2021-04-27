@@ -66,7 +66,7 @@ export class TimelineCursor extends QinoqMorph {
       halosEnabled: false,
       reactsToPointer: false
     });
-    this.ui.head = new Morph({
+    this.ui.head = new QinoqMorph({
       name: 'cursor/head',
       layout: new HorizontalLayout({
         spacing: 3,
@@ -76,7 +76,7 @@ export class TimelineCursor extends QinoqMorph {
       borderRadius: 4,
       submorphs: [this.ui.label]
     });
-    this.ui.headCenter = new Morph({
+    this.ui.headCenter = new QinoqMorph({
       extent: pt(20, 1),
       halosEnabled: false,
       reactsToPointer: false,
