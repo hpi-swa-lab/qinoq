@@ -523,6 +523,7 @@ export class InteractivesEditor extends QinoqMorph {
 
   __after_deserialize__ (snapshot, ref, pool) {
     super.__after_deserialize__(snapshot, ref, pool);
+    // Required to position the scrollOverlay correctly. Otherwise the scroll Overlay will be in the center of the screen and possibly misaligned with the interactive/ preview
     this.interactive.scrollOverlay.globalPosition = this.preview.globalPosition;
   }
 }
