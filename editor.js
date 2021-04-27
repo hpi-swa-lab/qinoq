@@ -186,18 +186,19 @@ export class InteractivesEditor extends QinoqMorph {
     this.globalTimeline.loadContent(interactive);
 
     this.tabContainer.visible = true;
+
     interactive.withAllSubmorphsDo(submorph => { if (!submorph.isSequence && !submorph.isInteractive) connect(submorph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' }); });
 
     connect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
 
     connect(this.interactive, 'name', this.globalTab, 'caption').update(this.interactive.name);
+    connect(this.globalTab, 'caption', this.interactive, 'name');
+
     connect(this.interactive, 'remove', this, 'reset');
     connect(this.interactive, '_length', this.menuBar.ui.scrollPositionInput, 'max').update(this.interactive.length);
     connect(this.preview, 'extent', this.interactive, 'extent');
 
     connect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
-
-    connect(this.globalTab, 'caption', this.interactive, 'name');
 
     // trigger update of timeline dependents
     this.onDisplayedTimelineChange(this.globalTimeline);
