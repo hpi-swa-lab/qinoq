@@ -92,10 +92,11 @@ export class Interactive extends Morph {
 
   // this is to be called if the scrollposition is changed via any means that are not natural scrolling
   onExternalScrollChange (scrollPosition) {
+    console.log('triggered');
+    this.blockScrollEvents = true;
     // this is necessary since the actual change of this.scrollPosition will only be done after onScroll on the InteractiveScrollHolder was executed
     // the scrollEvent for that is not handled synchronously
     this.scrollPosition = scrollPosition;
-    this.blockScrollEvents = true;
     const scrollOverlayNode = this.scrollOverlay.env.renderer.getNodeForMorph(this.scrollOverlay);
     if (scrollOverlayNode) {
       scrollOverlayNode.scrollTop = scrollPosition;
@@ -103,7 +104,7 @@ export class Interactive extends Morph {
     }
   }
 
-  // this can be listened to to get changed to the scrollposition due to natural scrolling
+  // this can be listened to to get changes to the scrollposition due to natural scrolling
   onInternalScrollChange (scrollPosition) {}
 
   get scrollOverlay () {
@@ -348,12 +349,16 @@ class InteractiveScrollHolder extends Morph {
     disconnect($world.firstHand, 'position', this, 'onMouseMoving');
   }
 
-  onScroll () {
+  onScroll (event) {
     if (!this.interactive.blockScrollEvents) {
       this.interactive.scrollPosition = this.scroll.y;
       this.interactive.onInternalScrollChange(this.interactive.scrollPosition);
     }
-    this.interactive.blockScrollEvents = false;
+    // this needs to be reseted so that scrolling in the interactive works as exepcted
+    // for unknown reasons, onExternalScrollChange sometimes in the interactive leads to more than one scrollEvent
+    // this is what caused the "jumps" of the scrollPosition when e.g., navigating with the menuBar buttons
+    // this delays the reset so that (heuristically) all scrollEvents are fired and therefore ignored before we accept their changes again
+    setTimeout(() => { this.interactive.blockScrollEvents = false; }, 50);
   }
 
   onDrag (event) {
