@@ -136,12 +136,12 @@ export class TimelineSequence extends QinoqMorph {
       height: this.height
     };
 
-    this.ui.rightResizer = new Morph({
+    this.ui.rightResizer = new QinoqMorph({
       name: 'right resizer',
       position: pt(this.width - resizerProps.width, 0),
       ...resizerProps
     });
-    this.ui.leftResizer = new Morph({
+    this.ui.leftResizer = new QinoqMorph({
       name: 'left resizer',
       position: pt(0, 0),
       ...resizerProps

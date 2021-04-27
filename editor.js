@@ -647,7 +647,7 @@ class Preview extends QinoqMorph {
     });
     newInteractiveButton.onMouseUp = () => this.editor.createInteractiveWithNamePrompt();
 
-    const container = new Morph({
+    const container = new QinoqMorph({
       acceptsDrops: false,
       extent: pt(this.width, this.height),
       position: pt(0, 0),
@@ -698,7 +698,7 @@ class MenuBar extends QinoqMorph {
     const containerCount = 3;
     const containerWidth = this.width / containerCount;
 
-    this.ui.leftContainer = new Morph({
+    this.ui.leftContainer = new QinoqMorph({
       layout: new HorizontalLayout({
         spacing: CONSTANTS.SPACING,
         autoResize: false,
@@ -710,7 +710,7 @@ class MenuBar extends QinoqMorph {
       extent: pt(containerWidth, CONSTANTS.MENU_BAR_HEIGHT)
     });
 
-    this.ui.scrollPositionToolbar = new Morph({
+    this.ui.scrollPositionToolbar = new QinoqMorph({
       layout: new HorizontalLayout({
         spacing: CONSTANTS.SPACING,
         autoResize: false,
@@ -724,7 +724,7 @@ class MenuBar extends QinoqMorph {
       extent: pt(containerWidth, CONSTANTS.MENU_BAR_HEIGHT)
     });
 
-    this.ui.rightContainer = new Morph({
+    this.ui.rightContainer = new QinoqMorph({
       layout: new HorizontalLayout({
         spacing: CONSTANTS.SPACING,
         autoResize: false,
