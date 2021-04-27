@@ -241,7 +241,12 @@ export class InteractivesEditor extends QinoqMorph {
       }));
 
     this.globalTimeline.clear();
-    this.tabs.forEach(tab => { if (tab !== this.globalTab) tab.close(); });
+    this.tabs.forEach(tab => {
+      if (tab !== this.globalTab) {
+        tab.close();
+        tab.abandon();
+      }
+    });
 
     this.inspector.deselect();
 
