@@ -50,8 +50,6 @@ export class InteractivesEditor extends QinoqMorph {
       },
       inspector: {
       },
-      preview: {
-      },
       interactiveInEditMode: {
         defaultValue: false,
         set (bool) {
