@@ -275,9 +275,7 @@ export class Timeline extends QinoqMorph {
     this.onLoadContent(content);
     this.initializeCursor();
     this.onScrollChange(this.editor.interactive.scrollPosition);
-    /* connect(this.editor, 'onScrollChange', this, 'onScrollChange', {
-      updater: '($update, scrollPosition) => { if (target.isDisplayed) $update(scrollPosition); }'
-    }).update(this.editor.interactive.scrollPosition); */
+
     connect(content, 'name', this, 'name', { converter: newName => `${newName.toLowerCase()} timeline` }).update(content.name);
     this._createOverviewLayers = false;
   }
