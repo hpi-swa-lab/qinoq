@@ -34,16 +34,12 @@ export class InteractiveMorphInspector extends QinoqMorph {
       },
       ui: {
         initialize () {
-          if (!this._deserializing) {
-            this.ui = {};
-          }
+          if (!this._deserializing) this.ui = {};
         }
       },
       propertyControls: {
         initialize () {
-          if (!this._deserializing) {
-            this.propertyControls = {};
-          }
+          if (!this._deserializing) this.propertyControls = {};
         }
       },
       targetMorph: {
@@ -355,12 +351,16 @@ class KeyframeButton extends QinoqMorph {
       animation: {
         after: ['sequence', 'property', 'inspector'],
         initialize () {
-          if (!this._deserializing) { this.animation = this.sequence.getAnimationForMorphProperty(this.target, this.property); }
+          if (!this._deserializing) {
+            this.animation = this.sequence.getAnimationForMorphProperty(this.target, this.property);
+          }
         }
       },
       _editor: {
         set (_editor) {
-          if (!this._deserializing) { connect(_editor, 'interactiveScrollPosition', this, 'updateStyle'); }
+          if (!this._deserializing) {
+            connect(_editor, 'interactiveScrollPosition', this, 'updateStyle');
+          }
           this.setProperty('_editor', _editor);
         }
       },
