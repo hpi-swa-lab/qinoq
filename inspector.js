@@ -303,7 +303,7 @@ export class InteractiveMorphInspector extends Morph {
 
   selectMorphThroughHalo (morph) {
     if (Array.isArray(morph)) morph = morph[0]; // Multi select through halo
-    if (Sequence.getSequenceOfMorph(morph)) {
+    if (this.editor.interactive && this.editor.interactive.sequences.includes(Sequence.getSequenceOfMorph(morph))) {
       this.targetMorph = morph;
     }
   }
