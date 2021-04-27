@@ -211,7 +211,6 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   internalScrollChangeWithGUIUpdate (scrollPosition) {
-    this.onInternalScrollChange(scrollPosition);
     this.menuBar.ui.scrollPositionInput.number = scrollPosition;
   }
 
