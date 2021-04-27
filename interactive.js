@@ -5,6 +5,7 @@ import { newUUID } from 'lively.lang/string.js';
 import { COLOR_SCHEME } from './colors.js';
 
 import { arr } from 'lively.lang';
+import { DeserializationAwareMorph } from './utilities/deserialization-morph.js';
 
 export class Interactive extends Morph {
   static async base (props = {}) {
@@ -458,7 +459,7 @@ export class Layer {
   }
 }
 
-export class Sequence extends Morph {
+export class Sequence extends DeserializationAwareMorph {
   static get properties () {
     return {
       start: {
@@ -642,15 +643,5 @@ export class Sequence extends Morph {
   onLoad () {
     // while savings the easings itself get lost and we need to recreate them
     this.animations.forEach(animation => animation.keyframes.forEach(keyframe => keyframe.setEasing(keyframe.easingName)));
-  }
-
-  __deserialize__ (snapshot, objRef, serializedMap, pool) {
-    this._deserializing = true;
-    super.__deserialize__(snapshot, objRef, serializedMap, pool);
-  }
-
-  __after_deserialize__ (snapshot, ref, pool) {
-    delete this._deserializing;
-    super.__after_deserialize__(snapshot, ref, pool);
   }
 }
