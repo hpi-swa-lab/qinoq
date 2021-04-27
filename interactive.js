@@ -3,7 +3,6 @@ import { pt } from 'lively.graphics';
 import { connect, disconnect, signal, disconnectAll } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
 import { COLOR_SCHEME } from './colors.js';
-
 import { arr } from 'lively.lang';
 import { DeserializationAwareMorph } from './utilities/deserialization-morph.js';
 
