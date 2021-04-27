@@ -449,6 +449,7 @@ export class InteractivesEditor extends QinoqMorph {
       this.interactive.showAllSequences();
       this.interactiveInEditMode = false;
     } else {
+      this.interactive.scrollPosition = this.currentSequence.start;
       this.interactive.showOnly(this.currentSequence);
       this.interactiveInEditMode = true;
     }
