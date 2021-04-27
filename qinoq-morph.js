@@ -22,4 +22,11 @@ export class QinoqMorph extends DeserializationAwareMorph {
   get interactive () {
     return this.editor.interactive;
   }
+
+  menuItems () {
+    if (this.editor && this.editor.debug) {
+      return super.menuItems();
+    }
+    return [];
+  }
 }
