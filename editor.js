@@ -62,6 +62,13 @@ export class InteractivesEditor extends QinoqMorph {
           }
         }
       },
+      debug: {
+        defaultValue: false,
+        set (bool) {
+          this.setHalosEnabledForEditorElements(bool);
+          this.setProperty('debug', bool);
+        }
+      },
       menuBar: {},
       tabContainer: {},
       window: {},
@@ -445,13 +452,9 @@ export class InteractivesEditor extends QinoqMorph {
   get snappingEnabled () {
     return !this._snappingDisabled;
   }
-  
+
   setHalosEnabledForEditorElements (halosEnabled = true) {
-    this.inspector.withAllSubmorphsDo(submorph => submorph.halosEnabled = halosEnabled);
-    this.menuBar.withAllSubmorphsDo(submorph => submorph.halosEnabled = halosEnabled);
-    this.tabContainer.withAllSubmorphsDo(submorph => submorph.halosEnabled = halosEnabled);
-    this.sequenceOverview.withAllSubmorphsDo(submorph => submorph.halosEnabled = halosEnabled);
-    this.halosEnabled = halosEnabled;
+    this.withAllSubmorphsDo(submorph => { if (submorph.isQinoqMorph) submorph.halosEnabled = halosEnabled; });
   }
 
   get commands () {
