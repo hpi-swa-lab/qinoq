@@ -1,4 +1,4 @@
-/* global it, describe, beforeEach */
+/* global it, describe, beforeEach, afterEach */
 import { expect } from 'mocha-es6';
 import { Interactive, Layer, Sequence } from '../index.js';
 import { pt } from 'lively.graphics';
@@ -13,7 +13,7 @@ describe('Interactive object', () => {
   let foreground, background;
 
   beforeEach(() => {
-    interactive = new Interactive({ extent: pt(10, 10) });
+    interactive = new Interactive({ extent: pt(100, 100) });
 
     sequenceOne = new Sequence({ start: 0, duration: 10 });
     sequenceTwo = new Sequence({ start: 8, duration: 10 });
@@ -122,5 +122,46 @@ describe('Interactive object', () => {
     it('can be serialized', () => {
       serialize(interactive);
     });
+  });
+
+  describe('resizing', () => {
+    let morph;
+    beforeEach(() => {
+      morph = new Morph({ extent: pt(20, 20) });
+      sequenceOne.addMorph(morph);
+      interactive.redraw();
+      interactive.openInWorld(); // Layouting is only applied when the interactive is open
+    });
+
+    it('resizes sequences', () => {
+      interactive.height = 200;
+      expect(sequenceOne.height).to.be.equal(interactive.height);
+      interactive.height = 300;
+      expect(sequenceOne.height).to.be.equal(interactive.height);
+    });
+
+    it('resizes morphs', async () => {
+      const initialMorphHeight = morph.height;
+      interactive.height = interactive.height * 3;
+      await new Promise(r => setTimeout(r, 5)); // Application of layout takes some time
+      expect(morph.height).to.be.equal(initialMorphHeight * 3);
+    });
+
+    it('resizes with fixed aspect ratio', () => {
+      const initialInteractiveWidth = interactive.width;
+      interactive.height = interactive.height * 3;
+      expect(interactive.width).to.be.equal(initialInteractiveWidth * 3);
+    });
+
+    it('does not resize with fixed aspect ratio when disabled', () => {
+      interactive.fixedAspectRatio = null;
+      const initialInteractiveWidth = interactive.width;
+      interactive.height = interactive.height * 3;
+      expect(interactive.width).to.not.be.equal(initialInteractiveWidth * 3);
+    });
+  });
+
+  afterEach(() => {
+    interactive.abandon();
   });
 });
