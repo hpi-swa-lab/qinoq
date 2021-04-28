@@ -57,6 +57,12 @@ describe('Editor', () => {
     expect(interactive.scrollOverlay.world()).to.be.ok;
   });
 
+  it('changes scroll position when changing tab', () => {
+    expect(editor.interactive.scrollPosition).to.be.equal(0);
+    editor.getTimelineFor(editor.globalTab).timelineSequences[2].openSequenceView();
+    expect(editor.interactive.scrollPosition).to.be.equal(250);
+  });
+
   describe('with qinoq morph', () => {
     let qinoqMorph;
 
@@ -104,10 +110,6 @@ describe('Editor', () => {
     });
   });
 
-  it('changes scroll position when changing tab', () => {
-    // TODO adjust as soon as #537 is merged
-  });
-  
   after(() => {
     editor.window.close();
   });
