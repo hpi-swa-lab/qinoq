@@ -7,7 +7,7 @@ import { Keyframe } from '../index.js';
 import { Morph } from 'lively.morphic';
 import { serialize } from 'lively.serializer2';
 
-describe('Interactive object', () => {
+describe('Interactive', () => {
   let interactive;
   let sequenceOne, sequenceTwo;
   let foreground, background;
