@@ -359,7 +359,7 @@ class KeyframeButton extends QinoqMorph {
       _editor: {
         set (_editor) {
           if (!this._deserializing) {
-            connect(this.editor, 'onScrollChange', this, 'updateStyle');
+            connect(_editor, 'onScrollChange', this, 'updateStyle');
           }
           this.setProperty('_editor', _editor);
         }
