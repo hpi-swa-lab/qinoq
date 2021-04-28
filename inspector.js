@@ -285,6 +285,10 @@ export class InteractiveMorphInspector extends QinoqMorph {
     this._updatingMorph = false;
   }
 
+  updateRespectedAnimations () {
+    this.displayedProperties.forEach(property => this.propertyControls[property].keyframe.updateAnimation());
+  }
+
   async initialize (editor) {
     this._editor = editor;
     this.build();
@@ -393,6 +397,11 @@ class KeyframeButton extends QinoqMorph {
       newKeyframe.value = pt(this.currentValue.x / this.sequence.width, this.currentValue.y / this.sequence.height);
     }
     this.editor.sequenceTimelines.forEach(sequenceTimeline => sequenceTimeline.updateLayers());
+  }
+
+  updateAnimation () {
+    this.animation = this.sequence.getAnimationForMorphProperty(this.target, this.property);
+    this.updateStyle();
   }
 
   // The rest is styling. This may be improved with a master component. See styleguides/keyframe-inspector.json
