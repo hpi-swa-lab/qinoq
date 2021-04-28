@@ -1,9 +1,10 @@
 /* global it, describe, before, beforeEach, after, afterEach */
 import { expect } from 'mocha-es6';
-import { Interactive, exampleInteractive, InteractivesEditor } from '../index.js';
+import { exampleInteractive, InteractivesEditor } from '../index.js';
 import { pt } from 'lively.graphics';
 import { Clipboard } from '../utilities/clipboard.js';
 import { QinoqMorph } from '../qinoq-morph.js';
+import { serialize } from 'lively.serializer2';
 
 describe('Editor', () => {
   let editor, interactive;
@@ -56,6 +57,12 @@ describe('Editor', () => {
       editor.simulateKeys('Delete');
       expect(nightBackgroundTimelineSequence.world()).to.not.be.ok;
       expect(interactive.sequences).to.not.include(nightBackgroundSequence);
+    });
+  });
+
+  describe('serialization', () => {
+    it('can be serialized with interactive', () => {
+      serialize(editor);
     });
   });
 

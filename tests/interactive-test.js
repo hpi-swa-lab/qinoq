@@ -5,6 +5,7 @@ import { pt } from 'lively.graphics';
 import { NumberAnimation } from '../index.js';
 import { Keyframe } from '../index.js';
 import { Morph } from 'lively.morphic';
+import { serialize } from 'lively.serializer2';
 
 describe('Interactive object', () => {
   let interactive;
@@ -114,6 +115,12 @@ describe('Interactive object', () => {
 
       expect(newKeyframe1.hasDefaultName()).to.not.be.ok;
       expect(newKeyframe1.name).to.not.be.equal(newKeyframe2.name);
+    });
+  });
+
+  describe('serialization', () => {
+    it('can be serialized', () => {
+      serialize(interactive);
     });
   });
 });
