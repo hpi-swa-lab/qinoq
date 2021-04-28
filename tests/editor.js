@@ -4,7 +4,7 @@ import { exampleInteractive, InteractivesEditor } from '../index.js';
 import { pt } from 'lively.graphics';
 import { Clipboard } from '../utilities/clipboard.js';
 import { QinoqMorph } from '../qinoq-morph.js';
-import { serialize } from 'lively.serializer2';
+import { serialize, deserialize } from 'lively.serializer2';
 
 describe('Editor', () => {
   let editor, interactive;
@@ -62,7 +62,29 @@ describe('Editor', () => {
 
   describe('serialization', () => {
     it('can be serialized with interactive', () => {
-      serialize(editor);
+      deserialize(serialize(editor));
+    });
+  });
+
+  describe('menu bar buttons', () => {
+    describe('creating a new sequence', () => {
+      let createSequenceButton;
+
+      before(() => {
+        createSequenceButton = editor.withAllSubmorphsSelect(submorph => submorph.tooltip == 'Create a new sequence')[0];
+      });
+
+      it('has a button to create a new sequence', () => {
+        expect(createSequenceButton).to.be.ok;
+      });
+
+      it('creates a new sequence', () => {
+        const sequenceCount = interactive.sequences.length;
+        createSequenceButton.onMouseUp();
+        expect(interactive.sequences.length).to.be.equal(sequenceCount + 1);
+        $world.firstHand.cancelGrab();
+        expect(interactive.sequences.length).to.be.equal(sequenceCount);
+      });
     });
   });
 
