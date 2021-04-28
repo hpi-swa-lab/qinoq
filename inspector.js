@@ -191,6 +191,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
             disconnect(this.propertyControls[inspectedProperty].number, 'number', this, 'updateInMorph');
             break;
         }
+        delete this.propertyControls[inspectedProperty];
       });
     }
   }
