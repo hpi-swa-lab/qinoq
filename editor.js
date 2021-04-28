@@ -594,8 +594,8 @@ export class InteractivesEditor extends QinoqMorph {
       animation.target = copiedMorph;
       this.currentSequence.addAnimation(animation);
     });
-    const layer = this.displayedTimeline.getTimelineLayerForMorph(copiedMorph);
-    this.displayedTimeline.addTimelineKeyframesForLayer(layer);
+    const layer = this.displayedTimeline.timelineLayers.find(timelineLayer => timelineLayer.morph === copiedMorph);
+    layer.addTimelineKeyframes();
   }
 
   __after_deserialize__ (snapshot, ref, pool) {
