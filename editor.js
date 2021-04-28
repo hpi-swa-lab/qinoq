@@ -209,6 +209,9 @@ export class InteractivesEditor extends QinoqMorph {
     this.onScrollChange(scrollPosition);
   }
 
+  // hook to change the scrollposition from within the editor
+  // use this method for any editor elements that want to change the scroll position
+  // e.g., menubar buttons or context menus
   internalScrollChangeWithGUIUpdate (scrollPosition) {
     this.menuBar.ui.scrollPositionInput.number = scrollPosition;
   }
@@ -218,6 +221,8 @@ export class InteractivesEditor extends QinoqMorph {
     this.onScrollChange(scrollPosition);
   }
 
+  // hook to get notification about updated scroll positions regardless of their origin
+  // should be used by consumers of the scroll position e.g., the timeline cursor
   onScrollChange (scrollPosition) {}
 
   onTabClose (tab) {
