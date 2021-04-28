@@ -85,6 +85,39 @@ describe('Editor', () => {
         $world.firstHand.cancelGrab();
         expect(interactive.sequences.length).to.be.equal(sequenceCount);
       });
+
+      it('creating a sequence can be cancelled with Escape', () => {
+        const sequenceCount = interactive.sequences.length;
+        createSequenceButton.onMouseUp();
+        expect(interactive.sequences.length).to.be.equal(sequenceCount + 1);
+        $world.firstHand.submorphs[0].simulateKeys('Escape');
+        $world.simulateKeys('Escape');
+        expect(interactive.sequences.length).to.be.equal(sequenceCount);
+      });
+    });
+
+    describe('creating a new layer', () => {
+      let createLayerButton;
+
+      before(() => {
+        createLayerButton = editor.withAllSubmorphsSelect(submorph => submorph.tooltip == 'Create a new layer')[0];
+      });
+
+      it('has a button to create a new layer', () => {
+        expect(createLayerButton).to.be.ok;
+      });
+
+      it('creates a new layer', () => {
+        const layerCount = interactive.layers.length;
+        createLayerButton.onMouseUp();
+        expect(interactive.layers.length).to.be.equal(layerCount + 1);
+        const newLayer = interactive.layers[interactive.layers.length - 1];
+        const timelineLayer = editor.globalTimeline.timelineLayers.find(timelineLayer => timelineLayer.layer == newLayer);
+        expect(timelineLayer).to.be.ok;
+        interactive.removeLayer(newLayer);
+        editor.globalTimeline.abandonTimelineLayer(timelineLayer);
+        expect(interactive.layers.length).to.be.equal(layerCount);
+      });
     });
   });
 
