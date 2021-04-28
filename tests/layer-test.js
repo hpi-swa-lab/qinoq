@@ -1,6 +1,7 @@
 /* global it, describe, beforeEach */
 import { expect } from 'mocha-es6';
 import { Layer, Interactive } from '../index.js';
+import { serialize, deserialize } from 'lively.serializer2';
 
 describe('Layer object', () => {
   let layer;
@@ -26,5 +27,11 @@ describe('Layer object', () => {
     expect(sequenceInInteractive.isDisplayed()).to.be.ok;
     layerInInteractive.hidden = true;
     expect(sequenceInInteractive.isDisplayed()).to.not.be.ok;
+  });
+
+  it('can be serialized', () => {
+    const serializedLayer = serialize(layer);
+    const deserializedLayer = deserialize(serializedLayer);
+    expect(deserializedLayer.equals(serializedLayer)).to.be.true;
   });
 });

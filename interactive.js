@@ -656,7 +656,7 @@ export class Sequence extends DeserializationAwareMorph {
   }
 
   onLoad () {
-    // while savings the easings itself get lost and we need to recreate them
+    // while saving the easings itself get lost and we need to recreate them
     this.animations.forEach(animation => animation.keyframes.forEach(keyframe => keyframe.setEasing(keyframe.easingName)));
   }
 }
