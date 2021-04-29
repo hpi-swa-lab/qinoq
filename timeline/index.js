@@ -21,7 +21,6 @@ export class Timeline extends QinoqMorph {
           this.ui = {};
         }
       },
-      interactive: {},
       _editor: {
         after: ['ui'],
         set (editor) {
@@ -259,7 +258,7 @@ export class Timeline extends QinoqMorph {
   }
 
   redraw () {
-    throw new Error('Subclass resposibility');
+    this.ui.cursor.location = this.getPositionFromScroll(this.interactive.scrollPosition);
   }
 
   get timelineLayers () {
@@ -364,6 +363,7 @@ export class GlobalTimeline extends Timeline {
   }
 
   redraw () {
+    super.redraw();
     this.timelineSequences.forEach(timelineSequence => {
       timelineSequence._lockModelUpdate = true;
       timelineSequence.setWidthAndUpdateResizers(this.getWidthFromDuration(timelineSequence.sequence.duration));
@@ -644,6 +644,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   redraw () {
+    super.redraw();
     this._activeAreaWidth = CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor;
     this.timelineLayers.forEach(timelineLayer => timelineLayer.redraw());
   }
