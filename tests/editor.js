@@ -67,7 +67,7 @@ describe('Editor', () => {
   });
 
   describe('menu bar buttons', () => {
-    describe('creating a new sequence', () => {
+    describe('create sequence button', () => {
       let createSequenceButton;
 
       before(() => {
@@ -86,7 +86,7 @@ describe('Editor', () => {
         expect(interactive.sequences.length).to.be.equal(sequenceCount);
       });
 
-      it('creating a sequence can be cancelled with Escape', () => {
+      it('cancels sequence creation with Escape', () => {
         const sequenceCount = interactive.sequences.length;
         createSequenceButton.onMouseUp();
         expect(interactive.sequences.length).to.be.equal(sequenceCount + 1);
@@ -96,7 +96,7 @@ describe('Editor', () => {
       });
     });
 
-    describe('creating a new layer', () => {
+    describe('creating layer button', () => {
       let createLayerButton;
 
       before(() => {
@@ -114,8 +114,7 @@ describe('Editor', () => {
         const newLayer = interactive.layers[interactive.layers.length - 1];
         const timelineLayer = editor.globalTimeline.timelineLayers.find(timelineLayer => timelineLayer.layer == newLayer);
         expect(timelineLayer).to.be.ok;
-        interactive.removeLayer(newLayer);
-        editor.globalTimeline.abandonTimelineLayer(timelineLayer);
+        timelineLayer.layerInfo.removeLayer();
         expect(interactive.layers.length).to.be.equal(layerCount);
       });
     });
