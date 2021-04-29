@@ -630,7 +630,7 @@ export class SequenceTimeline extends Timeline {
     const timelineLayer = super.createTimelineLayer(morph, index, name);
     this.ui.layerInfoContainer.submorphs[timelineLayer.index].onMouseUp = () => {
       if (morph.world()) morph.show();
-      this.editor.inspector.targetMorph = morph;
+      this.editor.ui.inspector.targetMorph = morph;
     };
     return timelineLayer;
   }
