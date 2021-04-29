@@ -5,7 +5,7 @@ import { pt } from 'lively.graphics';
 import { NumberAnimation } from '../index.js';
 import { Keyframe } from '../index.js';
 import { Morph } from 'lively.morphic';
-import { serialize } from 'lively.serializer2';
+import { serialize, deserialize } from 'lively.serializer2';
 
 describe('Interactive', () => {
   let interactive;
@@ -120,7 +120,7 @@ describe('Interactive', () => {
 
   describe('serialization', () => {
     it('can be serialized', () => {
-      serialize(interactive);
+      deserialize(serialize(interactive));
     });
   });
 

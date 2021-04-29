@@ -133,11 +133,15 @@ export class TimelineLayerInfo extends QinoqMorph {
     }
   }
 
-  async removeLayer () {
+  removeLayer () {
+    this.interactive.removeLayer(this.layer);
+    this.timeline.abandonTimelineLayer(this.timelineLayer);
+  }
+
+  async promptRemoveLayer () {
     const accept = await $world.confirm('Do you want to delete this layer?\nThis will remove all sequences in the layer.');
     if (accept) {
-      this.interactive.removeLayer(this.layer);
-      this.timeline.abandonTimelineLayer(this.timelineLayer);
+      this.removeLayer();
     }
   }
 
@@ -171,7 +175,7 @@ export class TimelineLayerInfo extends QinoqMorph {
       if (this.timelineLayer.index < this.timelineLayer.highestIndex) {
         menuOptions.push(['⬇️ Move layer down', () => this.timelineLayer.moveLayerBy(1)]);
       }
-      menuOptions.push(['❌ Remove layer', async () => await this.removeLayer()]);
+      menuOptions.push(['❌ Remove layer', async () => await this.promptRemoveLayer()]);
     }
     if (this.isInSequenceTimeline) {
       menuOptions.push(['🔍 Select morph in inspector', () => {
