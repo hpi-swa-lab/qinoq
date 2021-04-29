@@ -4,6 +4,7 @@ import { Interactive, exampleInteractive, InteractivesEditor } from '../index.js
 import { pt } from 'lively.graphics';
 import { Clipboard } from '../utilities/clipboard.js';
 import { QinoqMorph } from '../qinoq-morph.js';
+import { SimulatedDOMEvent, Event } from 'lively.morphic/events/Event.js';
 
 describe('Editor', () => {
   let editor, interactive;
@@ -16,6 +17,21 @@ describe('Editor', () => {
   function timelineSequences () {
     return editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence);
   }
+
+  describe('with timeline', () => {
+    it('first click on a single sequence sets _lastSelectedTimelineSequence', () => {
+      const nightBackgroundSequence = interactive.sequences.find(sequence => sequence.name == 'night background');
+      const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence == nightBackgroundSequence);
+      const timeline = nightBackgroundTimelineSequence.timeline;
+      const event = {
+        isShiftDown: () => { return false; },
+        isAltDown: () => { return false; }
+      };
+      expect(timeline._lastSelectedTimelineSequence).to.not.be.ok;
+      nightBackgroundTimelineSequence.onMouseDown(event);
+      expect(timeline._lastSelectedTimelineSequence).to.be.deep.equal(nightBackgroundTimelineSequence);
+    });
+  });
 
   describe('with keybindings', () => {
     it('can select all and no sequences', () => {
