@@ -84,7 +84,6 @@ export class TimelineLayer extends QinoqMorph {
     this.inactiveArea.onDragStart = event => this.onDragStart(event);
     this.inactiveArea.onDrag = event => this.onDrag(event);
     this.inactiveArea.onDragEnd = event => this.onDragEnd(event);
-    if (this.redraw) this.redraw();
     super.__after_deserialize__(snapshot, ref, pool);
   }
 
@@ -436,6 +435,11 @@ export class SequenceTimelineLayer extends TimelineLayer {
     // If this line is removed, the scroll does not happen (Race issue)
     await new Promise(r => setTimeout(r, 20));
     timelineKeyframe.show();
+  }
+
+  __after_deserialize__ (snapshot, ref, pool) {
+    this.redraw();
+    super.__after_deserialize__(snapshot, ref, pool);
   }
 
   abandon () {
