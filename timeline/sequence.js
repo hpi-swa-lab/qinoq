@@ -182,6 +182,7 @@ export class TimelineSequence extends QinoqMorph {
     super.onMouseDown(event);
     if (!this.isSelected && !singleSelectKeyPressed(event) && !rangeSelectKeyPressed(event)) {
       this.timeline.deselectAllSequencesExcept(this);
+      this.timeline._lastSelectedTimelineSequence = this;
       return;
     }
     if (event.leftMouseButtonPressed()) {
