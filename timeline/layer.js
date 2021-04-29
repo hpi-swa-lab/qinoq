@@ -58,7 +58,6 @@ export class TimelineLayer extends QinoqMorph {
       extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.LAYER_HEIGHT),
       position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0),
       reactsToPointer: false,
-      preserveContents: true,
       fill: COLOR_SCHEME.SURFACE_VARIANT,
       name: 'active area',
       borderStyle: { bottom: 'solid', left: 'none', right: 'none', top: 'solid' },
@@ -85,6 +84,7 @@ export class TimelineLayer extends QinoqMorph {
     this.inactiveArea.onDragStart = event => this.onDragStart(event);
     this.inactiveArea.onDrag = event => this.onDrag(event);
     this.inactiveArea.onDragEnd = event => this.onDragEnd(event);
+    if (this.redraw) this.redraw();
     super.__after_deserialize__(snapshot, ref, pool);
   }
 
