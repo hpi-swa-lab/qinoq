@@ -479,20 +479,24 @@ class TargetPicker extends Button {
       tooltip: {
         defaultValue: 'Choose Inspection Target'
       },
-      label: {
-        initialize () {
-          this.label = Icon.textAttribute('crosshairs');
-        }
-      },
       inspector: {
         async initialize () {
-          this.master = { auto: 'styleguide://System/buttons/light' };
-          await this.whenRendered();
-          this.extent = pt(CONSTANTS.TARGET_PICKER_DIAMETER, CONSTANTS.TARGET_PICKER_DIAMETER);
-          this.borderRadius = CONSTANTS.TARGET_PICKER_BORDER_RADIUS;
+          this.initializeUI();
         }
       }
     };
+  }
+
+  async initializeUI () {
+    // opacity is only relevant for optical reasons so one does not see the awaited changes
+    this.opacity = 0;
+    this.master = { auto: 'styleguide://System/buttons/light' };
+    await this.whenRendered();
+    this.label = Icon.textAttribute('crosshairs');
+    await this.whenRendered();
+    this.extent = pt(CONSTANTS.TARGET_PICKER_DIAMETER, CONSTANTS.TARGET_PICKER_DIAMETER);
+    this.borderRadius = CONSTANTS.TARGET_PICKER_BORDER_RADIUS;
+    this.opacity = 1;
   }
 
   async onMouseDown (event) {
