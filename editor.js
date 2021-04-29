@@ -72,8 +72,12 @@ export class InteractivesEditor extends QinoqMorph {
         }
       },
       ui: {
+        /*
+        * Keys:
+        * globalTab, globalTimeline, inspector, menuBar, preview, sequenceOverview, tabContainer, window
+        */
         initialize () {
-          this.ui = {};
+          if (!this._deserializing) this.ui = {};
         }
       }
     };
