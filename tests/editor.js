@@ -19,7 +19,7 @@ describe('Editor', () => {
   }
 
   describe('with timeline', () => {
-    it('first click on a single sequence sets _lastSelectedTimelineSequence', () => {
+    it('sets _lastSelectedTimelineSequence on the first click on a single sequence', () => {
       const nightBackgroundSequence = interactive.sequences.find(sequence => sequence.name == 'night background');
       const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence == nightBackgroundSequence);
       const timeline = nightBackgroundTimelineSequence.timeline;
