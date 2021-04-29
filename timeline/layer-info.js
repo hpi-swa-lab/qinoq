@@ -175,7 +175,7 @@ export class TimelineLayerInfo extends QinoqMorph {
     }
     if (this.isInSequenceTimeline) {
       menuOptions.push(['🔍 Select morph in inspector', () => {
-        this.editor.inspector.targetMorph = this.morph;
+        this.editor.ui.inspector.targetMorph = this.morph;
         if (this.morph.world()) this.morph.show();
       }]);
       menuOptions.push(['❌ Remove morph', async () => await this.abandonMorph()]);

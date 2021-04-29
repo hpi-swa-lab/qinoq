@@ -24,7 +24,7 @@ describe('Inspector', () => {
     interactive = await exampleInteractive();
     editor.interactive = interactive;
     morph = new InspectorTestMorph();
-    inspector = editor.inspector;
+    inspector = editor.ui.inspector;
     interactive.sequences[0].addMorph(morph);
     inspector.targetMorph = morph;
   });

@@ -718,7 +718,7 @@ export class TimelineSequence extends QinoqMorph {
 
     const sequenceTab = this.editor.getTabFor(this.sequence);
     if (sequenceTab) {
-      this.editor.tabContainer.disbandConnectionsFor(sequenceTab);
+      this.editor.ui.tabContainer.disbandConnectionsFor(sequenceTab);
       sequenceTab.close();
     }
     this.disbandInteractiveConnections();

@@ -45,29 +45,29 @@ describe('Editor', () => {
   });
 
   it('moves scroll holder', () => {
-    expect(interactive.scrollOverlay.globalPosition.equals(editor.preview.globalPosition)).to.be.ok;
-    editor.window.moveBy(pt(100, 100));
-    expect(interactive.scrollOverlay.globalPosition.equals(editor.preview.globalPosition)).to.be.ok;
+    expect(interactive.scrollOverlay.globalPosition.equals(editor.ui.preview.globalPosition)).to.be.ok;
+    editor.ui.window.moveBy(pt(100, 100));
+    expect(interactive.scrollOverlay.globalPosition.equals(editor.ui.preview.globalPosition)).to.be.ok;
   });
 
   it('removes scrollholder from world when minimized', () => {
     expect(interactive.scrollOverlay.world()).to.be.ok;
-    editor.window.toggleMinimize();
+    editor.ui.window.toggleMinimize();
     expect(interactive.scrollOverlay.world()).to.not.be.ok;
-    editor.window.toggleMinimize();
+    editor.ui.window.toggleMinimize();
     expect(interactive.scrollOverlay.world()).to.be.ok;
   });
 
   it('changes scroll position when changing tab', () => {
     expect(editor.interactive.scrollPosition).to.be.equal(0);
-    editor.getTimelineFor(editor.globalTab).timelineSequences[2].openSequenceView();
+    editor.getTimelineFor(editor.ui.globalTab).timelineSequences[2].openSequenceView();
     expect(editor.interactive.scrollPosition).to.be.equal(250);
   });
 
   it('shows zoom in the menu bar', () => {
-    expect(editor.menuBar.ui.zoomInput.number).to.be.equal(100);
-    editor.globalTimeline.zoomFactor = 1.5;
-    expect(editor.menuBar.ui.zoomInput.number).to.be.equal(150);
+    expect(editor.ui.menuBar.ui.zoomInput.number).to.be.equal(100);
+    editor.ui.globalTimeline.zoomFactor = 1.5;
+    expect(editor.ui.menuBar.ui.zoomInput.number).to.be.equal(150);
   });
 
   describe('with qinoq morph', () => {
@@ -118,7 +118,7 @@ describe('Editor', () => {
   });
 
   after(() => {
-    editor.window.close();
+    editor.ui.window.close();
   });
 });
 
