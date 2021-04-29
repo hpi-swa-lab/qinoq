@@ -64,6 +64,12 @@ describe('Editor', () => {
     expect(editor.interactive.scrollPosition).to.be.equal(250);
   });
 
+  it('shows zoom in the menu bar', () => {
+    expect(editor.menuBar.ui.zoomInput.number).to.be.equal(100);
+    editor.globalTimeline.zoomFactor = 1.5;
+    expect(editor.menuBar.ui.zoomInput.number).to.be.equal(150);
+  });
+
   describe('with qinoq morph', () => {
     let qinoqMorph;
 
