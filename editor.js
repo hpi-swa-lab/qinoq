@@ -49,8 +49,6 @@ export class InteractivesEditor extends QinoqMorph {
       extent: {
         defaultValue: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT)
       },
-      inspector: {
-      },
       interactiveInEditMode: {
         defaultValue: false,
         set (bool) {
@@ -73,82 +71,80 @@ export class InteractivesEditor extends QinoqMorph {
           this.setHalosEnabledForEditorElements(bool);
         }
       },
-      menuBar: {},
-      tabContainer: {},
-      window: {},
-      sequenceOverview: {},
-      preview: {},
-      globalTimeline: {},
-      globalTab: {}
+      ui: {
+        initialize () {
+          this.ui = {};
+        }
+      }
     };
   }
 
   async initialize () {
     this.initializeLayout();
-    this.window = this.openInWindow({
+    this.ui.window = this.openInWindow({
       title: 'Interactives Editor',
       name: 'window for interactives editor'
     });
     await this.initializePanels();
-    connect(this.window, 'close', this, 'abandon');
-    connect(this.window, 'position', this, 'positionChanged');
-    connect(this.window, 'minimized', this, 'onWindowMinimizedChange');
+    connect(this.ui.window, 'close', this, 'abandon');
+    connect(this.ui.window, 'position', this, 'positionChanged');
+    connect(this.ui.window, 'minimized', this, 'onWindowMinimizedChange');
     return this;
   }
 
   async initializePanels () {
-    this.sequenceOverview = this.addMorph(new SequenceOverview({ position: pt(0, 0) }));
+    this.ui.sequenceOverview = this.addMorph(new SequenceOverview({ position: pt(0, 0) }));
 
-    this.preview = this.addMorph(new Preview({ _editor: this }));
+    this.ui.preview = this.addMorph(new Preview({ _editor: this }));
 
-    this.inspector = new InteractiveMorphInspector({
+    this.ui.inspector = new InteractiveMorphInspector({
       position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0),
       extent: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT),
-      borderWidth: CONSTANTS.BORDER_WIDTH
+      borderWidth: CONSTANTS.BORDER_WIDTH,
+      _editor: this
     });
-    this.inspector.initialize(this);
-    this.addMorph(this.inspector);
+    this.addMorph(this.ui.inspector);
 
-    this.menuBar = new MenuBar({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), _editor: this });
-    this.addMorph(this.menuBar);
-    connect(this, 'onDisplayedTimelineChange', this.menuBar, 'onGlobalTimelineTab', {
+    this.ui.menuBar = new MenuBar({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), _editor: this });
+    this.addMorph(this.ui.menuBar);
+    connect(this, 'onDisplayedTimelineChange', this.ui.menuBar, 'onGlobalTimelineTab', {
       updater: `($update, displayedTimeline) => { 
-        if (displayedTimeline == source.globalTimeline) $update();
+        if (displayedTimeline == source.ui.globalTimeline) $update();
       }`
     });
-    connect(this, 'onDisplayedTimelineChange', this.menuBar, 'onSequenceView', {
+    connect(this, 'onDisplayedTimelineChange', this.ui.menuBar, 'onSequenceView', {
       updater: `($update, displayedTimeline) => { 
-        if (displayedTimeline !== source.globalTimeline) $update();
+        if (displayedTimeline !== source.ui.globalTimeline) $update();
       }`
     });
 
-    this.globalTimeline = new GlobalTimeline({
+    this.ui.globalTimeline = new GlobalTimeline({
       position: pt(0, 0),
       extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.TIMELINE_HEIGHT),
       _editor: this
     });
 
-    this.tabContainer = await resource('part://tabs/tabs').read();
-    Object.assign(this.tabContainer, {
+    this.ui.tabContainer = await resource('part://tabs/tabs').read();
+    Object.assign(this.ui.tabContainer, {
       position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT + CONSTANTS.MENU_BAR_HEIGHT),
       extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.TIMELINE_HEIGHT),
       showNewTabButton: false,
       tabHeight: 28,
       visible: false
     });
-    connect(this.tabContainer, 'onSelectedTabChange', this, 'onDisplayedTimelineChange', {
+    connect(this.ui.tabContainer, 'onSelectedTabChange', this, 'onDisplayedTimelineChange', {
       updater: `($update, selectedAndPreviousTab) => {
         selectedAndPreviousTab.prev ? 
           $update(target.getTimelineFor(selectedAndPreviousTab.curr),target.getTimelineFor(selectedAndPreviousTab.prev)) :
           $update(target.getTimelineFor(selectedAndPreviousTab.curr))
       }`
     });
-    connect(this.tabContainer, 'onTabClose', this, 'onTabClose');
+    connect(this.ui.tabContainer, 'onTabClose', this, 'onTabClose');
 
-    this.globalTab = await this.tabContainer.addTab('[no interactive loaded]', this.globalTimeline);
-    this.globalTab.closeable = false;
+    this.ui.globalTab = await this.ui.tabContainer.addTab('[no interactive loaded]', this.ui.globalTimeline);
+    this.ui.globalTab.closeable = false;
 
-    this.addMorph(this.tabContainer);
+    this.addMorph(this.ui.tabContainer);
   }
 
   initializeLayout () {
@@ -190,26 +186,26 @@ export class InteractivesEditor extends QinoqMorph {
 
   initializeInteractive (interactive) {
     if (!interactive) return;
-    this.preview.loadContent(interactive);
-    this.globalTimeline.loadContent(interactive);
+    this.ui.preview.loadContent(interactive);
+    this.ui.globalTimeline.loadContent(interactive);
 
-    this.tabContainer.visible = true;
+    this.ui.tabContainer.visible = true;
 
     interactive.withAllSubmorphsDo(submorph => { if (!submorph.isSequence && !submorph.isInteractive) connect(submorph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' }); });
 
     connect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
 
-    connect(this.interactive, 'name', this.globalTab, 'caption').update(this.interactive.name);
-    connect(this.globalTab, 'caption', this.interactive, 'name');
+    connect(this.interactive, 'name', this.ui.globalTab, 'caption').update(this.interactive.name);
+    connect(this.ui.globalTab, 'caption', this.interactive, 'name');
 
     connect(this.interactive, 'remove', this, 'reset');
-    connect(this.interactive, '_length', this.menuBar.ui.scrollPositionInput, 'max').update(this.interactive.length);
-    connect(this.preview, 'extent', this.interactive, 'extent');
+    connect(this.interactive, '_length', this.ui.menuBar.ui.scrollPositionInput, 'max').update(this.interactive.length);
+    connect(this.ui.preview, 'extent', this.interactive, 'extent');
 
     connect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
 
     // trigger update of timeline dependents
-    this.onDisplayedTimelineChange(this.globalTimeline);
+    this.onDisplayedTimelineChange(this.ui.globalTimeline);
   }
 
   // call this to propagate changes to the scrollposition to the actual interactive
@@ -223,7 +219,7 @@ export class InteractivesEditor extends QinoqMorph {
   // use this method for any editor elements that want to change the scroll position
   // e.g., menubar buttons or context menus
   internalScrollChangeWithGUIUpdate (scrollPosition) {
-    this.menuBar.ui.scrollPositionInput.number = scrollPosition;
+    this.ui.menuBar.ui.scrollPositionInput.number = scrollPosition;
   }
 
   // listens for actual scrolling happening on the Interactive
@@ -253,18 +249,18 @@ export class InteractivesEditor extends QinoqMorph {
 
     disconnect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
 
-    disconnect(this.interactive, 'name', this.globalTimeline, 'name');
+    disconnect(this.interactive, 'name', this.ui.globalTimeline, 'name');
     disconnect(this.interactive, 'remove', this, 'reset');
 
-    disconnect(this.preview, 'extent', this.interactive, 'extent');
+    disconnect(this.ui.preview, 'extent', this.interactive, 'extent');
 
-    disconnect(this.interactive, 'name', this.globalTab, 'caption');
-    disconnect(this.interactive, 'onLengthChange', this.globalTimeline, '_activeAreaWidth');
-    disconnect(this.interactive, '_length', this.menuBar.ui.scrollPositionInput, 'max');
+    disconnect(this.interactive, 'name', this.ui.globalTab, 'caption');
+    disconnect(this.interactive, 'onLengthChange', this.ui.globalTimeline, '_activeAreaWidth');
+    disconnect(this.interactive, '_length', this.ui.menuBar.ui.scrollPositionInput, 'max');
 
     disconnect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
 
-    const morphsToClear = [this.tabContainer, this.menuBar, this.inspector, this.sequenceOverview];
+    const morphsToClear = [this.ui.tabContainer, this.ui.menuBar, this.ui.inspector, this.ui.sequenceOverview];
     morphsToClear.forEach(morph =>
       morph.withAllSubmorphsDo(submorph => {
         if (submorph.attributeConnections) {
@@ -277,23 +273,23 @@ export class InteractivesEditor extends QinoqMorph {
         }
       }));
 
-    this.globalTimeline.clear();
+    this.ui.globalTimeline.clear();
     this.tabs.forEach(tab => {
-      if (tab !== this.globalTab) {
+      if (tab !== this.ui.globalTab) {
         tab.close();
         tab.abandon();
       }
     });
 
-    this.inspector.deselect();
+    this.ui.inspector.deselect();
 
-    this.preview.showEmptyPreviewPlaceholder();
+    this.ui.preview.showEmptyPreviewPlaceholder();
   }
 
   reset () {
     this.clearInteractive();
     this.setProperty('interactive', undefined);
-    this.tabContainer.visible = false;
+    this.ui.tabContainer.visible = false;
   }
 
   async initializeSequenceView (sequence) {
@@ -305,7 +301,7 @@ export class InteractivesEditor extends QinoqMorph {
     }
 
     const timeline = this.initializeSequenceTimeline(sequence);
-    const tab = await this.tabContainer.addTab(sequence.name, timeline);
+    const tab = await this.ui.tabContainer.addTab(sequence.name, timeline);
     connect(sequence, 'name', tab, 'caption');
     connect(tab, 'caption', sequence, 'name');
     return tab;
@@ -342,15 +338,15 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   get displayedTimeline () {
-    return this.getTimelineFor(this.tabContainer.selectedTab);
+    return this.getTimelineFor(this.ui.tabContainer.selectedTab);
   }
 
   get sequenceTimelines () {
-    return this.tabs.filter(tab => tab !== this.globalTab).map(tab => this.getTimelineFor(tab));
+    return this.tabs.filter(tab => tab !== this.ui.globalTab).map(tab => this.getTimelineFor(tab));
   }
 
   get tabs () {
-    return this.tabContainer.tabs;
+    return this.ui.tabContainer.tabs;
   }
 
   getTabFor (sequence) {
@@ -366,7 +362,7 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   get currentSequence () {
-    return this.getSequenceFor(this.tabContainer.selectedTab);
+    return this.getSequenceFor(this.ui.tabContainer.selectedTab);
   }
 
   createNewSequence () {
@@ -380,7 +376,7 @@ export class InteractivesEditor extends QinoqMorph {
     newSequence.layer = this.interactive.layers[0];
     this.interactive.addSequence(newSequence);
 
-    this.globalTimeline.createTimelineSequenceInHand(newSequence);
+    this.ui.globalTimeline.createTimelineSequenceInHand(newSequence);
   }
 
   createNewLayer () {
@@ -390,13 +386,13 @@ export class InteractivesEditor extends QinoqMorph {
     const newLayer = new Layer({ zIndex: newZIndex });
 
     this.interactive.addLayer(newLayer);
-    this.globalTimeline.createTimelineLayer(newLayer);
-    this.globalTimeline.onActiveAreaWidthChange();
+    this.ui.globalTimeline.createTimelineLayer(newLayer);
+    this.ui.globalTimeline.onActiveAreaWidthChange();
   }
 
   addMorphToInteractive (morph) {
     this.currentSequence.addMorph(morph);
-    this.inspector.targetMorph = morph;
+    this.ui.inspector.targetMorph = morph;
     this.displayedTimeline._createOverviewLayers = true;
     const newLayer = this.displayedTimeline.createOverviewTimelineLayer(morph);
     this.displayedTimeline._createOverviewLayers = false;
@@ -424,8 +420,8 @@ export class InteractivesEditor extends QinoqMorph {
       const timeline = this.getTimelineFor(tab);
       timeline.timelineLayers.filter(timelineLayer => timelineLayer.morph == morph).forEach(timelineLayer => timeline.abandonTimelineLayer(timelineLayer));
     }
-    if (this.inspector.targetMorph == morph) {
-      this.inspector.deselect();
+    if (this.ui.inspector.targetMorph == morph) {
+      this.ui.inspector.deselect();
     }
     if (doNotAbandon) morph.remove();
     else sequenceOfMorph.abandonMorph(morph);
@@ -445,7 +441,7 @@ export class InteractivesEditor extends QinoqMorph {
   onDisplayedTimelineChange (displayedTimeline, previouslyDisplayedTimeline) {
     if (!this.interactive) return displayedTimeline;
 
-    if (displayedTimeline === this.globalTimeline) {
+    if (displayedTimeline === this.ui.globalTimeline) {
       this.interactive.showAllSequences();
       this.interactiveInEditMode = false;
     } else {
@@ -454,12 +450,12 @@ export class InteractivesEditor extends QinoqMorph {
       this.interactiveInEditMode = true;
     }
     if (previouslyDisplayedTimeline) {
-      disconnect(this.window, 'extent', previouslyDisplayedTimeline, 'relayout');
+      disconnect(this.ui.window, 'extent', previouslyDisplayedTimeline, 'relayout');
       disconnect(this, 'onScrollChange', displayedTimeline, 'onScrollChange');
-      disconnect(previouslyDisplayedTimeline, 'zoomFactor', this.menuBar.ui.zoomInput, 'number');
+      disconnect(previouslyDisplayedTimeline, 'zoomFactor', this.ui.menuBar.ui.zoomInput, 'number');
     }
-    connect(displayedTimeline, 'zoomFactor', this.menuBar.ui.zoomInput, 'number', { converter: '(zoomFactor) => zoomFactor * 100' }).update(displayedTimeline.zoomFactor);
-    connect(this.window, 'extent', displayedTimeline, 'relayout').update(this.window.extent);
+    connect(displayedTimeline, 'zoomFactor', this.ui.menuBar.ui.zoomInput, 'number', { converter: '(zoomFactor) => zoomFactor * 100' }).update(displayedTimeline.zoomFactor);
+    connect(this.ui.window, 'extent', displayedTimeline, 'relayout').update(this.ui.window.extent);
     connect(this, 'onScrollChange', displayedTimeline, 'onScrollChange').update(this.interactive.scrollPosition);
     return displayedTimeline;
   }
@@ -528,7 +524,7 @@ export class InteractivesEditor extends QinoqMorph {
         doc: 'Enable or disable snapping of editor elements (e.g. keyframes, sequences)',
         exec: () => {
           this._snappingDisabled = !this._snappingDisabled;
-          const toggleSnappingButton = this.menuBar.ui.toggleSnappingButton;
+          const toggleSnappingButton = this.ui.menuBar.ui.toggleSnappingButton;
           toggleSnappingButton.fontColor = this._snappingDisabled ? COLOR_SCHEME.ON_BACKGROUND_VARIANT : COLOR_SCHEME.SECONDARY;
         }
       },
@@ -598,13 +594,13 @@ export class InteractivesEditor extends QinoqMorph {
     });
     const layer = this.displayedTimeline.timelineLayers.find(timelineLayer => timelineLayer.morph === copiedMorph);
     layer.addTimelineKeyframes();
-    this.inspector.updateRespectedAnimations();
+    this.ui.inspector.updateRespectedAnimations();
   }
 
   __after_deserialize__ (snapshot, ref, pool) {
     super.__after_deserialize__(snapshot, ref, pool);
     // Required to position the scrollOverlay correctly. Otherwise the scroll Overlay will be in the center of the screen and possibly misaligned with the interactive/ preview
-    this.interactive.scrollOverlay.globalPosition = this.preview.globalPosition;
+    this.interactive.scrollOverlay.globalPosition = this.ui.preview.globalPosition;
   }
 }
 

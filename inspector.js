@@ -33,8 +33,12 @@ export class InteractiveMorphInspector extends QinoqMorph {
         defaultValue: 'auto'
       },
       ui: {
+        after: ['_editor'],
         initialize () {
-          if (!this._deserializing) this.ui = {};
+          if (this._deserializing) return;
+          this.ui = {};
+          this.build();
+          connect($world, 'showHaloFor', this, 'selectMorphThroughHalo');
         }
       },
       propertyControls: {
@@ -288,12 +292,6 @@ export class InteractiveMorphInspector extends QinoqMorph {
 
   updateRespectedAnimations () {
     this.displayedProperties.forEach(property => this.propertyControls[property].keyframe.updateAnimation());
-  }
-
-  async initialize (editor) {
-    this._editor = editor;
-    this.build();
-    connect($world, 'showHaloFor', this, 'selectMorphThroughHalo');
   }
 
   selectMorphThroughHalo (morph) {
