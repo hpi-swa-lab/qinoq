@@ -134,6 +134,7 @@ export class TimelineKeyframe extends QinoqMorph {
     if (undoable) this.undoStart('move-keyframe');
     this.keyframe.position = newPosition;
     this.updatePosition();
+    this.layer.redraw();
     this.editor.interactive.redraw();
     if (undoable) this.undoStop('move-keyframe');
   }
