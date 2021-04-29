@@ -285,7 +285,7 @@ export class Timeline extends QinoqMorph {
 
   onActiveAreaWidthChange () {
     this.timelineLayers.forEach(timelineLayer => {
-      timelineLayer.activeArea.width = Math.max(this._activeAreaWidth, CONSTANTS.MINIMAL_ACTIVE_AREA_WIDTH);
+      timelineLayer.activeArea.width = this._activeAreaWidth;
     });
 
     const scrollbarWidth = this.ui.scrollBar.extent.x;
