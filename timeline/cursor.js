@@ -54,6 +54,12 @@ export class TimelineCursor extends QinoqMorph {
           this.initializeSubmorphs();
           this.initializeAppearance();
         }
+      },
+      timeline: {
+        get () {
+          if (!this.owner || !this.owner.owner) return null;
+          return this.getProperty('timeline');
+        }
       }
     };
   }
@@ -124,11 +130,6 @@ export class TimelineCursor extends QinoqMorph {
       });
       this.previousOwner = newOwner;
     }
-  }
-
-  get timeline () {
-    if (!this.owner || !this.owner.owner) return null;
-    return this.owner.owner.owner;
   }
 
   remove () {
