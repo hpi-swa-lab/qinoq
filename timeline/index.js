@@ -133,7 +133,7 @@ export class Timeline extends QinoqMorph {
   }
 
   initializeCursor () {
-    this.ui.cursor = new TimelineCursor({ displayValue: 0 });
+    this.ui.cursor = new TimelineCursor({ displayValue: 0, timeline: this });
     this.ui.layerContainer.addMorph(this.ui.cursor);
     this.ui.cursor.location = this.getPositionFromScroll(0);
     this.ui.cursor.height = this.ui.layerContainer.height;
