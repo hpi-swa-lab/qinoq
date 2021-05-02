@@ -4,7 +4,6 @@ import { Interactive, exampleInteractive, InteractivesEditor } from '../index.js
 import { pt } from 'lively.graphics';
 import { Clipboard } from '../utilities/clipboard.js';
 import { QinoqMorph } from '../qinoq-morph.js';
-import { SimulatedDOMEvent, Event } from 'lively.morphic/events/Event.js';
 
 describe('Editor', () => {
   let editor, interactive;
