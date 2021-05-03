@@ -74,6 +74,9 @@ export class TimelineSequence extends QinoqMorph {
       extent: {
         set (extent) {
           this.setProperty('extent', extent);
+          if (extent.x < CONSTANTS.MINIMAL_SEQUENCE_WIDTH && this.hasResizers) this.removeResizers();
+          else if (extent.x >= CONSTANTS.MINIMAL_SEQUENCE_WIDTH && !this.hasResizers) this.restoreResizers();
+
           if (!this._lockModelUpdate && !this._deserializing) { this.updateSequenceAfterArrangement(); }
         }
       },
@@ -156,6 +159,23 @@ export class TimelineSequence extends QinoqMorph {
 
     this.addMorphBack(this.ui.rightResizer);
     this.addMorphBack(this.ui.leftResizer);
+  }
+
+  get hasResizers () {
+    // assumes that rightResizer and leftResizer are always in the same state
+    return (this.ui && this.ui.rightResizer && this.ui.rightResizer.owner == this);
+  }
+
+  removeResizers () {
+    this.ui.rightResizer.remove();
+    this.ui.leftResizer.remove();
+  }
+
+  restoreResizers () {
+    if (this.ui && this.ui.rightResizer) {
+      this.addMorphBack(this.ui.rightResizer);
+      this.addMorphBack(this.ui.leftResizer);
+    }
   }
 
   onDoubleMouseDown (event) {
