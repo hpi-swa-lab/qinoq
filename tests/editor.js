@@ -112,7 +112,7 @@ describe('Editor', () => {
         createLayerButton.onMouseUp();
         expect(interactive.layers.length).to.be.equal(layerCount + 1);
         const newLayer = interactive.layers[interactive.layers.length - 1];
-        const timelineLayer = editor.globalTimeline.timelineLayers.find(timelineLayer => timelineLayer.layer == newLayer);
+        const timelineLayer = editor.ui.globalTimeline.timelineLayers.find(timelineLayer => timelineLayer.layer == newLayer);
         expect(timelineLayer).to.be.ok;
         timelineLayer.layerInfo.removeLayer();
         expect(interactive.layers.length).to.be.equal(layerCount);
