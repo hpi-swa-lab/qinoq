@@ -332,6 +332,10 @@ class InteractiveScrollHolder extends Morph {
     };
   }
 
+  get topbar () {
+    return $world.getSubmorphNamed('lively top bar');
+  }
+
   onMouseMoving (mousePosition) {
     const morphUnderMouse = this.getUnderlyingMorph(mousePosition);
     if (morphUnderMouse == this.previousMorphUnderMouse) return;
@@ -376,10 +380,7 @@ class InteractiveScrollHolder extends Morph {
   }
 
   onDragEnd (event) {
-    if (this.passThroughMorph) {
-      const newMorph = this.submorphs.filter(submorph => submorph.name !== 'scrollable content')[0];
-      if (newMorph) this.newMorph = newMorph;
-    }
+    this.setNewMorph();
     if (!this.passThroughMorph && this.delegatedTarget) {
       event.state.dragStartMorphPosition = this.dragStartPosition;
       // this should not be neccessary but if we do not call this here
@@ -395,21 +396,23 @@ class InteractiveScrollHolder extends Morph {
 
   onHoverIn (event) {
     connect(event.hand, 'position', this, 'onMouseMoving');
-
-    if (this.passThroughMorph && $world.get('lively top bar')) {
-      $world.get('lively top bar').attachToTarget(this);
+    if (this.passThroughMorph && this.topbar) {
+      this.topbar.attachToTarget(this);
+      // used for creation of morph that get created via single click (e.g. label)
+      connect(this.topbar, 'handleShapeCreation', this, 'setNewMorph');
       // should not be neccessary, this is a bug in upstream lively
-      $world.get('lively top bar').setEditMode($world.get('lively top bar').editMode);
+      this.topbar.setEditMode(this.topbar.editMode);
     }
   }
 
   onHoverOut (event) {
     disconnect(event.hand, 'position', this, 'onMouseMoving');
+    if (this.passThroughMorph && this.topbar) {
+      this.topbar.attachToTarget($world);
 
-    if (this.passThroughMorph && $world.get('lively top bar')) {
-      $world.get('lively top bar').attachToTarget($world);
+      disconnect(this.topbar, 'handleShapeCreation', this, 'setNewMorph');
       // should not be neccessary, this is a bug in upstream lively
-      $world.get('lively top bar').setEditMode($world.get('lively top bar').editMode);
+      this.topbar.setEditMode(this.topbar.editMode);
     }
   }
 
@@ -434,6 +437,13 @@ class InteractiveScrollHolder extends Morph {
 
   onMouseUp (event) {
     this.getUnderlyingMorph(event.hand.position).onMouseUp(event);
+  }
+
+  setNewMorph () {
+    if (this.passThroughMorph) {
+      const newMorph = this.submorphs.filter(submorph => submorph.name !== 'scrollable content')[0];
+      if (newMorph) this.newMorph = newMorph;
+    }
   }
 
   getUnderlyingMorph (position) {
