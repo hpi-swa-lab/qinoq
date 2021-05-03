@@ -287,16 +287,25 @@ describe('Editor and Interactive connections', () => {
     interactive.openInWorld();
   });
 
-  it('interactive has no outside connections when opened in world', () => {
+  it('do not exist when both are opened', () => {
     expect(interactiveHasOutsideConnections()).to.be.false;
+    expect(editorHasConnectionsToInteractive()).to.be.false;
   });
 
-  it('interactive has no outside connections after being in editor', async () => {
+  it('exist when interactive is loaded in editor', () => {
+    editor.interactive = interactive;
+    expect(interactiveHasOutsideConnections()).to.be.true;
+    expect(editorHasConnectionsToInteractive()).to.be.true;
+    interactive.remove();
+  });
+
+  it('do not exist after interactive has been removed from editor', async () => {
     editor.interactive = interactive;
     await performEditorActions();
     interactive.remove();
     interactive.openInWorld();
     expect(interactiveHasOutsideConnections()).to.be.false;
+    expect(editorHasConnectionsToInteractive()).to.be.false;
   });
 
   async function performEditorActions () {
@@ -314,6 +323,16 @@ describe('Editor and Interactive connections', () => {
     return connections;
   }
 
+  function editorConnections () {
+    const connections = [];
+    editor.withAllSubmorphsDo(morph => {
+      if (morph.attributeConnections) {
+        connections.push(...morph.attributeConnections);
+      }
+    });
+    return connections;
+  }
+
   function interactiveHasOutsideConnections () {
     const connections = interactiveConnections();
     return connections.map(connection => {
@@ -324,6 +343,16 @@ describe('Editor and Interactive connections', () => {
       return sourceInInteractive && targetInInteractive;
     }
     ).some(bool => !bool);
+  }
+
+  function editorHasConnectionsToInteractive () {
+    const connections = editorConnections();
+    return connections.map(connection => {
+      const target = connection.targetObj;
+      const targetInInteractive = Interactive.isMorphInInteractive(target) || target == interactive.scrollOverlay || target.owner == interactive.scrollOverlay;
+      return targetInInteractive;
+    }
+    ).some(bool => bool);
   }
 
   after(() => {
