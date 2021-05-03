@@ -134,15 +134,15 @@ describe('Editor', () => {
     });
   });
 
-  describe('menu bar buttons', () => {
-    describe('create sequence button', () => {
+  describe('with menu bar buttons', () => {
+    describe(', the create sequence button', () => {
       let createSequenceButton;
 
       before(() => {
         createSequenceButton = editor.withAllSubmorphsSelect(submorph => submorph.tooltip == 'Create a new sequence')[0];
       });
 
-      it('has a button to create a new sequence', () => {
+      it('exists', () => {
         expect(createSequenceButton).to.be.ok;
       });
 
@@ -164,14 +164,14 @@ describe('Editor', () => {
       });
     });
 
-    describe('creating layer button', () => {
+    describe(', the create layer button', () => {
       let createLayerButton;
 
       before(() => {
         createLayerButton = editor.withAllSubmorphsSelect(submorph => submorph.tooltip == 'Create a new layer')[0];
       });
 
-      it('has a button to create a new layer', () => {
+      it('exists', () => {
         expect(createLayerButton).to.be.ok;
       });
 
@@ -227,51 +227,62 @@ describe('Editor', () => {
     expect(newAnimation.keyframes.length).to.be.equal(2);
   });
 
-  describe('with qinoq morph', () => {
-    let qinoqMorph;
+  after(() => {
+    editor.ui.window.close();
+  });
+});
 
+describe('Qinoq morph', () => {
+  let qinoqMorph;
+  let editor, interactive;
+
+  before(async () => {
+    editor = await new InteractivesEditor().initialize();
+    interactive = await exampleInteractive();
+    editor.interactive = interactive;
+  });
+
+  beforeEach(() => {
+    qinoqMorph = new QinoqMorph({ _editor: editor, name: 'Qinoq test morph' });
+    editor.addMorph(qinoqMorph);
+  });
+
+  it('is qinoq morph', () => {
+    expect(qinoqMorph.isQinoqMorph).to.be.ok;
+  });
+
+  it('has no menu items', () => {
+    expect(qinoqMorph.menuItems().length).to.be.equal(0);
+  });
+
+  it('has halos disabled', () => {
+    expect(qinoqMorph.halosEnabled).to.not.be.ok;
+  });
+
+  it('has reference to interactive', () => {
+    expect(qinoqMorph.interactive).to.be.equal(interactive);
+  });
+
+  describe('in editor debug mode', () => {
     beforeEach(() => {
-      qinoqMorph = new QinoqMorph({ _editor: editor, name: 'Qinoq test morph' });
-      editor.addMorph(qinoqMorph);
+      editor.debug = true;
     });
 
-    it('is qinoq morph', () => {
-      expect(qinoqMorph.isQinoqMorph).to.be.ok;
+    it('has menu items', () => {
+      expect(qinoqMorph.menuItems().length).to.be.greaterThan(0);
     });
 
-    it('has no menu items', () => {
-      expect(qinoqMorph.menuItems().length).to.be.equal(0);
-    });
-
-    it('has halos disabled', () => {
-      expect(qinoqMorph.halosEnabled).to.not.be.ok;
-    });
-
-    it('has reference to interactive', () => {
-      expect(qinoqMorph.interactive).to.be.equal(interactive);
-    });
-
-    describe('in editor debug mode', () => {
-      beforeEach(() => {
-        editor.debug = true;
-      });
-
-      it('has menu items', () => {
-        expect(qinoqMorph.menuItems().length).to.be.greaterThan(0);
-      });
-
-      it('has halos enabled', () => {
-        expect(qinoqMorph.halosEnabled).to.be.ok;
-      });
-
-      afterEach(() => {
-        editor.debug = false;
-      });
+    it('has halos enabled', () => {
+      expect(qinoqMorph.halosEnabled).to.be.ok;
     });
 
     afterEach(() => {
-      qinoqMorph.abandon();
+      editor.debug = false;
     });
+  });
+
+  afterEach(() => {
+    qinoqMorph.abandon();
   });
 
   after(() => {
