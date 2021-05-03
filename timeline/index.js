@@ -608,10 +608,6 @@ export class SequenceTimeline extends Timeline {
     };
   }
 
-  get timelineLayers () {
-    return super.timelineLayers.filter(timelineLayer => !timelineLayer.isOverviewLayer);
-  }
-
   get selectedTimelineKeyframes () {
     return this.keyframes.filter(keyframe => keyframe.isSelected);
   }
@@ -654,7 +650,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   get keyframes () {
-    return this.timelineLayers.flatMap(timelineLayer => timelineLayer.keyframes);
+    return this.timelineLayers.flatMap(timelineLayer => !timelineLayer.isOverviewLayer && timelineLayer.keyframes);
   }
 
   getTimelineKeyframe (keyframe) {
