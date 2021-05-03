@@ -22,7 +22,7 @@ export class Interactive extends Morph {
   }
 
   static isMorphInInteractive (morph) {
-    return morph.isSequence || Sequence.getSequenceOfMorph(morph);
+    return morph.isInteractive || morph.isSequence || Sequence.getSequenceOfMorph(morph);
   }
 
   static get properties () {

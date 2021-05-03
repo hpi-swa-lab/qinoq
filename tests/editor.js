@@ -1,6 +1,6 @@
 /* global it, describe, before, beforeEach, after, afterEach */
 import { expect } from 'mocha-es6';
-import { exampleInteractive, Keyframe, InteractivesEditor } from '../index.js';
+import { exampleInteractive, Interactive, InteractivesEditor } from '../index.js';
 import { pt } from 'lively.graphics';
 import { Clipboard } from '../utilities/clipboard.js';
 import { QinoqMorph } from '../qinoq-morph.js';
@@ -276,6 +276,51 @@ describe('Editor', () => {
 
   after(() => {
     closeEditor();
+  });
+});
+
+describe('Editor and Interactive connections', () => {
+  let editor, interactive;
+  before(async () => {
+    editor = await new InteractivesEditor().initialize();
+    interactive = await exampleInteractive();
+    interactive.openInWorld();
+  });
+
+  it('interactive has no outside connections when opened in world', () => {
+    expect(interactiveHasOutsideConnections()).to.be.false;
+  });
+
+  function performEditorActions () {
+    const someTimelineSequence = editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence)[0];
+    someTimelineSequence.openSequenceView();
+  }
+
+  function interactiveConnections () {
+    const connections = [];
+    interactive.withAllSubmorphsDo(morphInInteractive => {
+      if (morphInInteractive.attributeConnections) {
+        connections.push(...morphInInteractive.attributeConnections);
+      }
+    });
+    return connections;
+  }
+
+  function interactiveHasOutsideConnections () {
+    const connections = interactiveConnections();
+    return connections.map(connection => {
+      const source = connection.sourceObj;
+      const target = connection.targetObj;
+      const sourceInInteractive = Interactive.isMorphInInteractive(source) || source == interactive.scrollOverlay || source.owner == interactive.scrollOverlay;
+      const targetInInteractive = Interactive.isMorphInInteractive(target) || target == interactive.scrollOverlay || target.owner == interactive.scrollOverlay;
+      return sourceInInteractive && targetInInteractive;
+    }
+    ).some(bool => !bool);
+  }
+
+  after(() => {
+    editor.ui.window.close();
+    interactive.abandon();
   });
 });
 
