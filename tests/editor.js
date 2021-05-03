@@ -20,8 +20,7 @@ describe('Editor', () => {
 
   describe('with timeline', () => {
     it('sets _lastSelectedTimelineSequence on the first click on a single sequence', () => {
-      const nightBackgroundSequence = interactive.sequences.find(sequence => sequence.name == 'night background');
-      const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence == nightBackgroundSequence);
+      const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'night background');
       const timeline = nightBackgroundTimelineSequence.timeline;
       const event = {
         isShiftDown: () => { return false; },
@@ -30,6 +29,16 @@ describe('Editor', () => {
       expect(timeline._lastSelectedTimelineSequence).to.not.be.ok;
       nightBackgroundTimelineSequence.onMouseDown(event);
       expect(timeline._lastSelectedTimelineSequence).to.be.deep.equal(nightBackgroundTimelineSequence);
+    });
+
+    it('removes sequence resizers when sequences are too small', () => {
+      const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'night background');
+      expect(nightBackgroundTimelineSequence.hasResizers).to.be.ok;
+      const initialWidth = nightBackgroundTimelineSequence.width;
+      nightBackgroundTimelineSequence.width = 3;
+      expect(nightBackgroundTimelineSequence.hasResizers).to.not.be.ok;
+      nightBackgroundTimelineSequence.width = initialWidth;
+      expect(nightBackgroundTimelineSequence.hasResizers).to.be.ok;
     });
   });
 
