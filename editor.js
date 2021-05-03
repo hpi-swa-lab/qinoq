@@ -270,7 +270,7 @@ export class InteractivesEditor extends QinoqMorph {
         if (submorph.attributeConnections) {
           submorph.attributeConnections.forEach(attributeConnection => {
             const target = attributeConnection.targetObj;
-            if (target === this.interactive || Interactive.isMorphInInteractive(target)) {
+            if (Interactive.isMorphInInteractive(target)) {
               disconnect(submorph, attributeConnection.sourceAttrName, attributeConnection.targetObj, attributeConnection.targetMethodName);
             }
           });
