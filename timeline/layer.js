@@ -263,14 +263,142 @@ export class SequenceTimelineLayer extends TimelineLayer {
   }
 }
 
-export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
-  async scrollToKeyframe (keyframe) {
-    const timelineKeyframe = this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe === keyframe);
-    this.timeline.scrollToTimelineKeyframe(timelineKeyframe);
+export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
+  static get properties () {
+    return {
+      isExpanded: {
+        defaultValue: false,
+        set (isExpanded) {
+          this.setProperty('isExpanded', isExpanded);
+          if (this.layerInfo && this.layerInfo.ui.collapseButton && !this._deserializing) {
+            isExpanded ? this.expand() : this.collapse();
+            this.redraw();
+          }
+        }
+      },
+      propertyLayers: {
+        defaultValue: []
+      }
+    };
+  }
 
-    // If this line is removed, the scroll does not happen (Race issue)
-    await new Promise(r => setTimeout(r, 20));
-    timelineKeyframe.show();
+  get keyframeLines () {
+    return this.submorphs.filter(submorph => submorph.isKeyframeLine);
+  }
+
+  get isOverviewLayer () {
+    return true;
+  }
+
+  getPropertyLayerFor (animation) {
+    return this.propertyLayers.find(propertyLayer => propertyLayer.animation === animation);
+  }
+
+  updateTooltip () {
+    this.tooltip = this.isExpanded ? '' : this.morphName;
+  }
+
+  async redraw () {
+    this.layerInfo.height = this.height;
+    this.activeArea.height = this.height;
+    this.inactiveArea.height = this.height;
+    this.keyframeLines.forEach(keyframeLine => keyframeLine.updatePosition());
+  }
+
+  collapse () {
+    this.layerInfo.restyleCollapseToggle();
+    this.opacity = 1;
+
+    this.height = this.expandedHeight;
+
+    this.updateTooltip();
+    this.reactsToPointer = true;
+    this.addTimelineKeyframes();
+    this.removePropertyLayers();
+  }
+
+  removePropertyLayers () {
+    this.propertyLayers.forEach(propertyLayer => {
+      propertyLayer.layerInfo.abandon();
+      propertyLayer.abandon();
+    });
+  }
+
+  addTimelineKeyframes () {
+    const animations = this.sequence.getAnimationsForMorph(this.morph);
+    animations.forEach((animation, index) => this.addKeyframesForAnimation(animation, index));
+    this.height = Math.max(CONSTANTS.LAYER_HEIGHT, CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * animations.length);
+    this.layerInfo.height = this.height;
+    this.redraw();
+  }
+
+  expand () {
+    this.layerInfo.restyleCollapseToggle();
+    this.opacity = 0;
+    this.expandedHeight = this.height;
+    this.height = CONSTANTS.LAYER_HEIGHT;
+
+    this.updateTooltip();
+    this.reactsToPointer = false;
+    this.removeKeyframeLines();
+    this.createPropertyLayers();
+  }
+
+  createPropertyLayers () {
+    this.propertyLayers = this.sequence.getAnimationsForMorph(this.morph).map(animation => {
+      // we assume that each sequence only holds one animation per morph per property
+      const propertyLayer = this.timeline.createTimelineLayer(this.morph, this.index + 1, animation.property);
+      propertyLayer.animation = animation;
+      propertyLayer.overviewLayer = this;
+      propertyLayer.addKeyframesForAnimation(animation);
+      return propertyLayer;
+    });
+    this.timeline.onActiveAreaWidthChange();
+  }
+
+  addKeyframesForAnimation (animation, index) {
+    const keyframeLine = this.addMorph(new KeyframeLine({
+      _editor: this.editor,
+      animation,
+      layer: this,
+      yPosition: CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * index
+    }));
+    this.onNumberOfKeyframeLinesChanged();
+  }
+
+  removeKeyframeLines () {
+    this.keyframeLines.forEach(keyframeLine => keyframeLine.abandon());
+  }
+
+  onNumberOfKeyframeLinesChanged () {
+    const containsKeyframes = this.containsKeyframeLines || this.propertyLayers.some(propertyLayer => propertyLayer.containsKeyframes);
+    if (!containsKeyframes) this.isExpanded = false;
+    this.layerInfo.onNumberOfKeyframeLinesInLayerChanged(containsKeyframes);
+  }
+
+  updateTimelineKeyframes () {
+    this.removeKeyframeLines();
+    this.addTimelineKeyframes();
+    this.onNumberOfKeyframeLinesChanged();
+  }
+
+  scrollToKeyframe (keyframe, animation) {
+    this.isExpanded = true;
+    this.getPropertyLayerFor(animation).scrollToKeyframe(keyframe);
+  }
+}
+
+export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
+  get keyframes () {
+    return this.submorphs.filter(submorph => submorph.isTimelineKeyframe);
+  }
+
+  get containsKeyframes () {
+    return this.numberOfKeyframes > 0;
+  }
+
+  get numberOfKeyframes () {
+    return this.keyframes.length;
   }
 
   updateTooltip () {
@@ -291,8 +419,15 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     this.timeline.deselectAllTimelineKeyframes();
   }
 
-  get keyframes () {
-    return this.submorphs.filter(submorph => submorph.isTimelineKeyframe);
+  async redraw () {
+    await this.activeArea.whenRendered();
+    if (this.keyframes.length == 0) return;
+    this.keyframes.forEach(timelineKeyframe => {
+      timelineKeyframe._lockModelUpdate = true;
+      timelineKeyframe.position = pt(this.timeline.getPositionFromKeyframe(timelineKeyframe.keyframe), timelineKeyframe.position.y);
+      timelineKeyframe._lockModelUpdate = false;
+    });
+    this.redrawActiveArea();
   }
 
   addTimelineKeyframes () {
@@ -317,25 +452,6 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
       this.overviewLayer.onNumberOfKeyframeLinesChanged();
       this.abandon();
     }
-  }
-
-  get containsKeyframes () {
-    return this.numberOfKeyframes > 0;
-  }
-
-  get numberOfKeyframes () {
-    return this.keyframes.length;
-  }
-
-  async redraw () {
-    await this.activeArea.whenRendered();
-    if (this.keyframes.length == 0) return;
-    this.keyframes.forEach(timelineKeyframe => {
-      timelineKeyframe._lockModelUpdate = true;
-      timelineKeyframe.position = pt(this.timeline.getPositionFromKeyframe(timelineKeyframe.keyframe), timelineKeyframe.position.y);
-      timelineKeyframe._lockModelUpdate = false;
-    });
-    this.redrawActiveArea();
   }
 
   redrawActiveArea () {
@@ -442,160 +558,13 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     this.activeArea.line(pt(previousPosition, previousXValue), pt(this.activeArea.width, previousXValue), xStyle);
     this.activeArea.line(pt(previousPosition, previousYValue), pt(this.activeArea.width, previousYValue), yStyle);
   }
-}
 
-export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
-  static get properties () {
-    return {
-      isExpanded: {
-        defaultValue: false,
-        set (isExpanded) {
-          this.setProperty('isExpanded', isExpanded);
-          if (this.layerInfo && this.layerInfo.ui.collapseButton && !this._deserializing) {
-            isExpanded ? this.expand() : this.collapse();
-            this.redraw();
-          }
-        }
-      },
-      propertyLayers: {
-        defaultValue: []
-      }
-    };
-  }
+  async scrollToKeyframe (keyframe) {
+    const timelineKeyframe = this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe === keyframe);
+    this.timeline.scrollToTimelineKeyframe(timelineKeyframe);
 
-  get keyframeLines () {
-    return this.submorphs.filter(submorph => submorph.isKeyframeLine);
-  }
-
-  get isOverviewLayer () {
-    return true;
-  }
-
-  updateTooltip () {
-    this.tooltip = this.isExpanded ? '' : this.morphName;
-  }
-
-  collapse () {
-    this.layerInfo.restyleCollapseToggle();
-    this.opacity = 1;
-
-    this.height = this.expandedHeight;
-
-    this.updateTooltip();
-    this.reactsToPointer = true;
-    this.addTimelineKeyframes();
-    this.removePropertyLayers();
-  }
-
-  async redraw () {
-    this.layerInfo.height = this.height;
-    this.activeArea.height = this.height;
-    this.inactiveArea.height = this.height;
-    this.keyframeLines.forEach(keyframeLine => keyframeLine.updatePosition());
-
-    await this.activeArea.whenRendered();
-    this.redrawActiveArea();
-  }
-
-  redrawActiveArea () {
-    const [h, s, b] = this.fill.toHSB();
-
-    (this.fill == COLOR_SCHEME.BACKGROUND_VARIANT)
-      ? this.activeArea.clear(COLOR_SCHEME.ON_BACKGROUND_VARIANT)
-      : this.activeArea.clear(Color.hsb(h, (s - 0.3), b + 0.1));
-
-    if (!this.animation) return false;
-    if (!this.activeArea.context) return false;
-
-    if (this.animation.type == 'number') {
-      this.drawNumberCurve();
-      return true;
-    }
-    if (this.animation.type == 'color') {
-      this.drawColorVisualization();
-      return true;
-    }
-    if (this.animation.type == 'point') {
-      this.drawPointCurves();
-      return true;
-    }
-  }
-
-  expand () {
-    this.layerInfo.restyleCollapseToggle();
-    this.opacity = 0;
-    this.expandedHeight = this.height;
-    this.height = CONSTANTS.LAYER_HEIGHT;
-
-    this.updateTooltip();
-    this.reactsToPointer = false;
-    this.removeKeyframeLines();
-    this.createPropertyLayers();
-  }
-
-  getPropertyLayerFor (animation) {
-    return this.propertyLayers.find(propertyLayer => propertyLayer.animation === animation);
-  }
-
-  addTimelineKeyframes () {
-    const animations = this.sequence.getAnimationsForMorph(this.morph);
-    animations.forEach((animation, index) => this.addKeyframesForAnimation(animation, index));
-    this.height = Math.max(CONSTANTS.LAYER_HEIGHT, CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * animations.length);
-    this.layerInfo.height = this.height;
-    this.redraw();
-  }
-
-  addKeyframesForAnimation (animation, index) {
-    const keyframeLine = this.addMorph(new KeyframeLine({
-      _editor: this.editor,
-      animation,
-      layer: this,
-      yPosition: CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * index
-    }));
-    this.onNumberOfKeyframeLinesChanged();
-  }
-
-  scrollToKeyframe (keyframe, animation) {
-    this.isExpanded = true;
-    this.getPropertyLayerFor(animation).scrollToKeyframe(keyframe);
-  }
-
-  createPropertyLayers () {
-    this.propertyLayers = this.sequence.getAnimationsForMorph(this.morph).map(animation => {
-      // we assume that each sequence only holds one animation per morph per property
-      const propertyLayer = this.timeline.createTimelineLayer(this.morph, this.index + 1, animation.property);
-      propertyLayer.animation = animation;
-      propertyLayer.overviewLayer = this;
-      propertyLayer.addKeyframesForAnimation(animation);
-      return propertyLayer;
-    });
-    this.timeline.onActiveAreaWidthChange();
-  }
-
-  removePropertyLayers () {
-    this.propertyLayers.forEach(propertyLayer => {
-      propertyLayer.layerInfo.abandon();
-      propertyLayer.abandon();
-    });
-  }
-
-  removeKeyframeLines () {
-    this.keyframeLines.forEach(keyframeLine => keyframeLine.abandon());
-  }
-
-  onNumberOfKeyframeLinesChanged () {
-    const containsKeyframes = this.containsKeyframeLines || this.propertyLayers.some(propertyLayer => propertyLayer.containsKeyframes);
-    if (!containsKeyframes) this.isExpanded = false;
-    this.layerInfo.onNumberOfKeyframeLinesInLayerChanged(containsKeyframes);
-  }
-
-  get containsKeyframeLines () {
-    return this.keyframeLines.length > 0;
-  }
-
-  updateTimelineKeyframes () {
-    this.removeKeyframeLines();
-    this.addTimelineKeyframes();
-    this.onNumberOfKeyframeLinesChanged();
+    // If this line is removed, the scroll does not happen (Race issue)
+    await new Promise(r => setTimeout(r, 20));
+    timelineKeyframe.show();
   }
 }
