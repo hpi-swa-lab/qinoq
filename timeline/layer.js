@@ -252,6 +252,12 @@ export class SequenceTimelineLayer extends TimelineLayer {
     if (this.layerInfo) this.layerInfo.updateLabel();
   }
 
+  onMouseDown (event) {
+    if (event.targetMorphs[0] !== this) return;
+    this.editor.ui.inspector.targetMorph = this.morph;
+    if (this.morph.world()) this.morph.show();
+  }
+
   __after_deserialize__ (snapshot, ref, pool) {
     this.redraw();
     super.__after_deserialize__(snapshot, ref, pool);
@@ -288,6 +294,10 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
 
   get isOverviewLayer () {
     return true;
+  }
+
+  get containsKeyframeLines () {
+    return this.keyframeLines.length > 0;
   }
 
   getPropertyLayerFor (animation) {
@@ -405,14 +415,8 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     this.tooltip = `${this.morphName}` + (this.animation ? `:${this.animation.property}` : '');
   }
 
-  onMouseUp (event) {
-    super.onMouseUp(event);
-    if (event.targetMorphs[0] !== this) return;
-    this.editor.ui.inspector.targetMorph = this.morph;
-    if (this.morph.world()) this.morph.show();
-  }
-
   onMouseDown (event) {
+    super.onMouseDown(event);
     // we get the event before the keyframes
     // if the click is on a keyframe we do not need to handle it
     if (this.morphsContainingPoint(event.hand.position).filter(morph => morph.isTimelineKeyframe).length > 0) return;
