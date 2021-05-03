@@ -3,7 +3,7 @@ import { VerticalLayout, Morph } from 'lively.morphic';
 import { TimelineCursor } from './cursor.js';
 import { connect, signal, disconnect } from 'lively.bindings';
 import { TimelineSequence } from './sequence.js';
-import { GlobalTimelineLayer, OverviewSequenceTimelineLayer, SequenceTimelineLayer } from './layer.js';
+import { GlobalTimelineLayer, PropertySequenceTimelineLayer, OverviewSequenceTimelineLayer } from './layer.js';
 import { CONSTANTS } from './constants.js';
 import { TimelineLayerInfo } from './layer-info.js';
 import { COLOR_SCHEME } from '../colors.js';
@@ -608,6 +608,10 @@ export class SequenceTimeline extends Timeline {
     };
   }
 
+  get timelineLayers () {
+    return super.timelineLayers.filter(timelineLayer => !timelineLayer.isOverviewLayer);
+  }
+
   get selectedTimelineKeyframes () {
     return this.keyframes.filter(keyframe => keyframe.isSelected);
   }
@@ -673,7 +677,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   getNewTimelineLayer (props) {
-    return this._createOverviewLayers ? new OverviewSequenceTimelineLayer(props) : new SequenceTimelineLayer(props);
+    return this._createOverviewLayers ? new OverviewSequenceTimelineLayer(props) : new PropertySequenceTimelineLayer(props);
   }
 
   getPositionFromScroll (scrollPosition) {
