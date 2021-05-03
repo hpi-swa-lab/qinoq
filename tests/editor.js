@@ -1,6 +1,6 @@
 /* global it, describe, before, beforeEach, after, afterEach */
 import { expect } from 'mocha-es6';
-import { exampleInteractive, InteractivesEditor } from '../index.js';
+import { exampleInteractive, Keyframe, InteractivesEditor } from '../index.js';
 import { pt } from 'lively.graphics';
 import { Clipboard } from '../utilities/clipboard.js';
 import { QinoqMorph } from '../qinoq-morph.js';
@@ -27,7 +27,7 @@ describe('Editor', () => {
     return editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence);
   }
 
-  describe('with timeline', () => {
+  describe('with global timeline', () => {
     it('sets _lastSelectedTimelineSequence on the first click on a single sequence', () => {
       const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'night background');
       const timeline = nightBackgroundTimelineSequence.timeline;
@@ -48,6 +48,51 @@ describe('Editor', () => {
       expect(nightBackgroundTimelineSequence.hasResizers).to.not.be.ok;
       nightBackgroundTimelineSequence.width = initialWidth;
       expect(nightBackgroundTimelineSequence.hasResizers).to.be.ok;
+    });
+  });
+
+  describe('with sequence timeline', () => {
+    beforeEach(async () => {
+      editor.ui.window.close();
+      editor = await new InteractivesEditor().initialize();
+      interactive = await exampleInteractive();
+      editor.interactive = interactive;
+    });
+
+    it('whos layer can be expanded with keyframes', async () => {
+      const dayBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'day background');
+      await dayBackgroundTimelineSequence.openSequenceView();
+      const layerInfo = editor.displayedTimeline.getSubmorphNamed('anOverviewSequenceTimelineLayer').layerInfo;
+      expect(layerInfo.menuItems().some(menuItem => menuItem[0] == '➕ Expand view')).to.be.true;
+      editor.getTabFor(dayBackgroundTimelineSequence.sequence).close();
+    });
+
+    it('whos layer cannot be expanded without keyframes', async () => {
+      const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'night background');
+      await nightBackgroundTimelineSequence.openSequenceView();
+      const layerInfo = editor.displayedTimeline.getSubmorphNamed('anOverviewSequenceTimelineLayer').layerInfo;
+      expect(layerInfo.menuItems().some(menuItem => menuItem[0] == '➕ Expand view')).to.be.false;
+      editor.getTabFor(nightBackgroundTimelineSequence.sequence).close();
+    });
+
+    it('whos layer can be expanded after adding keyframes', async () => {
+      const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'night background');
+      await nightBackgroundTimelineSequence.openSequenceView();
+      const timelineLayer = editor.displayedTimeline.getSubmorphNamed('anOverviewSequenceTimelineLayer');
+      const layerInfo = timelineLayer.layerInfo;
+      expect(layerInfo.menuItems().some(menuItem => menuItem[0] == '➕ Expand view')).to.be.false;
+      const clickEvent = { state: { clickedMorph: null }, targetMorphs: [timelineLayer] };
+      timelineLayer.onMouseUp(clickEvent);
+      await editor.getSubmorphNamed('aKeyframeButton').onMouseUp();
+      expect(layerInfo.menuItems().some(menuItem => menuItem[0] == '➕ Expand view')).to.be.true;
+      editor.getTabFor(nightBackgroundTimelineSequence.sequence).close();
+    });
+
+    after(async () => {
+      editor.ui.window.close();
+      editor = await new InteractivesEditor().initialize();
+      interactive = await exampleInteractive();
+      editor.interactive = interactive;
     });
   });
 
