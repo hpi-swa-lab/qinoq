@@ -291,9 +291,17 @@ describe('Editor and Interactive connections', () => {
     expect(interactiveHasOutsideConnections()).to.be.false;
   });
 
-  function performEditorActions () {
+  it('interactive has no outside connections after being in editor', async () => {
+    editor.interactive = interactive;
+    await performEditorActions();
+    interactive.remove();
+    interactive.openInWorld();
+    expect(interactiveHasOutsideConnections()).to.be.false;
+  });
+
+  async function performEditorActions () {
     const someTimelineSequence = editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence)[0];
-    someTimelineSequence.openSequenceView();
+    await someTimelineSequence.openSequenceView();
   }
 
   function interactiveConnections () {
