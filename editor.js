@@ -821,8 +821,7 @@ class MenuBar extends QinoqMorph {
       tooltip: 'Go to previous sequence',
       action: () => {
         const sequence = this.editor.currentSequence;
-        // TODO: flexibility of getPrevSequenceStart needed?
-        const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getPrevKeyframePosition(sequence.progress)) : this.editor.interactive.getPrevSequenceStart(this.editor.interactive.scrollPosition);
+        const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getPrevKeyframePosition(sequence.progress)) : this.editor.interactive.getPrevSequenceStart();
         if (nextPosition == undefined || isNaN(nextPosition)) return;
         this.editor.internalScrollChangeWithGUIUpdate(nextPosition);
       },
@@ -837,8 +836,7 @@ class MenuBar extends QinoqMorph {
       tooltip: 'Go to next sequence',
       action: () => {
         const sequence = this.editor.currentSequence;
-        // TODO: see above
-        const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getNextKeyframePosition(sequence.progress)) : this.editor.interactive.getNextSequenceStart(this.editor.interactive.scrollPosition);
+        const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getNextKeyframePosition(sequence.progress)) : this.editor.interactive.getNextSequenceStart();
         if (nextPosition == undefined || isNaN(nextPosition)) return;
         this.editor.internalScrollChangeWithGUIUpdate(nextPosition);
       },
