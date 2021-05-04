@@ -472,7 +472,9 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   onZoomChange (newZoom) {
+    this.undoStart('interactive-editor-change-zoom');
     this.displayedTimeline.zoomFactor = newZoom;
+    this.undoStop('interactive-editor-change-zoom');
   }
 
   get snappingEnabled () {
