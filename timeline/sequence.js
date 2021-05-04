@@ -183,7 +183,7 @@ export class TimelineSequence extends QinoqMorph {
   }
 
   openSequenceView () {
-    this.editor.initializeSequenceView(this.sequence);
+    return this.editor.initializeSequenceView(this.sequence);
   }
 
   get rectangularSelectionFilter () {
