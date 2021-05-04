@@ -6,7 +6,7 @@ import { InteractiveMorphInspector } from './inspector.js';
 import { resource } from 'lively.resources';
 import { arr } from 'lively.lang';
 import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
-import { Sequence, Interactive, Layer } from './index.js';
+import { Sequence, Keyframe, NumberAnimation, Interactive, Layer } from './index.js';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
 import { Button } from 'lively.components';
 import { arrowRightPressed, arrowLeftPressed } from './keys.js';
@@ -396,6 +396,7 @@ export class InteractivesEditor extends QinoqMorph {
 
   addMorphToInteractive (morph) {
     this.currentSequence.addMorph(morph);
+    this.onMorphAddition(morph); // Additional actions that are morph specific
     this.ui.inspector.targetMorph = morph;
     this.displayedTimeline._createOverviewLayers = true;
     const newLayer = this.displayedTimeline.createOverviewTimelineLayer(morph);
@@ -404,6 +405,15 @@ export class InteractivesEditor extends QinoqMorph {
     this.displayedTimeline.onActiveAreaWidthChange();
     connect(morph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' });
     newLayer.redraw();
+  }
+
+  onMorphAddition (morph) {
+    if (morph.isLottieMorph) {
+      if (this.currentSequence.getAnimationForMorphProperty(morph, 'progress')) return;
+      const animation = new NumberAnimation(morph, 'progress');
+      animation.addKeyframes([new Keyframe(0, 0, { name: 'animation start' }), new Keyframe(1, 1, { name: 'animation end', easing: 'linear' })]);
+      this.currentSequence.addAnimation(animation);
+    }
   }
 
   copyMorph (morphToCopy) {
