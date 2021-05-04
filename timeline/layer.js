@@ -258,11 +258,6 @@ export class SequenceTimelineLayer extends TimelineLayer {
     if (this.morph.world()) this.morph.show();
   }
 
-  __after_deserialize__ (snapshot, ref, pool) {
-    this.redraw();
-    super.__after_deserialize__(snapshot, ref, pool);
-  }
-
   abandon () {
     disconnect(this.morph, 'name', this, 'onMorphNameChange');
     super.abandon();
@@ -576,5 +571,10 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     // If this line is removed, the scroll does not happen (Race issue)
     await new Promise(r => setTimeout(r, 20));
     timelineKeyframe.show();
+  }
+
+  __after_deserialize__ (snapshot, ref, pool) {
+    this.redraw();
+    super.__after_deserialize__(snapshot, ref, pool);
   }
 }
