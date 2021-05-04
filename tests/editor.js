@@ -66,7 +66,7 @@ describe('Editor', () => {
       await openNewEditorWithExampleInteractive();
     });
 
-    it('whos layer can be expanded with keyframes', async () => {
+    it('with layer that can be expanded', async () => {
       const dayBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'day background');
       await dayBackgroundTimelineSequence.openSequenceView();
       const layerInfo = editor.displayedTimeline.getSubmorphNamed('anOverviewSequenceTimelineLayer').layerInfo;
@@ -74,7 +74,7 @@ describe('Editor', () => {
       editor.getTabFor(dayBackgroundTimelineSequence.sequence).close();
     });
 
-    it('whos layer cannot be expanded without keyframes', async () => {
+    it('whith layer that cannot be expanded', async () => {
       const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'night background');
       await nightBackgroundTimelineSequence.openSequenceView();
       const layerInfo = editor.displayedTimeline.getSubmorphNamed('anOverviewSequenceTimelineLayer').layerInfo;
@@ -82,7 +82,7 @@ describe('Editor', () => {
       editor.getTabFor(nightBackgroundTimelineSequence.sequence).close();
     });
 
-    it('whos layer can be expanded after adding keyframes', async () => {
+    it('with layer that can be expanded after adding a keyframe', async () => {
       const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'night background');
       await nightBackgroundTimelineSequence.openSequenceView();
       const timelineLayer = editor.displayedTimeline.getSubmorphNamed('anOverviewSequenceTimelineLayer');
