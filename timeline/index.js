@@ -1,7 +1,7 @@
 import { pt } from 'lively.graphics';
-import { VerticalLayout, Morph } from 'lively.morphic';
+import { VerticalLayout } from 'lively.morphic';
 import { TimelineCursor } from './cursor.js';
-import { connect, signal, disconnect } from 'lively.bindings';
+import { connect, disconnect } from 'lively.bindings';
 import { TimelineSequence } from './sequence.js';
 import { GlobalTimelineLayer, OverviewSequenceTimelineLayer, SequenceTimelineLayer } from './layer.js';
 import { CONSTANTS } from './constants.js';
@@ -39,15 +39,8 @@ export class Timeline extends QinoqMorph {
         min: 0,
         set (zoomFactor) {
           if (zoomFactor <= 0) return;
-          // when a connection is removed, it is triggered one last time
-          // this happens when grabbing the interactive out of the editor
-          // at this time another undo (for the grab) is also recorded
-          // this needs to be catched here, otherwise an error will be triggered
-          if (!this._deserializing && !this.undoStart('interactive-editor-change-zoom')) return;
           this.setProperty('zoomFactor', zoomFactor);
-          if (this._deserializing) return;
-          this.undoStop('interactive-editor-change-zoom');
-          if (!this.editor.interactive) return;
+          if (this._deserializing || !this.editor.interactive) return;
           this.redraw();
         }
       },
