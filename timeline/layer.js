@@ -445,7 +445,12 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
 
   addKeyframesForAnimation (animation) {
     animation.keyframes.forEach(keyframe => {
-      const timelineKeyframe = this.addMorph(new TimelineKeyframe({ _editor: this.editor, layer: this, _keyframe: keyframe, animation }));
+      const timelineKeyframe = this.addMorph(new TimelineKeyframe({
+        _editor: this.editor,
+        layer: this,
+        _keyframe: keyframe,
+        animation
+      }));
       timelineKeyframe.updatePosition();
     });
     this.onNumberOfKeyframesChanged();
