@@ -5,6 +5,7 @@ import { pt } from 'lively.graphics';
 import { Clipboard } from '../utilities/clipboard.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 import { serialize, deserialize } from 'lively.serializer2';
+import { LottieMorph } from '../interactive-morphs/lottie-morph.js';
 
 describe('Editor', () => {
   let editor, interactive;
@@ -13,6 +14,14 @@ describe('Editor', () => {
     interactive = await exampleInteractive();
     editor.interactive = interactive;
   });
+
+  beforeEach(() => {
+    openGlobalTab();
+  });
+
+  function openGlobalTab () {
+    editor.ui.globalTab.selected = true;
+  }
 
   function timelineSequences () {
     return editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence);
@@ -153,6 +162,19 @@ describe('Editor', () => {
     expect(editor.ui.menuBar.ui.zoomInput.number).to.be.equal(100);
     editor.ui.globalTimeline.zoomFactor = 1.5;
     expect(editor.ui.menuBar.ui.zoomInput.number).to.be.equal(150);
+  });
+
+  it('adds an animation when adding a lottie morph', async () => {
+    const lm = new LottieMorph();
+    const treeTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'tree sequence');
+    await treeTimelineSequence.openSequenceView();
+    const sequence = treeTimelineSequence.sequence;
+    const previousAnimationCount = sequence.animations.length;
+    editor.addMorphToInteractive(lm);
+    expect(sequence.animations.length).to.be.equal(previousAnimationCount + 1);
+    const newAnimation = sequence.animations[sequence.animations.length - 1];
+    expect(newAnimation.property).to.be.equal('progress');
+    expect(newAnimation.keyframes.length).to.be.equal(2);
   });
 
   describe('with qinoq morph', () => {

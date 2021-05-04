@@ -112,16 +112,6 @@ describe('Sequence object', () => {
       expect(sequence.getNextKeyframePosition(0.5)).to.be.equal(0.7);
       expect(sequence.getPrevKeyframePosition(0.5)).to.be.equal(0.1);
     });
-
-    it('when a lottie morph is added, a new animation is created', () => {
-      const lm = new LottieMorph();
-      expect(sequence.animations.length).to.be.equal(0);
-      sequence.addMorph(lm);
-      expect(sequence.animations.length).to.be.equal(1);
-      const newAnimation = sequence.animations[0];
-      expect(newAnimation.property).to.be.equal('progress');
-      expect(newAnimation.keyframes.length).to.be.equal(2);
-    });
   });
 
   describe('in interactive', () => {
