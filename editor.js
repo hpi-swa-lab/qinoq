@@ -87,7 +87,8 @@ export class InteractivesEditor extends QinoqMorph {
     this.initializeLayout();
     this.ui.window = this.openInWindow({
       title: 'Interactives Editor',
-      name: 'window for interactives editor'
+      name: 'window for interactives editor',
+      acceptsDrops: false
     });
     await this.initializePanels();
     connect(this.ui.window, 'close', this, 'abandon');
@@ -473,7 +474,7 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   setHalosEnabledForEditorElements (halosEnabled) {
-    this.withAllSubmorphsDo(submorph => { if (submorph.isQinoqMorph) submorph.halosEnabled = halosEnabled; });
+    this.withAllSubmorphsDo(submorph => { if (submorph.isQinoqMorph && submorph !== this) submorph.debug = halosEnabled; });
   }
 
   get commands () {

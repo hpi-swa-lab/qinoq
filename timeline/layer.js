@@ -105,6 +105,12 @@ export class GlobalTimelineLayer extends TimelineLayer {
       nativeCursor: {
         defaultValue: 'grab'
       },
+      acceptsDrops: {
+        defaultValue: true,
+        set (bool) {
+          this.setProperty('acceptsDrops', true);
+        }
+      },
       layer: {
         set (layer) {
           this.setProperty('layer', layer);
