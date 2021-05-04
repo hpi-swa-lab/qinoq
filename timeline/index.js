@@ -285,6 +285,7 @@ export class Timeline extends QinoqMorph {
     const visiblePortion = scrollbarWidth / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.scrollbarOffset.x);
     // keep margin at both left and right end of the scrollbar
     this.ui.scroller.extent = pt((visiblePortion * scrollbarWidth) - (2 * CONSTANTS.SCROLLBAR_MARGIN), this.ui.scroller.extent.y);
+    this.updateScrollerPosition();
   }
 
   get isDisplayed () {
