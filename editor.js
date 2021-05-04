@@ -297,7 +297,6 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   async initializeSequenceView (sequence) {
-    this.internalScrollChangeWithGUIUpdate(sequence.start);
     const sequenceTab = this.getTabFor(sequence);
     if (sequenceTab) {
       sequenceTab.selected = true;
@@ -449,7 +448,7 @@ export class InteractivesEditor extends QinoqMorph {
       this.interactive.showAllSequences();
       this.interactiveInEditMode = false;
     } else {
-      this.interactive.scrollPosition = this.currentSequence.start;
+      this.internalScrollChangeWithGUIUpdate(this.currentSequence.start);
       this.interactive.showOnly(this.currentSequence);
       this.interactiveInEditMode = true;
     }
