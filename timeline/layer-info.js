@@ -188,7 +188,7 @@ export class TimelineLayerInfo extends QinoqMorph {
       if (this.timelineLayer.isOverviewLayer) {
         menuOptions.push(['🗐 Copy Morph', () => this.editor.copyMorph(this.morph)]);
         menuOptions.push(['✂️ Cut Morph', () => this.editor.cutMorph(this.morph)]);
-        if (!this.timelineLayer.isExpanded && this.timelineLayer.keyframeLines.length > 0) {
+        if (!this.timelineLayer.isExpanded && this.timelineLayer.containsKeyframeLines) {
           menuOptions.push(['➕ Expand view', () => this.timelineLayer.isExpanded = true]);
         } else if (this.timelineLayer.isExpanded) {
           menuOptions.push(['➖ Collapse view', () => this.timelineLayer.isExpanded = false]);
