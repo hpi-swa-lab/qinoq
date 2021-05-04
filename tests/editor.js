@@ -322,6 +322,7 @@ describe('Editor and Interactive connections', () => {
   async function performEditorActions () {
     const someTimelineSequence = editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence)[0];
     await someTimelineSequence.openSequenceView();
+    editor.ui.inspector.targetMorph = someTimelineSequence.sequence.submorphs[0];
   }
 
   function interactiveConnections () {
@@ -331,6 +332,8 @@ describe('Editor and Interactive connections', () => {
         connections.push(...morphInInteractive.attributeConnections);
       }
     });
+    if (interactive.scrollOverlay.attributeConnections) connections.concat(interactive.scrollOverlay.attributeConnections);
+    if (interactive.scrollOverlay.submorphs[0].attributeConnections) connections.concat(interactive.scrollOverlay.submorphs[0].attributeConnections);
     return connections;
   }
 
