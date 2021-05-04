@@ -217,19 +217,6 @@ export class SequenceTimelineLayer extends TimelineLayer {
           this.setProperty('morph', morph);
           if (!this._deserializing) connect(morph, 'name', this, 'onMorphNameChange').update();
         }
-      },
-      animation: {
-        set (animation) {
-          this.setProperty('animation', animation);
-
-          if (!this._deserializing) {
-            this.fill = getColorForProperty(animation.property);
-            this.inactiveArea.fill = this.fill;
-            this.updateTooltip();
-            this.layerInfo.updateLabel();
-            this.redraw();
-          }
-        }
       }
     };
   }
@@ -258,9 +245,9 @@ export class SequenceTimelineLayer extends TimelineLayer {
     if (this.morph.world()) this.morph.show();
   }
 
-  abandon () {
+  abandon (bool) {
     disconnect(this.morph, 'name', this, 'onMorphNameChange');
-    super.abandon();
+    super.abandon(bool);
   }
 }
 
@@ -395,6 +382,24 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
 }
 
 export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
+  static get properties () {
+    return {
+      animation: {
+        set (animation) {
+          this.setProperty('animation', animation);
+
+          if (!this._deserializing) {
+            this.fill = getColorForProperty(animation.property);
+            this.inactiveArea.fill = this.fill;
+            this.updateTooltip();
+            this.layerInfo.updateLabel();
+            this.redraw();
+          }
+        }
+      }
+    };
+  }
+
   get keyframes () {
     return this.submorphs.filter(submorph => submorph.isTimelineKeyframe);
   }
