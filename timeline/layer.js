@@ -106,10 +106,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
         defaultValue: 'grab'
       },
       acceptsDrops: {
-        defaultValue: true,
-        set (bool) {
-          this.setProperty('acceptsDrops', true);
-        }
+        defaultValue: true
       },
       layer: {
         set (layer) {
