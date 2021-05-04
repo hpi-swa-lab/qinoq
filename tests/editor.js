@@ -143,9 +143,9 @@ describe('Editor', () => {
     expect(interactive.scrollOverlay.world()).to.be.ok;
   });
 
-  it('changes scroll position when changing tab', () => {
+  it('changes scroll position when changing tab', async () => {
     expect(editor.interactive.scrollPosition).to.be.equal(0);
-    editor.getTimelineFor(editor.ui.globalTab).timelineSequences[2].openSequenceView();
+    await timelineSequences()[2].openSequenceView();
     expect(editor.interactive.scrollPosition).to.be.equal(250);
   });
 
