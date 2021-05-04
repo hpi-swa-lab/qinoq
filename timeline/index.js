@@ -550,11 +550,17 @@ export class GlobalTimeline extends Timeline {
       ? Number(await $world.prompt('Duration:', { input: `${this.selectedSequences[0].sequence.duration}` }))
       : Number(await $world.prompt(`Duration of the ${this.selectedSequences.length} selected Sequences:`));
 
+    if (isNaN(newDuration) || typeof newDuration === 'undefined' || newDuration == 0) {
+      $world.setStatusMessage('Enter a positive number', COLOR_SCHEME.ERROR);
+      return;
+    }
+
     const invalidDuration = this.selectedSequences.some(timelineSequence => !this.editor.interactive.validSequenceDuration(timelineSequence.sequence, newDuration));
     if (!invalidDuration) {
       this.setDurationForSelection(newDuration);
     } else {
-      $world.setStatusMessage('Duration not set', COLOR_SCHEME.ERROR);
+      if (newDuration < 1) $world.setStatusMessage('Duration too short (< 1)', COLOR_SCHEME.ERROR);
+      else $world.setStatusMessage('Would overlap a sequence', COLOR_SCHEME.ERROR);
     }
   }
 
