@@ -9,10 +9,19 @@ import { LottieMorph } from '../interactive-morphs/lottie-morph.js';
 
 describe('Editor', () => {
   let editor, interactive;
-  before(async () => {
+
+  async function openNewEditorWithExampleInteractive () {
     editor = await new InteractivesEditor().initialize();
     interactive = await exampleInteractive();
     editor.interactive = interactive;
+  }
+
+  function closeEditor () {
+    editor.ui.window.close();
+  }
+
+  before(async () => {
+    await openNewEditorWithExampleInteractive();
   });
 
   beforeEach(() => {
@@ -53,10 +62,8 @@ describe('Editor', () => {
 
   describe('with sequence timeline', () => {
     beforeEach(async () => {
-      editor.ui.window.close();
-      editor = await new InteractivesEditor().initialize();
-      interactive = await exampleInteractive();
-      editor.interactive = interactive;
+      closeEditor();
+      await openNewEditorWithExampleInteractive();
     });
 
     it('whos layer can be expanded with keyframes', async () => {
@@ -89,10 +96,8 @@ describe('Editor', () => {
     });
 
     after(async () => {
-      editor.ui.window.close();
-      editor = await new InteractivesEditor().initialize();
-      interactive = await exampleInteractive();
-      editor.interactive = interactive;
+      closeEditor();
+      await openNewEditorWithExampleInteractive();
     });
   });
 
@@ -270,7 +275,7 @@ describe('Editor', () => {
   });
 
   after(() => {
-    editor.ui.window.close();
+    closeEditor();
   });
 });
 
