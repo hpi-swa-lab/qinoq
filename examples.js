@@ -126,6 +126,15 @@ class CloudMorph extends Image {
 }
 
 class CrownMorph extends Polygon {
+  constructor (props) {
+    // freezing breaks this class and will while deserialization not give any props which the class polygon can't take
+    // it will while deserialization set the vertices to the property values so those are
+    if (typeof props === 'undefined') {
+      props = { vertices: [pt(0, 0), pt(0, 0), pt(0, 0)] };
+    }
+    super(props);
+  }
+
   onMouseDown () {
     this.fill = this.fill.darker();
   }
