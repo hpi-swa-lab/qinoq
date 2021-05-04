@@ -55,12 +55,7 @@ export class TimelineCursor extends QinoqMorph {
           this.initializeAppearance();
         }
       },
-      timeline: {
-        get () {
-          if (!this.owner || !this.owner.owner) return null;
-          return this.getProperty('timeline');
-        }
-      }
+      timeline: {}
     };
   }
 
@@ -123,7 +118,8 @@ export class TimelineCursor extends QinoqMorph {
       if (this.previousOwner) { disconnect(this.previousOwner, 'extent', this, 'height'); }
       connect(newOwner, 'extent', this, 'height', {
         updater: `($update, extent) => {
-        if (!target.timeline) return;
+        // needed for setting first owner while deserialization
+        if (!target.timeline || !target.owner || !target.owner.owner) return;
         if (extent.y >= target.timeline.ui.layerContainer.height) $update(extent.y);
         else $update(target.timeline.ui.layerContainer.height)
       }`
