@@ -6,18 +6,12 @@ export class QinoqMorph extends DeserializationAwareMorph {
     return {
       _editor: {},
       halosEnabled: {
-        defaultValue: false
+        get () {
+          return this.editor && this.editor.debug;
+        }
       },
       acceptsDrops: {
         defaultValue: false
-      },
-      debug: {
-        defaultValue: false,
-        set (bool) {
-          this.setProperty('debug', bool);
-          this.halosEnabled = bool;
-          this.acceptsDrops = bool;
-        }
       }
     };
   }
