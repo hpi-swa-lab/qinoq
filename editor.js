@@ -1,5 +1,5 @@
-import { ProportionalLayout, Morph, config, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
-import { connect, signal, disconnectAll, disconnect } from 'lively.bindings';
+import { ProportionalLayout, config, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
+import { connect, disconnectAll, disconnect } from 'lively.bindings';
 import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
 import { InteractiveMorphInspector } from './inspector.js';
@@ -563,6 +563,10 @@ export class InteractivesEditor extends QinoqMorph {
       const { animation, sequence } = findResult;
       const tab = this.getTabFor(sequence) || await this.initializeSequenceView(sequence);
       tab.selected = true;
+
+      // Needed for scrolling to the correct position when opening existing tab
+      await new Promise(r => setTimeout(r, 30));
+
       this.getTimelineFor(tab).scrollToKeyframe(keyframe, animation);
     }
   }
