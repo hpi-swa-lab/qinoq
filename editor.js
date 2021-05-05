@@ -844,6 +844,7 @@ class MenuBar extends QinoqMorph {
       command: 'create new sequence',
       icon: 'ticket-alt',
       label: 'New Sequence',
+      collapsed: true,
       name: 'addSequenceButton',
       container: 'leftContainer'
     });
@@ -854,6 +855,7 @@ class MenuBar extends QinoqMorph {
       command: 'create new layer',
       icon: 'layer-group',
       label: 'New Layer',
+      collapsed: true,
       name: 'addLayerButton',
       container: 'leftContainer'
     });
@@ -979,7 +981,7 @@ class MenuBar extends QinoqMorph {
       autoResize = true
     } = options;
 
-    this.ui[name] = await resource('part://QinoqWidgets/icon button').read();
+    this.ui[name] = await resource('part://QinoqWidgets/icon button light').read();
 
     Object.assign(this.ui[name], {
       master: {
@@ -1005,15 +1007,15 @@ class MenuBar extends QinoqMorph {
   }
 
   onGlobalTimelineTab () {
-    this.ui.addSequenceButton.deactived = false;
-    this.ui.addLayerButton.deactived = false;
+    this.ui.addSequenceButton.deactivated = false;
+    this.ui.addLayerButton.deactivated = false;
     this.ui.gotoNextButton.label = 'Go to next sequence';
     this.ui.gotoPrevButton.label = 'Go to previous sequence';
   }
 
   onSequenceView () {
-    this.ui.addSequenceButton.deactived = true;
-    this.ui.addLayerButton.deactived = true;
+    this.ui.addSequenceButton.deactivated = true;
+    this.ui.addLayerButton.deactivated = true;
     this.ui.gotoNextButton.label = 'Go to next keyframe';
     this.ui.gotoPrevButton.label = 'Go to previous keyframe';
   }
