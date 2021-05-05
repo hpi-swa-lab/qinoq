@@ -295,7 +295,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   }
 
   updateTooltip () {
-    this.tooltip = this.isExpanded ? '' : this.morphName;
+    this.tooltip = this.morphName;
   }
 
   async redraw () {
@@ -308,13 +308,6 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
 
   collapse () {
     this.layerInfo.restyleCollapseToggle();
-    this.opacity = 1;
-
-    this.height = this.expandedHeight;
-
-    this.updateTooltip();
-    this.reactsToPointer = true;
-    this.addTimelineKeyframes();
     this.removePropertyLayers();
   }
 
@@ -325,7 +318,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     });
   }
 
-  addTimelineKeyframes () {
+  addKeyframeLines () {
     const animations = this.sequence.getAnimationsForMorph(this.morph);
     animations.forEach((animation, index) => this.addKeyframesForAnimation(animation, index));
     this.height = Math.max(CONSTANTS.LAYER_HEIGHT, CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * animations.length);
@@ -335,13 +328,6 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
 
   expand () {
     this.layerInfo.restyleCollapseToggle();
-    this.opacity = 0;
-    this.expandedHeight = this.height;
-    this.height = CONSTANTS.LAYER_HEIGHT;
-
-    this.updateTooltip();
-    this.reactsToPointer = false;
-    this.removeKeyframeLines();
     this.createPropertyLayers();
   }
 
@@ -379,7 +365,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
 
   updateTimelineKeyframes () {
     this.removeKeyframeLines();
-    this.addTimelineKeyframes();
+    this.addKeyframeLines();
     this.onNumberOfKeyframeLinesChanged();
   }
 
@@ -614,4 +600,3 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     super.__after_deserialize__(snapshot, ref, pool);
   }
 }
-

@@ -622,6 +622,7 @@ export class SequenceTimeline extends Timeline {
   createOverviewTimelineLayer (morph) {
     const timelineLayer = super.createTimelineLayer(morph);
     timelineLayer.layerInfo.addCollapseToggle();
+    timelineLayer.addKeyframeLines();
     return timelineLayer;
   }
 
@@ -636,10 +637,7 @@ export class SequenceTimeline extends Timeline {
 
   onLoadContent (sequence) {
     this._sequence = sequence;
-    this.sequence.submorphs.forEach(morph => {
-      const timelineLayer = this.createOverviewTimelineLayer(morph);
-      timelineLayer.addTimelineKeyframes();
-    });
+    this.sequence.submorphs.forEach(morph => this.createOverviewTimelineLayer(morph));
   }
 
   redraw () {
@@ -660,12 +658,9 @@ export class SequenceTimeline extends Timeline {
     this.withAllSubmorphsDo(submorph => {
       if (submorph.isTimelineLayer) {
         if (submorph.isOverviewLayer) {
-          if (!submorph.isExpanded) {
-            submorph.updateTimelineKeyframes();
-          } else {
-            submorph.removePropertyLayers();
-            submorph.createPropertyLayers();
-          }
+          submorph.updateTimelineKeyframes();
+          submorph.removePropertyLayers();
+          submorph.createPropertyLayers();
         }
       }
     });
