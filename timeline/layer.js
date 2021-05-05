@@ -596,15 +596,6 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     });
   }
 
-  async scrollToKeyframe (keyframe) {
-    const timelineKeyframe = this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe === keyframe);
-    this.timeline.scrollToTimelineKeyframe(timelineKeyframe);
-
-    // If this line is removed, the scroll does not happen (Race issue)
-    await new Promise(r => setTimeout(r, 20));
-    timelineKeyframe.show();
-  }
-
   __after_deserialize__ (snapshot, ref, pool) {
     this.redraw();
     super.__after_deserialize__(snapshot, ref, pool);
