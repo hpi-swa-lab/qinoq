@@ -44,7 +44,7 @@ export class TimelineKeyframe extends QinoqMorph {
           if (this._lockModelUpdate) return;
           if (this.layer) {
             this.keyframe.position = this.layer.timeline.getScrollFromPosition(this.position);
-            this.editor.interactive.redraw();
+            this.interactive.redraw();
             this.layer.redraw();
           }
         }
@@ -135,7 +135,7 @@ export class TimelineKeyframe extends QinoqMorph {
     this.keyframe.position = newPosition;
     this.updatePosition();
     this.layer.redraw();
-    this.editor.interactive.redraw();
+    this.interactive.redraw();
     if (undoable) this.undoStop('move-keyframe');
   }
 
@@ -235,7 +235,7 @@ export class TimelineKeyframe extends QinoqMorph {
       });
     }
 
-    this.editor.interactive.redraw();
+    this.interactive.redraw();
   }
 
   get isTimelineKeyframe () {
