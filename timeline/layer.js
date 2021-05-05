@@ -286,6 +286,10 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     return this.keyframeLines.length > 0;
   }
 
+  get mayBeExpanded () {
+    return (!this.isExpanded && this.containsKeyframeLines);
+  }
+
   getPropertyLayerFor (animation) {
     return this.propertyLayers.find(propertyLayer => propertyLayer.animation === animation);
   }
@@ -610,3 +614,4 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     super.__after_deserialize__(snapshot, ref, pool);
   }
 }
+
