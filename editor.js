@@ -110,6 +110,8 @@ export class InteractivesEditor extends QinoqMorph {
     this.addMorph(this.ui.inspector);
 
     this.ui.menuBar = new MenuBar({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), _editor: this });
+    // we need to explicitly wait for the buttons to load
+    await this.ui.menuBar.initializeUI();
     this.addMorph(this.ui.menuBar);
     connect(this, 'onDisplayedTimelineChange', this.ui.menuBar, 'onGlobalTimelineTab', {
       updater: `($update, displayedTimeline) => { 
@@ -777,12 +779,7 @@ class MenuBar extends QinoqMorph {
       layoutable: {
         defaultValue: false
       },
-      ui: {
-        after: ['_editor'],
-        initialize () {
-          if (!this._deserializing) this.initializeUI();
-        }
-      }
+      ui: {}
     };
   }
 
