@@ -647,7 +647,7 @@ class Preview extends QinoqMorph {
   }
 
   onDrop (event) {
-    if (event.type != 'morphicdrop') return;
+    if (event.type != 'morphicdragend') return;
     const grabbedMorph = arr.first(event.hand.grabbedMorphs);
     if (grabbedMorph.isInteractive) {
       this.editor.interactive = grabbedMorph;
