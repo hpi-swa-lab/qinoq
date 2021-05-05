@@ -89,7 +89,7 @@ describe('Editor', () => {
       const layerInfo = timelineLayer.layerInfo;
       expect(layerInfo.menuItems().some(menuItem => menuItem[0] == '➕ Expand view')).to.be.false;
       const clickEvent = { state: { clickedMorph: null }, targetMorphs: [timelineLayer] };
-      timelineLayer.onMouseUp(clickEvent);
+      timelineLayer.onMouseDown(clickEvent);
       await editor.getSubmorphNamed('aKeyframeButton').onMouseUp();
       expect(layerInfo.menuItems().some(menuItem => menuItem[0] == '➕ Expand view')).to.be.true;
       editor.getTabFor(nightBackgroundTimelineSequence.sequence).close();
