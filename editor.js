@@ -556,7 +556,7 @@ export class InteractivesEditor extends QinoqMorph {
 
   // Focus on a specific item in the interactive
   async goto (item) {
-    if (item.constructor.name == 'Keyframe') {
+    if (item.isKeyframe) {
       const findResult = this.interactive.findKeyframe(item);
       if (!findResult) return;
       const { animation, sequence } = findResult;
