@@ -417,8 +417,15 @@ class InteractiveScrollHolder extends Morph {
   }
 
   onDrop (event) {
-    if (event.type != 'morphicdragend' || !this.passThroughMorph) return;
-
+    if (event.type != 'morphicdragend') return;
+    if (!this.passThroughMorph) {
+      event.hand.grabbedMorphs.forEach(morph => {
+        const properties = event.hand._grabbedMorphProperties.get(morph);
+        properties.prevOwner.addMorph(morph);
+        morph.position = properties.prevPosition;
+      });
+      $world.setStatusMessage('Use sequence view to add', COLOR_SCHEME.ERROR);
+    }
     event.hand.grabbedMorphs.forEach(grabbedMorph => {
       const { pointerAndShadow } = event.hand._grabbedMorphProperties.get(grabbedMorph) || {};
       Object.assign(grabbedMorph, pointerAndShadow);
