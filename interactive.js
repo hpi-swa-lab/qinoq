@@ -425,7 +425,7 @@ class InteractiveScrollHolder extends Morph {
         morph.position = properties.prevPosition;
         Object.assign(morph, properties.pointerAndShadow);
       });
-      $world.setStatusMessage('Use sequence view to add', COLOR_SCHEME.ERROR);
+      $world.setStatusMessage('Only add in sequence view', COLOR_SCHEME.ERROR);
     }
     event.hand.grabbedMorphs.forEach(grabbedMorph => {
       const { pointerAndShadow } = event.hand._grabbedMorphProperties.get(grabbedMorph) || {};
