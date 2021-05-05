@@ -160,6 +160,10 @@ export class Keyframe {
     return Object.keys(easings);
   }
 
+  get isKeyframe () {
+    return true;
+  }
+
   copy () {
     return new Keyframe(this.position, this.value, { name: this.name, easing: this.easingName });
   }
