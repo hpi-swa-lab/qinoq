@@ -531,36 +531,36 @@ export class InteractivesEditor extends QinoqMorph {
         name: 'scroll to start',
         doc: 'set scrollposition to start of sequence of sequence view or start of interactive',
         exec: () => {
-          this.interactiveScrollPosition = this.currentSequence ? this.currentSequence.start : 0;
+          this.internalScrollChangeWithGUIUpdate(this.currentSequence ? this.currentSequence.start : 0);
         }
       },
       {
         name: 'scroll to previous sequence',
         exec: () => {
           const sequence = this.currentSequence;
-          const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getPrevKeyframePosition(sequence.progress)) : this.interactive.getPrevSequenceStart(this.interactiveScrollPosition);
+          const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getPrevKeyframePosition(sequence.progress)) : this.interactive.getPrevSequenceStart();
           if (nextPosition == undefined || isNaN(nextPosition)) return;
-          this.interactiveScrollPosition = nextPosition;
+          this.internalScrollChangeWithGUIUpdate(nextPosition);
         }
       },
       {
         name: 'scroll to next sequence',
         exec: () => {
           const sequence = this.currentSequence;
-          const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getNextKeyframePosition(sequence.progress)) : this.interactive.getNextSequenceStart(this.interactiveScrollPosition);
+          const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getNextKeyframePosition(sequence.progress)) : this.interactive.getNextSequenceStart();
           if (nextPosition == undefined || isNaN(nextPosition)) return;
-          this.interactiveScrollPosition = nextPosition;
+          this.internalScrollChangeWithGUIUpdate(nextPosition);
         }
       },
       {
         name: 'scroll to end',
         doc: 'Scroll to the end of the interactive or the open sequence',
         exec: () => {
-          this.interactiveScrollPosition = this.currentSequence ? this.currentSequence.end : this.interactive.length;
+          this.internalScrollChangeWithGUIUpdate(this.currentSequence ? this.currentSequence.end : this.interactive.length);
         }
       },
       {
-        name: 'zoomToFitTimeline',
+        name: 'zoom to fit timeline',
         doc: 'Zoom so that the complete timeline can be seen',
         exec: () => {
           this.displayedTimeline.zoomToFit();
@@ -575,8 +575,8 @@ export class InteractivesEditor extends QinoqMorph {
           const newLayer = new Layer({ zIndex: newZIndex });
 
           this.interactive.addLayer(newLayer);
-          this.globalTimeline.createTimelineLayer(newLayer);
-          this.globalTimeline.onActiveAreaWidthChange();
+          this.ui.globalTimeline.createTimelineLayer(newLayer);
+          this.ui.globalTimeline.onActiveAreaWidthChange();
         }
       },
       {
@@ -592,7 +592,7 @@ export class InteractivesEditor extends QinoqMorph {
           newSequence.layer = this.interactive.layers[0];
           this.interactive.addSequence(newSequence);
 
-          this.globalTimeline.createTimelineSequenceInHand(newSequence);
+          this.ui.globalTimeline.createTimelineSequenceInHand(newSequence);
         }
       }];
   }
@@ -786,7 +786,7 @@ class MenuBar extends QinoqMorph {
     };
   }
 
-  initializeUI () {
+  async initializeUI () {
     this.ui = {};
 
     const containerCount = 3;
@@ -920,7 +920,7 @@ class MenuBar extends QinoqMorph {
     await this.buildIconButton({
       tooltip: 'Zoom to fit timeline',
       target: this.editor,
-      action: 'zoomToFitTimeline',
+      command: 'zoom to fit timeline',
       icon: 'expand-arrows-alt',
 	  label: 'Zoom to fit timeline',
       name: 'fitZoomButton',
