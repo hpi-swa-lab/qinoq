@@ -648,6 +648,10 @@ export class SequenceTimeline extends Timeline {
     this.timelineLayers.forEach(timelineLayer => timelineLayer.redraw());
   }
 
+  get overviewLayers () {
+    return this.timelineLayers.filter(timelineLayer => timelineLayer.isOverviewLayer);
+  }
+
   get keyframes () {
     return this.timelineLayers.flatMap(timelineLayer => !timelineLayer.isOverviewLayer && timelineLayer.keyframes);
   }
@@ -800,6 +804,17 @@ export class SequenceTimeline extends Timeline {
         await this.promptUserForNewAbsolutePositionForSelection(multipleKeyframesSelected);
       }
     }
+  }
+
+  async scrollToKeyframe (keyframe, animation) {
+    const overviewLayer = this.overviewLayers.find(overviewLayer => overviewLayer.morph === animation.target);
+    if (!overviewLayer.isExpanded) overviewLayer.isExpanded = true;
+    const timelineKeyframe = this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe === keyframe);
+    this.scrollToTimelineKeyframe(timelineKeyframe);
+
+    // If this line is removed, the scroll does not happen (Race issue)
+    await new Promise(r => setTimeout(r, 30));
+    timelineKeyframe.show();
   }
 
   scrollToTimelineKeyframe (timelineKeyframe) {
