@@ -105,6 +105,7 @@ Closes [fill in your issues here]
 - [ ] it is possible to add a new morph to the interactive using the top bar
   - [ ] the newly created morph is also added to the timeline as an own layer
 - [ ] it is possible to add a new morph to the interactive by grab-and-drop
+  - [ ] when a morph is grabed onto the interactive while the global timeline is active, an error message appears and the morph returns to its original position
 - [ ] it is possible to remove a morph using the layer info context menu
 - [ ] it is possible to rename a morph
   - [ ] using the halo
