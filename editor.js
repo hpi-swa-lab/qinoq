@@ -557,13 +557,13 @@ export class InteractivesEditor extends QinoqMorph {
   // Focus on a specific item in the interactive
   async goto (item) {
     if (item.isKeyframe) {
-      const findResult = this.interactive.findKeyframe(item);
+      const keyframe = item;
+      const findResult = this.interactive.findKeyframe(keyframe);
       if (!findResult) return;
       const { animation, sequence } = findResult;
       const tab = this.getTabFor(sequence) || await this.initializeSequenceView(sequence);
       tab.selected = true;
-      const timelineLayer = this.getTimelineFor(tab).timelineLayers.find(timelineLayer => timelineLayer.morph === animation.target);
-      timelineLayer.scrollToKeyframe(item, animation);
+      this.getTimelineFor(tab).scrollToKeyframe(keyframe, animation);
     }
   }
 
