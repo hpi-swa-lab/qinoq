@@ -810,10 +810,15 @@ export class SequenceTimeline extends Timeline {
     const overviewLayer = this.overviewLayers.find(overviewLayer => overviewLayer.morph === animation.target);
     if (!overviewLayer.isExpanded) overviewLayer.isExpanded = true;
     const timelineKeyframe = this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe === keyframe);
+
+    // Make sure that the layout is applied, thus layer positions are set
+    if (!this.ui.layerContainer.layout.active) this.ui.layerContainer.layout.apply();
+
     this.scrollToTimelineKeyframe(timelineKeyframe);
 
     // If this line is removed, the scroll does not happen (Race issue)
     await new Promise(r => setTimeout(r, 30));
+
     timelineKeyframe.show();
   }
 

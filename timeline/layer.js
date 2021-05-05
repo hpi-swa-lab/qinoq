@@ -403,7 +403,8 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
             this.layerInfo.updateLabel();
             this.redraw();
           }
-        }
+        },
+        overviewLayer: {}
       }
     };
   }
