@@ -1,4 +1,4 @@
-import { Morph, ShadowObject, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
+import { ShadowObject, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
 import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
 import { NumberWidget, StringWidget } from 'lively.ide/value-widgets.js';
@@ -337,7 +337,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
 
   selectMorphThroughHalo (morph) {
     if (Array.isArray(morph)) morph = morph[0]; // Multi select through halo
-    if (this.editor.interactive && this.editor.interactive.sequences.includes(Sequence.getSequenceOfMorph(morph))) {
+    if (this.interactive && this.interactive.sequences.includes(Sequence.getSequenceOfMorph(morph))) {
       this.targetMorph = morph;
     }
   }

@@ -565,7 +565,7 @@ export class TimelineSequence extends QinoqMorph {
 
       // Check if it would be a valid position
       const newStart = this.getStartScrollOnGrab();
-      if (this.editor.interactive.sequenceWouldBeValidInLayer(this.sequence, newStart, this.sequence.duration, layer)) {
+      if (this.interactive.sequenceWouldBeValidInLayer(this.sequence, newStart, this.sequence.duration, layer)) {
         this.setDefaultAppearance();
       } else {
         this.setOverlappingAppearance();
@@ -615,8 +615,8 @@ export class TimelineSequence extends QinoqMorph {
   updateSequenceAfterArrangement () {
     this.sequence.duration = this.timeline.getDurationFromWidth(this.width);
     this.sequence.start = this.timeline.getScrollFromPosition(this.position.x);
-    this.editor.interactive.updateInteractiveLength();
-    this.editor.interactive.redraw();
+    this.interactive.updateInteractiveLength();
+    this.interactive.redraw();
   }
 
   createWarningMorph (morphSuffix, morphPosition, gradientVector) {
@@ -748,7 +748,7 @@ export class TimelineSequence extends QinoqMorph {
   }
 
   delete () {
-    this.editor.interactive.removeSequence(this.sequence);
+    this.interactive.removeSequence(this.sequence);
     this.abandon();
   }
 }

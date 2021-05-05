@@ -650,7 +650,7 @@ class Preview extends QinoqMorph {
     if (event.type != 'morphicdrop') return;
     const grabbedMorph = arr.first(event.hand.grabbedMorphs);
     if (grabbedMorph.isInteractive) {
-      this.editor.interactive = grabbedMorph;
+      this.interactive = grabbedMorph;
 
       // Restore style properties set during grab
       const { pointerAndShadow } = event.hand._grabbedMorphProperties.get(grabbedMorph) || {};
@@ -829,7 +829,7 @@ class MenuBar extends QinoqMorph {
       tooltip: 'Go to previous sequence',
       action: () => {
         const sequence = this.editor.currentSequence;
-        const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getPrevKeyframePosition(sequence.progress)) : this.editor.interactive.getPrevSequenceStart();
+        const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getPrevKeyframePosition(sequence.progress)) : this.interactive.getPrevSequenceStart();
         if (nextPosition == undefined || isNaN(nextPosition)) return;
         this.editor.internalScrollChangeWithGUIUpdate(nextPosition);
       },
@@ -844,7 +844,7 @@ class MenuBar extends QinoqMorph {
       tooltip: 'Go to next sequence',
       action: () => {
         const sequence = this.editor.currentSequence;
-        const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getNextKeyframePosition(sequence.progress)) : this.editor.interactive.getNextSequenceStart();
+        const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getNextKeyframePosition(sequence.progress)) : this.interactive.getNextSequenceStart();
         if (nextPosition == undefined || isNaN(nextPosition)) return;
         this.editor.internalScrollChangeWithGUIUpdate(nextPosition);
       },
@@ -856,7 +856,7 @@ class MenuBar extends QinoqMorph {
     this.buildIconButton({
       tooltip: 'Go to end',
       action: () => {
-        this.editor.internalScrollChangeWithGUIUpdate(this.editor.currentSequence ? this.editor.currentSequence.end : this.editor.interactive.length);
+        this.editor.internalScrollChangeWithGUIUpdate(this.editor.currentSequence ? this.editor.currentSequence.end : this.interactive.length);
       },
       icon: 'fast-forward',
       name: 'gotoEndButton',

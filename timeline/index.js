@@ -40,7 +40,7 @@ export class Timeline extends QinoqMorph {
         set (zoomFactor) {
           if (zoomFactor <= 0) return;
           this.setProperty('zoomFactor', zoomFactor);
-          if (this._deserializing || !this.editor.interactive) return;
+          if (this._deserializing || !this.interactive) return;
           this.redraw();
         }
       },
@@ -266,7 +266,7 @@ export class Timeline extends QinoqMorph {
     this._createOverviewLayers = true;
     this.onLoadContent(content);
     this.initializeCursor();
-    this.onScrollChange(this.editor.interactive.scrollPosition);
+    this.onScrollChange(this.interactive.scrollPosition);
 
     connect(content, 'name', this, 'name', { converter: newName => `${newName.toLowerCase()} timeline` }).update(content.name);
     this._createOverviewLayers = false;
@@ -311,7 +311,7 @@ export class Timeline extends QinoqMorph {
   abandon (bool) {
     super.abandon(bool);
     disconnect(this.editor, 'onScrollChange', this, 'onScrollChange');
-    if (this.editor.interactive) disconnect(this.editor.interactive, 'name', this, 'name');
+    if (this.interactive) disconnect(this.interactive, 'name', this, 'name');
   }
 
   renameSelection (newName) {
@@ -347,9 +347,9 @@ export class GlobalTimeline extends Timeline {
   }
 
   onLoadContent (interactive) {
-    this.editor.interactive.layers.sort((a, b) => a.zIndex - b.zIndex).forEach(layer => this.createTimelineLayer(layer));
-    connect(this.editor.interactive, 'onLengthChange', this, '_activeAreaWidth', { converter: '(length) => target.getWidthFromDuration(length)' }).update(this.editor.interactive.length);
-    this.editor.interactive.sequences.forEach(sequence => {
+    this.interactive.layers.sort((a, b) => a.zIndex - b.zIndex).forEach(layer => this.createTimelineLayer(layer));
+    connect(this.interactive, 'onLengthChange', this, '_activeAreaWidth', { converter: '(length) => target.getWidthFromDuration(length)' }).update(this.interactive.length);
+    this.interactive.sequences.forEach(sequence => {
       this.createTimelineSequence(sequence);
     });
     this.updateLayerPositions();
@@ -363,11 +363,11 @@ export class GlobalTimeline extends Timeline {
       timelineSequence.position = pt(this.getPositionFromScroll(timelineSequence.sequence.start), timelineSequence.position.y);
       timelineSequence._lockModelUpdate = false;
     });
-    this._activeAreaWidth = this.getWidthFromDuration(this.editor.interactive.length);
+    this._activeAreaWidth = this.getWidthFromDuration(this.interactive.length);
   }
 
   updateLayerPositions () {
-    this.editor.interactive.layers.forEach(layer => {
+    this.interactive.layers.forEach(layer => {
       const timelineLayer = this.getTimelineLayerFor(layer);
       timelineLayer.position = pt(timelineLayer.position.x, -layer.zIndex);
     });
@@ -412,7 +412,7 @@ export class GlobalTimeline extends Timeline {
     layerPositions.forEach((layerPositionObject, index) => {
       layerPositionObject.layer.zIndex = index * 10;
     });
-    this.editor.interactive.redraw();
+    this.interactive.redraw();
   }
 
   deselectAllSequences (filter) {
@@ -548,7 +548,7 @@ export class GlobalTimeline extends Timeline {
       return;
     }
 
-    const invalidDuration = this.selectedSequences.some(timelineSequence => !this.editor.interactive.validSequenceDuration(timelineSequence.sequence, newDuration));
+    const invalidDuration = this.selectedSequences.some(timelineSequence => !this.interactive.validSequenceDuration(timelineSequence.sequence, newDuration));
     if (!invalidDuration) {
       this.setDurationForSelection(newDuration);
     } else {
@@ -572,7 +572,7 @@ export class GlobalTimeline extends Timeline {
       ? Number(await $world.prompt('Start:', { input: `${this.selectedSequences[0].sequence.start}` }))
       : Number(await $world.prompt(`Start of the ${this.selectedSequences.length} selected Sequences:`));
 
-    const invalidStart = this.selectedSequences.some(timelineSequence => !this.editor.interactive.validSequenceStart(timelineSequence.sequence, newStart));
+    const invalidStart = this.selectedSequences.some(timelineSequence => !this.interactive.validSequenceStart(timelineSequence.sequence, newStart));
     if (!invalidStart) {
       this.setStartForSelection(newStart);
     } else {
@@ -591,7 +591,7 @@ export class GlobalTimeline extends Timeline {
   }
 
   zoomToFit () {
-    const widthToFit = this.editor.interactive.length + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + CONSTANTS.INACTIVE_AREA_WIDTH;
+    const widthToFit = this.interactive.length + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + CONSTANTS.INACTIVE_AREA_WIDTH;
     const widthAvailable = this.ui.layerContainer.width;
     const factor = widthAvailable / widthToFit;
     this.zoomFactor = factor;
@@ -793,7 +793,7 @@ export class SequenceTimeline extends Timeline {
 
     if (newPosition) {
       const newRelativePosition = sequence.getRelativePositionFor(newPosition);
-      if (newPosition >= 0 && newPosition <= this.editor.interactive.length && newRelativePosition >= 0 && newRelativePosition <= 1) {
+      if (newPosition >= 0 && newPosition <= this.interactive.length && newRelativePosition >= 0 && newRelativePosition <= 1) {
         this.changeKeyframePositionForSelection(newRelativePosition);
       } else {
         await $world.inform('Enter a valid scroll position inside this sequence.');
