@@ -890,9 +890,11 @@ class MenuBar extends QinoqMorph {
   buildZoomInput () {
     this.ui.zoomInput = new NumberWidget({
       min: 1,
+      // these two are necessary for the correct layouting to be applied
+      extent: pt(100, 25),
+      autofit: false,
       number: 100,
       tooltip: 'Set zoom factor',
-      autofit: false,
       dropShadow: false,
       borderWidth: 2,
       unit: '%',
@@ -906,9 +908,10 @@ class MenuBar extends QinoqMorph {
   buildScrollPositionInput () {
     this.ui.scrollPositionInput = new NumberWidget({
       min: 0,
+      // these two are necessary for the correct layouting to be applied
       extent: pt(100, 25),
-      tooltip: 'Set scroll position',
       autofit: false,
+      tooltip: 'Set scroll position',
       dropShadow: false,
       borderWidth: 2,
       borderColor: COLOR_SCHEME.SECONDARY
