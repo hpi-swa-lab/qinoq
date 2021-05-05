@@ -114,7 +114,8 @@ export class Interactive extends Morph {
     this.scrollOverlay = new InteractiveScrollHolder({ interactive: this });
     const scrollLengthContainer = new Morph({
       name: 'scrollable content',
-      halosEnabled: false
+      halosEnabled: false,
+      acceptsDrops: false
     });
     this.scrollOverlay.addMorph(scrollLengthContainer);
     connect(this, 'position', this.scrollOverlay, 'globalPosition', { converter: '() => source.globalPosition' });
