@@ -1,7 +1,7 @@
 /* global it, describe, beforeEach */
 import { expect } from 'mocha-es6';
 import { Morph } from 'lively.morphic';
-import { NumberAnimation, TypeWriterAnimation, Keyframe } from '../animations.js';
+import { NumberAnimation, TypewriterAnimation, Keyframe } from '../animations.js';
 
 // TODO:
 // PointAnimation concrete implementation
@@ -62,7 +62,7 @@ describe('Typewriter animation', () => {
     mockMorph = {
       textString: 'Something'
     };
-    stringAnimation = new TypeWriterAnimation(mockMorph, 'textString');
+    stringAnimation = new TypewriterAnimation(mockMorph, 'textString');
   });
 
   it('interpolates between strings forward', () => {
