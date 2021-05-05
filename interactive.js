@@ -417,7 +417,8 @@ class InteractiveScrollHolder extends Morph {
   }
 
   onDrop (event) {
-    if (event.type != 'morphicdrop' || !this.passThroughMorph) return;
+    if (event.type != 'morphicdragend' || !this.passThroughMorph) return;
+
     event.hand.grabbedMorphs.forEach(grabbedMorph => {
       const { pointerAndShadow } = event.hand._grabbedMorphProperties.get(grabbedMorph) || {};
       Object.assign(grabbedMorph, pointerAndShadow);
