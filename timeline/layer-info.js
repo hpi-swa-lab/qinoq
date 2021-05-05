@@ -4,6 +4,7 @@ import { pt } from 'lively.graphics';
 import { COLOR_SCHEME } from '../colors.js';
 import { Sequence } from '../index.js';
 import { QinoqMorph } from '../qinoq-morph.js';
+import { resource } from 'lively.resources';
 
 export class TimelineLayerInfo extends QinoqMorph {
   static get properties () {
@@ -16,8 +17,8 @@ export class TimelineLayerInfo extends QinoqMorph {
       },
       ui: {
         after: ['timelineLayer', 'name'],
-        initialize () {
-          if (!this._deserializing) this.initialize();
+        async initialize () {
+          if (!this._deserializing) await this.initialize();
         }
       },
       height: {
@@ -46,7 +47,7 @@ export class TimelineLayerInfo extends QinoqMorph {
     return !this.isInGlobalTimeline;
   }
 
-  initialize () {
+  async initialize () {
     this.ui = {};
     this.ui.label = new Label({
       textString: this.name,
@@ -56,16 +57,26 @@ export class TimelineLayerInfo extends QinoqMorph {
     this.addMorph(this.ui.label);
 
     if (this.isInGlobalTimeline) {
-      this.ui.hideButton = new Label({ name: 'hide button', tooltip: 'Hide layer in interactive', nativeCursor: 'pointer', reactsToPointer: true });
-      this.ui.hideButton.onMouseUp = (event) => {
-        // domEvt.button 0 is left click, the DOM event has a wrong buttons property, so event.leftMouseButtonPressed() doesn't work currently
-        if (event.domEvt.button == 0) this.toggleLayerVisibility();
-      };
-      Icon.setIcon(this.ui.hideButton, 'eye');
+      this.ui.hideButton = await resource('part://QinoqWidgets/icon button').read();
 
-      this.addMorph(this.ui.hideButton);
+      Object.assign(this.ui.hideButton, {
+        master: {
+          auto: 'styleguide://QinoqWidgets/icon button/default/light',
+          hover: 'styleguide://QinoqWidgets/icon button/hover/light',
+          click: 'styleguide://QinoqWidgets/icon button/active/light'
+        },
+        target: this,
+        action: 'toggleLayerVisibility',
+        masterButtonDeactivated: 'styleguide://QinoqWidgets/icon button/disabled/light',
+        collapsed: true,
+        autoResize: true,
+        name: 'hide button',
+        description: 'Hide layer in interactive',
+        icon: 'eye',
+        label: 'hide layer'
+      });
     }
-
+    this.addMorph(this.ui.hideButton);
     this.layout = new VerticalLayout({ spacing: 4, autoResize: false });
     this.restyleAfterHideToggle();
   }
@@ -90,8 +101,8 @@ export class TimelineLayerInfo extends QinoqMorph {
 
   restyleAfterHideToggle () {
     if (!this.layer) return;
-    Icon.setIcon(this.ui.hideButton, this.layer.hidden ? 'eye-slash' : 'eye');
-    this.ui.hideButton.tooltip = this.layer.hidden ? 'Show layer in interactive' : 'Hide layer in interactive';
+    this.ui.hideButton.icon = this.layer.hidden ? 'eye-slash' : 'eye';
+    this.ui.hideButton.label = this.layer.hidden ? 'Show layer in interactive' : 'Hide layer in interactive';
     this.interactive.redraw();
     this.timelineLayer.toggleHiddenStyle();
   }
