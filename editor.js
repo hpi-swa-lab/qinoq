@@ -24,10 +24,13 @@ const CONSTANTS = {
   SPACING: 3,
   SCROLL_POSITION_TOOLBAR_X_OFFSET: 360,
   DEFAULT_SCROLL_STEP: 1,
-  LARGE_SCROLL_STEP: 10
+  LARGE_SCROLL_STEP: 10,
+  MENU_BAR_WIDGET_WIDTH: 100,
+  MENU_BAR_WIDGET_HEIGHT: 25
 };
 CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
 CONSTANTS.TIMELINE_HEIGHT = CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT - CONSTANTS.MENU_BAR_HEIGHT;
+CONSTANTS.MENU_BAR_WIDGET_EXTENT = pt(CONSTANTS.MENU_BAR_WIDGET_WIDTH, CONSTANTS.MENU_BAR_WIDGET_HEIGHT);
 
 export class InteractivesEditor extends QinoqMorph {
   static get properties () {
@@ -891,7 +894,7 @@ class MenuBar extends QinoqMorph {
     this.ui.zoomInput = new NumberWidget({
       min: 1,
       // these two are necessary for the correct layouting to be applied
-      extent: pt(100, 25),
+      extent: CONSTANTS.MENU_BAR_WIDGET_EXTENT,
       autofit: false,
       number: 100,
       tooltip: 'Set zoom factor',
@@ -909,7 +912,7 @@ class MenuBar extends QinoqMorph {
     this.ui.scrollPositionInput = new NumberWidget({
       min: 0,
       // these two are necessary for the correct layouting to be applied
-      extent: pt(100, 25),
+      extent: CONSTANTS.MENU_BAR_WIDGET_EXTENT,
       autofit: false,
       tooltip: 'Set scroll position',
       dropShadow: false,
