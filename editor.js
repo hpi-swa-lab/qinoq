@@ -619,6 +619,9 @@ export class InteractivesEditor extends QinoqMorph {
 class Preview extends QinoqMorph {
   static get properties () {
     return {
+      acceptsDrops: {
+        defaultValue: true
+      },
       name: {
         defaultValue: 'preview'
       },
