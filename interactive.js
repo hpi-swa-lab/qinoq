@@ -60,6 +60,7 @@ export class Interactive extends Morph {
             extent.x = extent.y * this.fixedAspectRatio;
           }
           this.setProperty('extent', extent);
+          if (this.scrollOverlay) this.updateScrollContainerExtents();
         }
       },
       sequences: {
@@ -120,7 +121,6 @@ export class Interactive extends Morph {
     this.scrollOverlay.addMorph(scrollLengthContainer);
     connect(this, 'position', this.scrollOverlay, 'globalPosition', { converter: '() => source.globalPosition' });
     connect(this, 'onLengthChange', scrollLengthContainer, 'extent', { converter: '(length) => pt(1, length + source.extent.y)', varMapping: { pt } });
-    connect(this, 'extent', this, 'updateScrollContainerExtents');
   }
 
   updateScrollContainerExtents () {
@@ -130,11 +130,7 @@ export class Interactive extends Morph {
   }
 
   updateInteractiveLength () {
-    let length = 0;
-    this.sequences.forEach(sequence => {
-      if (sequence.end > length) length = sequence.end;
-    });
-    this._length = length;
+    this._length = Math.max.apply(Math, this.sequences.map(sequence => sequence.end));
   }
 
   openInWorld () {
