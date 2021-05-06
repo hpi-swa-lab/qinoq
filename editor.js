@@ -904,7 +904,10 @@ class MenuBar extends QinoqMorph {
       dropShadow: false,
       borderWidth: 2,
       unit: '%',
-      borderColor: COLOR_SCHEME.SECONDARY
+      borderColor: COLOR_SCHEME.SECONDARY,
+      // Scale factor != 1 is necessary for floatingPoint to not be true (NumberWidget)
+      floatingPoint: false,
+      scaleFactor: 1.000000000000001 // smallest number greater than 1, not equal to 1 in JS
     });
     this.ui.zoomInput.getSubmorphNamed('value').fontColor = COLOR_SCHEME.ON_SURFACE;
     connect(this.ui.zoomInput, 'number', this.editor, 'onZoomChange', { converter: '(percent) => percent/100' });
@@ -920,7 +923,10 @@ class MenuBar extends QinoqMorph {
       tooltip: 'Set scroll position',
       dropShadow: false,
       borderWidth: 2,
-      borderColor: COLOR_SCHEME.SECONDARY
+      borderColor: COLOR_SCHEME.SECONDARY,
+      // Scale factor != 1 is necessary for floatingPoint to not be true (NumberWidget)
+      floatingPoint: false,
+      scaleFactor: 1.000000000000001
     });
     this.ui.scrollPositionInput.getSubmorphNamed('value').fontColor = COLOR_SCHEME.ON_SURFACE;
     connect(this.ui.scrollPositionInput, 'number', this.editor, 'onInternalScrollChange');
@@ -959,13 +965,6 @@ class MenuBar extends QinoqMorph {
     this.ui.addLayerButton.fontColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
     this.ui.gotoNextButton.tooltip = 'Go to next keyframe';
     this.ui.gotoPrevButton.tooltip = 'Go to previous keyframe';
-  }
-
-  __after_deserialize__ (snapshot, ref, pool) {
-    // floatingPoint property is not properly serialized and needs to be set here again
-    this.ui.zoomInput.floatingPoint = false;
-    this.ui.scrollPositionInput.floatingPoint = false;
-    super.__after_deserialize__(snapshot, ref, pool);
   }
 }
 

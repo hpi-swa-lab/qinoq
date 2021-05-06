@@ -144,7 +144,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
       position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
       extent: CONSTANTS.WIDGET_EXTENT,
       autofit: false,
-      scaleFactor: 1.01, // Has to be different than 1 to disable floatingPoint
+      scaleFactor: 1.000000000000001, // Has to be different than 1 to disable floatingPoint
       floatingPoint: false
     });
     this.propertyControls[property].y = new NumberWidget({
@@ -173,7 +173,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
     this.propertyControls[property].number = new NumberWidget({
       position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
       floatingPoint,
-      scaleFactor: 1.01, // Has to be different than 1 to disable floatingPoint
+      scaleFactor: 1.000000000000001, // Has to be different than 1 to disable floatingPoint
       unit,
       min,
       max,
