@@ -76,13 +76,16 @@ export class TimelineSequence extends QinoqMorph {
           this.setProperty('extent', extent);
           if (extent.x < CONSTANTS.MINIMAL_SEQUENCE_WIDTH && this.hasResizers) this.removeResizers();
           else if (extent.x >= CONSTANTS.MINIMAL_SEQUENCE_WIDTH && !this.hasResizers) this.restoreResizers();
-
           if (!this._lockModelUpdate && !this._deserializing) { this.updateSequenceAfterArrangement(); }
         }
       },
       position: {
         set (position) {
           this.setProperty('position', position);
+          if (this.hasResizers) {
+            this.ui.leftResizer.position = pt(0, 0);
+            this.ui.rightResizer.position = pt(this.width - this.ui.rightResizer.width, 0);
+          }
           if (!this._lockModelUpdate && !this._deserializing) { this.updateSequenceAfterArrangement(); }
         }
       },
@@ -489,6 +492,7 @@ export class TimelineSequence extends QinoqMorph {
     // because lively automatically records drag moves, we have to remove that drag move. Then we can record our own undo.
     this.env.undoManager.removeLatestUndo();
     this.undoStart('timeline-sequence-resize');
+
     this.timeline.deselectAllSequencesExcept(this);
     event.hand.timelineSequenceStates = [{
       timelineSequence: this,
@@ -507,8 +511,7 @@ export class TimelineSequence extends QinoqMorph {
     this.handleOverlappingOtherSequence(event.hand.timelineSequenceStates);
     event.hand.timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.removeSnapIndicators());
     this.clearSnappingData();
-    this.ui.leftResizer.position = pt(0, 0);
-    this.ui.rightResizer.position = pt(this.width - this.ui.rightResizer.width, 0);
+
     delete event.hand.timelineSequenceStates;
   }
 
