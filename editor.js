@@ -1,4 +1,4 @@
-import { ProportionalLayout, Morph, config, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
+import { ProportionalLayout, config, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
 import { connect, signal, disconnectAll, disconnect } from 'lively.bindings';
 import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
@@ -12,6 +12,7 @@ import { Button } from 'lively.components';
 import { arrowRightPressed, arrowLeftPressed } from './keys.js';
 import { Clipboard } from './utilities/clipboard.js';
 import { QinoqMorph } from './qinoq-morph.js';
+import { buildIconButton } from './utilities/buttons.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -845,104 +846,113 @@ class MenuBar extends QinoqMorph {
 
     this.layout = new ProportionalLayout({ initialExtent: this.extent });
 
-    await this.buildIconButton({
-      tooltip: 'Create a new sequence',
-      target: this.editor,
-      command: 'create new sequence',
-      icon: 'ticket-alt',
-      label: 'New Sequence',
-      collapsed: true,
-      name: 'addSequenceButton',
-      container: 'leftContainer'
-    });
+    await this.addIconButton(
+      'leftContainer',
+      'addSequenceButton',
+      {
+        tooltip: 'Create a new sequence',
+        target: this.editor,
+        command: 'create new sequence',
+        icon: 'ticket-alt',
+        label: 'New Sequence',
+        collapsed: true
+      });
 
-    await this.buildIconButton({
-      tooltip: 'Create a new layer',
-      target: this.editor,
-      command: 'create new layer',
-      icon: 'layer-group',
-      label: 'New Layer',
-      collapsed: true,
-      name: 'addLayerButton',
-      container: 'leftContainer'
-    });
+    await this.addIconButton(
+      'leftContainer',
+      'addLayerButton',
+      {
+        tooltip: 'Create a new layer',
+        target: this.editor,
+        command: 'create new layer',
+        icon: 'layer-group',
+        label: 'New Layer',
+        collapsed: true
+      });
 
-    await this.buildIconButton({
-      tooltip: 'Go to start',
-      target: this.editor,
-      command: 'scroll to start',
-      icon: 'fast-backward',
-      label: 'Go to start',
-      collapsed: true,
-      name: 'gotoStartButton',
-      container: 'scrollPositionToolbar'
-    });
+    await this.addIconButton(
+      'scrollPositionToolbar',
+      'gotoStartButton',
+      {
+        tooltip: 'Go to start',
+        target: this.editor,
+        command: 'scroll to start',
+        icon: 'fast-backward',
+        label: 'Go to start',
+        collapsed: true
+      });
 
-    await this.buildIconButton({
-      tooltip: 'Go to previous sequence',
-      target: this.editor,
-      command: 'scroll to previous sequence',
-      icon: 'step-backward',
-      label: 'Go to previous sequence',
-      collapsed: true,
-      name: 'gotoPrevButton',
-      container: 'scrollPositionToolbar'
-    });
+    await this.addIconButton(
+      'scrollPositionToolbar',
+      'gotoPrevButton',
+      {
+        tooltip: 'Go to previous sequence',
+        target: this.editor,
+        command: 'scroll to previous sequence',
+        icon: 'step-backward',
+        label: 'Go to previous sequence',
+        collapsed: true
+      });
 
     this.buildScrollPositionInput();
 
-    await this.buildIconButton({
-      tooltip: 'Go to next sequence',
-      target: this.editor,
-      command: 'scroll to next sequence',
-      icon: 'step-forward',
-      label: 'Go to next sequence',
-      name: 'gotoNextButton',
-      collapsed: true,
-      container: 'scrollPositionToolbar'
-    });
+    await this.addIconButton(
+      'scrollPositionToolbar',
+      'gotoNextButton',
+      {
+        tooltip: 'Go to next sequence',
+        target: this.editor,
+        command: 'scroll to next sequence',
+        icon: 'step-forward',
+        label: 'Go to next sequence',
+        collapsed: true
+      });
 
-    await this.buildIconButton({
-      tooltip: 'Go to end',
-      target: this.editor,
-      command: 'scroll to end',
-      icon: 'fast-forward',
-      label: 'Go to end',
-      collapsed: true,
-      name: 'gotoEndButton',
-      container: 'scrollPositionToolbar'
-    });
+    await this.addIconButton(
+      'scrollPositionToolbar',
+      'gotoEndButton',
+      {
+        tooltip: 'Go to end',
+        target: this.editor,
+        command: 'scroll to end',
+        icon: 'fast-forward',
+        label: 'Go to end',
+        collapsed: true
+      });
 
-    await this.buildIconButton({
-      tooltip: 'Toggle Snapping',
-      target: this.editor,
-      command: 'toggle snapping',
-      icon: 'magnet',
-      label: 'Toggle Snapping',
-      name: 'toggleSnappingButton',
-      container: 'rightContainer',
-      mode: true
-    });
+    await this.addIconButton(
+      'rightContainer',
+      'toggleSnappingButton',
+      {
+        tooltip: 'Toggle Snapping',
+        target: this.editor,
+        command: 'toggle snapping',
+        icon: 'magnet',
+        label: 'Toggle Snapping',
+        mode: true
+      });
 
-    await this.buildIconButton({
-      tooltip: 'Zoom to fit timeline',
-      target: this.editor,
-      command: 'zoom to fit timeline',
-      icon: 'expand-arrows-alt',
-      label: 'Zoom to fit timeline',
-      name: 'fitZoomButton',
-      container: 'rightContainer'
-    });
+    await this.addIconButton(
+      'rightContainer',
+      'fitZoomButton',
+      {
+        tooltip: 'Zoom to fit timeline',
+        target: this.editor,
+        command: 'zoom to fit timeline',
+        icon: 'expand-arrows-alt',
+        label: 'Zoom to fit timeline'
+      });
 
-    await this.buildIconButton({
-      tooltip: 'Find Keyframe',
-      target: this.editor,
-      command: 'find keyframe',
-      icon: 'search-location',
-      label: 'Find Keyframe',
-      name: 'findKeyframeButton',
-      container: 'rightContainer'
-    });
+    await this.addIconButton(
+      'rightContainer',
+      'findKeyframeButton',
+      {
+        tooltip: 'Find Keyframe',
+        target: this.editor,
+        command: 'find keyframe',
+        icon: 'search-location',
+        label: 'Find Keyframe'
+      });
 
     this.buildZoomInput();
   }
@@ -982,36 +992,8 @@ class MenuBar extends QinoqMorph {
     this.ui.scrollPositionToolbar.addMorph(this.ui.scrollPositionInput);
   }
 
-  async buildIconButton (options = {}) {
-    const {
-      target, action, args, command = undefined, tooltip, name,
-      morphName = 'anIconButton', icon, label = '', container, collapsed = true,
-      autoResize = true, mode = false
-    } = options;
-
-    this.ui[name] = await resource('part://QinoqWidgets/icon button light').read();
-
-    Object.assign(this.ui[name], {
-      master: {
-        auto: 'styleguide://QinoqWidgets/icon button/default/light',
-        hover: 'styleguide://QinoqWidgets/icon button/hover/light',
-        click: 'styleguide://QinoqWidgets/icon button/active/light'
-      },
-      target: target,
-      action: action,
-      args: args,
-      masterButtonDeactivated: 'styleguide://QinoqWidgets/icon button/disabled/light',
-      collapsed: collapsed,
-      autoResize: autoResize,
-      name: morphName,
-      description: tooltip,
-      icon: icon,
-      label: label,
-      mode: mode
-    });
-
-    if (command) this.ui[name].command = command;
-
+  async addIconButton (container, name, options = {}) {
+    this.ui[name] = await buildIconButton(options);
     this.ui[container].addMorph(this.ui[name]);
   }
 
