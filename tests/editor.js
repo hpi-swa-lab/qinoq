@@ -208,10 +208,12 @@ describe('Editor', () => {
     expect(editor.interactive.scrollPosition).to.be.equal(250);
   });
 
-  it('shows zoom in the menu bar', () => {
-    expect(editor.ui.menuBar.ui.zoomInput.number).to.be.equal(100);
-    editor.ui.globalTimeline.zoomFactor = 1.5;
-    expect(editor.ui.menuBar.ui.zoomInput.number).to.be.equal(150);
+  it('zoom input changes timeline zoom', () => {
+    editor.ui.menuBar.ui.zoomInput.number = 100;
+    expect(editor.ui.globalTimeline.zoomFactor).to.be.equal(1.0);
+    editor.ui.menuBar.ui.zoomInput.number = 150;
+    expect(editor.ui.globalTimeline.zoomFactor).to.be.equal(1.5);
+    editor.ui.menuBar.ui.zoomInput.number = 100;
   });
 
   it('adds an animation when adding a lottie morph', async () => {
