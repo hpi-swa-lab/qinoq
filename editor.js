@@ -998,6 +998,7 @@ class MenuBar extends QinoqMorph {
   onGlobalTimelineTab () {
     this.ui.addSequenceButton.enabled = true;
     this.ui.addLayerButton.enabled = true;
+    this.ui.toggleSnappingButton.enabled = true;
     this.ui.gotoNextButton.tooltip = 'Go to next sequence';
     this.ui.gotoPrevButton.tooltip = 'Go to previous sequence';
   }
@@ -1005,6 +1006,7 @@ class MenuBar extends QinoqMorph {
   onSequenceView () {
     this.ui.addSequenceButton.enabled = false;
     this.ui.addLayerButton.enabled = false;
+    this.ui.toggleSnappingButton.enabled = false;
     this.ui.gotoNextButton.tooltip = 'Go to next keyframe';
     this.ui.gotoPrevButton.tooltip = 'Go to previous keyframe';
   }
