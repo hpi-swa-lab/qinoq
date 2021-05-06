@@ -51,6 +51,12 @@ export class Timeline extends QinoqMorph {
           if (this._deserializing) return;
           this.onActiveAreaWidthChange();
         }
+      },
+      extent: {
+        set (extent) {
+          this.setProperty('extent', extent);
+          if (this.editor && this.editor.ui.window) this.relayout(this.editor.ui.window.extent);
+        }
       }
     };
   }
@@ -72,6 +78,9 @@ export class Timeline extends QinoqMorph {
   }
 
   relayout (newWindowExtent) {
+    // Ensure UI has been created
+    if (!this.ui.scrollableContainer || !this.ui.scrollBar || !this.ui.layerContainer || !this.owner) return;
+
     this.ui.scrollableContainer.extent = pt(newWindowExtent.x, this.owner.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT);
     this.ui.layerContainer.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - CONSTANTS.LAYER_INFO_WIDTH, this.owner.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT);
     this.ui.scrollBar.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - CONSTANTS.LAYER_INFO_WIDTH, this.ui.scrollBar.extent.y);
