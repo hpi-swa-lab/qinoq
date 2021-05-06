@@ -24,6 +24,7 @@ export class QinoqButton extends Label {
         defaultValue: false,
         set (filled) {
           this.setProperty('filled', filled);
+          if (!this.enabled) return;
           if (filled) {
             this.setFilledStyle();
           } else {
@@ -71,8 +72,8 @@ export class QinoqButton extends Label {
   }
 
   setDisabledStyle () {
-    this.fontColor = COLOR_SCHEME.BACKGROUND;
-    this.fill = COLOR_SCHEME.BACKGROUND_VARIANT;
+    this.fill = COLOR_SCHEME.BACKGROUND;
+    this.fontColor = COLOR_SCHEME.BACKGROUND_VARIANT;
   }
 
   setFilledStyle () {
