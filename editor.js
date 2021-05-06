@@ -198,7 +198,6 @@ export class InteractivesEditor extends QinoqMorph {
     interactive.withAllSubmorphsDo(submorph => { if (!submorph.isSequence && !submorph.isInteractive) connect(submorph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' }); });
 
     connect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
-    connect(this, 'onInternalScrollChange', this.interactive, 'onExternalScrollChange');
 
     connect(this.interactive, 'name', this.ui.globalTab, 'caption').update(this.interactive.name);
     connect(this.ui.globalTab, 'caption', this.interactive, 'name');
@@ -216,6 +215,7 @@ export class InteractivesEditor extends QinoqMorph {
   // call this to propagate changes to the scrollposition to the actual interactive
   onInternalScrollChange (scrollPosition) {
     if (!this.interactive) return;
+    this.interactive.onExternalScrollChange(scrollPosition);
     this.onScrollChange(scrollPosition);
   }
 
@@ -255,7 +255,6 @@ export class InteractivesEditor extends QinoqMorph {
     this.interactive.withAllSubmorphsDo(submorph => { if (!submorph.isSequence && !submorph.isInteractive) disconnect(submorph, 'onAbandon', this, 'removeMorphFromInteractive'); });
 
     disconnect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
-    disconnect(this, 'onInternalScrollChange', this.interactive, 'onExternalScrollChange');
 
     disconnect(this.interactive, 'name', this.ui.globalTimeline, 'name');
     disconnect(this.interactive, 'remove', this, 'reset');
