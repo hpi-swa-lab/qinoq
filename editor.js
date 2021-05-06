@@ -519,7 +519,7 @@ export class InteractivesEditor extends QinoqMorph {
         exec: () => {
           this._snappingDisabled = !this._snappingDisabled;
           const toggleSnappingButton = this.ui.menuBar.ui.toggleSnappingButton;
-          toggleSnappingButton.fontColor = this._snappingDisabled ? COLOR_SCHEME.ON_BACKGROUND_VARIANT : COLOR_SCHEME.SECONDARY;
+          toggleSnappingButton.filled = !this._snappingDisabled;
         }
       },
       {
@@ -538,7 +538,7 @@ export class InteractivesEditor extends QinoqMorph {
         name: 'scroll to start',
         doc: 'set scrollposition to start of sequence of sequence view or start of interactive',
         exec: () => {
-          this.interactiveScrollPosition = this.currentSequence ? this.currentSequence.start : 0;
+          this.internalScrollChangeWithGUIUpdate(this.currentSequence ? this.currentSequence.start : 0);
         }
       },
       {
@@ -547,7 +547,7 @@ export class InteractivesEditor extends QinoqMorph {
           const sequence = this.currentSequence;
           const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getPrevKeyframePosition(sequence.progress)) : this.interactive.getPrevSequenceStart(this.interactiveScrollPosition);
           if (nextPosition == undefined || isNaN(nextPosition)) return;
-          this.interactiveScrollPosition = nextPosition;
+          this.internalScrollChangeWithGUIUpdate(nextPosition);
         }
       },
       {
@@ -556,18 +556,18 @@ export class InteractivesEditor extends QinoqMorph {
           const sequence = this.currentSequence;
           const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getNextKeyframePosition(sequence.progress)) : this.interactive.getNextSequenceStart(this.interactiveScrollPosition);
           if (nextPosition == undefined || isNaN(nextPosition)) return;
-          this.interactiveScrollPosition = nextPosition;
+          this.internalScrollChangeWithGUIUpdate(nextPosition);
         }
       },
       {
         name: 'scroll to end',
         doc: 'Scroll to the end of the interactive or the open sequence',
         exec: () => {
-          this.interactiveScrollPosition = this.currentSequence ? this.currentSequence.end : this.interactive.length;
+          this.internalScrollChangeWithGUIUpdate(this.currentSequence ? this.currentSequence.end : this.interactive.length);
         }
       },
       {
-        name: 'zoomToFitTimeline',
+        name: 'zoom to fit timeline',
         doc: 'Zoom so that the complete timeline can be seen',
         exec: () => {
           this.displayedTimeline.zoomToFit();
@@ -582,8 +582,8 @@ export class InteractivesEditor extends QinoqMorph {
           const newLayer = new Layer({ zIndex: newZIndex });
 
           this.interactive.addLayer(newLayer);
-          this.globalTimeline.createTimelineLayer(newLayer);
-          this.globalTimeline.onActiveAreaWidthChange();
+          this.ui.globalTimeline.createTimelineLayer(newLayer);
+          this.ui.globalTimeline.onActiveAreaWidthChange();
         }
       },
       {
@@ -599,7 +599,7 @@ export class InteractivesEditor extends QinoqMorph {
           newSequence.layer = this.interactive.layers[0];
           this.interactive.addSequence(newSequence);
 
-          this.globalTimeline.createTimelineSequenceInHand(newSequence);
+          this.ui.globalTimeline.createTimelineSequenceInHand(newSequence);
         }
       }];
   }
@@ -912,22 +912,24 @@ class MenuBar extends QinoqMorph {
 
     this.buildIconButton({
       tooltip: 'Toggle snapping',
-      action: () => this.editor.execCommand('toggle snapping'),
+      target: this.editor,
+      command: 'toggle snapping',
       icon: 'magnet',
       name: 'toggleSnappingButton',
-      container: 'rightContainer'
+      container: 'rightContainer',
+      filled: true
     });
 
     this.buildIconButton({
       tooltip: 'Zoom to fit timeline',
       target: this.editor,
-      action: 'zoomToFitTimeline',
+      command: 'zoom to fit timeline',
       icon: 'expand-arrows-alt',
       name: 'fitZoomButton',
       container: 'rightContainer'
     });
 
-    await this.buildIconButton({
+    this.buildIconButton({
       tooltip: 'Find Keyframe',
       target: this.editor,
       command: 'find keyframe',
@@ -976,16 +978,18 @@ class MenuBar extends QinoqMorph {
   }
 
   buildIconButton (options = {}) {
-    const { action, tooltip, name, morphName = 'aButton', icon, container } = options;
+    const { action, command, target, tooltip, name, morphName = 'aButton', icon, container, filled } = options;
     this.ui[name] = new QinoqButton({
       fontSize: 20,
       padding: rect(3, 3, 3, 3),
       name: morphName,
       tooltip,
-      target: this.editor,
-      action: 'createNewSequence',
+      target: target,
+      action: action,
+      command: command,
       icon: icon
     });
+    if (filled) this.ui[name].filled = true;
     this.ui[container].addMorph(this.ui[name]);
   }
 

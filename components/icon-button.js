@@ -33,6 +33,7 @@ export class QinoqButton extends Label {
       },
       target: {},
       action: {},
+      command: {},
       nativeCursor: {
         defaultValue: 'pointer'
       },
@@ -55,7 +56,7 @@ export class QinoqButton extends Label {
   onMouseUp (event) {
     super.onMouseUp(event);
     this.setDefaultStyle();
-    this.target[this.action]();
+    this.command ? this.target.execCommand(this.command) : this.target[this.action]();
   }
 
   setDefaultStyle () {
