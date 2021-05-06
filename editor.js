@@ -514,7 +514,7 @@ export class InteractivesEditor extends QinoqMorph {
         exec: () => {
           this._snappingDisabled = !this._snappingDisabled;
           const toggleSnappingButton = this.ui.menuBar.ui.toggleSnappingButton;
-          toggleSnappingButton.fontColor = this._snappingDisabled ? COLOR_SCHEME.ON_BACKGROUND_VARIANT : COLOR_SCHEME.SECONDARY;
+          toggleSnappingButton.mode = !this._snappingDisabled;
         }
       },
       {
@@ -913,7 +913,8 @@ class MenuBar extends QinoqMorph {
       icon: 'magnet',
       label: 'Toggle Snapping',
       name: 'toggleSnappingButton',
-      container: 'rightContainer'
+      container: 'rightContainer',
+      mode: true
     });
 
     await this.buildIconButton({
@@ -978,7 +979,7 @@ class MenuBar extends QinoqMorph {
     const {
       target, action, args, command = undefined, tooltip, name,
       morphName = 'anIconButton', icon, label = '', container, collapsed = true,
-      autoResize = true
+      autoResize = true, mode = false
     } = options;
 
     this.ui[name] = await resource('part://QinoqWidgets/icon button light').read();
@@ -998,7 +999,8 @@ class MenuBar extends QinoqMorph {
       name: morphName,
       description: tooltip,
       icon: icon,
-      label: label
+      label: label,
+      mode: mode
     });
 
     if (command) this.ui[name].command = command;
