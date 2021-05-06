@@ -466,9 +466,8 @@ export class InteractivesEditor extends QinoqMorph {
     if (previouslyDisplayedTimeline) {
       disconnect(this.ui.window, 'extent', previouslyDisplayedTimeline, 'relayout');
       disconnect(this, 'onScrollChange', displayedTimeline, 'onScrollChange');
-      disconnect(previouslyDisplayedTimeline, 'zoomFactor', this.ui.menuBar.ui.zoomInput, 'number');
     }
-    connect(displayedTimeline, 'zoomFactor', this.ui.menuBar.ui.zoomInput, 'number', { converter: '(zoomFactor) => zoomFactor * 100' }).update(displayedTimeline.zoomFactor);
+    this.updateZoomInputNumber(displayedTimeline.zoomFactor);
     connect(this.ui.window, 'extent', displayedTimeline, 'relayout').update(this.ui.window.extent);
     connect(this, 'onScrollChange', displayedTimeline, 'onScrollChange').update(this.interactive.scrollPosition);
     return displayedTimeline;
@@ -478,6 +477,10 @@ export class InteractivesEditor extends QinoqMorph {
     this.undoStart('interactive-editor-change-zoom');
     this.displayedTimeline.zoomFactor = newZoom;
     this.undoStop('interactive-editor-change-zoom');
+  }
+
+  updateZoomInputNumber (zoomFactor) {
+    this.ui.menuBar.ui.zoomInput.number = zoomFactor * 100;
   }
 
   get snappingEnabled () {
