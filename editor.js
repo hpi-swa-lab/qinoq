@@ -79,7 +79,8 @@ export class InteractivesEditor extends QinoqMorph {
         initialize () {
           if (!this._deserializing) this.ui = {};
         }
-      }
+      },
+      _snappingDisabled: {}
     };
   }
 
