@@ -48,13 +48,11 @@ export class QinoqButton extends Label {
     };
   }
 
-  onMouseDown (event) {
-    super.onMouseDown(event);
+  onMouseDown () {
     this.setFilledStyle();
   }
 
-  onMouseUp (event) {
-    super.onMouseUp(event);
+  onMouseUp () {
     this.setDefaultStyle();
     this.command ? this.target.execCommand(this.command) : this.target[this.action]();
   }
