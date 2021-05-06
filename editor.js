@@ -45,6 +45,7 @@ export class InteractivesEditor extends QinoqMorph {
           this.clearInteractive();
           this.setProperty('interactive', interactive);
           this.initializeInteractive(interactive);
+          this.ui.menuBar.enableUIElements();
         }
       },
       name: {
@@ -112,6 +113,7 @@ export class InteractivesEditor extends QinoqMorph {
     this.addMorph(this.ui.inspector);
 
     this.ui.menuBar = new MenuBar({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), _editor: this });
+    this.ui.menuBar.disableUIElements();
     this.addMorph(this.ui.menuBar);
     connect(this, 'onDisplayedTimelineChange', this.ui.menuBar, 'onGlobalTimelineTab', {
       updater: `($update, displayedTimeline) => { 
@@ -293,6 +295,7 @@ export class InteractivesEditor extends QinoqMorph {
     this.ui.inspector.deselect();
 
     this.ui.preview.showEmptyPreviewPlaceholder();
+    this.ui.menuBar.disableUIElements();
   }
 
   reset () {
@@ -1010,6 +1013,25 @@ class MenuBar extends QinoqMorph {
     this.ui.gotoNextButton.tooltip = 'Go to next keyframe';
     this.ui.gotoPrevButton.tooltip = 'Go to previous keyframe';
   }
+
+  disableUIElements () {
+    Object.keys(this.ui).forEach(key => {
+      const morph = this.ui[key];
+      if (morph.isQinoqButton) morph.enabled = false;
+    });
+    this.ui.zoomInput.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
+    this.ui.scrollPositionInput.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
+  }
+
+  enableUIElements () {
+    Object.keys(this.ui).forEach(key => {
+      const morph = this.ui[key];
+      if (morph.isQinoqButton) morph.enabled = true;
+    });
+    this.ui.zoomInput.borderColor = COLOR_SCHEME.SECONDARY;
+    this.ui.scrollPositionInput.borderColor = COLOR_SCHEME.SECONDARY;
+  }
+
 }
 
 class SequenceOverview extends QinoqMorph {
