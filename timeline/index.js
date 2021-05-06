@@ -85,6 +85,7 @@ export class Timeline extends QinoqMorph {
     this.ui.layerContainer.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - CONSTANTS.LAYER_INFO_WIDTH, this.owner.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT);
     this.ui.scrollBar.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - CONSTANTS.LAYER_INFO_WIDTH, this.ui.scrollBar.extent.y);
     this.ui.scrollBar.position = this.ui.layerContainer.bottomLeft;
+    this.updateScrollerExtent();
   }
 
   initializeScrollBar () {
@@ -290,6 +291,10 @@ export class Timeline extends QinoqMorph {
       timelineLayer.activeArea.width = this._activeAreaWidth;
     });
 
+    this.updateScrollerExtent();
+  }
+
+  updateScrollerExtent () {
     const scrollbarWidth = this.ui.scrollBar.extent.x;
     const visiblePortion = scrollbarWidth / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.scrollbarOffset.x);
     // keep margin at both left and right end of the scrollbar
