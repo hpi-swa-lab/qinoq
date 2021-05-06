@@ -274,14 +274,13 @@ export class TimelineSequence extends QinoqMorph {
 
   onDrag (event) {
     if (!event.hand.timelineSequenceStates) return;
-    super.onDrag(event);
 
-    const draggedByUserState = event.hand.timelineSequenceStates.find(dragState => dragState.timelineSequence === this);
-    const prevPositionX = draggedByUserState.previousPosition.x;
-    const dragDeltaX = prevPositionX - this.position.x;
+    const { dragStartMorphPosition, absDragDelta } = event.state;
+    this.position = pt(dragStartMorphPosition.x + absDragDelta.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+    const dragDeltaX = absDragDelta.x;
 
     event.hand.timelineSequenceStates.filter(dragState => dragState.timelineSequence !== this).forEach(dragState => {
-      dragState.timelineSequence.position = pt(dragState.previousPosition.x - dragDeltaX, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+      dragState.timelineSequence.position = pt(dragState.previousPosition.x + dragDeltaX, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     });
 
     if (event.hand.leftMostSequenceStates[0].timelineSequence.position.x <= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
