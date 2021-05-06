@@ -286,6 +286,10 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     return this.keyframeLines.length > 0;
   }
 
+  toggleExpand () {
+    this.isExpanded = !this.isExpanded;
+  }
+
   get mayBeExpanded () {
     return (!this.isExpanded && this.containsKeyframeLines);
   }

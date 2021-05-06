@@ -98,31 +98,36 @@ export class TimelineLayerInfo extends QinoqMorph {
   }
 
   addCollapseToggle () {
-    this.ui.collapseButton = new Label({ name: 'collapseButton', position: pt(10, 10), fontSize: 15, nativeCursor: 'pointer' });
-    Icon.setIcon(this.ui.collapseButton, 'caret-right');
+    this.ui.collapseButton = new QinoqButton({
+      padding: rect(3, 3, 3, 3),
+      position: pt(10, 10),
+      fontSize: 15,
+      name: 'collapse button',
+      target: this.timelineLayer,
+      action: 'toggleExpand',
+      icon: 'caret-right'
+    });
     this.addMorph(this.ui.collapseButton);
     this.disableCollapseButton();
   }
 
+  enableCollapseButton () {
+    this.ui.collapseButton.enabled = true;
+    this.ui.collapseButton.tooltip = 'Expand to see animated properties';
+  }
+
   disableCollapseButton () {
-    this.ui.collapseButton.fontColor = COLOR_SCHEME.BACKGROUND_VARIANT;
-    this.ui.collapseButton.onMouseUp = () => {};
+    this.ui.collapseButton.enabled = false;
     this.ui.collapseButton.tooltip = 'Expansion only available for morphs with keyframes';
+  }
+
+  restyleCollapseToggle () {
+    this.ui.collapseButton.icon = this.timelineLayer.isExpanded ? 'caret-down' : 'caret-right';
   }
 
   onNumberOfKeyframeLinesInLayerChanged (containsKeyframes) {
     if (!containsKeyframes) this.disableCollapseButton();
     else this.enableCollapseButton();
-  }
-
-  enableCollapseButton () {
-    this.ui.collapseButton.fontColor = COLOR_SCHEME.ON_SURFACE;
-    this.ui.collapseButton.onMouseUp = () => { this.timelineLayer.isExpanded = !this.timelineLayer.isExpanded; };
-    this.ui.collapseButton.tooltip = 'Expand to see animated properties';
-  }
-
-  restyleCollapseToggle () {
-    Icon.setIcon(this.ui.collapseButton, this.timelineLayer.isExpanded ? 'caret-down' : 'caret-right');
   }
 
   async promptLayerName () {
