@@ -750,13 +750,14 @@ class Preview extends QinoqMorph {
     });
     text.height = 30;
 
-    const newInteractiveButton = new Button({
-      label: 'Create a new interactive',
-      master: 'styleguide://SystemUserUI/blue button',
-      acceptsDrops: false,
-      padding: rect(8, 5, 0, -2)
+    const newInteractiveButton = new QinoqButton({
+      textString: 'Create a new interactive',
+      padding: rect(8, 5, 0, -2),
+      target: this.editor,
+      filled: true,
+      fontSize: 20,
+      action: 'createInteractiveWithNamePrompt'
     });
-    newInteractiveButton.onMouseUp = () => this.editor.createInteractiveWithNamePrompt();
 
     const container = new QinoqMorph({
       acceptsDrops: false,
