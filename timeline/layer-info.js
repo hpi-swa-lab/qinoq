@@ -4,7 +4,7 @@ import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from '../colors.js';
 import { Sequence } from '../index.js';
 import { QinoqMorph } from '../qinoq-morph.js';
-import { QinoqButton } from '../components/icon-button.js';
+import { QinoqButton } from '../components/qinoq-button.js';
 
 export class TimelineLayerInfo extends QinoqMorph {
   static get properties () {
