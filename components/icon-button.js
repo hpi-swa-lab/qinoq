@@ -77,7 +77,8 @@ export class QinoqButton extends Label {
   }
 
   enable () {
-    this.setDefaultStyle();
+    if (this.filled) this.setFilledStyle();
+    else this.setDefaultStyle();
     this.reactsToPointer = true;
   }
 
