@@ -44,8 +44,9 @@ export class TimelineKeyframe extends QinoqMorph {
           if (this._lockModelUpdate) return;
           if (this.layer) {
             this.keyframe.position = this.layer.timeline.getScrollFromPosition(this.position);
-            this.interactive.redraw();
             this.layer.redraw();
+            if (this.currentDrag && !this.isPrimaryDragTarget) return; // No need for redraw for all dragged keyframes
+            this.editor.interactive.redraw();
           }
         }
       },
@@ -182,13 +183,17 @@ export class TimelineKeyframe extends QinoqMorph {
   onDragStart (event) {
     if (singleSelectKeyPressed(event)) return;
     const undo = this.undoStart('move-keyframe');
-    event.hand.dragKeyframeStates = this.timeline.selectedTimelineKeyframes.map(timelinekeyframe => {
-      undo.addTarget(timelinekeyframe);
-      return {
-        timelineKeyframe: timelinekeyframe,
-        previousPosition: timelinekeyframe.position,
-        keyframe: timelinekeyframe.keyframe
+    event.hand.dragKeyframeStates = this.timeline.selectedTimelineKeyframes.map(timelineKeyframe => {
+      undo.addTarget(timelineKeyframe);
+      const state = {
+        timelineKeyframe,
+        previousPosition: timelineKeyframe.position,
+        keyframe: timelineKeyframe.keyframe
       };
+      if (timelineKeyframe == this) {
+        state.isPrimaryDragTarget = true;
+      }
+      return state;
     });
   }
 
@@ -197,6 +202,14 @@ export class TimelineKeyframe extends QinoqMorph {
     this.undoStop('move-keyframe');
     this._dragged = true;
     delete event.hand.dragKeyframeStates;
+  }
+
+  get currentDrag () {
+    return $world.firstHand.dragKeyframeStates;
+  }
+
+  get isPrimaryDragTarget () {
+    return this.currentDrag && this.currentDrag.find(state => state.isPrimaryDragTarget).timelineKeyframe == this;
   }
 
   isValidDrag (dragStates) {
