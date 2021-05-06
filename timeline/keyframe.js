@@ -200,14 +200,7 @@ export class TimelineKeyframe extends QinoqMorph {
   }
 
   isValidDrag (dragStates) {
-    let validDrag = true;
-    dragStates.forEach(dragState => {
-      if (dragState.keyframe.position < 0 || dragState.keyframe.position > 1) {
-        validDrag = false;
-        return true;
-      }
-    });
-    return validDrag;
+    return !dragStates.some(dragState => (dragState.keyframe.position < 0 || dragState.keyframe.position > 1));
   }
 
   onDrag (event) {
