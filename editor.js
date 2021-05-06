@@ -192,6 +192,7 @@ export class InteractivesEditor extends QinoqMorph {
 
   initializeInteractive (interactive) {
     if (!interactive) return;
+    this._isInitializing = true;
     this.ui.preview.loadContent(interactive);
     this.ui.globalTimeline.loadContent(interactive);
 
@@ -212,6 +213,7 @@ export class InteractivesEditor extends QinoqMorph {
 
     // trigger update of timeline dependents
     this.onDisplayedTimelineChange(this.ui.globalTimeline);
+    this._isInitializing = false;
   }
 
   // call this to propagate changes to the scrollposition to the actual interactive
@@ -445,9 +447,14 @@ export class InteractivesEditor extends QinoqMorph {
       disconnect(this, 'onScrollChange', displayedTimeline, 'onScrollChange');
       disconnect(previouslyDisplayedTimeline, 'zoomFactor', this.ui.menuBar.ui.zoomInput, 'number');
     }
-    connect(displayedTimeline, 'zoomFactor', this.ui.menuBar.ui.zoomInput, 'number', { converter: '(zoomFactor) => zoomFactor * 100' }).update(displayedTimeline.zoomFactor);
+    connect(displayedTimeline, 'zoomFactor', this.ui.menuBar.ui.zoomInput, 'number', { converter: '(zoomFactor) => zoomFactor * 100' });
     connect(this.ui.window, 'extent', displayedTimeline, 'relayout').update(this.ui.window.extent);
-    connect(this, 'onScrollChange', displayedTimeline, 'onScrollChange').update(this.interactive.scrollPosition);
+    connect(this, 'onScrollChange', displayedTimeline, 'onScrollChange');
+
+    if (!this._isInitializing) {
+      signal(displayedTimeline, 'zoomFactor', displayedTimeline.zoomFactor);
+      signal(this, 'onScrollChange', this.interactive.scrollPosition);
+    }
     return displayedTimeline;
   }
 
