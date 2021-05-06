@@ -58,6 +58,10 @@ export class QinoqButton extends Label {
   }
 
   setDefaultStyle () {
+    if (this.filled) {
+      this.setFilledStyle();
+      return;
+    }
     this.fill = COLOR_SCHEME.BACKGROUND;
     this.fontColor = COLOR_SCHEME.BUTTON_BLUE;
   }
