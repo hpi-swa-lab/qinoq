@@ -198,6 +198,7 @@ export class InteractivesEditor extends QinoqMorph {
     interactive.withAllSubmorphsDo(submorph => { if (!submorph.isSequence && !submorph.isInteractive) connect(submorph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' }); });
 
     connect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
+    connect(this, 'onInternalScrollChange', this.interactive, 'onExternalScrollChange');
 
     connect(this.interactive, 'name', this.ui.globalTab, 'caption').update(this.interactive.name);
     connect(this.ui.globalTab, 'caption', this.interactive, 'name');
@@ -215,7 +216,6 @@ export class InteractivesEditor extends QinoqMorph {
   // call this to propagate changes to the scrollposition to the actual interactive
   onInternalScrollChange (scrollPosition) {
     if (!this.interactive) return;
-    this.interactive.onExternalScrollChange(scrollPosition);
     this.onScrollChange(scrollPosition);
   }
 
@@ -228,6 +228,9 @@ export class InteractivesEditor extends QinoqMorph {
 
   // listens for actual scrolling happening on the Interactive
   onExternalScrollChange (scrollPosition) {
+    // this will not trigger the connection for number on scrollPositionInput
+    this.ui.menuBar.ui.scrollPositionInput.setProperty('number', scrollPosition);
+    this.ui.menuBar.ui.scrollPositionInput.relayout(false);
     this.onScrollChange(scrollPosition);
   }
 
@@ -252,6 +255,7 @@ export class InteractivesEditor extends QinoqMorph {
     this.interactive.withAllSubmorphsDo(submorph => { if (!submorph.isSequence && !submorph.isInteractive) disconnect(submorph, 'onAbandon', this, 'removeMorphFromInteractive'); });
 
     disconnect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
+    disconnect(this, 'onInternalScrollChange', this.interactive, 'onExternalScrollChange');
 
     disconnect(this.interactive, 'name', this.ui.globalTimeline, 'name');
     disconnect(this.interactive, 'remove', this, 'reset');
@@ -933,7 +937,6 @@ class MenuBar extends QinoqMorph {
     });
     this.ui.scrollPositionInput.getSubmorphNamed('value').fontColor = COLOR_SCHEME.ON_SURFACE;
     connect(this.ui.scrollPositionInput, 'number', this.editor, 'onInternalScrollChange');
-    connect(this.editor, 'onExternalScrollChange', this.ui.scrollPositionInput, 'number');
     this.ui.scrollPositionToolbar.addMorph(this.ui.scrollPositionInput);
   }
 
