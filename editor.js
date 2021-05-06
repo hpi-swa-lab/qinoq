@@ -372,31 +372,6 @@ export class InteractivesEditor extends QinoqMorph {
     return this.getSequenceFor(this.ui.tabContainer.selectedTab);
   }
 
-  createNewSequence () {
-    if (!this.interactive) return;
-
-    // Assign a valid position to the new sequence
-    const lastSequenceInFirstLayer = this.interactive.getLastSequenceInLayer(this.interactive.layers[0]);
-    const startingPosition = lastSequenceInFirstLayer ? lastSequenceInFirstLayer.end : 0;
-
-    const newSequence = new Sequence({ name: 'unnamed sequence', start: startingPosition, duration: CONSTANTS.NEW_SEQUENCE_LENGTH });
-    newSequence.layer = this.interactive.layers[0];
-    this.interactive.addSequence(newSequence);
-
-    this.ui.globalTimeline.createTimelineSequenceInHand(newSequence);
-  }
-
-  createNewLayer () {
-    if (!this.interactive) return;
-
-    const newZIndex = this.interactive.highestZIndex + 10;
-    const newLayer = new Layer({ zIndex: newZIndex });
-
-    this.interactive.addLayer(newLayer);
-    this.ui.globalTimeline.createTimelineLayer(newLayer);
-    this.ui.globalTimeline.onActiveAreaWidthChange();
-  }
-
   addMorphToInteractive (morph) {
     this.currentSequence.addMorph(morph);
     this.onMorphAddition(morph); // Additional actions that are morph specific
@@ -557,6 +532,74 @@ export class InteractivesEditor extends QinoqMorph {
             const keyframe = allKeyframes[keyframeSearchStrings.indexOf(result.selected[0])];
             await this.goto(keyframe);
           }
+        }
+      },
+      {
+        name: 'scroll to start',
+        doc: 'set scrollposition to start of sequence of sequence view or start of interactive',
+        exec: () => {
+          this.interactiveScrollPosition = this.currentSequence ? this.currentSequence.start : 0;
+        }
+      },
+      {
+        name: 'scroll to previous sequence',
+        exec: () => {
+          const sequence = this.currentSequence;
+          const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getPrevKeyframePosition(sequence.progress)) : this.interactive.getPrevSequenceStart(this.interactiveScrollPosition);
+          if (nextPosition == undefined || isNaN(nextPosition)) return;
+          this.interactiveScrollPosition = nextPosition;
+        }
+      },
+      {
+        name: 'scroll to next sequence',
+        exec: () => {
+          const sequence = this.currentSequence;
+          const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getNextKeyframePosition(sequence.progress)) : this.interactive.getNextSequenceStart(this.interactiveScrollPosition);
+          if (nextPosition == undefined || isNaN(nextPosition)) return;
+          this.interactiveScrollPosition = nextPosition;
+        }
+      },
+      {
+        name: 'scroll to end',
+        doc: 'Scroll to the end of the interactive or the open sequence',
+        exec: () => {
+          this.interactiveScrollPosition = this.currentSequence ? this.currentSequence.end : this.interactive.length;
+        }
+      },
+      {
+        name: 'zoomToFitTimeline',
+        doc: 'Zoom so that the complete timeline can be seen',
+        exec: () => {
+          this.displayedTimeline.zoomToFit();
+        }
+      },
+      {
+        name: 'create new layer',
+        exec: () => {
+          if (!this.interactive) return;
+
+          const newZIndex = this.interactive.highestZIndex + 10;
+          const newLayer = new Layer({ zIndex: newZIndex });
+
+          this.interactive.addLayer(newLayer);
+          this.globalTimeline.createTimelineLayer(newLayer);
+          this.globalTimeline.onActiveAreaWidthChange();
+        }
+      },
+      {
+        name: 'create new sequence',
+        exec: () => {
+          if (!this.interactive) return;
+
+          // Assign a valid position to the new sequence
+          const lastSequenceInFirstLayer = this.interactive.getLastSequenceInLayer(this.interactive.layers[0]);
+          const startingPosition = lastSequenceInFirstLayer ? lastSequenceInFirstLayer.end : 0;
+
+          const newSequence = new Sequence({ name: 'unnamed sequence', start: startingPosition, duration: CONSTANTS.NEW_SEQUENCE_LENGTH });
+          newSequence.layer = this.interactive.layers[0];
+          this.interactive.addSequence(newSequence);
+
+          this.globalTimeline.createTimelineSequenceInHand(newSequence);
         }
       }];
   }
@@ -813,9 +856,8 @@ class MenuBar extends QinoqMorph {
 
     this.buildIconButton({
       tooltip: 'Create a new sequence',
-      action: () => {
-        this.editor.createNewSequence();
-      },
+      target: this.editor,
+      command: 'create new sequence',
       icon: 'ticket-alt',
       name: 'addSequenceButton',
       container: 'leftContainer'
@@ -823,9 +865,8 @@ class MenuBar extends QinoqMorph {
 
     this.buildIconButton({
       tooltip: 'Create a new layer',
-      action: () => {
-        this.editor.createNewLayer();
-      },
+      target: this.editor,
+      command: 'create new layer',
       icon: 'layer-group',
       name: 'addLayerButton',
       container: 'leftContainer'
@@ -833,9 +874,8 @@ class MenuBar extends QinoqMorph {
 
     this.buildIconButton({
       tooltip: 'Go to start',
-      action: () => {
-        this.editor.internalScrollChangeWithGUIUpdate(this.editor.currentSequence ? this.editor.currentSequence.start : 0);
-      },
+      target: this.editor,
+      command: 'scroll to start',
       icon: 'fast-backward',
       name: 'gotoStartButton',
       container: 'scrollPositionToolbar'
@@ -843,12 +883,8 @@ class MenuBar extends QinoqMorph {
 
     this.buildIconButton({
       tooltip: 'Go to previous sequence',
-      action: () => {
-        const sequence = this.editor.currentSequence;
-        const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getPrevKeyframePosition(sequence.progress)) : this.interactive.getPrevSequenceStart();
-        if (nextPosition == undefined || isNaN(nextPosition)) return;
-        this.editor.internalScrollChangeWithGUIUpdate(nextPosition);
-      },
+      target: this.editor,
+      command: 'scroll to previous sequence',
       icon: 'step-backward',
       name: 'gotoPrevButton',
       container: 'scrollPositionToolbar'
@@ -858,12 +894,8 @@ class MenuBar extends QinoqMorph {
 
     this.buildIconButton({
       tooltip: 'Go to next sequence',
-      action: () => {
-        const sequence = this.editor.currentSequence;
-        const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getNextKeyframePosition(sequence.progress)) : this.interactive.getNextSequenceStart();
-        if (nextPosition == undefined || isNaN(nextPosition)) return;
-        this.editor.internalScrollChangeWithGUIUpdate(nextPosition);
-      },
+      target: this.editor,
+      command: 'scroll to next sequence',
       icon: 'step-forward',
       name: 'gotoNextButton',
       container: 'scrollPositionToolbar'
@@ -871,9 +903,8 @@ class MenuBar extends QinoqMorph {
 
     this.buildIconButton({
       tooltip: 'Go to end',
-      action: () => {
-        this.editor.internalScrollChangeWithGUIUpdate(this.editor.currentSequence ? this.editor.currentSequence.end : this.interactive.length);
-      },
+      target: this.editor,
+      command: 'scroll to end',
       icon: 'fast-forward',
       name: 'gotoEndButton',
       container: 'scrollPositionToolbar'
@@ -889,15 +920,17 @@ class MenuBar extends QinoqMorph {
 
     this.buildIconButton({
       tooltip: 'Zoom to fit timeline',
-      action: () => this.editor.displayedTimeline.zoomToFit(),
+      target: this.editor,
+      action: 'zoomToFitTimeline',
       icon: 'expand-arrows-alt',
       name: 'fitZoomButton',
       container: 'rightContainer'
     });
 
-    this.buildIconButton({
-      tooltip: 'Find keyframe',
-      action: () => this.editor.execCommand('find keyframe'),
+    await this.buildIconButton({
+      tooltip: 'Find Keyframe',
+      target: this.editor,
+      command: 'find keyframe',
       icon: 'search-location',
       name: 'findKeyframeButton',
       container: 'rightContainer'
