@@ -48,6 +48,10 @@ export class QinoqButton extends Label {
     };
   }
 
+  get isQinoqButton () {
+    return true;
+  }
+
   onMouseDown () {
     this.setFilledStyle();
   }
