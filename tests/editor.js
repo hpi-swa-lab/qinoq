@@ -128,7 +128,13 @@ describe('Editor', () => {
   });
 
   describe('serialization', () => {
-    it('can be serialized with interactive', () => {
+    it('can be serialized without an interactive', async () => {
+      const emptyEditor = await new InteractivesEditor().initialize();
+      deserialize(serialize(emptyEditor));
+      emptyEditor.ui.window.close();
+    });
+
+    it('can be serialized with an interactive', () => {
       deserialize(serialize(editor));
     });
   });
