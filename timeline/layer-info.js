@@ -1,9 +1,10 @@
 import { VerticalLayout, Icon, Label } from 'lively.morphic';
 import { CONSTANTS } from './constants.js';
-import { pt } from 'lively.graphics';
+import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from '../colors.js';
 import { Sequence } from '../index.js';
 import { QinoqMorph } from '../qinoq-morph.js';
+import { QinoqButton } from '../components/icon-button.js';
 
 export class TimelineLayerInfo extends QinoqMorph {
   static get properties () {
@@ -56,18 +57,18 @@ export class TimelineLayerInfo extends QinoqMorph {
     this.addMorph(this.ui.label);
 
     if (this.isInGlobalTimeline) {
-      this.ui.hideButton = new Label({ name: 'hide button', tooltip: 'Hide layer in interactive', nativeCursor: 'pointer', reactsToPointer: true });
-      this.ui.hideButton.onMouseUp = (event) => {
-        // domEvt.button 0 is left click, the DOM event has a wrong buttons property, so event.leftMouseButtonPressed() doesn't work currently
-        if (event.domEvt.button == 0) this.toggleLayerVisibility();
-      };
-      Icon.setIcon(this.ui.hideButton, 'eye');
-
+      this.ui.hideButton = new QinoqButton({
+        padding: rect(3, 3, 3, 3),
+        name: 'hide button',
+        tooltip: 'Hide layer in interactive',
+        target: this,
+        action: 'toggleLayerVisibility',
+        icon: 'eye'
+      });
       this.addMorph(this.ui.hideButton);
+      this.restyleAfterHideToggle();
     }
-
     this.layout = new VerticalLayout({ spacing: 4, autoResize: false });
-    this.restyleAfterHideToggle();
   }
 
   updateLabel () {
@@ -90,7 +91,7 @@ export class TimelineLayerInfo extends QinoqMorph {
 
   restyleAfterHideToggle () {
     if (!this.layer) return;
-    Icon.setIcon(this.ui.hideButton, this.layer.hidden ? 'eye-slash' : 'eye');
+    this.ui.hideButton.icon = this.layer.hidden ? 'eye-slash' : 'eye';
     this.ui.hideButton.tooltip = this.layer.hidden ? 'Show layer in interactive' : 'Hide layer in interactive';
     this.interactive.redraw();
     this.timelineLayer.toggleHiddenStyle();
