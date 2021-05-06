@@ -305,16 +305,16 @@ export class InteractivesEditor extends QinoqMorph {
       return this.getTimelineFor(sequenceTab);
     }
 
-    const timeline = this.initializeSequenceTimeline(sequence);
+    const timeline = await this.initializeSequenceTimeline(sequence);
     const tab = await this.ui.tabContainer.addTab(sequence.name, timeline);
     connect(sequence, 'name', tab, 'caption');
     connect(tab, 'caption', sequence, 'name');
     return tab;
   }
 
-  initializeSequenceTimeline (sequence) {
+  async initializeSequenceTimeline (sequence) {
     const sequenceTimeline = new SequenceTimeline({ position: pt(0, 0), extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.TIMELINE_HEIGHT), _editor: this });
-    sequenceTimeline.loadContent(sequence);
+    await sequenceTimeline.loadContent(sequence);
     return sequenceTimeline;
   }
 

@@ -306,6 +306,10 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
     this.keyframeLines.forEach(keyframeLine => keyframeLine.updatePosition());
   }
 
+  toggleExpanded () {
+    this.isExpanded = !this.isExpanded;
+  }
+
   collapse () {
     this.layerInfo.restyleCollapseToggle();
     this.opacity = 1;
@@ -614,4 +618,3 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     super.__after_deserialize__(snapshot, ref, pool);
   }
 }
-

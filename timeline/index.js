@@ -258,13 +258,13 @@ export class Timeline extends QinoqMorph {
     return this.withAllSubmorphsSelect(submorph => submorph.isTimelineLayer);
   }
 
-  loadContent (content) {
+  async loadContent (content) {
     if (this.submorphs.length !== 0) {
       this.submorphs.forEach(submorph => submorph.remove());
       this.initialize();
     }
     this._createOverviewLayers = true;
-    this.onLoadContent(content);
+    await this.onLoadContent(content);
     this.initializeCursor();
     this.onScrollChange(this.editor.interactive.scrollPosition);
 
@@ -619,9 +619,9 @@ export class SequenceTimeline extends Timeline {
     return true;
   }
 
-  createOverviewTimelineLayer (morph) {
+  async createOverviewTimelineLayer (morph) {
     const timelineLayer = super.createTimelineLayer(morph);
-    timelineLayer.layerInfo.addCollapseToggle();
+    await timelineLayer.layerInfo.addCollapseToggle();
     return timelineLayer;
   }
 
@@ -634,12 +634,13 @@ export class SequenceTimeline extends Timeline {
     return timelineLayer;
   }
 
-  onLoadContent (sequence) {
+  async onLoadContent (sequence) {
     this._sequence = sequence;
-    this.sequence.submorphs.forEach(morph => {
-      const timelineLayer = this.createOverviewTimelineLayer(morph);
+    // https://stackoverflow.com/a/37576787
+    for (const morph of this.sequence.submorphs) {
+      const timelineLayer = await this.createOverviewTimelineLayer(morph);
       timelineLayer.addTimelineKeyframes();
-    });
+    }
   }
 
   redraw () {
