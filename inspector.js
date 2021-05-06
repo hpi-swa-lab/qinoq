@@ -114,9 +114,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
     });
     switch (propType) {
       case 'point':
-        // extent and autofit are necessary for the correct layouting to be applied
-        this.propertyControls[property].x = new NumberWidget({ position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y), extent: CONSTANTS.WIDGET_EXTENT, autofit: false });
-        this.propertyControls[property].y = new NumberWidget({ position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_TWO_Y), extent: CONSTANTS.WIDGET_EXTENT, autofit: false });
+        this.buildPointPropertyControl(property);
         break;
       case 'color':
         this.propertyControls[property].color = new ColorPickerField({ position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y), colorValue: this.targetMorph[property] });
@@ -140,6 +138,24 @@ export class InteractiveMorphInspector extends QinoqMorph {
     this.ui.propertyPane.addMorph(this.ui[property]);
   }
 
+  buildPointPropertyControl (property) {
+    // extent and autofit are necessary for the correct layouting to be applied
+    this.propertyControls[property].x = new NumberWidget({
+      position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
+      extent: CONSTANTS.WIDGET_EXTENT,
+      autofit: false,
+      scaleFactor: 1.01, // Has to be different than 1 to disable floatingPoint
+      floatingPoint: false
+    });
+    this.propertyControls[property].y = new NumberWidget({
+      position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_TWO_Y),
+      extent: CONSTANTS.WIDGET_EXTENT,
+      autofit: false,
+      scaleFactor: 1.01, // Has to be different than 1 to disable floatingPoint
+      floatingPoint: false
+    });
+  }
+
   buildNumberPropertyControl (property) {
     const spec = this.targetMorph.propertiesAndPropertySettings().properties[property];
     let floatingPoint = spec.isFloat;
@@ -157,6 +173,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
     this.propertyControls[property].number = new NumberWidget({
       position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
       floatingPoint,
+      scaleFactor: 1.01, // Has to be different than 1 to disable floatingPoint
       unit,
       min,
       max,
