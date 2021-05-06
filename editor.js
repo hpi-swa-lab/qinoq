@@ -922,7 +922,7 @@ class MenuBar extends QinoqMorph {
       target: this.editor,
       command: 'zoom to fit timeline',
       icon: 'expand-arrows-alt',
-	  label: 'Zoom to fit timeline',
+      label: 'Zoom to fit timeline',
       name: 'fitZoomButton',
       container: 'rightContainer'
     });
