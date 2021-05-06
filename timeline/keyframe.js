@@ -44,7 +44,7 @@ export class TimelineKeyframe extends QinoqMorph {
           if (this._lockModelUpdate) return;
           if (this.layer) {
             this.keyframe.position = this.layer.timeline.getScrollFromPosition(this.position);
-            this.layer.redraw();
+            this.layer.redraw({ doNotRepositionKeyframes: true });
             if (this.currentDrag && !this.isPrimaryDragTarget) return; // No need for redraw for all dragged keyframes
             this.editor.interactive.redraw();
           }

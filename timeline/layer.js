@@ -433,14 +433,16 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     this.timeline.deselectAllTimelineKeyframes();
   }
 
-  async redraw () {
+  async redraw (options = {}) {
     await this.activeArea.whenRendered();
     if (this.keyframes.length == 0) return;
-    this.keyframes.forEach(timelineKeyframe => {
-      timelineKeyframe._lockModelUpdate = true;
-      timelineKeyframe.position = pt(this.timeline.getPositionFromKeyframe(timelineKeyframe.keyframe), timelineKeyframe.position.y);
-      timelineKeyframe._lockModelUpdate = false;
-    });
+    if (!options.doNotRepositionKeyframes) {
+      this.keyframes.forEach(timelineKeyframe => {
+        timelineKeyframe._lockModelUpdate = true;
+        timelineKeyframe.position = pt(this.timeline.getPositionFromKeyframe(timelineKeyframe.keyframe), timelineKeyframe.position.y);
+        timelineKeyframe._lockModelUpdate = false;
+      });
+    }
     this.redrawActiveArea();
   }
 
@@ -606,4 +608,3 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     super.__after_deserialize__(snapshot, ref, pool);
   }
 }
-
