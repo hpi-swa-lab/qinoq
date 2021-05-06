@@ -7,19 +7,18 @@ import { QinoqMorph } from '../qinoq-morph.js';
 import { serialize, deserialize } from 'lively.serializer2';
 import { LottieMorph } from '../interactive-morphs/lottie-morph.js';
 
+let editor, interactive;
+function closeEditor () {
+  editor.ui.window.close();
+}
+
+async function openNewEditorWithExampleInteractive () {
+  editor = await new InteractivesEditor().initialize();
+  interactive = await exampleInteractive();
+  editor.interactive = interactive;
+}
+
 describe('Editor', () => {
-  let editor, interactive;
-
-  async function openNewEditorWithExampleInteractive () {
-    editor = await new InteractivesEditor().initialize();
-    interactive = await exampleInteractive();
-    editor.interactive = interactive;
-  }
-
-  function closeEditor () {
-    editor.ui.window.close();
-  }
-
   before(async () => {
     await openNewEditorWithExampleInteractive();
   });
@@ -234,12 +233,9 @@ describe('Editor', () => {
 
 describe('Qinoq morph', () => {
   let qinoqMorph;
-  let editor, interactive;
 
   before(async () => {
-    editor = await new InteractivesEditor().initialize();
-    interactive = await exampleInteractive();
-    editor.interactive = interactive;
+    await openNewEditorWithExampleInteractive();
   });
 
   beforeEach(() => {
@@ -291,7 +287,6 @@ describe('Qinoq morph', () => {
 });
 
 describe('Editor and Interactive connections', () => {
-  let editor, interactive;
   before(async () => {
     editor = await new InteractivesEditor().initialize();
     interactive = await exampleInteractive();
@@ -349,6 +344,7 @@ describe('Editor and Interactive connections', () => {
 
   function interactiveHasOutsideConnections () {
     const connections = interactiveConnections();
+
     return connections.map(connection => {
       const source = connection.sourceObj;
       const target = connection.targetObj;
@@ -370,7 +366,7 @@ describe('Editor and Interactive connections', () => {
   }
 
   after(() => {
-    editor.ui.window.close();
+    closeEditor();
     interactive.abandon();
   });
 });
