@@ -12,6 +12,7 @@ import { Button } from 'lively.components';
 import { arrowRightPressed, arrowLeftPressed } from './keys.js';
 import { Clipboard } from './utilities/clipboard.js';
 import { QinoqMorph } from './qinoq-morph.js';
+import { QinoqButton } from './components/icon-button.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -19,7 +20,7 @@ const CONSTANTS = {
   PREVIEW_WIDTH: 533,
   SUBWINDOW_HEIGHT: 300,
   BORDER_WIDTH: 3,
-  MENU_BAR_HEIGHT: 32,
+  MENU_BAR_HEIGHT: 38,
   NEW_SEQUENCE_LENGTH: 125,
   SPACING: 3,
   SCROLL_POSITION_TOOLBAR_X_OFFSET: 360,
@@ -943,33 +944,28 @@ class MenuBar extends QinoqMorph {
 
   buildIconButton (options = {}) {
     const { action, tooltip, name, morphName = 'aButton', icon, container } = options;
-    this.ui[name] = new Label({
-      extent: pt(64, 64),
+    this.ui[name] = new QinoqButton({
       fontSize: 20,
-      fontColor: COLOR_SCHEME.SECONDARY,
-      nativeCursor: 'pointer',
+      padding: rect(3, 3, 3, 3),
       name: morphName,
-      tooltip
+      tooltip,
+      target: this.editor,
+      action: 'createNewSequence',
+      icon: icon
     });
-    this.ui[name].onMouseUp = action;
-    Icon.setIcon(this.ui[name], icon);
     this.ui[container].addMorph(this.ui[name]);
   }
 
   onGlobalTimelineTab () {
-    this.ui.addSequenceButton.reactsToPointer = true;
-    this.ui.addLayerButton.reactsToPointer = true;
-    this.ui.addSequenceButton.fontColor = COLOR_SCHEME.SECONDARY;
-    this.ui.addLayerButton.fontColor = COLOR_SCHEME.SECONDARY;
+    this.ui.addSequenceButton.enabled = true;
+    this.ui.addLayerButton.enabled = true;
     this.ui.gotoNextButton.tooltip = 'Go to next sequence';
     this.ui.gotoPrevButton.tooltip = 'Go to previous sequence';
   }
 
   onSequenceView () {
-    this.ui.addSequenceButton.reactsToPointer = false;
-    this.ui.addLayerButton.reactsToPointer = false;
-    this.ui.addSequenceButton.fontColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
-    this.ui.addLayerButton.fontColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
+    this.ui.addSequenceButton.enabled = false;
+    this.ui.addLayerButton.enabled = false;
     this.ui.gotoNextButton.tooltip = 'Go to next keyframe';
     this.ui.gotoPrevButton.tooltip = 'Go to previous keyframe';
   }
