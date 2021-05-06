@@ -12,7 +12,7 @@ import { Button } from 'lively.components';
 import { arrowRightPressed, arrowLeftPressed } from './keys.js';
 import { Clipboard } from './utilities/clipboard.js';
 import { QinoqMorph } from './qinoq-morph.js';
-import { QinoqButton } from './components/icon-button.js';
+import { QinoqButton } from './components/qinoq-button.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
