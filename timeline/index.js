@@ -655,14 +655,18 @@ export class SequenceTimeline extends Timeline {
   }
 
   updateLayers () {
-    this.withAllSubmorphsDo(submorph => {
-      if (submorph.isTimelineLayer) {
-        if (submorph.isOverviewLayer) {
-          submorph.updateTimelineKeyframes();
-          submorph.removePropertyLayers();
-          submorph.createPropertyLayers();
-        }
+    this.timelineLayers.forEach(timelineLayer => {
+      if (timelineLayer.isOverviewLayer) {
+        timelineLayer.updateTimelineKeyframes();
+        timelineLayer.removePropertyLayers();
+        timelineLayer.createPropertyLayers();
       }
+    });
+  }
+
+  onKeyframePositionChanged (timelineKeyframe) {
+    this.timelineLayers.forEach(timelineLayer => {
+      if (timelineLayer.isOverviewLayer) timelineLayer.updateTimelineKeyframes();
     });
   }
 

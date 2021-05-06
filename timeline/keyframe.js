@@ -234,7 +234,7 @@ export class TimelineKeyframe extends QinoqMorph {
         stateForKeyframe.previousPosition = stateForKeyframe.timelineKeyframe.position;
       });
     }
-
+    this.timeline.onKeyframePositionChanged(this);
     this.editor.interactive.redraw();
   }
 
