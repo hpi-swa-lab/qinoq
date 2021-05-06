@@ -208,10 +208,12 @@ export class TimelineKeyframe extends QinoqMorph {
     super.onDrag(event);
     this.position = pt(this.position.x, this.timelineKeyframeY);
 
-    const referenceDragState = event.hand.dragKeyframeStates.filter(dragState => dragState.timelineKeyframe == this)[0];
+    const referenceDragState = event.hand.dragKeyframeStates.find(dragState => dragState.timelineKeyframe == this);
+
     const prevPositionX = referenceDragState.previousPosition.x;
     const dragDeltaX = prevPositionX - this.position.x;
 
+    // Handle dragging when multiple keyframes are dragged together
     event.hand.dragKeyframeStates.forEach(dragState => {
       if (dragState.timelineKeyframe != this) {
         dragState.timelineKeyframe.position = pt(dragState.previousPosition.x - dragDeltaX, dragState.previousPosition.y);
@@ -227,8 +229,6 @@ export class TimelineKeyframe extends QinoqMorph {
         stateForKeyframe.previousPosition = stateForKeyframe.timelineKeyframe.position;
       });
     }
-
-    this.interactive.redraw();
   }
 
   get isTimelineKeyframe () {
