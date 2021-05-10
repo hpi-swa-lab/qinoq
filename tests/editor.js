@@ -191,6 +191,25 @@ describe('Editor', () => {
         expect(interactive.layers.length).to.be.equal(layerCount);
       });
     });
+
+    describe(', the zoom to fit timeline button', () => {
+      let zoomToFitTimelineButton;
+
+      before(() => {
+        zoomToFitTimelineButton = editor.withAllSubmorphsSelect(submorph => submorph.tooltip == 'Zoom to fit timeline')[0];
+      });
+
+      it('exists', () => {
+        expect(zoomToFitTimelineButton).to.be.ok;
+      });
+
+      it('changes zoom in global timeline', () => {
+        editor.updateZoomInputNumber(1);
+        expect(editor.ui.menuBar.ui.zoomInput.number).to.be.equal(100);
+        zoomToFitTimelineButton.onMouseUp();
+        expect(editor.ui.menuBar.ui.zoomInput.number).to.be.greaterThan(100);
+      });
+    });
   });
 
   it('moves scroll holder', () => {
