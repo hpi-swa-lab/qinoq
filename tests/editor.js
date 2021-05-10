@@ -41,7 +41,14 @@ describe('Editor', () => {
       const timeline = nightBackgroundTimelineSequence.timeline;
       const event = {
         isShiftDown: () => { return false; },
-        isAltDown: () => { return false; }
+        isAltDown: () => { return false; },
+        targetMorph: nightBackgroundTimelineSequence,
+        state: {
+          prevClick:
+                {
+                  clickCount: 0
+                }
+        }
       };
       expect(timeline._lastSelectedTimelineSequence).to.not.be.ok;
       nightBackgroundTimelineSequence.onMouseDown(event);
@@ -87,7 +94,17 @@ describe('Editor', () => {
       const timelineLayer = editor.displayedTimeline.getSubmorphNamed('anOverviewSequenceTimelineLayer');
       const layerInfo = timelineLayer.layerInfo;
       expect(layerInfo.menuItems().some(menuItem => menuItem[0] == '➕ Expand view')).to.be.false;
-      const clickEvent = { state: { clickedMorph: null }, targetMorphs: [timelineLayer] };
+      const clickEvent = {
+        state: {
+          clickedMorph: null,
+          prevClick:
+                {
+                  clickCount: 0
+                }
+        },
+        targetMorphs: [timelineLayer],
+        targetMorph: timelineLayer
+      };
       timelineLayer.onMouseDown(clickEvent);
       await editor.getSubmorphNamed('aKeyframeButton').onMouseUp();
       expect(layerInfo.menuItems().some(menuItem => menuItem[0] == '➕ Expand view')).to.be.true;
