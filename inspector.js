@@ -115,8 +115,18 @@ export class InteractiveMorphInspector extends QinoqMorph {
     switch (propType) {
       case 'point':
         // extent and autofit are necessary for the correct layouting to be applied
-        this.propertyControls[property].x = new NumberWidget({ position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y), extent: CONSTANTS.WIDGET_EXTENT, autofit: false });
-        this.propertyControls[property].y = new NumberWidget({ position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_TWO_Y), extent: CONSTANTS.WIDGET_EXTENT, autofit: false });
+        this.propertyControls[property].x = new NumberWidget({
+          position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
+          extent: CONSTANTS.WIDGET_EXTENT,
+          autofit: false,
+          floatingPoint: false
+        });
+        this.propertyControls[property].y = new NumberWidget({
+          position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_TWO_Y),
+          extent: CONSTANTS.WIDGET_EXTENT,
+          autofit: false,
+          floatingPoint: false
+        });
         break;
       case 'color':
         this.propertyControls[property].color = new ColorPickerField({ position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y), colorValue: this.targetMorph[property] });
