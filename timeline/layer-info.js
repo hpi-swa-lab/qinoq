@@ -58,7 +58,6 @@ export class TimelineLayerInfo extends QinoqMorph {
 
     if (this.isInGlobalTimeline) {
       this.ui.hideButton = new QinoqButton({
-        padding: rect(3, 3, 3, 3),
         name: 'hide button',
         tooltip: 'Hide layer in interactive',
         target: this,
@@ -99,7 +98,6 @@ export class TimelineLayerInfo extends QinoqMorph {
 
   addCollapseToggle () {
     this.ui.collapseButton = new QinoqButton({
-      padding: rect(3, 3, 3, 3),
       position: pt(10, 10),
       fontSize: 15,
       name: 'collapse button',

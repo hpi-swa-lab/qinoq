@@ -1,5 +1,5 @@
 import { Label, Icon } from 'lively.morphic';
-import { Color } from 'lively.graphics';
+import { Color, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from '../colors.js';
 
 export class QinoqButton extends Label {
@@ -47,6 +47,9 @@ export class QinoqButton extends Label {
       borderWidth: {
         defaultValue: 1
       },
+      padding: {
+        defaultValue: rect(1, 1, 4, 2)
+      },
       icon: {
         set (icon) {
           Icon.setIcon(this, icon);
@@ -74,6 +77,7 @@ export class QinoqButton extends Label {
 
   onHoverOut () {
     this.borderColor = COLOR_SCHEME.BACKGROUND;
+    this.setDefaultStyle();
   }
 
   setDefaultStyle () {
