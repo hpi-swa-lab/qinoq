@@ -1015,8 +1015,8 @@ class MenuBar extends QinoqMorph {
   }
 
   disableUIElements () {
-    Object.keys(this.ui).forEach(key => {
-      const morph = this.ui[key];
+    Object.values(this.ui).forEach(value => {
+      const morph = value;
       if (morph.isQinoqButton) morph.enabled = false;
     });
     this.ui.zoomInput.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
@@ -1024,8 +1024,8 @@ class MenuBar extends QinoqMorph {
   }
 
   enableUIElements () {
-    Object.keys(this.ui).forEach(key => {
-      const morph = this.ui[key];
+    Object.values(this.ui).forEach(value => {
+      const morph = value;
       if (morph.isQinoqButton) morph.enabled = true;
     });
     this.ui.zoomInput.borderColor = COLOR_SCHEME.SECONDARY;
