@@ -606,6 +606,10 @@ export class TimelineSequence extends QinoqMorph {
     return true;
   }
 
+  get mayBeSelected () {
+    return true;
+  }
+
   get timeline () {
     return this.timelineLayer.timeline;
   }

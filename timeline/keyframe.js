@@ -249,6 +249,10 @@ export class TimelineKeyframe extends QinoqMorph {
     return true;
   }
 
+  get mayBeSelected () {
+    return true;
+  }
+
   updateAppearance () {
     this.borderColor = this.isSelected ? COLOR_SCHEME.PRIMARY : COLOR_SCHEME.KEYFRAME_BORDER;
   }
