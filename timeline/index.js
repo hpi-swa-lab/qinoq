@@ -610,6 +610,7 @@ export class GlobalTimeline extends Timeline {
     const widthAvailable = this.ui.layerContainer.width;
     const factor = widthAvailable / widthToFit;
     this.zoomFactor = factor;
+    this.editor.updateZoomInputNumber(this.zoomFactor);
   }
 }
 
@@ -857,6 +858,7 @@ export class SequenceTimeline extends Timeline {
 
   zoomToFit () {
     this.zoomFactor = 1;
+    this.editor.updateZoomInputNumber(this.zoomFactor);
   }
 
   menuItems () {
