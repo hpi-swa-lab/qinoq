@@ -54,7 +54,7 @@ export class QinoqButton extends Label {
   }
 
   onMouseDown () {
-    this.setFilledStyle();
+    this.filled ? this.resetStyle() : this.setFilledStyle();
   }
 
   onMouseUp () {
@@ -63,12 +63,7 @@ export class QinoqButton extends Label {
   }
 
   setDefaultStyle () {
-    if (this.filled) {
-      this.setFilledStyle();
-      return;
-    }
-    this.fill = COLOR_SCHEME.BACKGROUND;
-    this.fontColor = COLOR_SCHEME.BUTTON_BLUE;
+    this.filled ? this.setFilledStyle() : this.resetStyle();
   }
 
   setDisabledStyle () {
@@ -79,6 +74,11 @@ export class QinoqButton extends Label {
   setFilledStyle () {
     this.fill = COLOR_SCHEME.BUTTON_BLUE;
     this.fontColor = COLOR_SCHEME.BACKGROUND;
+  }
+
+  resetStyle () {
+    this.fill = COLOR_SCHEME.BACKGROUND;
+    this.fontColor = COLOR_SCHEME.BUTTON_BLUE;
   }
 
   enable () {
