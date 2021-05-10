@@ -210,9 +210,9 @@ export class TimelineSequence extends QinoqMorph {
     }
     if (event.leftMouseButtonPressed()) {
       if (rangeSelectKeyPressed(event) && !this.isSelected && this.timeline._lastSelectedTimelineSequence && this.timeline.getSelectedSequences().length > 0) {
-        this.timeline.selectAllSequences(this.rectangularSelectionFilter);
+        this.timeline.selectAllItems(this.rectangularSelectionFilter);
       } else if (rangeSelectKeyPressed(event) && this.isSelected && this.timeline._lastSelectedTimelineSequence) {
-        this.timeline.deselectAllSequences(this.rectangularSelectionFilter);
+        this.timeline.deselectAllItems(this.rectangularSelectionFilter);
       } else if (singleSelectKeyPressed(event)) {
         this.toggleSelected();
       }
