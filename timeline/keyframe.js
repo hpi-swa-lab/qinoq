@@ -45,7 +45,7 @@ export class TimelineKeyframe extends QinoqMorph {
           if (this.layer) {
             this.keyframe.position = this.timeline.getScrollFromPosition(this.position);
             this.layer.redraw({ doNotRepositionKeyframes: true });
-            if (this.currentDrag && !this.isPrimaryDragTarget) return; // No need for redraw for all dragged keyframes
+            if (this.currentDragStates && !this.isPrimaryDragTarget) return; // No need for redraw for all dragged keyframes
             this.editor.interactive.redraw();
           }
         }
@@ -204,12 +204,12 @@ export class TimelineKeyframe extends QinoqMorph {
     delete event.hand.dragKeyframeStates;
   }
 
-  get currentDrag () {
+  get currentDragStates () {
     return $world.firstHand.dragKeyframeStates;
   }
 
   get isPrimaryDragTarget () {
-    return this.currentDrag && this.currentDrag.find(state => state.isPrimaryDragTarget).timelineKeyframe == this;
+    return this.currentDragStates && this.currentDragStates.find(state => state.isPrimaryDragTarget).timelineKeyframe == this;
   }
 
   isValidDrag (dragStates) {
