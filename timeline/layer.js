@@ -437,7 +437,9 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
   }
 
   async redraw (options = {}) {
-    await this.activeArea.whenRendered();
+    this.activeArea.whenRendered().then(() => {
+      this.redrawActiveArea();
+    });
     if (this.keyframes.length == 0) return;
     if (!options.doNotRepositionKeyframes) {
       this.keyframes.forEach(timelineKeyframe => {
@@ -446,7 +448,6 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
         timelineKeyframe._lockModelUpdate = false;
       });
     }
-    this.redrawActiveArea();
   }
 
   addTimelineKeyframes () {
