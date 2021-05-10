@@ -31,7 +31,7 @@ export class QinoqMorph extends DeserializationAwareMorph {
 
   onMouseDown (event) {
     super.onMouseDown(event);
-    if (!event.targetMorph.isTimelineSequence) this.world().get('interactives editor').execCommand('deselect all items');
+    if (!event.targetMorph.isTimelineSequence && !event.targetMorph.isTimelineKeyframe) this.world().get('interactives editor').execCommand('deselect all items');
   }
 
   menuItems () {

@@ -433,7 +433,7 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     // we get the event before the keyframes
     // if the click is on a keyframe we do not need to handle it
     if (this.morphsContainingPoint(event.hand.position).filter(morph => morph.isTimelineKeyframe).length > 0) return;
-    this.timeline.deselectAllTimelineKeyframes();
+    this.timeline.deselectAllItems();
   }
 
   async redraw (options = {}) {
