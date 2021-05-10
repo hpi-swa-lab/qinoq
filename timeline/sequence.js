@@ -293,7 +293,6 @@ export class TimelineSequence extends QinoqMorph {
         dragState.timelineSequence.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + dragState.previousPosition.x - event.hand.leftMostSequenceStates[0].previousPosition.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       });
     } else {
-      this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.hideWarning('left'));
     }
     const beforeSnappingTime = Date.now();
@@ -301,13 +300,12 @@ export class TimelineSequence extends QinoqMorph {
     const afterSnappingTime = Date.now();
     event.hand.timelineSequenceStates.forEach(dragState => {
       dragState.timelineSequence.updateAppearance();
-      dragState.timelineSequence.updateSequenceAfterArrangement();
     });
 
     const endTime = Date.now();
     console.log(`onDrag performance report: \nTime to set position ${afterPositionSetTime - dragStartTime}
 Time to set position of other sequences: ${afterAllSequencesPositionSet - afterPositionSetTime}
-Snapping preparation ${beforeSnappingTime - afterAllSequencesPositionSet}
+Warnings ${beforeSnappingTime - afterAllSequencesPositionSet}
 handle Snapping ${afterSnappingTime - beforeSnappingTime}
 update Arrangment, update data objects ${endTime - afterSnappingTime}`);
   }
@@ -467,7 +465,6 @@ update Arrangment, update data objects ${endTime - afterSnappingTime}`);
     }
 
     this.updateAppearance();
-    this.updateSequenceAfterArrangement();
   }
 
   onResizeLeft (event) {
@@ -496,7 +493,6 @@ update Arrangment, update data objects ${endTime - afterSnappingTime}`);
     this.handleSnapping('resizeLeft', event.hand.timelineSequenceStates);
 
     this.updateAppearance();
-    this.updateSequenceAfterArrangement();
   }
 
   onResizeStart (event) {
