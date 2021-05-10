@@ -185,8 +185,7 @@ export class Timeline extends QinoqMorph {
 
       const normalizedOffset = offset / this.zoomFactor;
 
-      this.zoomFactor += zoomDelta;
-      this.editor.updateZoomInputNumber(this.zoomFactor);
+      this.editor.updateZoomInputNumber(this.zoomFactor + zoomDelta);
 
       const newOffset = normalizedOffset * this.zoomFactor;
       const scrollDifference = newOffset - offset;
