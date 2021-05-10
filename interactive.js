@@ -130,7 +130,7 @@ export class Interactive extends Morph {
   }
 
   updateInteractiveLength () {
-    this._length = Math.max.apply(Math, this.sequences.map(sequence => sequence.end));
+    this._length = Math.max(...this.sequences.map(sequence => sequence.end));
   }
 
   openInWorld () {
