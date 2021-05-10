@@ -299,7 +299,6 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   }
 
   async redraw () {
-    await this.activeArea.whenRendered();
     this.layerInfo.height = this.height;
     this.activeArea.height = this.height;
     this.inactiveArea.height = this.height;
@@ -606,4 +605,3 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     super.__after_deserialize__(snapshot, ref, pool);
   }
 }
-
