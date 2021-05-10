@@ -733,10 +733,6 @@ export class SequenceTimeline extends Timeline {
     this.selectedTimelineKeyframes.forEach(keyframe => keyframe.isSelected = false);
   }
 
-  selectAllItems () {
-    this.selectedTimelineKeyframes.forEach(keyframe => keyframe.isSelected = true);
-  }
-
   deleteSelectedItems () {
     arr.invoke(this.selectedTimelineKeyframes, 'delete');
   }
