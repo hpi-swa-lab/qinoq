@@ -91,7 +91,6 @@ export class QinoqButton extends Label {
       case 'unfilled':
         this.fill = COLOR_SCHEME.BACKGROUND;
         this.fontColor = COLOR_SCHEME.BUTTON_BLUE;
-
         break;
       case 'disabled':
         this.fill = COLOR_SCHEME.BACKGROUND;
