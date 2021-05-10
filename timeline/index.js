@@ -55,7 +55,7 @@ export class Timeline extends QinoqMorph {
       extent: {
         set (extent) {
           this.setProperty('extent', extent);
-          if (this.editor && this.editor.ui.window) this.relayout(this.editor.ui.window.extent);
+          if (!this._deserializing && this.editor && this.editor.ui.window) this.relayout(this.editor.ui.window.extent);
         }
       }
     };
