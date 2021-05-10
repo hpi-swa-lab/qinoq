@@ -1030,7 +1030,6 @@ class MenuBar extends QinoqMorph {
     this.ui.zoomInput.borderColor = COLOR_SCHEME.SECONDARY;
     this.ui.scrollPositionInput.borderColor = COLOR_SCHEME.SECONDARY;
   }
-
 }
 
 class SequenceOverview extends QinoqMorph {
