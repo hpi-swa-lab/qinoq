@@ -998,17 +998,17 @@ class MenuBar extends QinoqMorph {
   }
 
   onGlobalTimelineTab () {
-    this.ui.addSequenceButton.enabled = true;
-    this.ui.addLayerButton.enabled = true;
-    this.ui.toggleSnappingButton.enabled = true;
+    this.ui.addSequenceButton.enable();
+    this.ui.addLayerButton.enable();
+    this.ui.toggleSnappingButton.enable();
     this.ui.gotoNextButton.tooltip = 'Go to next sequence';
     this.ui.gotoPrevButton.tooltip = 'Go to previous sequence';
   }
 
   onSequenceView () {
-    this.ui.addSequenceButton.enabled = false;
-    this.ui.addLayerButton.enabled = false;
-    this.ui.toggleSnappingButton.enabled = false;
+    this.ui.addSequenceButton.disable();
+    this.ui.addLayerButton.disable();
+    this.ui.toggleSnappingButton.disable();
     this.ui.gotoNextButton.tooltip = 'Go to next keyframe';
     this.ui.gotoPrevButton.tooltip = 'Go to previous keyframe';
   }
@@ -1016,7 +1016,7 @@ class MenuBar extends QinoqMorph {
   disableUIElements () {
     Object.values(this.ui).forEach(value => {
       const morph = value;
-      if (morph.isQinoqButton) morph.enabled = false;
+      if (morph.isQinoqButton) morph.disable();
     });
     this.ui.zoomInput.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
     this.ui.scrollPositionInput.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
@@ -1025,7 +1025,7 @@ class MenuBar extends QinoqMorph {
   enableUIElements () {
     Object.values(this.ui).forEach(value => {
       const morph = value;
-      if (morph.isQinoqButton) morph.enabled = true;
+      if (morph.isQinoqButton) morph.enable();
     });
     this.ui.zoomInput.borderColor = COLOR_SCHEME.SECONDARY;
     this.ui.scrollPositionInput.borderColor = COLOR_SCHEME.SECONDARY;

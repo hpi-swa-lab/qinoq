@@ -110,12 +110,12 @@ export class TimelineLayerInfo extends QinoqMorph {
   }
 
   enableCollapseButton () {
-    this.ui.collapseButton.enabled = true;
+    this.ui.collapseButton.enable();
     this.ui.collapseButton.tooltip = 'Expand to see animated properties';
   }
 
   disableCollapseButton () {
-    this.ui.collapseButton.enabled = false;
+    this.ui.collapseButton.disable();
     this.ui.collapseButton.tooltip = 'Expansion only available for morphs with keyframes';
   }
 
