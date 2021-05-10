@@ -8,17 +8,6 @@ export class QinoqButton extends Label {
       fontColor: {
         defaultValue: COLOR_SCHEME.BUTTON_BLUE
       },
-      enabled: {
-        defaultValue: true,
-        set (enabled) {
-          this.setProperty('enabled', enabled);
-          if (enabled) {
-            this.enable();
-          } else {
-            this.disable();
-          }
-        }
-      },
       // use to show a state e.g. toggle snapping
       filled: {
         defaultValue: false,
@@ -103,7 +92,7 @@ export class QinoqButton extends Label {
   }
 
   enable () {
-    this.styleSet = this.filled ? 'filled' : 'default';
+    this.styleSet = 'default';
     this.reactsToPointer = true;
   }
 
