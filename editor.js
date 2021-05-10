@@ -330,7 +330,7 @@ export class InteractivesEditor extends QinoqMorph {
       { keys: 'Shift-Left', command: { command: 'move sequence left or decrease scroll position', args: { stepSize: CONSTANTS.LARGE_SCROLL_STEP } } },
       { keys: 'Right', command: { command: 'move sequence right or increase scroll position', args: { stepSize: CONSTANTS.DEFAULT_SCROLL_STEP } } },
       { keys: 'Shift-Right', command: { command: 'move sequence right or increase scroll position', args: { stepSize: CONSTANTS.LARGE_SCROLL_STEP } } },
-      { keys: 'Ctrl-A', command: 'select all sequences' },
+      { keys: 'Ctrl-A', command: 'select all items' },
       { keys: 'Delete', command: 'delete selected items' }
     ].concat(super.keybindings);
   }
@@ -505,12 +505,12 @@ export class InteractivesEditor extends QinoqMorph {
         }
       },
       {
-        name: 'select all sequences',
-        exec: () => {
-          if (this.displayedTimeline.isGlobalTimeline && !this.inputFieldFocused()) {
-            this.displayedTimeline.selectAllSequences();
-          }
-        }
+        name: 'select all items',
+        exec: () => { if (!this.inputFieldFocused()) this.displayedTimeline.selectAllItems(); }
+      },
+      {
+        name: 'deselect all items',
+        exec: () => { if (!this.inputFieldFocused()) this.displayedTimeline.deselectAllItems(); }
       },
       {
         name: 'delete selected items',

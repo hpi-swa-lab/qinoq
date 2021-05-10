@@ -215,6 +215,14 @@ export class Timeline extends QinoqMorph {
     throw new Error('Subclass resposibility');
   }
 
+  deselectAllItems () {
+    throw new Error('Subclass resposibility');
+  }
+
+  selectAllItems () {
+    throw new Error('Subclass resposibility');
+  }
+
   deleteSelectedItems () {
     throw new Error('Subclass resposibility');
   }
@@ -430,7 +438,7 @@ export class GlobalTimeline extends Timeline {
     this.interactive.redraw();
   }
 
-  deselectAllSequences (filter) {
+  deselectAllItems (filter) {
     let allSequences = this.sequences;
     if (filter) {
       allSequences = allSequences.filter(filter);
@@ -439,7 +447,7 @@ export class GlobalTimeline extends Timeline {
   }
 
   deselectAllSequencesExcept (timelineSequence) {
-    this.deselectAllSequences();
+    this.deselectAllItems();
     timelineSequence.isSelected = true;
   }
 
@@ -458,13 +466,13 @@ export class GlobalTimeline extends Timeline {
     return this.selectedSequences;
   }
 
-  selectAllSequences (filter, deselectIfAllAreSelected = true) {
+  selectAllItems (filter, deselectIfAllAreSelected = true) {
     let allSequences = this.sequences;
     if (filter) {
       allSequences = allSequences.filter(filter);
     }
     if (deselectIfAllAreSelected && arr.equals(allSequences, this.getSelectedSequences(filter))) {
-      this.deselectAllSequences();
+      this.deselectAllItems();
     } else {
       allSequences.forEach(sequence => sequence.isSelected = true);
     }
@@ -721,8 +729,12 @@ export class SequenceTimeline extends Timeline {
     timelineKeyframe.isSelected = true;
   }
 
-  deselectAllTimelineKeyframes () {
+  deselectAllItems () {
     this.selectedTimelineKeyframes.forEach(keyframe => keyframe.isSelected = false);
+  }
+
+  selectAllItems () {
+    this.selectedTimelineKeyframes.forEach(keyframe => keyframe.isSelected = true);
   }
 
   deleteSelectedItems () {

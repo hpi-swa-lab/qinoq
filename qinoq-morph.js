@@ -1,4 +1,5 @@
 import { DeserializationAwareMorph } from './utilities/deserialization-morph.js';
+import { singleSelectKeyPressed, rangeSelectKeyPressed } from './keys.js';
 
 // QinoqMorphs are components of the editor
 export class QinoqMorph extends DeserializationAwareMorph {
@@ -26,6 +27,11 @@ export class QinoqMorph extends DeserializationAwareMorph {
 
   get interactive () {
     return this.editor.interactive;
+  }
+
+  onMouseDown (event) {
+    super.onMouseDown(event);
+    if (!event.targetMorph.isTimelineSequence) this.world().get('interactives editor').execCommand('deselect all items');
   }
 
   menuItems () {
