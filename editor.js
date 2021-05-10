@@ -911,6 +911,7 @@ class MenuBar extends QinoqMorph {
       // these two are necessary for the correct layouting to be applied
       extent: CONSTANTS.MENU_BAR_WIDGET_EXTENT,
       autofit: false,
+      floatingPoint: false,
       number: 100,
       tooltip: 'Set zoom factor',
       dropShadow: false,
@@ -929,6 +930,7 @@ class MenuBar extends QinoqMorph {
       // these two are necessary for the correct layouting to be applied
       extent: CONSTANTS.MENU_BAR_WIDGET_EXTENT,
       autofit: false,
+      floatingPoint: false,
       tooltip: 'Set scroll position',
       dropShadow: false,
       borderWidth: 2,
@@ -970,13 +972,6 @@ class MenuBar extends QinoqMorph {
     this.ui.addLayerButton.fontColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
     this.ui.gotoNextButton.tooltip = 'Go to next keyframe';
     this.ui.gotoPrevButton.tooltip = 'Go to previous keyframe';
-  }
-
-  __after_deserialize__ (snapshot, ref, pool) {
-    // floatingPoint property is not properly serialized and needs to be set here again
-    this.ui.zoomInput.floatingPoint = false;
-    this.ui.scrollPositionInput.floatingPoint = false;
-    super.__after_deserialize__(snapshot, ref, pool);
   }
 }
 
