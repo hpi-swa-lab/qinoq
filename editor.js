@@ -986,7 +986,7 @@ class MenuBar extends QinoqMorph {
     const { action, command, target, tooltip, name, morphName = 'aButton', icon, container, filled } = options;
     this.ui[name] = new QinoqButton({
       fontSize: 20,
-      padding: rect(3, 3, 3, 3),
+      padding: rect(1, 1, 4, 2),
       name: morphName,
       tooltip,
       target: target,

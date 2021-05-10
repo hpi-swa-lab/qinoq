@@ -41,6 +41,12 @@ export class QinoqButton extends Label {
       borderRadius: {
         defaultValue: 4
       },
+      borderColor: {
+        defaultValue: COLOR_SCHEME.BACKGROUND
+      },
+      borderWidth: {
+        defaultValue: 1
+      },
       icon: {
         set (icon) {
           Icon.setIcon(this, icon);
@@ -60,6 +66,14 @@ export class QinoqButton extends Label {
   onMouseUp () {
     this.setDefaultStyle();
     this.command ? this.target.execCommand(this.command) : this.target[this.action]();
+  }
+
+  onHoverIn () {
+    this.borderColor = COLOR_SCHEME.BUTTON_BLUE;
+  }
+
+  onHoverOut () {
+    this.borderColor = COLOR_SCHEME.BACKGROUND;
   }
 
   setDefaultStyle () {
