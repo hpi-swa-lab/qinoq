@@ -24,12 +24,8 @@ export class QinoqButton extends Label {
         defaultValue: false,
         set (filled) {
           this.setProperty('filled', filled);
-          if (!this.enabled) return;
-          if (filled) {
-            this.setFilledStyle();
-          } else {
-            this.setDefaultStyle();
-          }
+          this.styleSet = 'default';
+          this.updateStyle();
         }
       },
       target: {},
@@ -54,6 +50,13 @@ export class QinoqButton extends Label {
         set (icon) {
           Icon.setIcon(this, icon);
         }
+      },
+      styleSet: {
+        defaultValue: 'default',
+        set (styleSet) {
+          this.setProperty('styleSet', styleSet);
+          this.updateStyle();
+        }
       }
     };
   }
@@ -63,11 +66,11 @@ export class QinoqButton extends Label {
   }
 
   onMouseDown () {
-    this.filled ? this.resetStyle() : this.setFilledStyle();
+    this.styleSet = this.filled ? 'unfilled' : 'filled';
   }
 
   onMouseUp () {
-    this.setDefaultStyle();
+    this.styleSet = 'default';
     this.command ? this.target.execCommand(this.command) : this.target[this.action]();
   }
 
@@ -77,36 +80,36 @@ export class QinoqButton extends Label {
 
   onHoverOut () {
     this.borderColor = COLOR_SCHEME.BACKGROUND;
-    this.setDefaultStyle();
+    this.styleSet = 'default';
   }
 
-  setDefaultStyle () {
-    this.filled ? this.setFilledStyle() : this.resetStyle();
-  }
+  updateStyle () {
+    switch (this.styleSet) {
+      case 'default':
+        this.styleSet = this.filled ? 'filled' : 'unfilled';
+        break;
+      case 'unfilled':
+        this.fill = COLOR_SCHEME.BACKGROUND;
+        this.fontColor = COLOR_SCHEME.BUTTON_BLUE;
 
-  setDisabledStyle () {
-    this.fill = COLOR_SCHEME.BACKGROUND;
-    this.fontColor = COLOR_SCHEME.BACKGROUND_VARIANT;
-  }
-
-  setFilledStyle () {
-    this.fill = COLOR_SCHEME.BUTTON_BLUE;
-    this.fontColor = COLOR_SCHEME.BACKGROUND;
-  }
-
-  resetStyle () {
-    this.fill = COLOR_SCHEME.BACKGROUND;
-    this.fontColor = COLOR_SCHEME.BUTTON_BLUE;
+        break;
+      case 'disabled':
+        this.fill = COLOR_SCHEME.BACKGROUND;
+        this.fontColor = COLOR_SCHEME.BACKGROUND_VARIANT;
+        break;
+      case 'filled':
+        this.fill = COLOR_SCHEME.BUTTON_BLUE;
+        this.fontColor = COLOR_SCHEME.BACKGROUND;
+    }
   }
 
   enable () {
-    if (this.filled) this.setFilledStyle();
-    else this.setDefaultStyle();
+    this.styleSet = this.filled ? 'filled' : 'default';
     this.reactsToPointer = true;
   }
 
   disable () {
-    this.setDisabledStyle();
+    this.styleSet = 'disabled';
     this.reactsToPointer = false;
   }
 }
