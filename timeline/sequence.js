@@ -272,16 +272,18 @@ export class TimelineSequence extends QinoqMorph {
   }
 
   onDrag (event) {
+    const dragStartTime = Date.now();
     if (!event.hand.timelineSequenceStates) return;
 
     const { dragStartMorphPosition, absDragDelta } = event.state;
     this.position = pt(dragStartMorphPosition.x + absDragDelta.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     const dragDeltaX = absDragDelta.x;
+    const afterPositionSetTime = Date.now();
 
     event.hand.timelineSequenceStates.filter(dragState => dragState.timelineSequence !== this).forEach(dragState => {
       dragState.timelineSequence.position = pt(dragState.previousPosition.x + dragDeltaX, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     });
-
+    const afterAllSequencesPositionSet = Date.now();
     if (event.hand.leftMostSequenceStates[0].timelineSequence.position.x <= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
       event.hand.leftMostSequenceStates[0].timelineSequence.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.showWarning('left', event.hand.position.x));
@@ -293,11 +295,20 @@ export class TimelineSequence extends QinoqMorph {
       this.position = pt(this.position.x, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
       event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.hideWarning('left'));
     }
+    const beforeSnappingTime = Date.now();
     this.handleSnapping('drag', event.hand.timelineSequenceStates);
+    const afterSnappingTime = Date.now();
     event.hand.timelineSequenceStates.forEach(dragState => {
       dragState.timelineSequence.updateAppearance();
       dragState.timelineSequence.updateSequenceAfterArrangement();
     });
+
+    const endTime = Date.now();
+    console.log(`onDrag performance report: \nTime to set position ${afterPositionSetTime - dragStartTime}
+Time to set position of other sequences: ${afterAllSequencesPositionSet - afterPositionSetTime}
+Snapping preparation ${beforeSnappingTime - afterAllSequencesPositionSet}
+handle Snapping ${afterSnappingTime - beforeSnappingTime}
+update Arrangment, update data objects ${endTime - afterSnappingTime}`);
   }
 
   removeSnapIndicators () {
