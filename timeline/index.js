@@ -61,6 +61,30 @@ export class Timeline extends QinoqMorph {
     };
   }
 
+  get isDisplayed () {
+    return this === this.editor.displayedTimeline;
+  }
+
+  getDisplayValueFromScroll (scrollPosition) {
+    throw new Error('Subclass resposibility');
+  }
+
+  getPositionFromScroll (scrollPosition) {
+    throw new Error('Subclass resposibility');
+  }
+
+  getScrollFromPosition (positionPosition) {
+    throw new Error('Subclass resposibility');
+  }
+
+  getNewTimelineLayer () {
+    throw new Error('Subclass resposibility');
+  }
+
+  get timelineLayers () {
+    return this.withAllSubmorphsSelect(submorph => submorph.isTimelineLayer);
+  }
+
   // Is automatically called by editor setter
   initialize () {
     this.ui.scrollableContainer = new QinoqMorph(
@@ -75,17 +99,6 @@ export class Timeline extends QinoqMorph {
     this.initializeLayerContainer();
     connect(this.ui.layerContainer, 'extent', this.ui.scrollableContainer, 'height', { converter: ' (extent) => extent.y > timeline.height - scrollbarHeight ? timeline.height - scrollbarHeight : extent.y', varMapping: { timeline: this, scrollbarHeight: CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT } }).update(this.ui.layerContainer.extent);
     this.initializeScrollBar();
-  }
-
-  relayout (newWindowExtent) {
-    // Ensure UI has been created
-    if (!this.ui.scrollableContainer || !this.ui.scrollBar || !this.ui.layerContainer || !this.owner) return;
-
-    this.ui.scrollableContainer.extent = pt(newWindowExtent.x, this.owner.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT);
-    this.ui.layerContainer.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - CONSTANTS.LAYER_INFO_WIDTH, this.owner.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT);
-    this.ui.scrollBar.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - CONSTANTS.LAYER_INFO_WIDTH, this.ui.scrollBar.extent.y);
-    this.ui.scrollBar.position = this.ui.layerContainer.bottomLeft;
-    this.updateScrollerExtent();
   }
 
   initializeScrollBar () {
@@ -156,17 +169,96 @@ export class Timeline extends QinoqMorph {
       })
     });
 
-    connect(this.ui.layerContainer, 'onMouseWheel', this, 'layerContainerOnMouseWheel');
-
     this.ui.scrollableContainer.addMorph(this.ui.layerContainer);
   }
 
-  updateScrollerPosition () {
-    const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
-    this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
+  initializeLayerInfoContainer () {
+    this.ui.layerInfoContainer = new QinoqMorph({
+      name: 'layer info container',
+      position: pt(0, 0),
+      extent: pt(CONSTANTS.LAYER_INFO_WIDTH, this.height - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
+      layout: new VerticalLayout({
+        spacing: 2,
+        resizeSubmorphs: true,
+        autoResize: true,
+        orderByIndex: true
+      })
+    });
+    this.ui.scrollableContainer.addMorph(this.ui.layerInfoContainer);
   }
 
-  layerContainerOnMouseWheel (event) {
+  createTimelineLayer (layer, index = 0, name = undefined) {
+    const props = layer.constructor.name == 'Layer' ? { layer: layer } : { morph: layer };
+    const timelineLayer = this.getNewTimelineLayer({ _editor: this.editor, container: this.ui.layerContainer, ...props });
+    this.ui.layerContainer.addMorphAt(timelineLayer, index);
+
+    const layerInfo = new TimelineLayerInfo({ timelineLayer, name });
+    timelineLayer.layerInfo = layerInfo;
+    this.ui.layerInfoContainer.addMorphAt(layerInfo, index);
+    return timelineLayer;
+  }
+
+  loadContent (content) {
+    if (this.submorphs.length !== 0) {
+      this.submorphs.forEach(submorph => submorph.remove());
+      this.initialize();
+    }
+    this._createOverviewLayers = true;
+    this.onLoadContent(content);
+    this.initializeCursor();
+    this.onScrollChange(this.interactive.scrollPosition);
+
+    connect(content, 'name', this, 'name', { converter: newName => `${newName.toLowerCase()} timeline` }).update(content.name);
+    this._createOverviewLayers = false;
+  }
+
+  onLoadContent (content) {
+    throw new Error('Subclass resposibility');
+  }
+
+  deselectAllItems () {
+    throw new Error('Subclass resposibility');
+  }
+
+  selectAllItems () {
+    throw new Error('Subclass resposibility');
+  }
+
+  deleteSelectedItems () {
+    throw new Error('Subclass resposibility');
+  }
+
+  renameSelection (newName) {
+    throw new Error('Subclass responsibility');
+  }
+
+  zoomToFit () {
+    throw new Error('Subclass responsibility');
+  }
+
+  arrangeLayerInfos () {
+    this.ui.layerInfoContainer.removeAllMorphs();
+    const layerInfos = new Array(this.timelineLayers.length);
+    this.timelineLayers.forEach(timelineLayer => {
+      layerInfos[timelineLayer.index] = timelineLayer.layerInfo;
+    });
+    this.ui.layerInfoContainer.submorphs = layerInfos;
+  }
+
+  onActiveAreaWidthChange () {
+    this.timelineLayers.forEach(timelineLayer => {
+      timelineLayer.activeArea.width = this._activeAreaWidth;
+    });
+
+    this.updateScrollerExtent();
+  }
+
+  onScrollChange (scrollPosition) {
+    this.ui.cursor.displayValue = this.getDisplayValueFromScroll(scrollPosition);
+    this.ui.cursor.location = this.getPositionFromScroll(scrollPosition);
+  }
+
+  onMouseWheel (event) {
     if (singleSelectKeyPressed(event)) {
       const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
       layerContainerNode.scrollLeft = layerContainerNode.scrollLeft + event.domEvt.deltaY;
@@ -196,62 +288,6 @@ export class Timeline extends QinoqMorph {
     }
   }
 
-  initializeLayerInfoContainer () {
-    this.ui.layerInfoContainer = new QinoqMorph({
-      name: 'layer info container',
-      position: pt(0, 0),
-      extent: pt(CONSTANTS.LAYER_INFO_WIDTH, this.height - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
-      layout: new VerticalLayout({
-        spacing: 2,
-        resizeSubmorphs: true,
-        autoResize: true,
-        orderByIndex: true
-      })
-    });
-    this.ui.scrollableContainer.addMorph(this.ui.layerInfoContainer);
-  }
-
-  getNewTimelineLayer () {
-    throw new Error('Subclass resposibility');
-  }
-
-  deselectAllItems () {
-    throw new Error('Subclass resposibility');
-  }
-
-  selectAllItems () {
-    throw new Error('Subclass resposibility');
-  }
-
-  deleteSelectedItems () {
-    throw new Error('Subclass resposibility');
-  }
-
-  createTimelineLayer (layer, index = 0, name = undefined) {
-    const props = layer.constructor.name == 'Layer' ? { layer: layer } : { morph: layer };
-    const timelineLayer = this.getNewTimelineLayer({ _editor: this.editor, container: this.ui.layerContainer, ...props });
-    this.ui.layerContainer.addMorphAt(timelineLayer, index);
-
-    const layerInfo = new TimelineLayerInfo({ timelineLayer, name });
-    timelineLayer.layerInfo = layerInfo;
-    this.ui.layerInfoContainer.addMorphAt(layerInfo, index);
-    return timelineLayer;
-  }
-
-  abandonTimelineLayer (timelineLayer) {
-    timelineLayer.layerInfo.abandon();
-    timelineLayer.abandon();
-  }
-
-  arrangeLayerInfos () {
-    this.ui.layerInfoContainer.removeAllMorphs();
-    const layerInfos = new Array(this.timelineLayers.length);
-    this.timelineLayers.forEach(timelineLayer => {
-      layerInfos[timelineLayer.index] = timelineLayer.layerInfo;
-    });
-    this.ui.layerInfoContainer.submorphs = layerInfos;
-  }
-
   ensureValidScrollerPosition () {
     let positionX = this.ui.scroller.position.x;
     if (this.ui.scroller.position.x < CONSTANTS.SCROLLBAR_MARGIN) {
@@ -268,37 +304,19 @@ export class Timeline extends QinoqMorph {
     this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
   }
 
-  redraw () {
-    this.ui.cursor.location = this.getPositionFromScroll(this.interactive.scrollPosition);
+  updateScrollerPosition () {
+    const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
+    this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
   }
 
-  get timelineLayers () {
-    return this.withAllSubmorphsSelect(submorph => submorph.isTimelineLayer);
-  }
+  relayout (newWindowExtent) {
+    // Ensure UI has been created
+    if (!this.ui.scrollableContainer || !this.ui.scrollBar || !this.ui.layerContainer || !this.owner) return;
 
-  loadContent (content) {
-    if (this.submorphs.length !== 0) {
-      this.submorphs.forEach(submorph => submorph.remove());
-      this.initialize();
-    }
-    this._createOverviewLayers = true;
-    this.onLoadContent(content);
-    this.initializeCursor();
-    this.onScrollChange(this.interactive.scrollPosition);
-
-    connect(content, 'name', this, 'name', { converter: newName => `${newName.toLowerCase()} timeline` }).update(content.name);
-    this._createOverviewLayers = false;
-  }
-
-  onLoadContent (content) {
-    throw new Error('Subclass resposibility');
-  }
-
-  onActiveAreaWidthChange () {
-    this.timelineLayers.forEach(timelineLayer => {
-      timelineLayer.activeArea.width = this._activeAreaWidth;
-    });
-
+    this.ui.scrollableContainer.extent = pt(newWindowExtent.x, this.owner.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT);
+    this.ui.layerContainer.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - CONSTANTS.LAYER_INFO_WIDTH, this.owner.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT);
+    this.ui.scrollBar.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - CONSTANTS.LAYER_INFO_WIDTH, this.ui.scrollBar.extent.y);
+    this.ui.scrollBar.position = this.ui.layerContainer.bottomLeft;
     this.updateScrollerExtent();
   }
 
@@ -310,25 +328,13 @@ export class Timeline extends QinoqMorph {
     this.updateScrollerPosition();
   }
 
-  get isDisplayed () {
-    return this === this.editor.displayedTimeline;
+  redraw () {
+    this.ui.cursor.location = this.getPositionFromScroll(this.interactive.scrollPosition);
   }
 
-  onScrollChange (scrollPosition) {
-    this.ui.cursor.displayValue = this.getDisplayValueFromScroll(scrollPosition);
-    this.ui.cursor.location = this.getPositionFromScroll(scrollPosition);
-  }
-
-  getDisplayValueFromScroll (scrollPosition) {
-    throw new Error('Subclass resposibility');
-  }
-
-  getPositionFromScroll (scrollPosition) {
-    throw new Error('Subclass resposibility');
-  }
-
-  getScrollFromPosition (positionPosition) {
-    throw new Error('Subclass resposibility');
+  abandonTimelineLayer (timelineLayer) {
+    timelineLayer.layerInfo.abandon();
+    timelineLayer.abandon();
   }
 
   abandon (bool) {
@@ -336,73 +342,34 @@ export class Timeline extends QinoqMorph {
     disconnect(this.editor, 'onScrollChange', this, 'onScrollChange');
     if (this.interactive) disconnect(this.interactive, 'name', this, 'name');
   }
-
-  renameSelection (newName) {
-    throw new Error('Subclass responsibility');
-  }
-
-  zoomToFit () {
-    throw new Error('Subclass responsibility');
-  }
 }
 
 export class GlobalTimeline extends Timeline {
-  createTimelineSequence (sequence) {
-    const timelineSequence = new TimelineSequence({
-      _editor: this.editor,
-      sequence,
-      timelineLayer: this.getTimelineLayerFor(sequence.layer)
-    });
-    connect(sequence, 'name', timelineSequence, 'caption');
-    return timelineSequence;
-  }
-
-  createTimelineSequenceInHand (sequence) {
-    const newTimelineSequence = this.createTimelineSequence(sequence);
-    const hand = $world.firstHand;
-    hand.grab(newTimelineSequence);
-    newTimelineSequence.onGrabStart(hand);
-    newTimelineSequence.center = pt(0, 0);
-  }
-
-  getNewTimelineLayer (props) {
-    return new GlobalTimelineLayer(props);
-  }
-
-  onLoadContent (interactive) {
-    this.interactive.layers.sort((a, b) => a.zIndex - b.zIndex).forEach(layer => this.createTimelineLayer(layer));
-    connect(this.interactive, 'onLengthChange', this, '_activeAreaWidth', { converter: '(length) => target.getWidthFromDuration(length)' }).update(this.interactive.length);
-    this.interactive.sequences.forEach(sequence => {
-      this.createTimelineSequence(sequence);
-    });
-    this.updateLayerPositions();
-  }
-
-  redraw () {
-    super.redraw();
-    this.timelineSequences.forEach(timelineSequence => {
-      timelineSequence._lockModelUpdate = true;
-      timelineSequence.setWidthAndUpdateResizers(this.getWidthFromDuration(timelineSequence.sequence.duration));
-      timelineSequence.position = pt(this.getPositionFromScroll(timelineSequence.sequence.start), timelineSequence.position.y);
-      timelineSequence._lockModelUpdate = false;
-    });
-    this._activeAreaWidth = this.getWidthFromDuration(this.interactive.length);
-  }
-
-  updateLayerPositions () {
-    this.interactive.layers.forEach(layer => {
-      const timelineLayer = this.getTimelineLayerFor(layer);
-      timelineLayer.position = pt(timelineLayer.position.x, -layer.zIndex);
-    });
-    this.arrangeLayerInfos();
+  get isGlobalTimeline () {
+    return true;
   }
 
   getTimelineLayerFor (layer) {
     return this.timelineLayers.find(timelineLayer => timelineLayer.layer === layer);
   }
 
+  getNewTimelineLayer (props) {
+    return new GlobalTimelineLayer(props);
+  }
+
   get timelineSequences () {
     return this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences);
+  }
+
+  get selectedTimelineSequences () {
+    return this.timelineSequences.filter(timelineSequence => timelineSequence.isSelected);
+  }
+
+  getSelectedTimelineSequences (filter) {
+    if (filter) {
+      return this.selectedTimelineSequences.filter(filter);
+    }
+    return this.selectedTimelineSequences;
   }
 
   getDisplayValueFromScroll (scrollPosition) {
@@ -425,21 +392,48 @@ export class GlobalTimeline extends Timeline {
     return width / this.zoomFactor;
   }
 
-  updateZIndicesFromTimelineLayerPositions () {
-    const layerPositions = this.timelineLayers.map(timelineLayer =>
-      ({
-        layer: timelineLayer.layer,
-        y: timelineLayer.index
-      }));
-    layerPositions.sort((a, b) => b.y - a.y);
-    layerPositions.forEach((layerPositionObject, index) => {
-      layerPositionObject.layer.zIndex = index * 10;
+  createTimelineSequence (sequence) {
+    const timelineSequence = new TimelineSequence({
+      _editor: this.editor,
+      sequence,
+      timelineLayer: this.getTimelineLayerFor(sequence.layer)
     });
-    this.interactive.redraw();
+    connect(sequence, 'name', timelineSequence, 'caption');
+    return timelineSequence;
+  }
+
+  createTimelineSequenceInHand (sequence) {
+    const newTimelineSequence = this.createTimelineSequence(sequence);
+    const hand = $world.firstHand;
+    hand.grab(newTimelineSequence);
+    newTimelineSequence.onGrabStart(hand);
+    newTimelineSequence.center = pt(0, 0);
+  }
+
+  onLoadContent (interactive) {
+    this.interactive.layers.sort((a, b) => a.zIndex - b.zIndex).forEach(layer => this.createTimelineLayer(layer));
+    connect(this.interactive, 'onLengthChange', this, '_activeAreaWidth', { converter: '(length) => target.getWidthFromDuration(length)' }).update(this.interactive.length);
+    this.interactive.sequences.forEach(sequence => {
+      this.createTimelineSequence(sequence);
+    });
+    this.updateLayerPositions();
+  }
+
+  toggleVisbilityForSelection () {
+    const undo = this.undoStart('sequence-visibility');
+    this.selectedTimelineSequences.forEach(timelineSequence => {
+      undo.addTarget(timelineSequence);
+      timelineSequence.isHidden = !timelineSequence.isHidden;
+    });
+    this.undoStop('sequence-visibility');
+  }
+
+  deleteSelectedItems () {
+    arr.invoke(this.selectedTimelineSequences, 'delete');
   }
 
   deselectAllItems (filter) {
-    let allSequences = this.sequences;
+    let allSequences = this.timelineSequences;
     if (filter) {
       allSequences = allSequences.filter(filter);
     }
@@ -451,35 +445,16 @@ export class GlobalTimeline extends Timeline {
     timelineSequence.isSelected = true;
   }
 
-  get sequences () {
-    return this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences);
-  }
-
-  get selectedSequences () {
-    return this.sequences.filter(sequence => sequence.isSelected);
-  }
-
-  getSelectedSequences (filter) {
-    if (filter) {
-      return this.selectedSequences.filter(filter);
-    }
-    return this.selectedSequences;
-  }
-
   selectAllItems (filter, deselectIfAllAreSelected = true) {
-    let allSequences = this.sequences;
+    let allSequences = this.timelineSequences;
     if (filter) {
       allSequences = allSequences.filter(filter);
     }
-    if (deselectIfAllAreSelected && arr.equals(allSequences, this.getSelectedSequences(filter))) {
+    if (deselectIfAllAreSelected && arr.equals(allSequences, this.getSelectedTimelineSequences(filter))) {
       this.deselectAllItems();
     } else {
       allSequences.forEach(sequence => sequence.isSelected = true);
     }
-  }
-
-  get isGlobalTimeline () {
-    return true;
   }
 
   moveTimelineSequencesBy (timelineSequences, scrollStepSize) {
@@ -521,29 +496,18 @@ export class GlobalTimeline extends Timeline {
     });
   }
 
-  clear () {
-    this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences).forEach(timelineSequence => timelineSequence.disbandInteractiveConnections());
-    this.ui.layerInfoContainer.submorphs = [];
-    this.ui.layerContainer.submorphs = [];
-  }
-
-  deleteSelectedItems () {
-    arr.invoke(this.selectedSequences, 'delete');
-  }
-
-  toggleVisbilityForSelection () {
-    const undo = this.undoStart('sequence-visibility');
-    this.selectedSequences.forEach(timelineSequence => {
-      undo.addTarget(timelineSequence);
-      timelineSequence.isHidden = !timelineSequence.isHidden;
-    });
-    this.undoStop('sequence-visibility');
+  zoomToFit () {
+    const widthToFit = this.interactive.length + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + CONSTANTS.INACTIVE_AREA_WIDTH;
+    const widthAvailable = this.ui.layerContainer.width;
+    const factor = widthAvailable / widthToFit;
+    this.zoomFactor = factor;
+    this.editor.updateZoomInputNumber(this.zoomFactor);
   }
 
   async promptRenameForSelection () {
-    const newName = !(this.selectedSequences.length > 1)
-      ? await $world.prompt('Sequence name:', { input: this.selectedSequences[0].sequence.name })
-      : await $world.prompt(`Name for the ${this.selectedSequences.length} selected Sequences`);
+    const newName = !(this.selectedTimelineSequences.length > 1)
+      ? await $world.prompt('Sequence name:', { input: this.selectedTimelineSequences[0].sequence.name })
+      : await $world.prompt(`Name for the ${this.selectedTimelineSequences.length} selected Sequences`);
 
     if (newName) {
       this.renameSelection(newName);
@@ -554,7 +518,7 @@ export class GlobalTimeline extends Timeline {
 
   renameSelection (newName) {
     const undo = this.undoStart('rename-sequence');
-    this.selectedSequences.forEach(timelineSequence => {
+    this.selectedTimelineSequences.forEach(timelineSequence => {
       undo.addTarget(timelineSequence);
       timelineSequence.caption = newName;
     });
@@ -562,16 +526,16 @@ export class GlobalTimeline extends Timeline {
   }
 
   async promptDurationForSelection () {
-    const newDuration = !(this.selectedSequences.length > 1)
-      ? Number(await $world.prompt('Duration:', { input: `${this.selectedSequences[0].sequence.duration}` }))
-      : Number(await $world.prompt(`Duration of the ${this.selectedSequences.length} selected Sequences:`));
+    const newDuration = !(this.selectedTimelineSequences.length > 1)
+      ? Number(await $world.prompt('Duration:', { input: `${this.selectedTimelineSequences[0].sequence.duration}` }))
+      : Number(await $world.prompt(`Duration of the ${this.selectedTimelineSequences.length} selected Sequences:`));
 
     if (isNaN(newDuration) || typeof newDuration === 'undefined' || newDuration == 0) {
       $world.setStatusMessage('Enter a positive number', COLOR_SCHEME.ERROR);
       return;
     }
 
-    const invalidDuration = this.selectedSequences.some(timelineSequence => !this.interactive.validSequenceDuration(timelineSequence.sequence, newDuration));
+    const invalidDuration = this.selectedTimelineSequences.some(timelineSequence => !this.interactive.validSequenceDuration(timelineSequence.sequence, newDuration));
     if (!invalidDuration) {
       this.setDurationForSelection(newDuration);
     } else {
@@ -582,7 +546,7 @@ export class GlobalTimeline extends Timeline {
 
   setDurationForSelection (newDuration) {
     const undo = this.undoStart('sequence-duration');
-    this.selectedSequences.forEach(timelineSequence => {
+    this.selectedTimelineSequences.forEach(timelineSequence => {
       undo.addTarget(timelineSequence);
       timelineSequence.sequence.duration = newDuration;
       timelineSequence.width = this.getWidthFromDuration(newDuration);
@@ -591,11 +555,11 @@ export class GlobalTimeline extends Timeline {
   }
 
   async promptStartForSelection () {
-    const newStart = !(this.selectedSequences.length > 1)
-      ? Number(await $world.prompt('Start:', { input: `${this.selectedSequences[0].sequence.start}` }))
-      : Number(await $world.prompt(`Start of the ${this.selectedSequences.length} selected Sequences:`));
+    const newStart = !(this.selectedTimelineSequences.length > 1)
+      ? Number(await $world.prompt('Start:', { input: `${this.selectedTimelineSequences[0].sequence.start}` }))
+      : Number(await $world.prompt(`Start of the ${this.selectedTimelineSequences.length} selected Sequences:`));
 
-    const invalidStart = this.selectedSequences.some(timelineSequence => !this.interactive.validSequenceStart(timelineSequence.sequence, newStart));
+    const invalidStart = this.selectedTimelineSequences.some(timelineSequence => !this.interactive.validSequenceStart(timelineSequence.sequence, newStart));
     if (!invalidStart) {
       this.setStartForSelection(newStart);
     } else {
@@ -606,19 +570,49 @@ export class GlobalTimeline extends Timeline {
   setStartForSelection (newStart) {
     const undo = this.undoStart();
     const newPositionX = this.getPositionFromScroll(newStart);
-    this.selectedSequences.forEach(timelineSequence => {
+    this.selectedTimelineSequences.forEach(timelineSequence => {
       undo.addTarget(timelineSequence);
       timelineSequence.position = pt(newPositionX, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     });
     this.undoStop();
   }
 
-  zoomToFit () {
-    const widthToFit = this.interactive.length + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + CONSTANTS.INACTIVE_AREA_WIDTH;
-    const widthAvailable = this.ui.layerContainer.width;
-    const factor = widthAvailable / widthToFit;
-    this.zoomFactor = factor;
-    this.editor.updateZoomInputNumber(this.zoomFactor);
+  redraw () {
+    super.redraw();
+    this.timelineSequences.forEach(timelineSequence => {
+      timelineSequence._lockModelUpdate = true;
+      timelineSequence.setWidthAndUpdateResizers(this.getWidthFromDuration(timelineSequence.sequence.duration));
+      timelineSequence.position = pt(this.getPositionFromScroll(timelineSequence.sequence.start), timelineSequence.position.y);
+      timelineSequence._lockModelUpdate = false;
+    });
+    this._activeAreaWidth = this.getWidthFromDuration(this.interactive.length);
+  }
+
+  updateLayerPositions () {
+    this.interactive.layers.forEach(layer => {
+      const timelineLayer = this.getTimelineLayerFor(layer);
+      timelineLayer.position = pt(timelineLayer.position.x, -layer.zIndex);
+    });
+    this.arrangeLayerInfos();
+  }
+
+  updateZIndicesFromTimelineLayerPositions () {
+    const layerPositions = this.timelineLayers.map(timelineLayer =>
+      ({
+        layer: timelineLayer.layer,
+        y: timelineLayer.index
+      }));
+    layerPositions.sort((a, b) => b.y - a.y);
+    layerPositions.forEach((layerPositionObject, index) => {
+      layerPositionObject.layer.zIndex = index * 10;
+    });
+    this.interactive.redraw();
+  }
+
+  clear () {
+    this.timelineLayers.flatMap(timelineLayer => timelineLayer.timelineSequences).forEach(timelineSequence => timelineSequence.disbandInteractiveConnections());
+    this.ui.layerInfoContainer.submorphs = [];
+    this.ui.layerContainer.submorphs = [];
   }
 }
 
@@ -639,30 +633,6 @@ export class SequenceTimeline extends Timeline {
     return this._sequence;
   }
 
-  isSequenceTimeline () {
-    return true;
-  }
-
-  createOverviewTimelineLayer (morph) {
-    const timelineLayer = super.createTimelineLayer(morph);
-    timelineLayer.layerInfo.addCollapseToggle();
-    return timelineLayer;
-  }
-
-  onLoadContent (sequence) {
-    this._sequence = sequence;
-    this.sequence.submorphs.forEach(morph => {
-      const timelineLayer = this.createOverviewTimelineLayer(morph);
-      timelineLayer.addTimelineKeyframes();
-    });
-  }
-
-  redraw () {
-    super.redraw();
-    this._activeAreaWidth = CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor;
-    this.timelineLayers.forEach(timelineLayer => timelineLayer.redraw());
-  }
-
   get overviewLayers () {
     return this.timelineLayers.filter(timelineLayer => timelineLayer.isOverviewLayer);
   }
@@ -675,19 +645,8 @@ export class SequenceTimeline extends Timeline {
     return this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe === keyframe);
   }
 
-  updateLayers () {
-    this.withAllSubmorphsDo(submorph => {
-      if (submorph.isTimelineLayer) {
-        if (submorph.isOverviewLayer) {
-          if (!submorph.isExpanded) {
-            submorph.updateTimelineKeyframes();
-          } else {
-            submorph.removePropertyLayers();
-            submorph.createPropertyLayers();
-          }
-        }
-      }
-    });
+  get isSequenceTimeline () {
+    return true;
   }
 
   getNewTimelineLayer (props) {
@@ -724,6 +683,20 @@ export class SequenceTimeline extends Timeline {
     return this.sequence.progress.toFixed(2);
   }
 
+  createOverviewTimelineLayer (morph) {
+    const timelineLayer = super.createTimelineLayer(morph);
+    timelineLayer.layerInfo.addCollapseToggle();
+    return timelineLayer;
+  }
+
+  onLoadContent (sequence) {
+    this._sequence = sequence;
+    this.sequence.submorphs.forEach(morph => {
+      const timelineLayer = this.createOverviewTimelineLayer(morph);
+      timelineLayer.addTimelineKeyframes();
+    });
+  }
+
   deselectAllTimelineKeyframesExcept (timelineKeyframe) {
     this.selectedTimelineKeyframes.forEach(keyframe => keyframe.isSelected = false);
     timelineKeyframe.isSelected = true;
@@ -735,6 +708,54 @@ export class SequenceTimeline extends Timeline {
 
   deleteSelectedItems () {
     arr.invoke(this.selectedTimelineKeyframes, 'delete');
+  }
+
+  async scrollToKeyframe (keyframe, animation) {
+    const overviewLayer = this.overviewLayers.find(overviewLayer => overviewLayer.morph === animation.target);
+    if (!overviewLayer.isExpanded) overviewLayer.isExpanded = true;
+    const timelineKeyframe = this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe === keyframe);
+
+    // Make sure that the layout is applied, thus layer positions are set
+    if (!this.ui.layerContainer.layout.active) this.ui.layerContainer.layout.apply();
+
+    this.scrollToTimelineKeyframe(timelineKeyframe);
+
+    // If this line is removed, the scroll does not happen (Race issue)
+    await new Promise(r => setTimeout(r, 30));
+
+    timelineKeyframe.show();
+  }
+
+  scrollToTimelineKeyframe (timelineKeyframe) {
+    const scrollToX = timelineKeyframe.position.x - this.ui.layerContainer.extent.x / 2;
+    this.scrollHorizontallyTo(scrollToX);
+
+    const scrollToY = timelineKeyframe.layer.position.y;
+    this.scrollVerticallyTo(scrollToY);
+  }
+
+  scrollHorizontallyTo (scrollLeft) {
+    const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
+    if (!layerContainerNode) return;
+    layerContainerNode.scrollLeft = scrollLeft;
+    this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
+    const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
+    this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
+  }
+
+  scrollVerticallyTo (scrollTop) {
+    const maxScroll = this.ui.scrollableContainer.scrollExtent.y - this.ui.scrollableContainer.extent.y - this.ui.scrollableContainer.scrollbarOffset.y;
+    scrollTop = scrollTop > maxScroll ? maxScroll : scrollTop;
+
+    const scrollableContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.scrollableContainer);
+    if (!scrollableContainerNode) return;
+    scrollableContainerNode.scrollTop = scrollTop;
+    this.ui.scrollableContainer.setProperty('scroll', pt(0, scrollTop));
+  }
+
+  zoomToFit () {
+    this.zoomFactor = 1;
+    this.editor.updateZoomInputNumber(this.zoomFactor);
   }
 
   async promptEasingForSelection (multipleKeyframesSelected) {
@@ -821,58 +842,31 @@ export class SequenceTimeline extends Timeline {
     }
   }
 
-  async scrollToKeyframe (keyframe, animation) {
-    const overviewLayer = this.overviewLayers.find(overviewLayer => overviewLayer.morph === animation.target);
-    if (!overviewLayer.isExpanded) overviewLayer.isExpanded = true;
-    const timelineKeyframe = this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe === keyframe);
-
-    // Make sure that the layout is applied, thus layer positions are set
-    if (!this.ui.layerContainer.layout.active) this.ui.layerContainer.layout.apply();
-
-    this.scrollToTimelineKeyframe(timelineKeyframe);
-
-    // If this line is removed, the scroll does not happen (Race issue)
-    await new Promise(r => setTimeout(r, 30));
-
-    timelineKeyframe.show();
-  }
-
-  scrollToTimelineKeyframe (timelineKeyframe) {
-    const scrollToX = timelineKeyframe.position.x - this.ui.layerContainer.extent.x / 2;
-    this.scrollHorizontallyTo(scrollToX);
-
-    const scrollToY = timelineKeyframe.layer.position.y;
-    this.scrollVerticallyTo(scrollToY);
-  }
-
-  scrollHorizontallyTo (scrollLeft) {
-    const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
-    if (!layerContainerNode) return;
-    layerContainerNode.scrollLeft = scrollLeft;
-    this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
-    const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
-    this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
-  }
-
-  scrollVerticallyTo (scrollTop) {
-    const maxScroll = this.ui.scrollableContainer.scrollExtent.y - this.ui.scrollableContainer.extent.y - this.ui.scrollableContainer.scrollbarOffset.y;
-    scrollTop = scrollTop > maxScroll ? maxScroll : scrollTop;
-
-    const scrollableContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.scrollableContainer);
-    if (!scrollableContainerNode) return;
-    scrollableContainerNode.scrollTop = scrollTop;
-    this.ui.scrollableContainer.setProperty('scroll', pt(0, scrollTop));
-  }
-
-  zoomToFit () {
-    this.zoomFactor = 1;
-    this.editor.updateZoomInputNumber(this.zoomFactor);
-  }
-
   menuItems () {
     const menuItems = [];
     if (this.editor.clipboard.containsMorph) menuItems.push(['✏️ Paste Morph', () => this.editor.pasteMorphFromClipboard()]);
     return menuItems;
+  }
+
+  redraw () {
+    super.redraw();
+    this._activeAreaWidth = CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor;
+    this.timelineLayers.forEach(timelineLayer => timelineLayer.redraw());
+  }
+
+  updateLayers () {
+    this.withAllSubmorphsDo(submorph => {
+      if (submorph.isTimelineLayer) {
+        if (submorph.isOverviewLayer) {
+          if (!submorph.isExpanded) {
+            submorph.updateTimelineKeyframes();
+          } else {
+            submorph.removePropertyLayers();
+            submorph.createPropertyLayers();
+          }
+        }
+      }
+    });
   }
 
   abandon (bool) {
