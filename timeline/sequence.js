@@ -128,6 +128,7 @@ export class TimelineSequence extends QinoqMorph {
     }));
     this.timelineLayer.addMorph(this);
     this.caption = this.sequence.name;
+    connect(this.sequence, 'name', this, 'caption');
     this.initializeResizers();
     this._lockModelUpdate = false;
     this.updateAppearance();
