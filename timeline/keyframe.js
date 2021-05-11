@@ -111,15 +111,6 @@ export class TimelineKeyframe extends QinoqMorph {
     this.tooltip = this.keyframe ? `${this.name}\nEasing: ${this.keyframe.easingName}` : this.name;
   }
 
-  async promptRename () {
-    const newName = await $world.prompt('Keyframe name:', { input: this.keyframe.name });
-    if (newName) {
-      this.undoStart('rename keyframe');
-      this.name = newName;
-      this.undoStop('rename keyframe');
-    }
-  }
-
   menuItems (event) {
     const multipleKeyframesSelected = this.timeline.selectedTimelineKeyframes.length > 1;
     return [

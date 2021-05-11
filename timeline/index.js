@@ -761,8 +761,8 @@ export class SequenceTimeline extends Timeline {
 
   async promptRenameForSelection (multipleKeyframesSelected) {
     const newName = multipleKeyframesSelected
-      ? await $world.prompt('Keyframe name:', { input: this.selectedTimelineKeyframes[0].name })
-      : await $world.prompt(`Name for the ${this.selectedTimelineKeyframes.length} selected Keyframes:`);
+      ? await $world.prompt(`Name for the ${this.selectedTimelineKeyframes.length} selected Keyframes:`)
+      : await $world.prompt('Keyframe name:', { input: this.selectedTimelineKeyframes[0].name });
 
     if (newName) {
       this.renameSelection(newName);
