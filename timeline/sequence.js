@@ -277,7 +277,7 @@ export class TimelineSequence extends QinoqMorph {
   }
 
   get inMultiDrag () {
-    return this.dragSequenceStates && this.dragSequenceStates.length > 0;
+    return this.dragSequenceStates && this.dragSequenceStates.length > 1;
   }
 
   onDrag (event) {
