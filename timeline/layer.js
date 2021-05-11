@@ -252,7 +252,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
   }
 }
 
-export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
+export class OverviewTimelineLayer extends SequenceTimelineLayer {
   static get properties () {
     return {
       isExpanded: {
@@ -348,7 +348,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   createPropertyLayers () {
     this.propertyLayers = this.sequence.getAnimationsForMorph(this.morph).map(animation => {
       // we assume that each sequence only holds one animation per morph per property
-      const propertyLayer = new PropertySequenceTimelineLayer({
+      const propertyLayer = new PropertyTimelineLayer({
         morph: this.morph,
         _editor: this.editor,
         timeline: this.timeline
@@ -394,7 +394,7 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   }
 }
 
-export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
+export class PropertyTimelineLayer extends SequenceTimelineLayer {
   static get properties () {
     return {
       animation: {
