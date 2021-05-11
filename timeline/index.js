@@ -198,6 +198,13 @@ export class Timeline extends QinoqMorph {
     return timelineLayer;
   }
 
+  addTimelineLayer (timelineLayer, index = 0, name = undefined) {
+    this.ui.layerContainer.addMorphAt(timelineLayer, index);
+    const layerInfo = new TimelineLayerInfo({ timelineLayer, name });
+    timelineLayer.layerInfo = layerInfo;
+    this.ui.layerInfoContainer.addMorphAt(layerInfo, index);
+  }
+
   loadContent (content) {
     if (this.submorphs.length !== 0) {
       this.submorphs.forEach(submorph => submorph.remove());
