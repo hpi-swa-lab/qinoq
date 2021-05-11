@@ -39,7 +39,7 @@ export class Timeline extends QinoqMorph {
         min: 0,
         set (zoomFactor) {
           if (zoomFactor <= 0) return;
-          this.setProperty('zoomFactor', zoomFactor);
+          this.setProperty('zoomFactor', Math.round((zoomFactor + Number.EPSILON) * 100) / 100);
           if (this._deserializing || !this.interactive) return;
           this.redraw();
         }
