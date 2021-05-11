@@ -345,6 +345,12 @@ export class InteractiveMorphInspector extends QinoqMorph {
     this.displayedProperties.forEach(property => this.propertyControls[property].keyframe.updateAnimation());
   }
 
+  updateKeyframeButtonStyle (animation) {
+    this.withAllSubmorphsDo(submorph => {
+      if (submorph.isKeyframeButton && submorph.animation == animation) submorph.updateStyle();
+    });
+  }
+
   selectMorphThroughHalo (morph) {
     if (Array.isArray(morph)) morph = morph[0]; // Multi select through halo
     if (this.interactive && this.interactive.sequences.includes(Sequence.getSequenceOfMorph(morph))) {
@@ -432,6 +438,10 @@ class KeyframeButton extends QinoqMorph {
 
   get target () {
     return this.inspector.targetMorph;
+  }
+
+  get isKeyframeButton () {
+    return true;
   }
 
   get currentValue () {
