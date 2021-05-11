@@ -81,12 +81,17 @@ export class TimelineSequence extends QinoqMorph {
       },
       position: {
         set (position) {
+          const positionStartTime = Date.now();
           this.setProperty('position', position);
+          const positionSetTime = Date.now();
           if (this.hasResizers) {
             this.ui.leftResizer.position = pt(0, 0);
             this.ui.rightResizer.position = pt(this.width - this.ui.rightResizer.width, 0);
           }
-          if (!this._lockModelUpdate && !this._deserializing) { this.updateSequenceAfterArrangement(); }
+          const resizerSetTime = Date.now();
+          if (!this._lockModelUpdate && !this._deserializing && !this.inMultiDrag) { this.updateSequenceAfterArrangement(); }
+          const sequenceArrangmentTime = Date.now();
+          console.log(`Position setter profiling\nTime to set property ${positionSetTime - positionStartTime}\nTime to reposition resizers ${resizerSetTime - positionSetTime}\nTime to arrange sequence ${sequenceArrangmentTime - resizerSetTime}`);
         }
       },
       isSelected: {
@@ -272,6 +277,14 @@ export class TimelineSequence extends QinoqMorph {
     delete event.hand.draggedSequence;
   }
 
+  get dragSequenceStates () {
+    return $world.firstHand.timelineSequenceStates;
+  }
+
+  get inMultiDrag () {
+    return this.dragSequenceStates && this.dragSequenceStates.length > 0;
+  }
+
   onDrag (event) {
     const dragStartTime = Date.now();
     if (!event.hand.timelineSequenceStates) return;
@@ -301,6 +314,9 @@ export class TimelineSequence extends QinoqMorph {
     event.hand.timelineSequenceStates.forEach(dragState => {
       dragState.timelineSequence.updateAppearance();
     });
+
+    // when multiple sequences are dragged, the sequences are not arranged in the position setter
+    if (this.inMultiDrag) this.updateDraggedSequencesAfterArrangement();
 
     const endTime = Date.now();
     console.log(`onDrag performance report: \nTime to set position ${afterPositionSetTime - dragStartTime}
@@ -627,8 +643,23 @@ update Arrangment, update data objects ${endTime - afterSnappingTime}`);
   }
 
   updateSequenceAfterArrangement () {
+    const start = Date.now();
     this.sequence.duration = this.timeline.getDurationFromWidth(this.width);
     this.sequence.start = this.timeline.getScrollFromPosition(this.position.x);
+    const lengthUpdateStart = Date.now();
+    this.interactive.updateInteractiveLength();
+    const lengthUpdateEnd = Date.now();
+    this.interactive.redraw();
+    const end = Date.now();
+    console.log(`Update sequence after arrangement\nSet position start, duration ${lengthUpdateStart - start}\nUpdating length${lengthUpdateEnd - lengthUpdateStart}\nInteractive redraw${end - lengthUpdateEnd}`);
+  }
+
+  updateDraggedSequencesAfterArrangement () {
+    this.dragSequenceStates.forEach(dragState => {
+      const timelineSequences = dragState.timelineSequence;
+      timelineSequences.sequence.duration = timelineSequences.timeline.getDurationFromWidth(timelineSequences.width);
+      timelineSequences.sequence.start = timelineSequences.timeline.getScrollFromPosition(timelineSequences.position.x);
+    });
     this.interactive.updateInteractiveLength();
     this.interactive.redraw();
   }
