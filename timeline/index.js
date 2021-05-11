@@ -653,6 +653,21 @@ export class SequenceTimeline extends Timeline {
     return true;
   }
 
+  updateAnimationLayer (animation) {
+    this.withAllSubmorphsDo(submorph => {
+      if (submorph.isTimelineLayer && submorph.morph == animation.target) {
+        if (submorph.isOverviewLayer) {
+          if (!submorph.isExpanded) {
+            submorph.updateTimelineKeyframes();
+          } else {
+            submorph.removePropertyLayers();
+            submorph.createPropertyLayers();
+          }
+        }
+      }
+    });
+  }
+
   getNewTimelineLayer (props) {
     return this._createOverviewLayers ? new OverviewTimelineLayer(props) : new PropertyTimelineLayer(props);
   }

@@ -446,7 +446,7 @@ class KeyframeButton extends QinoqMorph {
     if (this.animation.useRelativeValues && this.propType == 'point') {
       newKeyframe.value = pt(this.currentValue.x / this.sequence.width, this.currentValue.y / this.sequence.height);
     }
-    this.editor.getTimelineForSequence(this.sequence).updateLayers();
+    this.editor.getTimelineForSequence(this.sequence).updateAnimationLayer(this.animation);
   }
 
   updateAnimation () {
