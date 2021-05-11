@@ -713,7 +713,7 @@ class Preview extends QinoqMorph {
     if (event.type != 'morphicdragend') return;
     const grabbedMorph = arr.first(event.hand.grabbedMorphs);
     if (grabbedMorph.isInteractive) {
-      this.interactive = grabbedMorph;
+      this.editor.interactive = grabbedMorph;
 
       // Restore style properties set during grab
       const { pointerAndShadow } = event.hand._grabbedMorphProperties.get(grabbedMorph) || {};
