@@ -24,7 +24,8 @@ export class TimelineLayer extends QinoqMorph {
       },
       height: {
         defaultValue: CONSTANTS.LAYER_HEIGHT
-      }
+      },
+      timeline: {}
     };
   }
 
@@ -34,10 +35,6 @@ export class TimelineLayer extends QinoqMorph {
 
   relayout () {
     this.height = CONSTANTS.LAYER_HEIGHT;
-  }
-
-  get timeline () {
-    return this.owner.owner.owner;
   }
 
   updateLayerPosition () {
