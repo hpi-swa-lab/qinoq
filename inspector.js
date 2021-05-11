@@ -399,13 +399,16 @@ class KeyframeButton extends QinoqMorph {
       borderStyle: {
         defaultValue: 'solid'
       },
+      fill: {
+        defaultValue: COLOR_SCHEME.KEYFRAME_FILL
+      },
+      borderColor: {
+        defaultValue: COLOR_SCHEME.KEYFRAME_BORDER
+      },
       mode: {
         defaultValue: 'default',
         type: 'Enum',
-        values: ['default', 'activated'],
-        initialize () {
-          this.setDefaultStyle();
-        }
+        values: ['default', 'activated']
       },
       inspector: { },
       animation: {
@@ -432,7 +435,14 @@ class KeyframeButton extends QinoqMorph {
           this.tooltip = `Create a keyframe for the ${property} property`;
         }
       },
-      propType: {}
+      propType: {},
+      styleSet: {
+        defaultValue: 'default',
+        set (styleSet) {
+          this.setProperty('styleSet', styleSet);
+          this.setStyle();
+        }
+      }
     };
   }
 
@@ -450,7 +460,7 @@ class KeyframeButton extends QinoqMorph {
 
   async onMouseUp () {
     this.mode = 'activated';
-    this.setActivatedStyle();
+    this.styleSet = 'activated';
     const newKeyframe = new Keyframe(this.sequence.progress, this.currentValue);
     this.animation = await this.sequence.addKeyframeForMorph(newKeyframe, this.target, this.property, this.propType);
     if (this.animation.useRelativeValues && this.propType == 'point') {
@@ -466,37 +476,34 @@ class KeyframeButton extends QinoqMorph {
 
   // The rest is styling. This may be improved with a master component. See styleguides/keyframe-inspector.json
 
-  setDefaultStyle () {
-    this.fill = COLOR_SCHEME.KEYFRAME_FILL;
-    this.borderColor = COLOR_SCHEME.KEYFRAME_BORDER;
-  }
-
-  setHoverStyle () {
-    this.fill = getColorForProperty(this.property);
-  }
-
-  setClickStyle () {
-    this.fill = COLOR_SCHEME.TRANSPARENT;
-  }
-
-  setActivatedStyle () {
-    this.fill = getColorForProperty(this.property);
-  }
-
   onMouseDown (event) {
     super.onMouseDown(event);
-    this.setClickStyle();
+    this.styleSet = 'click';
   }
 
   onHoverIn () {
-    this.setHoverStyle();
+    this.styleSet = 'hover';
   }
 
   onHoverOut () {
     if (this.mode === 'activated') {
-      this.setActivatedStyle();
+      this.styleSet = 'activated';
     } else {
-      this.setDefaultStyle();
+      this.styleSet = 'default';
+    }
+  }
+
+  setStyle () {
+    switch (this.styleSet) {
+      case 'default':
+        this.fill = COLOR_SCHEME.KEYFRAME_FILL;
+        this.borderColor = COLOR_SCHEME.KEYFRAME_BORDER;
+        break;
+      case 'activated' || 'hover':
+        this.fill = getColorForProperty(this.property);
+        break;
+      case 'click':
+        this.fill = COLOR_SCHEME.TRANSPARENT;
     }
   }
 
@@ -512,10 +519,10 @@ class KeyframeButton extends QinoqMorph {
 
     if (animationPosition >= 0 && animationPosition <= 1 && this.animation.getKeyframeAt(animationPosition)) {
       this.mode = 'activated';
-      this.setActivatedStyle();
+      this.styleSet = 'activated';
     } else {
       this.mode = 'default';
-      this.setDefaultStyle();
+      this.styleSet = 'default';
     }
     this._updatingStyle = false;
   }
