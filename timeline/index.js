@@ -187,11 +187,12 @@ export class Timeline extends QinoqMorph {
     this.ui.scrollableContainer.addMorph(this.ui.layerInfoContainer);
   }
 
-  addTimelineLayer (timelineLayer, index = 0, name = undefined) {
+  addTimelineLayer (timelineLayer, index = 0, name) {
     this.ui.layerContainer.addMorphAt(timelineLayer, index);
     const layerInfo = new TimelineLayerInfo({ timelineLayer, name });
     timelineLayer.layerInfo = layerInfo;
     this.ui.layerInfoContainer.addMorphAt(layerInfo, index);
+    return timelineLayer;
   }
 
   loadContent (content) {
@@ -361,11 +362,8 @@ export class GlobalTimeline extends Timeline {
     return this.timelineSequences.filter(timelineSequence => timelineSequence.isSelected);
   }
 
-  getSelectedTimelineSequences (filter) {
-    if (filter) {
-      return this.selectedTimelineSequences.filter(filter);
-    }
-    return this.selectedTimelineSequences;
+  getSelectedTimelineSequences (filter = () => true) {
+    return this.selectedTimelineSequences.filter(filter);
   }
 
   getDisplayValueFromScroll (scrollPosition) {
@@ -394,7 +392,6 @@ export class GlobalTimeline extends Timeline {
       sequence,
       timelineLayer: this.getTimelineLayerFor(sequence.layer)
     });
-    connect(sequence, 'name', timelineSequence, 'caption');
     return timelineSequence;
   }
 
@@ -414,8 +411,7 @@ export class GlobalTimeline extends Timeline {
       layer
     });
 
-    this.addTimelineLayer(timelineLayer);
-    return timelineLayer;
+    return this.addTimelineLayer(timelineLayer);
   }
 
   onLoadContent (interactive) {
@@ -513,9 +509,9 @@ export class GlobalTimeline extends Timeline {
   }
 
   async promptRenameForSelection () {
-    const newName = !(this.selectedTimelineSequences.length > 1)
-      ? await $world.prompt('Sequence name:', { input: this.selectedTimelineSequences[0].sequence.name })
-      : await $world.prompt(`Name for the ${this.selectedTimelineSequences.length} selected Sequences`);
+    const newName = this.selectedTimelineSequences.length > 1
+      ? await $world.prompt(`Name for the ${this.selectedTimelineSequences.length} selected Sequences`)
+      : await $world.prompt('Sequence name:', { input: this.selectedTimelineSequences[0].sequence.name });
 
     if (newName) {
       this.renameSelection(newName);
