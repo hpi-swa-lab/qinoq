@@ -103,6 +103,7 @@ Closes [fill in your issues here]
 - [ ] when more than two keyframes are selected, the context menu allows changing of relative positions, where entering a relative position changes the position of all selected keyframes - this works with all menu items and is undoable as expected (one undo for all selected keyframes)
 - [ ] having more than one keyframe selected and dragging one moves all keyframes, this is undoable
 - [ ] it is possible to add a new morph to the interactive using the top bar
+  - [ ] it is possible to add a lottie morph with the top bar
   - [ ] the newly created morph is also added to the timeline as an own layer
 - [ ] it is possible to add a new morph to the interactive by grab-and-drop
   - [ ] when a morph is grabed onto the interactive while the global timeline is active, an error message appears and the morph returns to its original position
