@@ -348,7 +348,12 @@ export class OverviewSequenceTimelineLayer extends SequenceTimelineLayer {
   createPropertyLayers () {
     this.propertyLayers = this.sequence.getAnimationsForMorph(this.morph).map(animation => {
       // we assume that each sequence only holds one animation per morph per property
-      const propertyLayer = this.timeline.createTimelineLayer(this.morph, this.index + 1, animation.property);
+      const propertyLayer = new PropertySequenceTimelineLayer({
+        morph: this.morph,
+        _editor: this.editor,
+        timeline: this.timeline
+      });
+      this.timeline.addTimelineLayer(propertyLayer, this.index + 1, animation.property);
       propertyLayer.animation = animation;
       propertyLayer.overviewLayer = this;
       propertyLayer.addKeyframesForAnimation(animation);
@@ -423,14 +428,6 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
 
   updateTooltip () {
     this.tooltip = `${this.morphName}` + (this.animation ? `:${this.animation.property}` : '');
-  }
-
-  onMouseDown (event) {
-    super.onMouseDown(event);
-    // we get the event before the keyframes
-    // if the click is on a keyframe we do not need to handle it
-    if (this.morphsContainingPoint(event.hand.position).filter(morph => morph.isTimelineKeyframe).length > 0) return;
-    this.timeline.deselectAllItems();
   }
 
   async redraw (options = {}) {
