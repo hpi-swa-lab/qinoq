@@ -700,15 +700,14 @@ export class SequenceTimeline extends Timeline {
     });
     this.addTimelineLayer(timelineLayer);
     timelineLayer.layerInfo.addCollapseToggle();
+
+    timelineLayer.addTimelineKeyframes();
     return timelineLayer;
   }
 
   onLoadContent (sequence) {
     this._sequence = sequence;
-    this.sequence.submorphs.forEach(morph => {
-      const timelineLayer = this.createOverviewTimelineLayer(morph);
-      timelineLayer.addTimelineKeyframes();
-    });
+    this.sequence.submorphs.forEach(morph => this.createOverviewTimelineLayer(morph));
   }
 
   deselectAllTimelineKeyframesExcept (timelineKeyframe) {
