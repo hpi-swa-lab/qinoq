@@ -6,7 +6,7 @@ import { InteractiveMorphInspector } from './inspector.js';
 import { resource } from 'lively.resources';
 import { arr } from 'lively.lang';
 import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
-import { Sequence, Keyframe, NumberAnimation, Interactive, Layer } from './index.js';
+import { Sequence, LottieMorph, Keyframe, NumberAnimation, Interactive, Layer } from './index.js';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
 import { Button } from 'lively.components';
 import { arrowRightPressed, arrowLeftPressed } from './keys.js';
@@ -86,6 +86,8 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   async initialize () {
+    if ($world.get('lively top bar')) this.customizeTopBar();
+    connect($world, 'onTopBarLoaded', this, 'customizeTopBar');
     this.initializeLayout();
     this.ui.window = this.openInWindow({
       title: 'Interactives Editor',
@@ -97,6 +99,11 @@ export class InteractivesEditor extends QinoqMorph {
     connect(this.ui.window, 'position', this, 'positionChanged');
     connect(this.ui.window, 'minimized', this, 'onWindowMinimizedChange');
     return this;
+  }
+
+  customizeTopBar () {
+    const bar = $world.get('lively top bar');
+    bar.registerCustomShape('Lottie Animation', LottieMorph, 'A', ['camera-retro', { paddingTop: '1px' }]);
   }
 
   async initializePanels () {
@@ -629,6 +636,7 @@ export class InteractivesEditor extends QinoqMorph {
     config.altClickDefinesThat = this._altClickDefinesThatStorage;
     this.clipboard.clear();
     this.clearInteractive();
+    disconnect($world, 'onTopBarLoaded', this, 'customizeTopBar');
     super.abandon();
   }
 
