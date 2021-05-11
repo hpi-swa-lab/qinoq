@@ -598,9 +598,12 @@ export class Sequence extends DeserializationAwareMorph {
   /**
   * Remove a morph from a sequence and clear references to it,
   * e.g. removing animations with that morph
+  * Name "removeMorph" is already taken, a call with doNotAbandonMorph = false,
+  *  results in clearing all connections from sequence to morph
+  *  while not calling abandon on the morph
   **/
-  abandonMorph (morph) {
-    morph.abandon(true);
+  abandonMorph (morph, doNotAbandonMorph = false) {
+    if (doNotAbandonMorph) morph.remove(); else morph.abandon(true);
     this.animations.filter(animation => animation.target == morph).forEach(animation => this.removeAnimation(animation));
   }
 
