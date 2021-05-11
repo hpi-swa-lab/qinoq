@@ -376,6 +376,10 @@ export class InteractivesEditor extends QinoqMorph {
     return this.getSequenceFor(this.ui.tabContainer.selectedTab);
   }
 
+  get selectedTimelineSequences () {
+    return this.displayedTimeline.selectedTimelineSequences;
+  }
+
   addMorphToInteractive (morph) {
     this.currentSequence.addMorph(morph);
     this.onMorphAddition(morph); // Additional actions that are morph specific
@@ -476,8 +480,8 @@ export class InteractivesEditor extends QinoqMorph {
         doc: 'Move the selected sequences right or increase the scrollPosition by args.stepSize units',
         exec: (morph, args) => {
           if (!this.interactive || this.inputFieldFocused()) return;
-          if (this.displayedTimeline.isGlobalTimeline && this.displayedTimeline.selectedSequences.length > 0) {
-            this.displayedTimeline.moveTimelineSequencesBy(this.displayedTimeline.selectedSequences, args.stepSize);
+          if (this.displayedTimeline.isGlobalTimeline && this.selectedTimelineSequences.length > 0) {
+            this.displayedTimeline.moveTimelineSequencesBy(this.selectedTimelineSequences, args.stepSize);
             return;
           }
           if (this.interactive.scrollPosition + args.stepSize <= this.interactive.length) {
@@ -492,8 +496,8 @@ export class InteractivesEditor extends QinoqMorph {
         doc: 'Move the selected sequences left or decrease the scroll position by args.stepSize units',
         exec: (morph, args) => {
           if (!this.interactive || this.inputFieldFocused()) return;
-          if (this.displayedTimeline.isGlobalTimeline && this.displayedTimeline.selectedSequences.length > 0) {
-            this.displayedTimeline.moveTimelineSequencesBy(this.displayedTimeline.selectedSequences, -args.stepSize);
+          if (this.displayedTimeline.isGlobalTimeline && this.selectedTimelineSequences.length > 0) {
+            this.displayedTimeline.moveTimelineSequencesBy(this.selectedTimelineSequences, -args.stepSize);
             return;
           }
           if (this.interactive.scrollPosition - args.stepSize >= 0) {
