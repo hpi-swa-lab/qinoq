@@ -23,14 +23,14 @@ Closes [fill in your issues here]
 - [ ] mouseUp on the leaves makes them ligher again (it is expected that the color is not green anymore)
 - [ ] hovering over the clouds blurs them
 - [ ] moving the mouse away from the clouds removes the blur  
+- [ ] the interactive can be resized by a fixed aspect ratio
+- [ ] after resizing to have a bigger interactive the sun is bigger and still moves to about half of the interactive width
 - [ ] can be saved
 
 ### Interactive and editor
 
 - [ ] a new scrollytelling can be created with a button
 - [ ] can be loaded in the editor via drag and drop
-- [ ] the interactive can be resized by a fixed aspect ratio
-- [ ] after resizing to have a bigger interactive the sun is bigger and still moves to about half of the interactive width
 - [ ] an interactive can be grabbed out of the editor and placed in the world with both the editor and interactive still working. The editor is cleared
 
 ### Sequences in GlobalTimeline
