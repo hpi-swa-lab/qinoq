@@ -305,11 +305,11 @@ export class KeyframeLine extends QinoqMorph {
   }
 
   updatePosition () {
-    this.submorphs.forEach(keyframe => keyframe.abandon());
-    this.addKeyframes();
     const start = Math.min(...this.animation.keyframes.map(keyframe => this.timeline.getPositionFromKeyframe(keyframe)));
     const end = Math.max(...this.animation.keyframes.map(keyframe => this.timeline.getPositionFromKeyframe(keyframe)));
     this.width = end - start;
     this.position = pt(start, this.yPosition);
+    this.submorphs.forEach(keyframe => keyframe.abandon());
+    this.addKeyframes();
   }
 }
