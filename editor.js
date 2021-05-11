@@ -368,6 +368,10 @@ export class InteractivesEditor extends QinoqMorph {
     return tab.content;
   }
 
+  getTimelineForSequence (sequence) {
+    return this.getTimelineFor(this.getTabFor(sequence));
+  }
+
   getSequenceFor (tab) {
     return this.getTimelineFor(tab).sequence;
   }
