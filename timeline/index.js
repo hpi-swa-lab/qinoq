@@ -189,7 +189,7 @@ export class Timeline extends QinoqMorph {
 
   createTimelineLayer (layer, index = 0, name = undefined) {
     const props = layer.constructor.name == 'Layer' ? { layer: layer } : { morph: layer };
-    const timelineLayer = this.getNewTimelineLayer({ _editor: this.editor, container: this.ui.layerContainer, ...props });
+    const timelineLayer = this.getNewTimelineLayer({ timeline: this, _editor: this.editor, container: this.ui.layerContainer, ...props });
     this.ui.layerContainer.addMorphAt(timelineLayer, index);
 
     const layerInfo = new TimelineLayerInfo({ timelineLayer, name });
