@@ -81,17 +81,12 @@ export class TimelineSequence extends QinoqMorph {
       },
       position: {
         set (position) {
-          const positionStartTime = Date.now();
           this.setProperty('position', position);
-          const positionSetTime = Date.now();
           if (this.hasResizers) {
             this.ui.leftResizer.position = pt(0, 0);
             this.ui.rightResizer.position = pt(this.width - this.ui.rightResizer.width, 0);
           }
-          const resizerSetTime = Date.now();
           if (!this._lockModelUpdate && !this._deserializing && !this.inMultiDrag) { this.updateSequenceAfterArrangement(); }
-          const sequenceArrangmentTime = Date.now();
-          console.log(`Position setter profiling\nTime to set property ${positionSetTime - positionStartTime}\nTime to reposition resizers ${resizerSetTime - positionSetTime}\nTime to arrange sequence ${sequenceArrangmentTime - resizerSetTime}`);
         }
       },
       isSelected: {
@@ -643,15 +638,10 @@ update Arrangment, update data objects ${endTime - afterSnappingTime}`);
   }
 
   updateSequenceAfterArrangement () {
-    const start = Date.now();
     this.sequence.duration = this.timeline.getDurationFromWidth(this.width);
     this.sequence.start = this.timeline.getScrollFromPosition(this.position.x);
-    const lengthUpdateStart = Date.now();
     this.interactive.updateInteractiveLength();
-    const lengthUpdateEnd = Date.now();
     this.interactive.redraw();
-    const end = Date.now();
-    console.log(`Update sequence after arrangement\nSet position start, duration ${lengthUpdateStart - start}\nUpdating length${lengthUpdateEnd - lengthUpdateStart}\nInteractive redraw${end - lengthUpdateEnd}`);
   }
 
   updateDraggedSequencesAfterArrangement () {
