@@ -75,7 +75,7 @@ describe('Editor', () => {
     it('a layer with keyframes can be expanded', async () => {
       const dayBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'day background');
       await dayBackgroundTimelineSequence.openSequenceView();
-      const layerInfo = editor.displayedTimeline.getSubmorphNamed('anOverviewSequenceTimelineLayer').layerInfo;
+      const layerInfo = editor.displayedTimeline.getSubmorphNamed('anOverviewTimelineLayer').layerInfo;
       expect(layerInfo.menuItems().some(menuItem => menuItem[0] == '➕ Expand view')).to.be.true;
       editor.getTabFor(dayBackgroundTimelineSequence.sequence).close();
     });
@@ -83,7 +83,7 @@ describe('Editor', () => {
     it('a layer without keyframes cannot be expanded', async () => {
       const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'night background');
       await nightBackgroundTimelineSequence.openSequenceView();
-      const layerInfo = editor.displayedTimeline.getSubmorphNamed('anOverviewSequenceTimelineLayer').layerInfo;
+      const layerInfo = editor.displayedTimeline.getSubmorphNamed('anOverviewTimelineLayer').layerInfo;
       expect(layerInfo.menuItems().some(menuItem => menuItem[0] == '➕ Expand view')).to.be.false;
       editor.getTabFor(nightBackgroundTimelineSequence.sequence).close();
     });
@@ -91,7 +91,7 @@ describe('Editor', () => {
     it('a layer can be expanded after adding a keyframe', async () => {
       const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'night background');
       await nightBackgroundTimelineSequence.openSequenceView();
-      const timelineLayer = editor.displayedTimeline.getSubmorphNamed('anOverviewSequenceTimelineLayer');
+      const timelineLayer = editor.displayedTimeline.getSubmorphNamed('anOverviewTimelineLayer');
       const layerInfo = timelineLayer.layerInfo;
       expect(layerInfo.menuItems().some(menuItem => menuItem[0] == '➕ Expand view')).to.be.false;
       const clickEvent = {

@@ -3,7 +3,7 @@ import { VerticalLayout } from 'lively.morphic';
 import { TimelineCursor } from './cursor.js';
 import { connect, disconnect } from 'lively.bindings';
 import { TimelineSequence } from './sequence.js';
-import { GlobalTimelineLayer, PropertySequenceTimelineLayer, OverviewSequenceTimelineLayer } from './layer.js';
+import { GlobalTimelineLayer, PropertyTimelineLayer, OverviewTimelineLayer } from './layer.js';
 import { CONSTANTS } from './constants.js';
 import { TimelineLayerInfo } from './layer-info.js';
 import { COLOR_SCHEME } from '../colors.js';
@@ -185,17 +185,6 @@ export class Timeline extends QinoqMorph {
       })
     });
     this.ui.scrollableContainer.addMorph(this.ui.layerInfoContainer);
-  }
-
-  createTimelineLayer (layer, index = 0, name = undefined) {
-    const props = layer.constructor.name == 'Layer' ? { layer: layer } : { morph: layer };
-    const timelineLayer = this.getNewTimelineLayer({ timeline: this, _editor: this.editor, container: this.ui.layerContainer, ...props });
-    this.ui.layerContainer.addMorphAt(timelineLayer, index);
-
-    const layerInfo = new TimelineLayerInfo({ timelineLayer, name });
-    timelineLayer.layerInfo = layerInfo;
-    this.ui.layerInfoContainer.addMorphAt(layerInfo, index);
-    return timelineLayer;
   }
 
   addTimelineLayer (timelineLayer, index = 0, name = undefined) {
@@ -417,8 +406,20 @@ export class GlobalTimeline extends Timeline {
     newTimelineSequence.center = pt(0, 0);
   }
 
+  createGlobalLayer (layer) {
+    const timelineLayer = new GlobalTimelineLayer({
+      timeline: this,
+      _editor: this.editor,
+      container: this.ui.layerContainer,
+      layer
+    });
+
+    this.addTimelineLayer(timelineLayer);
+    return timelineLayer;
+  }
+
   onLoadContent (interactive) {
-    this.interactive.layers.sort((a, b) => a.zIndex - b.zIndex).forEach(layer => this.createTimelineLayer(layer));
+    this.interactive.layers.sort((a, b) => a.zIndex - b.zIndex).forEach(layer => this.createGlobalLayer(layer));
     connect(this.interactive, 'onLengthChange', this, '_activeAreaWidth', { converter: '(length) => target.getWidthFromDuration(length)' }).update(this.interactive.length);
     this.interactive.sequences.forEach(sequence => {
       this.createTimelineSequence(sequence);
@@ -657,7 +658,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   getNewTimelineLayer (props) {
-    return this._createOverviewLayers ? new OverviewSequenceTimelineLayer(props) : new PropertySequenceTimelineLayer(props);
+    return this._createOverviewLayers ? new OverviewTimelineLayer(props) : new PropertyTimelineLayer(props);
   }
 
   getPositionFromScroll (scrollPosition) {
@@ -691,7 +692,13 @@ export class SequenceTimeline extends Timeline {
   }
 
   createOverviewTimelineLayer (morph) {
-    const timelineLayer = super.createTimelineLayer(morph);
+    const timelineLayer = new OverviewTimelineLayer({
+      timeline: this,
+      _editor: this.editor,
+      morph,
+      container: this.ui.layerContainer
+    });
+    this.addTimelineLayer(timelineLayer);
     timelineLayer.layerInfo.addCollapseToggle();
     return timelineLayer;
   }

@@ -590,7 +590,7 @@ export class InteractivesEditor extends QinoqMorph {
           const newLayer = new Layer({ zIndex: newZIndex });
 
           this.interactive.addLayer(newLayer);
-          this.ui.globalTimeline.createTimelineLayer(newLayer);
+          this.ui.globalTimeline.createGlobalLayer(newLayer);
           this.ui.globalTimeline.onActiveAreaWidthChange();
         }
       },
