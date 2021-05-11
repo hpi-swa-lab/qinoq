@@ -6,6 +6,7 @@ import { Clipboard } from '../utilities/clipboard.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 import { serialize, deserialize } from 'lively.serializer2';
 import { LottieMorph } from '../interactive-morphs/lottie-morph.js';
+import { Morph } from 'lively.morphic';
 
 let editor, interactive;
 function closeEditor () {
@@ -109,6 +110,53 @@ describe('Editor', () => {
       await editor.getSubmorphNamed('aKeyframeButton').onMouseUp();
       expect(layerInfo.menuItems().some(menuItem => menuItem[0] == '➕ Expand view')).to.be.true;
       editor.getTabFor(nightBackgroundTimelineSequence.sequence).close();
+    });
+
+    describe('cutting a morph', () => {
+      let morphToCut;
+
+      class CutTestMorph extends Morph {
+        abandon (bool) {
+          this._abandonHasBeenCalled = true;
+          super.abandon(bool);
+        }
+      }
+
+      beforeEach(async () => {
+        const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'night background');
+        await nightBackgroundTimelineSequence.openSequenceView();
+        morphToCut = new CutTestMorph();
+        editor.addMorphToInteractive(morphToCut);
+      });
+
+      it('does not trigger abandon', () => {
+        expect(morphToCut._abandonHasBeenCalled).to.not.be.ok;
+        editor.cutMorph(morphToCut);
+        expect(morphToCut._abandonHasBeenCalled).to.not.be.ok;
+        morphToCut.abandon();
+        expect(morphToCut._abandonHasBeenCalled).to.be.ok;
+      });
+
+      it('removes morph from interactive', () => {
+        expect(editor.currentSequence.submorphs).to.include(morphToCut);
+        editor.cutMorph(morphToCut);
+        expect(editor.currentSequence.submorphs).to.not.include(morphToCut);
+      });
+
+      it('removes morph animations from sequence', () => {
+        expect(editor.currentSequence.submorphs).to.include(morphToCut);
+        editor.cutMorph(morphToCut);
+        expect(editor.currentSequence.submorphs).to.not.include(morphToCut);
+      });
+
+      it('places morph in clipboard', async () => {
+        const { Keyframe } = await System.import('qinoq/animations.js');
+        const someKeyframe = new Keyframe(0, 0);
+        const animation = await editor.currentSequence.addKeyframeForMorph(someKeyframe, morphToCut, 'opacity', 'number');
+        expect(editor.currentSequence.animations).to.include(animation);
+        editor.cutMorph(morphToCut);
+        expect(editor.currentSequence.animations).not.to.include(animation);
+      });
     });
 
     after(async () => {
