@@ -346,6 +346,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
   }
 
   updateKeyframeButtonStyle (animation) {
+    if (animation.target !== this.targetMorph) return;
     this.withAllSubmorphsDo(submorph => {
       if (submorph.isKeyframeButton && submorph.animation == animation) submorph.updateStyle();
     });
