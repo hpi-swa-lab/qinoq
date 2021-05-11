@@ -440,7 +440,7 @@ export class PropertySequenceTimelineLayer extends SequenceTimelineLayer {
     this.activeArea.whenRendered().then(() => {
       this.redrawActiveArea();
     });
-    if (this.keyframes.length == 0) return;
+    if (this.keyframes.length == 0 || !this.owner) return;
     if (!options.doNotRepositionKeyframes) {
       this.keyframes.forEach(timelineKeyframe => {
         timelineKeyframe._lockModelUpdate = true;
