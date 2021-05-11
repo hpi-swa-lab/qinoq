@@ -409,7 +409,7 @@ export class InteractivesEditor extends QinoqMorph {
     this.removeMorphFromInteractive(morphToCut, true);
   }
 
-  removeMorphFromInteractive (morph, doNotAbandon = false) {
+  removeMorphFromInteractive (morph, doNotAbandonMorph = false) {
     disconnect(morph, 'onAbandon', this, 'removeMorphFromInteractive');
     const sequenceOfMorph = Sequence.getSequenceOfMorph(morph);
     const tab = this.getTabFor(sequenceOfMorph);
@@ -420,8 +420,7 @@ export class InteractivesEditor extends QinoqMorph {
     if (this.ui.inspector.targetMorph == morph) {
       this.ui.inspector.deselect();
     }
-    if (doNotAbandon) morph.remove();
-    else sequenceOfMorph.abandonMorph(morph);
+    sequenceOfMorph.abandonMorph(morph, doNotAbandonMorph);
   }
 
   get inputFieldClasses () {
@@ -546,7 +545,8 @@ export class InteractivesEditor extends QinoqMorph {
         }
       },
       {
-        name: 'scroll to previous sequence',
+        name: 'scroll to previous item',
+        doc: 'Scroll to previous sequence or keyframe',
         exec: () => {
           const sequence = this.currentSequence;
           const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getPrevKeyframePosition(sequence.progress)) : this.interactive.getPrevSequenceStart(this.interactiveScrollPosition);
@@ -555,7 +555,8 @@ export class InteractivesEditor extends QinoqMorph {
         }
       },
       {
-        name: 'scroll to next sequence',
+        name: 'scroll to next item',
+        doc: 'Scroll to next sequence or keyframe',
         exec: () => {
           const sequence = this.currentSequence;
           const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getNextKeyframePosition(sequence.progress)) : this.interactive.getNextSequenceStart(this.interactiveScrollPosition);
@@ -889,7 +890,7 @@ class MenuBar extends QinoqMorph {
     this.buildIconButton({
       tooltip: 'Go to previous sequence',
       target: this.editor,
-      command: 'scroll to previous sequence',
+      command: 'scroll to previous item',
       icon: 'step-backward',
       name: 'gotoPrevButton',
       container: 'scrollPositionToolbar'
@@ -900,7 +901,7 @@ class MenuBar extends QinoqMorph {
     this.buildIconButton({
       tooltip: 'Go to next sequence',
       target: this.editor,
-      command: 'scroll to next sequence',
+      command: 'scroll to next item',
       icon: 'step-forward',
       name: 'gotoNextButton',
       container: 'scrollPositionToolbar'
