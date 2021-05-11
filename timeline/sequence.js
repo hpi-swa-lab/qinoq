@@ -209,7 +209,7 @@ export class TimelineSequence extends QinoqMorph {
       return;
     }
     if (event.leftMouseButtonPressed()) {
-      if (rangeSelectKeyPressed(event) && !this.isSelected && this.timeline._lastSelectedTimelineSequence && this.timeline.getSelectedSequences().length > 0) {
+      if (rangeSelectKeyPressed(event) && !this.isSelected && this.timeline._lastSelectedTimelineSequence && this.timeline.getSelectedTimelineSequences().length > 0) {
         this.timeline.selectAllItems(this.rectangularSelectionFilter);
       } else if (rangeSelectKeyPressed(event) && this.isSelected && this.timeline._lastSelectedTimelineSequence) {
         this.timeline.deselectAllItems(this.rectangularSelectionFilter);
@@ -233,7 +233,7 @@ export class TimelineSequence extends QinoqMorph {
     this.isSelected = true;
     this._dragged = true;
     const undo = this.undoStart('move-timeline-sequence');
-    event.hand.timelineSequenceStates = this.timeline.getSelectedSequences().map(timelineSequence => {
+    event.hand.timelineSequenceStates = this.timeline.getSelectedTimelineSequences().map(timelineSequence => {
       undo.addTarget(timelineSequence);
       return {
         timelineSequence: timelineSequence,
@@ -243,8 +243,8 @@ export class TimelineSequence extends QinoqMorph {
         isMove: true
       };
     });
-    const leftMostSequence = this.timeline.getSelectedSequences().sort((a, b) => a.sequence.start - b.sequence.start)[0];
-    event.hand.leftMostSequenceStates = this.timeline.getSelectedSequences().map(timelineSequence => {
+    const leftMostSequence = this.timeline.getSelectedTimelineSequences().sort((a, b) => a.sequence.start - b.sequence.start)[0];
+    event.hand.leftMostSequenceStates = this.timeline.getSelectedTimelineSequences().map(timelineSequence => {
       if (timelineSequence.sequence.start == leftMostSequence.sequence.start) {
         return {
           timelineSequence: timelineSequence,
@@ -395,7 +395,7 @@ export class TimelineSequence extends QinoqMorph {
       case 'drag': {
         const snapTarget = startIsCloserThanEnd ? 'position' : 'topRight';
 
-        this.timeline.getSelectedSequences(s => s !== this).forEach(timelineSequence =>
+        this.timeline.getSelectedTimelineSequences(s => s !== this).forEach(timelineSequence =>
           timelineSequence[snapTarget] = pt(
             Math.abs(this[snapTarget].x - snapPosition - timelineSequence[snapTarget].x),
             CONSTANTS.SEQUENCE_LAYER_Y_OFFSET));
@@ -713,8 +713,8 @@ export class TimelineSequence extends QinoqMorph {
   }
 
   sequenceVisbilityMenuString () {
-    if (this.timeline.selectedSequences.every(sequence => sequence.isHidden == false)) return '🙈 Hide Selected Sequences';
-    if (this.timeline.selectedSequences.every(sequence => sequence.isHidden != false)) return '🐵 Show Selected Sequences';
+    if (this.timeline.selectedTimelineSequences.every(sequence => sequence.isHidden == false)) return '🙈 Hide Selected Sequences';
+    if (this.timeline.selectedTimelineSequences.every(sequence => sequence.isHidden != false)) return '🐵 Show Selected Sequences';
     return (this.isHidden ? '🐵' : '🙈').concat('Toggle Visbility of Selected Sequences');
   }
 
@@ -725,7 +725,7 @@ export class TimelineSequence extends QinoqMorph {
       ['↔️ Edit duration', async () => await this.timeline.promptDurationForSelection()],
       ['🏁 Edit start position', async () => await this.timeline.promptStartForSelection()],
       [this.sequenceVisbilityMenuString(), () => this.timeline.toggleVisbilityForSelection()]];
-    if (this.timeline.getSelectedSequences().length === 1) {
+    if (this.timeline.getSelectedTimelineSequences().length === 1) {
       items = items.concat([{ isDivider: true },
         ['🔍 View sequence', () => this.openSequenceView()],
         ['▶️ Go to start', () => this.editor.internalScrollChangeWithGUIUpdate(this.sequence.start)]
