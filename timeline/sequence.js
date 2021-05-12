@@ -297,8 +297,9 @@ export class TimelineSequence extends QinoqMorph {
     this.handleSnapping('drag', event.hand.timelineSequenceStates);
     event.hand.timelineSequenceStates.forEach(dragState => {
       dragState.timelineSequence.updateAppearance();
-      dragState.timelineSequence.updateSequenceAfterArrangement();
+      dragState.timelineSequence.updateSequenceAfterArrangement(false);
     });
+    this.interactive.updateInteractiveLength();
   }
 
   removeSnapIndicators () {
@@ -619,10 +620,10 @@ export class TimelineSequence extends QinoqMorph {
     this.ui.rightResizer.position = pt(this.width - this.ui.rightResizer.width, 0);
   }
 
-  updateSequenceAfterArrangement () {
+  updateSequenceAfterArrangement (updateInteractiveLength = true) {
     this.sequence.duration = this.timeline.getDurationFromWidth(this.width);
     this.sequence.start = this.timeline.getScrollFromPosition(this.position.x);
-    this.interactive.updateInteractiveLength();
+    if (updateInteractiveLength) this.interactive.updateInteractiveLength();
     this.interactive.redraw();
   }
 

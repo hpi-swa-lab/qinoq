@@ -498,7 +498,7 @@ export class GlobalTimeline extends Timeline {
 
       timelineSequence.position = pt(timelineSequence.position.x + timelineSequence.timeline.getWidthFromDuration(scrollStepSize),
         timelineSequence.position.y);
-      timelineSequence.updateSequenceAfterArrangement();
+      timelineSequence.updateSequenceAfterArrangement(false);
 
       const forbiddenMovement = timelineSequence.isOverlappingOtherSequence() || timelineSequence.sequence.start < 0;
 
@@ -506,6 +506,7 @@ export class GlobalTimeline extends Timeline {
         faultyTimelineSequences.push(timelineSequence);
       }
     });
+    this.interactive.updateInteractiveLength();
 
     this.undoStop('timeline-sequence-move');
 

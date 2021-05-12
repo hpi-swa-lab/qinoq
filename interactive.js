@@ -129,12 +129,30 @@ export class Interactive extends Morph {
     scrollableContent.extent = pt(1, this.extent.y + this._length);
   }
 
+  _updateLengthBuffer (changedSequence) {
+    if (!this.lengthBuffer) {
+      this.lengthBuffer = changedSequence.end;
+      return;
+    }
+
+    if (changedSequence.end > this.lengthBuffer) { this.lengthBuffer = changedSequence.end; }
+  }
+
+  _resetLengthBuffer () {
+    this.lengthBuffer = 0;
+  }
+
   updateInteractiveLength () {
-    let length = 0;
-    this.sequences.forEach(sequence => {
-      if (sequence.end > length) length = sequence.end;
-    });
-    this._length = length;
+    if (!this.lengthBuffer) {
+      this._length = Math.max(...this.sequences.map(sequence => sequence.end));
+      console.log('big');
+      return;
+    }
+
+    console.log('update');
+
+    this._length = this.lengthBuffer;
+    this._resetLengthBuffer();
   }
 
   openInWorld () {
@@ -229,13 +247,18 @@ export class Interactive extends Morph {
     }
     sequence.interactive = this;
     connect(this, 'extent', sequence, 'extent');
+    connect(sequence, 'onEndChange', this, '_updateLengthBuffer', {
+      converter: '() => source'
+    }).update(sequence);
   }
 
   removeSequence (sequence) {
     disconnectAll(sequence);
     disconnect(this, 'extent', sequence, 'extent');
+    disconnect(sequence, 'onEndChange', this, '_updateLengthBuffer');
     arr.remove(this.sequences, sequence);
     sequence.remove();
+    this._resetLengthBuffer();
     this.updateInteractiveLength();
   }
 
@@ -498,11 +521,19 @@ export class Sequence extends DeserializationAwareMorph {
   static get properties () {
     return {
       start: {
-        defaultValue: 0
+        defaultValue: 0,
+        set (start) {
+          this.setProperty('start', start);
+          signal(this, 'onEndChange');
+        }
       },
       duration: {
         defaultValue: 0,
-        isFloat: false
+        isFloat: false,
+        set (duration) {
+          this.setProperty('duration', duration);
+          signal(this, 'onEndChange');
+        }
       },
       _progress: {
         defaultValue: 0,
