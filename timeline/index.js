@@ -1,5 +1,5 @@
 import { pt } from 'lively.graphics';
-import { VerticalLayout } from 'lively.morphic';
+import { VerticalLayout, Label, Morph } from 'lively.morphic';
 import { TimelineCursor } from './cursor.js';
 import { connect, disconnect } from 'lively.bindings';
 import { TimelineSequence } from './sequence.js';
@@ -703,7 +703,37 @@ export class SequenceTimeline extends Timeline {
 
   onLoadContent (sequence) {
     this._sequence = sequence;
-    this.sequence.submorphs.forEach(morph => this.createOverviewTimelineLayer(morph));
+    this.sequence.submorphs.length !== 0
+      ? this.sequence.submorphs.forEach(morph => this.createOverviewTimelineLayer(morph))
+      : this.addPlaceholder();
+  }
+
+  addPlaceholder () {
+    const placeholder = new Morph({
+      name: 'placeholder',
+      fill: COLOR_SCHEME.BACKGROUND_VARIANT,
+      opacity: 0.5,
+      height: CONSTANTS.LAYER_HEIGHT,
+      layout: new VerticalLayout({
+        align: 'center',
+        direction: 'centered',
+        autoResize: false
+      })
+    });
+    const label = new Label({
+      textString: 'Create content here by dragging a Morph into the Preview, creating a new one or pasting it from the clipboard.',
+      fontWeight: 'bold',
+      fontSize: 15
+    });
+    placeholder.addMorph(label);
+    this.ui.layerContainer.addMorphAt(placeholder, 0);
+    this.ui.scrollableContainer.clipMode = 'hidden';
+  }
+
+  removePlaceholder () {
+    const placeholder = this.get('placeholder');
+    if (placeholder) placeholder.remove();
+    this.ui.scrollableContainer.clipMode = 'auto';
   }
 
   deselectAllTimelineKeyframesExcept (timelineKeyframe) {
