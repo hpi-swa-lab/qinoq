@@ -9,6 +9,7 @@ import { ColorPickerField } from 'lively.ide/styling/color-picker.js';
 import { Sequence, Keyframe } from './index.js';
 import { animatedPropertiesAndTypes, getColorForProperty } from './properties.js';
 import { QinoqMorph } from './qinoq-morph.js';
+import { resource } from 'lively.resources';
 
 const CONSTANTS = {
   LABEL_X: 10,
@@ -32,9 +33,6 @@ export class InteractiveMorphInspector extends QinoqMorph {
       borderColor: {
         defaultValue: COLOR_SCHEME.BACKGROUND_VARIANT
       },
-      clipMode: {
-        defaultValue: 'auto'
-      },
       ui: {
         after: ['_editor'],
         initialize () {
@@ -42,11 +40,6 @@ export class InteractiveMorphInspector extends QinoqMorph {
           this.ui = {};
           this.build();
           connect($world, 'showHaloFor', this, 'selectMorphThroughHalo');
-        }
-      },
-      propertyControls: {
-        initialize () {
-          if (!this._deserializing) this.propertyControls = {};
         }
       },
       targetMorph: {
@@ -58,18 +51,102 @@ export class InteractiveMorphInspector extends QinoqMorph {
           }
 
           if (morph && morph != this.targetMorph) {
-            this.disbandConnections();
+            this.ui.animationsInspector.disbandConnections();
             this.setProperty('targetMorph', morph);
             this.ui.headline.textString = `Inspecting ${morph.toString()}`;
 
-            this.buildPropertyControls();
-            this.refreshAllPropertiesInInspector();
-            this.displayedProperties.forEach(property => {
-              this.propertyControls[property].keyframe.updateStyle();
-            });
-            this.createConnections();
+            this.ui.animationsInspector.initialize();
           }
         }
+      }
+    };
+  }
+
+  get sequence () {
+    return Sequence.getSequenceOfMorph(this.targetMorph);
+  }
+
+  buildTargetPicker () {
+    this.ui.targetPicker = new TargetPicker({ inspector: this });
+  }
+
+  async build () {
+    this.buildTargetPicker();
+
+    this.ui.headlinePane = new QinoqMorph({ name: 'headline pane' });
+    this.ui.headline = new Label({ name: 'headline', textString: 'No morph selected', fontWeight: 'bold' });
+    this.ui.headlinePane.layout = new HorizontalLayout({ spacing: 5, align: 'center' });
+    this.ui.headlinePane.addMorph(this.ui.headline);
+    this.ui.headlinePane.addMorph(this.ui.targetPicker);
+
+    this.addMorph(this.ui.headlinePane);
+
+    this.ui.tabContainer = await resource('part://tabs/tabs').read();
+    Object.assign(this.ui.tabContainer, {
+      position: pt(0, 38),
+      extent: pt(this.width, this.height - this.ui.headlinePane.height),
+      showNewTabButton: false,
+      tabHeight: 20
+    });
+    this.ui.animationsInspector = new AnimationsInspector({
+      inspector: this,
+      _editor: this.editor
+    });
+    this.ui.animationsInspectorTab = await this.ui.tabContainer.addTab('animations', this.ui.animationsInspector);
+    this.ui.animationsInspectorTab.closeable = false;
+
+    this.addMorph(this.ui.tabContainer);
+  }
+
+  selectMorphThroughHalo (morph) {
+    if (Array.isArray(morph)) morph = morph[0]; // Multi select through halo
+    if (this.interactive && this.interactive.sequences.includes(Sequence.getSequenceOfMorph(morph))) {
+      this.targetMorph = morph;
+    }
+  }
+
+  updateInMorph () {
+    this.ui.animationsInspector.updateInMorph();
+  }
+
+  deselect () {
+    this.ui.animationsInspector.disbandConnections();
+    Object.values(this.ui).forEach(uiElement => {
+      if (uiElement.isMorph) {
+        uiElement.remove();
+      }
+    });
+    this.targetMorph = undefined;
+    this.build();
+  }
+
+  abandon () {
+    disconnect($world, 'showHaloFor', this, 'selectMorphThroughHalo');
+    super.abandon();
+  }
+}
+
+class AnimationsInspector extends QinoqMorph {
+  static get properties () {
+    return {
+      name: {
+        defaultValue: 'animations inspector'
+      },
+      inspector: {},
+      ui: {
+        initialize () {
+          if (this._deserializing) return;
+          this.ui = {};
+          this.build();
+        }
+      },
+      propertyControls: {
+        initialize () {
+          if (!this._deserializing) this.propertyControls = {};
+        }
+      },
+      clipMode: {
+        defaultValue: 'auto'
       }
     };
   }
@@ -77,10 +154,6 @@ export class InteractiveMorphInspector extends QinoqMorph {
   get displayedProperties () {
     // serialized objects might contain a _rev key that is not removed after deserialization
     return Object.keys(this.propertyControls).filter(property => property !== '_rev');
-  }
-
-  get sequence () {
-    return Sequence.getSequenceOfMorph(this.targetMorph);
   }
 
   get propertiesToDisplay () {
@@ -93,8 +166,32 @@ export class InteractiveMorphInspector extends QinoqMorph {
     return Object.fromEntries(propertyList);
   }
 
+  get targetMorph () {
+    return this.inspector.targetMorph;
+  }
+
+  initialize () {
+    this.buildPropertyControls();
+    this.refreshAllPropertiesInInspector();
+    this.displayedProperties.forEach(property => {
+      this.propertyControls[property].keyframe.updateStyle();
+    });
+    this.createConnections();
+  }
+
+  build () {
+    this.ui.propertyPane = new QinoqMorph({ name: 'property pane' });
+    this.ui.propertyPane.layout = new VerticalLayout({ spacing: 2 });
+
+    this.addMorph(this.ui.propertyPane);
+    this.layout = new VerticalLayout({
+      autoResize: false,
+      spacing: 5
+    });
+  }
+
   buildPropertyControls () {
-    if (!this.targetMorph) {
+    if (!this.inspector.targetMorph) {
       return;
     }
     this.ui.propertyPane.submorphs.forEach(morph => morph.withAllSubmorphsDo(submorph => submorph.remove()));
@@ -139,10 +236,10 @@ export class InteractiveMorphInspector extends QinoqMorph {
     }
     this.propertyControls[property].keyframe = new KeyframeButton({
       position: pt(CONSTANTS.KEYFRAME_BUTTON_X, CONSTANTS.WIDGET_ONE_Y),
-      inspector: this,
+      inspector: this.inspector,
       property,
       propType,
-      sequence: this.sequence,
+      sequence: this.inspector.sequence,
       _editor: this.editor
     });
     this.ui[property] = new QinoqMorph();
@@ -190,34 +287,10 @@ export class InteractiveMorphInspector extends QinoqMorph {
     ;
   }
 
-  buildTargetPicker () {
-    this.ui.targetPicker = new TargetPicker({ inspector: this });
-  }
-
-  build () {
-    this.buildTargetPicker();
-
-    this.ui.headlinePane = new QinoqMorph({ name: 'headline pane' });
-    this.ui.headline = new Label({ name: 'headline', textString: 'No morph selected', fontWeight: 'bold' });
-    this.ui.headlinePane.layout = new HorizontalLayout({ spacing: 5, align: 'center' });
-    this.ui.headlinePane.addMorph(this.ui.headline);
-    this.ui.headlinePane.addMorph(this.ui.targetPicker);
-
-    this.ui.propertyPane = new QinoqMorph({ name: 'property pane' });
-    this.ui.propertyPane.layout = new VerticalLayout({ spacing: 2 });
-
-    this.addMorph(this.ui.headlinePane);
-    this.addMorph(this.ui.propertyPane);
-    this.layout = new VerticalLayout({
-      autoResize: false,
-      spacing: 5
-    });
-  }
-
   disbandConnections () {
     if (this.targetMorph) {
-      disconnect(this.targetMorph, 'name', this.ui.headline, 'textString');
-      const sequenceOfTarget = this.sequence;
+      disconnect(this.targetMorph, 'name', this.inspector.ui.headline, 'textString');
+      const sequenceOfTarget = this.inspector.sequence;
       this.displayedProperties.forEach(inspectedProperty => {
         this.propertyControls[inspectedProperty].keyframe.remove();
         const propType = this.propertiesToDisplay[inspectedProperty];
@@ -243,7 +316,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
   }
 
   createConnections () {
-    connect(this.targetMorph, 'name', this.ui.headline, 'textString', { converter: '() => {return `Inspecting ${targetMorph.toString()}`}', varMapping: { targetMorph: this.targetMorph } });
+    connect(this.targetMorph, 'name', this.inspector.ui.headline, 'textString', { converter: '() => {return `Inspecting ${targetMorph.toString()}`}', varMapping: { targetMorph: this.targetMorph } });
     this.displayedProperties.forEach(inspectedProperty => {
       const propType = this.propertiesToDisplay[inspectedProperty];
       connect(this.targetMorph, inspectedProperty, this, 'updateInInspector', { converter: '() => {return {property, propType}}', varMapping: { property: inspectedProperty, propType } });
@@ -350,29 +423,6 @@ export class InteractiveMorphInspector extends QinoqMorph {
     this.withAllSubmorphsDo(submorph => {
       if (submorph.isKeyframeButton && submorph.animation == animation) submorph.setMode();
     });
-  }
-
-  selectMorphThroughHalo (morph) {
-    if (Array.isArray(morph)) morph = morph[0]; // Multi select through halo
-    if (this.interactive && this.interactive.sequences.includes(Sequence.getSequenceOfMorph(morph))) {
-      this.targetMorph = morph;
-    }
-  }
-
-  deselect () {
-    this.disbandConnections();
-    Object.values(this.ui).forEach(uiElement => {
-      if (uiElement.isMorph) {
-        uiElement.remove();
-      }
-    });
-    this.targetMorph = undefined;
-    this.build();
-  }
-
-  abandon () {
-    disconnect($world, 'showHaloFor', this, 'selectMorphThroughHalo');
-    super.abandon();
   }
 }
 
