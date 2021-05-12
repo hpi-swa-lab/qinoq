@@ -163,6 +163,10 @@ export class TimelineLayerInfo extends QinoqMorph {
     }
   }
 
+  centerMorph () {
+    this.morph.center = this.interactive.center;
+  }
+
   menuItems () {
     const menuOptions = [];
     if (this.isInGlobalTimeline) {
@@ -189,6 +193,7 @@ export class TimelineLayerInfo extends QinoqMorph {
       menuOptions.push(['❌ Remove morph', async () => await this.abandonMorph()]);
       menuOptions.push(['✏️ Rename morph', async () => await this.promptMorphName()]);
       menuOptions.push(['▭ Show halo for morph', () => $world.showHaloFor(this.morph)]);
+      menuOptions.push(['Center morph', () => this.centerMorph()]);
       if (this.timelineLayer.isOverviewLayer) {
         menuOptions.push(['🗐 Copy Morph', () => this.editor.copyMorph(this.morph)]);
         menuOptions.push(['✂️ Cut Morph', () => this.editor.cutMorph(this.morph)]);
