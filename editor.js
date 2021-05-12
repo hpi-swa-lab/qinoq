@@ -392,6 +392,7 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   addMorphToInteractive (morph) {
+    this.displayedTimeline.removePlaceholder();
     this.currentSequence.addMorph(morph);
     this.onMorphAddition(morph); // Additional actions that are morph specific
     this.ui.inspector.targetMorph = morph;
@@ -435,6 +436,10 @@ export class InteractivesEditor extends QinoqMorph {
       this.ui.inspector.deselect();
     }
     sequenceOfMorph.abandonMorph(morph, doNotAbandonMorph);
+    if (sequenceOfMorph.isEmpty && tab) {
+      const timeline = this.getTimelineFor(tab);
+      timeline.addPlaceholder();
+    }
   }
 
   get inputFieldClasses () {
