@@ -56,10 +56,12 @@ export class Interactive extends Morph {
       extent: {
         defaultValue: pt(533, 300),
         set (extent) {
+          const previousHeight = this.extent.y;
           if (this.fixedAspectRatio) {
             extent.x = extent.y * this.fixedAspectRatio;
           }
           this.setProperty('extent', extent);
+          this.scaleText(previousHeight);
         }
       },
       sequences: {
@@ -121,6 +123,14 @@ export class Interactive extends Morph {
     connect(this, 'position', this.scrollOverlay, 'globalPosition', { converter: '() => source.globalPosition' });
     connect(this, 'onLengthChange', scrollLengthContainer, 'extent', { converter: '(length) => pt(1, length + source.extent.y)', varMapping: { pt } });
     connect(this, 'extent', this, 'updateScrollContainerExtents');
+  }
+
+  scaleText (previousHeight) {
+    const morphsWithText = this.sequences.flatMap(sequence => sequence.submorphs).filter(morph => 'fontSize' in morph);
+    morphsWithText.forEach(morph => {
+      const fontExtentRatio = morph.fontSize / previousHeight;
+      morph.fontSize = Math.round(fontExtentRatio * this.extent.y);
+    });
   }
 
   updateScrollContainerExtents () {
