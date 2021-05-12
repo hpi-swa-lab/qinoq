@@ -403,13 +403,14 @@ class KeyframeButton extends QinoqMorph {
       fill: {
         defaultValue: COLOR_SCHEME.KEYFRAME_FILL
       },
-      borderColor: {
-        defaultValue: COLOR_SCHEME.KEYFRAME_BORDER
-      },
       mode: {
         defaultValue: 'default',
         type: 'Enum',
-        values: ['default', 'activated']
+        values: ['default', 'activated'],
+        set (mode) {
+          this.setProperty('mode', mode);
+          this.styleSet = mode;
+        }
       },
       inspector: { },
       animation: {
@@ -461,7 +462,6 @@ class KeyframeButton extends QinoqMorph {
 
   async onMouseUp () {
     this.mode = 'activated';
-    this.styleSet = 'activated';
     const newKeyframe = new Keyframe(this.sequence.progress, this.currentValue);
     this.animation = await this.sequence.addKeyframeForMorph(newKeyframe, this.target, this.property, this.propType);
     if (this.animation.useRelativeValues && this.propType == 'point') {
@@ -500,7 +500,8 @@ class KeyframeButton extends QinoqMorph {
         this.fill = COLOR_SCHEME.KEYFRAME_FILL;
         this.borderColor = COLOR_SCHEME.KEYFRAME_BORDER;
         break;
-      case 'activated' || 'hover':
+      case 'activated':
+      case 'hover':
         this.fill = getColorForProperty(this.property);
         break;
       case 'click':
@@ -520,10 +521,8 @@ class KeyframeButton extends QinoqMorph {
 
     if (animationPosition >= 0 && animationPosition <= 1 && this.animation.getKeyframeAt(animationPosition)) {
       this.mode = 'activated';
-      this.styleSet = 'activated';
     } else {
       this.mode = 'default';
-      this.styleSet = 'default';
     }
     this._updatingStyle = false;
   }
