@@ -112,9 +112,9 @@ Closes [fill in your issues here]
   - [ ] using the halo
   - [ ] using the context menu on the layer info (both these options affect labels and tooltips)
 - [ ] it is still possible to draw morphs in the world
-- [ ] Context menu of OverviewLayers holds a Cut Morph Option
+- [ ] Context menu of OverviewLayers holds a Cut Morph Option and a Copy Morph Option
   - [ ] clicking it will remove the layer and the morph immediately
-  - [ ] in another sequenceview, in the timeline, paste morph can be clicked in a context menu
+  - [ ] in another sequenceview, on a layer-info, paste morph can be clicked in a context menu
   - [ ] the morph, its layers and keyframes appear
     - [ ] the interactive can still be scrolled and a keyframe in the pasted morph can be moved
     - [ ] the same morph can be pasted multiple times
