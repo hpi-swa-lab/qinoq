@@ -589,6 +589,10 @@ export class Sequence extends DeserializationAwareMorph {
     return true;
   }
 
+  get isEmpty () {
+    return this.submorphs.length === 0;
+  }
+
   get end () {
     return this.start + this.duration;
   }
