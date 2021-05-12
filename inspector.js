@@ -348,7 +348,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
   updateKeyframeButtonStyle (animation) {
     if (animation.target !== this.targetMorph) return;
     this.withAllSubmorphsDo(submorph => {
-      if (submorph.isKeyframeButton && submorph.animation == animation) submorph.updateStyle();
+      if (submorph.isKeyframeButton && submorph.animation == animation) submorph.setMode();
     });
   }
 
@@ -424,7 +424,7 @@ class KeyframeButton extends QinoqMorph {
       _editor: {
         set (_editor) {
           if (!this._deserializing) {
-            connect(_editor, 'onScrollChange', this, 'updateStyle');
+            connect(_editor, 'onScrollChange', this, 'setMode');
           }
           this.setProperty('_editor', _editor);
         }
@@ -442,7 +442,7 @@ class KeyframeButton extends QinoqMorph {
         defaultValue: 'default',
         set (styleSet) {
           this.setProperty('styleSet', styleSet);
-          this.setStyle();
+          this.updateStyle();
         }
       }
     };
@@ -472,7 +472,7 @@ class KeyframeButton extends QinoqMorph {
 
   updateAnimation () {
     this.animation = this.sequence.getAnimationForMorphProperty(this.target, this.property);
-    this.updateStyle();
+    this.setMode();
   }
 
   // The rest is styling. This may be improved with a master component. See styleguides/keyframe-inspector.json
@@ -494,7 +494,7 @@ class KeyframeButton extends QinoqMorph {
     }
   }
 
-  setStyle () {
+  updateStyle () {
     switch (this.styleSet) {
       case 'default':
         this.fill = COLOR_SCHEME.KEYFRAME_FILL;
@@ -509,7 +509,7 @@ class KeyframeButton extends QinoqMorph {
     }
   }
 
-  async updateStyle () {
+  setMode () {
     if (this._updatingStyle) {
       return;
     }
@@ -528,7 +528,7 @@ class KeyframeButton extends QinoqMorph {
   }
 
   remove () {
-    if (this.editor) disconnect(this.editor, 'onScrollChange', this, 'updateStyle');
+    if (this.editor) disconnect(this.editor, 'onScrollChange', this, 'setMode');
     super.remove();
   }
 }
