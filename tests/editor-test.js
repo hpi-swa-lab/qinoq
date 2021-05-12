@@ -73,6 +73,37 @@ describe('Editor', () => {
       await openNewEditorWithExampleInteractive();
     });
 
+    it('shows placeholder if empty sequence is opened', async () => {
+      const dayBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'day background');
+      dayBackgroundTimelineSequence.sequence.submorphs.forEach(submorph => submorph.remove());
+      await dayBackgroundTimelineSequence.openSequenceView();
+      const placeholder = editor.getSubmorphNamed('placeholder');
+      expect(placeholder).to.be.ok;
+    });
+
+    it('inserts placeholder when last morph in sequence is removed', async () => {
+      const dayBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'day background');
+      await dayBackgroundTimelineSequence.openSequenceView();
+      expect(editor.getSubmorphNamed('placeholder')).to.not.be.ok;
+      editor.removeMorphFromInteractive(dayBackgroundTimelineSequence.sequence.submorphs[0]);
+      expect(editor.getSubmorphNamed('placeholder')).to.be.ok;
+    });
+
+    it('removes placeholder when morph is added to the sequence', async () => {
+      const dayBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'day background');
+      dayBackgroundTimelineSequence.sequence.submorphs.forEach(submorph => submorph.remove());
+      await dayBackgroundTimelineSequence.openSequenceView();
+      editor.addMorphToInteractive(new Morph());
+      expect(editor.getSubmorphNamed('placeholder')).to.not.be.ok;
+    });
+
+    it('does not insert placeholder when morph(s) remain in the sequence', async () => {
+      const dayBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'tree sequence');
+      await dayBackgroundTimelineSequence.openSequenceView();
+      editor.removeMorphFromInteractive(dayBackgroundTimelineSequence.sequence.submorphs[0]);
+      expect(editor.getSubmorphNamed('placeholder')).to.not.be.ok;
+    });
+
     it('a layer with keyframes can be expanded', async () => {
       const dayBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'day background');
       await dayBackgroundTimelineSequence.openSequenceView();
