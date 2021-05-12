@@ -4,7 +4,7 @@ import { Interactive, Layer, Sequence } from '../index.js';
 import { pt } from 'lively.graphics';
 import { NumberAnimation } from '../index.js';
 import { Keyframe } from '../index.js';
-import { Morph } from 'lively.morphic';
+import { Morph, Text } from 'lively.morphic';
 import { serialize, deserialize } from 'lively.serializer2';
 
 describe('Interactive', () => {
@@ -127,7 +127,7 @@ describe('Interactive', () => {
   describe('resizing', () => {
     let morph;
     beforeEach(() => {
-      morph = new Morph({ extent: pt(20, 20) });
+      morph = new Text({ extent: pt(20, 20) });
       sequenceOne.addMorph(morph);
       interactive.redraw();
       interactive.openInWorld(); // Layouting is only applied when the interactive is open
@@ -158,6 +158,15 @@ describe('Interactive', () => {
       const initialInteractiveWidth = interactive.width;
       interactive.height = interactive.height * 3;
       expect(interactive.width).to.not.be.equal(initialInteractiveWidth * 3);
+    });
+
+    it('scales text depending on own height', () => {
+      const initialInteractiveHeight = interactive.height;
+      const initialFontSize = morph.fontSize;
+      interactive.height = interactive.height * 3;
+      expect(morph.fontSize > initialFontSize).to.be.true;
+      interactive.height = initialInteractiveHeight;
+      expect(morph.fontSize).to.be.equal(initialFontSize);
     });
   });
 
