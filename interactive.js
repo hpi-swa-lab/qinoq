@@ -455,7 +455,7 @@ class InteractiveScrollHolder extends Morph {
       if (newMorph) {
         this.newMorph = newMorph;
         // resetting this on mouse up will break the creation of morphs with a single click
-        $world.getSubmorphNamed('lively top bar').setEditMode('Halo');
+        this.topbar.setEditMode('Halo');
       }
     }
   }
