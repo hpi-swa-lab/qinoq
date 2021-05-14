@@ -27,24 +27,12 @@ export class TimelineLayerInfo extends QinoqMorph {
     };
   }
 
-  get layer () {
-    return this.timelineLayer.layer;
-  }
-
   get timeline () {
     return this.timelineLayer.timeline;
   }
 
   get morph () {
     return this.timelineLayer.morph;
-  }
-
-  get isInGlobalTimeline () {
-    return !!this.layer;
-  }
-
-  get isInSequenceTimeline () {
-    return !this.isInGlobalTimeline;
   }
 
   initialize () {
@@ -54,33 +42,41 @@ export class TimelineLayerInfo extends QinoqMorph {
       reactsToPointer: false
     });
     this.updateLabel();
-    this.addMorph(this.ui.label);
 
-    if (this.isInGlobalTimeline) {
-      this.ui.hideButton = new QinoqButton({
-        name: 'hide button',
-        tooltip: 'Hide layer in interactive',
-        target: this,
-        action: 'toggleLayerVisibility',
-        icon: 'eye'
-      });
-      this.addMorph(this.ui.hideButton);
-      this.restyleAfterHideToggle();
-    }
     this.layout = new VerticalLayout({ spacing: 4, autoResize: false });
   }
 
   updateLabel () {
-    if (this.isInGlobalTimeline) {
-      this.name = this.layer.name;
-    } else {
-      if (this.timelineLayer.isOverviewLayer) {
-        this.name = this.morph.name;
-      } else if (this.timelineLayer.animation) {
-        this.name = this.timelineLayer.animation.property;
-      }
-    }
     this.ui.label.textString = this.name;
+    this.addMorph(this.ui.label);
+  }
+}
+
+export class GlobalTimelineLayerInfo extends TimelineLayerInfo {
+  get layer () {
+    return this.timelineLayer.layer;
+  }
+
+  get isInGlobalTimeline () {
+    return true;
+  }
+
+  updateLabel () {
+    this.name = this.layer.name;
+    super.updateLabel();
+    if (!this.ui.hideButton) this.initializeVisibilityButton();
+  }
+
+  initializeVisibilityButton () {
+    this.ui.hideButton = new QinoqButton({
+      name: 'hide button',
+      tooltip: 'Hide layer in interactive',
+      target: this,
+      action: 'toggleLayerVisibility',
+      icon: 'eye'
+    });
+    this.addMorph(this.ui.hideButton);
+    this.restyleAfterHideToggle();
   }
 
   toggleLayerVisibility () {
@@ -94,6 +90,66 @@ export class TimelineLayerInfo extends QinoqMorph {
     this.ui.hideButton.tooltip = this.layer.hidden ? 'Show layer in interactive' : 'Hide layer in interactive';
     this.interactive.redraw();
     this.timelineLayer.toggleHiddenStyle();
+  }
+
+  async promptLayerName () {
+    const newName = await $world.prompt('Layer name:', { input: this.layer.name });
+    if (newName) {
+      this.layer.name = newName;
+      this.timelineLayer.updateTooltip();
+      this.updateLabel();
+    }
+  }
+
+  async promptRemoveLayer () {
+    const accept = await $world.confirm('Do you want to delete this layer?\nThis will remove all sequences in the layer.');
+    if (accept) {
+      this.removeLayer();
+    }
+  }
+
+  removeLayer () {
+    this.interactive.removeLayer(this.layer);
+    this.timeline.abandonTimelineLayer(this.timelineLayer);
+  }
+
+  menuItems () {
+    const menuOptions = [['✏️ Rename Layer', async () => await this.promptLayerName()]];
+    if (this.layer.hidden) {
+      menuOptions.push(['🐵 Show Layer', () => this.toggleLayerVisibility()]);
+    }
+    if (!this.layer.hidden) {
+      menuOptions.push(['🙈 Hide Layer', () => this.toggleLayerVisibility()]);
+    }
+    if (this.timelineLayer.index > 0) {
+      menuOptions.push(['⬆️ Move layer up', () => this.timelineLayer.moveLayerBy(-1)]);
+    }
+    if (this.timelineLayer.index < this.timelineLayer.highestIndex) {
+      menuOptions.push(['⬇️ Move layer down', () => this.timelineLayer.moveLayerBy(1)]);
+    }
+    menuOptions.push(['❌ Remove layer', async () => await this.promptRemoveLayer()]);
+
+    return menuOptions;
+  }
+}
+
+export class SequenceTimelineLayerInfo extends TimelineLayerInfo {
+  get isInSequenceTimeline () {
+    return true;
+  }
+
+  updateLabel () {
+    if (this.timelineLayer.isOverviewLayer) {
+      this.name = this.morph.name;
+    } else if (this.timelineLayer.animation) {
+      this.name = this.timelineLayer.animation.property;
+    }
+    super.updateLabel();
+  }
+
+  onNumberOfKeyframeLinesInLayerChanged (containsKeyframes) {
+    if (!containsKeyframes) this.disableCollapseButton();
+    else this.enableCollapseButton();
   }
 
   addCollapseToggle () {
@@ -123,32 +179,6 @@ export class TimelineLayerInfo extends QinoqMorph {
     this.ui.collapseButton.icon = this.timelineLayer.isExpanded ? 'caret-down' : 'caret-right';
   }
 
-  onNumberOfKeyframeLinesInLayerChanged (containsKeyframes) {
-    if (!containsKeyframes) this.disableCollapseButton();
-    else this.enableCollapseButton();
-  }
-
-  async promptLayerName () {
-    const newName = await $world.prompt('Layer name:', { input: this.layer.name });
-    if (newName) {
-      this.layer.name = newName;
-      this.timelineLayer.updateTooltip();
-      this.updateLabel();
-    }
-  }
-
-  removeLayer () {
-    this.interactive.removeLayer(this.layer);
-    this.timeline.abandonTimelineLayer(this.timelineLayer);
-  }
-
-  async promptRemoveLayer () {
-    const accept = await $world.confirm('Do you want to delete this layer?\nThis will remove all sequences in the layer.');
-    if (accept) {
-      this.removeLayer();
-    }
-  }
-
   async abandonMorph () {
     const accept = await $world.confirm('Do you want to delete this morph?\n This can not be undone.');
     if (accept) {
@@ -165,22 +195,6 @@ export class TimelineLayerInfo extends QinoqMorph {
 
   menuItems () {
     const menuOptions = [];
-    if (this.isInGlobalTimeline) {
-      menuOptions.push(['✏️ Rename Layer', async () => await this.promptLayerName()]);
-      if (this.layer.hidden) {
-        menuOptions.push(['🐵 Show Layer', () => this.toggleLayerVisibility()]);
-      }
-      if (!this.layer.hidden) {
-        menuOptions.push(['🙈 Hide Layer', () => this.toggleLayerVisibility()]);
-      }
-      if (this.timelineLayer.index > 0) {
-        menuOptions.push(['⬆️ Move layer up', () => this.timelineLayer.moveLayerBy(-1)]);
-      }
-      if (this.timelineLayer.index < this.timelineLayer.highestIndex) {
-        menuOptions.push(['⬇️ Move layer down', () => this.timelineLayer.moveLayerBy(1)]);
-      }
-      menuOptions.push(['❌ Remove layer', async () => await this.promptRemoveLayer()]);
-    }
     if (this.isInSequenceTimeline) {
       menuOptions.push(['🔍 Select morph in inspector', () => {
         this.editor.ui.inspector.targetMorph = this.morph;
