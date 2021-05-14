@@ -5,7 +5,7 @@ import { connect, disconnect } from 'lively.bindings';
 import { TimelineSequence } from './sequence.js';
 import { GlobalTimelineLayer, PropertyTimelineLayer, OverviewTimelineLayer } from './layer.js';
 import { CONSTANTS } from './constants.js';
-import { TimelineLayerInfo } from './layer-info.js';
+import { TimelineLayerInfo, SequenceTimelineLayerInfo, GlobalTimelineLayerInfo } from './layer-info.js';
 import { COLOR_SCHEME } from '../colors.js';
 import { arr } from 'lively.lang';
 import { singleSelectKeyPressed, zoomKeyPressed } from '../keys.js';
@@ -189,7 +189,12 @@ export class Timeline extends QinoqMorph {
 
   addTimelineLayer (timelineLayer, index = 0, name) {
     this.ui.layerContainer.addMorphAt(timelineLayer, index);
-    const layerInfo = new TimelineLayerInfo({ timelineLayer, name });
+    let layerInfo;
+    if (this.isGlobalTimeline) {
+      layerInfo = new GlobalTimelineLayerInfo({ timelineLayer, name });
+    } else {
+      layerInfo = new SequenceTimelineLayerInfo({ timelineLayer, name });
+    }
     timelineLayer.layerInfo = layerInfo;
     this.ui.layerInfoContainer.addMorphAt(layerInfo, index);
     return timelineLayer;
