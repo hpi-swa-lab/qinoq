@@ -95,17 +95,13 @@ export class Interactive extends DeserializationAwareMorph {
 
   initializeMorphSequences () {
     this.sequences.forEach(sequence => {
-      sequence.withAllSubmorphsDo(morphInSequence => {
-        morphInSequence._sequence = sequence;
-      });
+      sequence.initializeMorphSequences();
     });
   }
 
   clearMorphSequences () {
     this.sequences.forEach(sequence => {
-      sequence.withAllSubmorphsDo(morphInSequence => {
-        morphInSequence._sequence = null;
-      });
+      sequence.clearMorphSequences();
     });
   }
 
@@ -715,8 +711,22 @@ export class Sequence extends DeserializationAwareMorph {
     return (scrollPosition - this.start) / this.duration;
   }
 
+  clearMorphSequences () {
+    this.withAllSubmorphsDo(morphInSequence => {
+      morphInSequence._sequence = null;
+    });
+  }
+
+  initializeMorphSequences () {
+    this.withAllSubmorphsDo(morphInSequence => {
+      morphInSequence._sequence = this;
+    });
+  }
+
   onLoad () {
     // while saving the easings itself get lost and we need to recreate them
     this.animations.forEach(animation => animation.keyframes.forEach(keyframe => keyframe.setEasing(keyframe.easingName)));
+    // same is true for the _sequence property on submorphs since its not a real property
+    this.initializeMorphSequences();
   }
 }
