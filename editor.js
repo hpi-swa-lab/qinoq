@@ -202,6 +202,7 @@ export class InteractivesEditor extends QinoqMorph {
 
   initializeInteractive (interactive) {
     if (!interactive) return;
+    this.interactive.initializeMorphSequences();
     this.ui.preview.loadContent(interactive);
     this.ui.globalTimeline.loadContent(interactive);
 
@@ -395,6 +396,7 @@ export class InteractivesEditor extends QinoqMorph {
   addMorphToInteractive (morph) {
     this.displayedTimeline.removePlaceholder();
     this.currentSequence.addMorph(morph);
+    morph._sequence = this.currentSequence;
     this.onMorphAddition(morph); // Additional actions that are morph specific
     this.ui.inspector.targetMorph = morph;
     this.displayedTimeline._createOverviewLayers = true;
