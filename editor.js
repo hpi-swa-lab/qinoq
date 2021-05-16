@@ -208,7 +208,12 @@ export class InteractivesEditor extends QinoqMorph {
 
     this.ui.tabContainer.visible = true;
 
-    interactive.withAllSubmorphsDo(submorph => { if (!submorph.isSequence && !submorph.isInteractive) connect(submorph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' }); });
+    interactive.withAllSubmorphsDo(submorph => {
+      if (!submorph.isSequence && !submorph.isInteractive) {
+        connect(submorph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' });
+        connect(submorph, 'remove', this, 'moveMorphOutOfInteractive', { converter: '() => source' });
+      }
+    });
 
     connect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
 
@@ -404,6 +409,7 @@ export class InteractivesEditor extends QinoqMorph {
     const newLayer = this.displayedTimeline.createOverviewTimelineLayer(morph);
     this.displayedTimeline._createOverviewLayers = false;
     this.displayedTimeline.onActiveAreaWidthChange();
+    connect(morph, 'remove', this, 'moveMorphOutOfInteractive', { converter: '() => source' });
     connect(morph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' });
     newLayer.redraw();
   }
@@ -428,9 +434,21 @@ export class InteractivesEditor extends QinoqMorph {
     this.removeMorphFromInteractive(morphToCut, true);
   }
 
-  removeMorphFromInteractive (morph, doNotAbandonMorph = false) {
-    disconnect(morph, 'onAbandon', this, 'removeMorphFromInteractive');
+  moveMorphOutOfInteractive (morph) {
     const sequenceOfMorph = Sequence.getSequenceOfMorph(morph);
+    this.morphRemoval(morph, sequenceOfMorph);
+    sequenceOfMorph.abandonMorph(morph, true);
+  }
+
+  removeMorphFromInteractive (morph, doNotAbandonMorph = false) {
+    const sequenceOfMorph = Sequence.getSequenceOfMorph(morph);
+    this.morphRemoval(morph, sequenceOfMorph);
+    sequenceOfMorph.abandonMorph(morph, doNotAbandonMorph);
+  }
+
+  morphRemoval (morph, sequenceOfMorph) {
+    disconnect(morph, 'remove', this, 'moveMorphOutOfInteractive');
+    disconnect(morph, 'onAbandon', this, 'removeMorphFromInteractive');
     const tab = this.getTabFor(sequenceOfMorph);
     if (tab) {
       const timeline = this.getTimelineFor(tab);
