@@ -93,6 +93,14 @@ export class Interactive extends DeserializationAwareMorph {
     };
   }
 
+  initializeMorphSequences () {
+    this.sequences.forEach(sequence => {
+      sequence.withAllSubmorphsDo(morphInSequence => {
+        morphInSequence._sequence = sequence;
+      });
+    });
+  }
+
   // this is to be called if the scrollposition is changed via any means that are not natural scrolling
   onExternalScrollChange (scrollPosition) {
     this.blockScrollEvents = true;
@@ -584,7 +592,7 @@ export class Sequence extends DeserializationAwareMorph {
   }
 
   static getSequenceOfMorph (morph) {
-    return morph ? morph.ownerChain().find(m => m.isSequence) : undefined;
+    return morph ? (morph._sequence || morph.ownerChain().find(m => m.isSequence)) : undefined;
   }
 
   static baseSequence (props = {}) {
