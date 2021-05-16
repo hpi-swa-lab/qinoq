@@ -359,6 +359,12 @@ describe('Editor', () => {
     expect(progressAnimations.length).to.be.equal(1);
   });
 
+  it('removes animations after a morph has been removed from the interactive', () => {
+    const dayBackgroundSequence = interactive.sequences.find(sequence => sequence.name == 'day background');
+    dayBackgroundSequence.submorphs[0].remove();
+    expect(dayBackgroundSequence.animations).to.be.empty;
+  });
+
   after(() => {
     editor.ui.window.close();
   });
