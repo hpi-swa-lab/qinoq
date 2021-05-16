@@ -639,6 +639,7 @@ export class Sequence extends DeserializationAwareMorph {
   *  while not calling abandon on the morph
   **/
   abandonMorph (morph, doNotAbandonMorph = false) {
+    morph._sequence = null;
     if (doNotAbandonMorph) morph.remove(); else morph.abandon(true);
     this.animations.filter(animation => animation.target == morph).forEach(animation => this.removeAnimation(animation));
   }
