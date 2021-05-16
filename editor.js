@@ -263,7 +263,12 @@ export class InteractivesEditor extends QinoqMorph {
     if (!this.interactive) return;
     this.interactiveInEditMode = false;
 
-    this.interactive.withAllSubmorphsDo(submorph => { if (!submorph.isSequence && !submorph.isInteractive) disconnect(submorph, 'onAbandon', this, 'removeMorphFromInteractive'); });
+    this.interactive.withAllSubmorphsDo(submorph => {
+      if (!submorph.isSequence && !submorph.isInteractive) {
+        disconnect(submorph, 'onAbandon', this, 'removeMorphFromInteractive');
+        disconnect(submorph, 'remove', this, 'moveMorphOutOfInteractive');
+      }
+    });
 
     disconnect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
 
