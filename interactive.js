@@ -101,6 +101,14 @@ export class Interactive extends DeserializationAwareMorph {
     });
   }
 
+  clearMorphSequences () {
+    this.sequences.forEach(sequence => {
+      sequence.withAllSubmorphsDo(morphInSequence => {
+        morphInSequence._sequence = null;
+      });
+    });
+  }
+
   // this is to be called if the scrollposition is changed via any means that are not natural scrolling
   onExternalScrollChange (scrollPosition) {
     this.blockScrollEvents = true;
