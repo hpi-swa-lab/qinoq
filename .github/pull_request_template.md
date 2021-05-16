@@ -112,6 +112,7 @@ Closes [fill in your issues here]
   - [ ] when a morph is grabed onto the interactive while the global timeline is active, an error message appears and the morph returns to its original position
 - [ ] it is still possible to draw morphs in the world
 - [ ] it is possible to remove a morph using the layer info context menu
+- [ ] it is possible to remove a morph from the interactive by grabbing it
 - [ ] it is possible to rename a morph
   - [ ] using the halo
   - [ ] using the context menu on the layer info (both these options affect labels and tooltips)
