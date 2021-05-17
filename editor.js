@@ -660,30 +660,26 @@ export class InteractivesEditor extends QinoqMorph {
             fontSize: textSize
           }));
           fader.addMorph(new Label({
-            textString: 'List of available Keybindings in the Easing Selection',
-            fontWeight: 'bold',
-            fontColor: COLOR_SCHEME.BACKGROUND,
-            fontSize: headingSize
-          }));
-          fader.addMorph(new Label({
-            textString: textForEasingSelection,
-            fontColor: COLOR_SCHEME.BACKGROUND,
-            fontSize: textSize
-          }));
-          fader.addMorph(new Label({
             textString: 'List of available mouse interactions',
             fontWeight: 'bold',
             fontColor: COLOR_SCHEME.BACKGROUND,
             fontSize: headingSize
           }));
-          const textForMouseInteractions = ['Alt-Left — Add an Item to selection',
-            'Alt-Left — Add an Item to selection',
-            'Ctrl-Mousewheel — Zoom in the timeline',
-            'Alt-Mousewheel — Scroll horizontally in the timeline'].map(string => '\t' + string).join('\n');
           fader.addMorph(new Label({
             textString: textForMouseInteractions,
             fontColor: COLOR_SCHEME.BACKGROUND,
             fontSize: textSize
+          }));
+          fader.addMorph(new Label({
+            textString: 'List of available Keybindings in the Easing Selection',
+            fontWeight: 'bold',
+            fontColor: COLOR_SCHEME.BACKGROUND,
+            fontSize: textSize
+          }));
+          fader.addMorph(new Label({
+            textString: textForEasingSelection,
+            fontColor: COLOR_SCHEME.BACKGROUND,
+            fontSize: textSize - 2
           }));
         }
       }];
