@@ -5,14 +5,13 @@ import { connect, disconnect } from 'lively.bindings';
 import { TimelineSequence } from './sequence.js';
 import { GlobalTimelineLayer, PropertyTimelineLayer, OverviewTimelineLayer } from './layer.js';
 import { CONSTANTS } from './constants.js';
-import { TimelineLayerInfo, SequenceTimelineLayerInfo, GlobalTimelineLayerInfo } from './layer-info.js';
+import { SequenceTimelineLayerInfo, GlobalTimelineLayerInfo } from './layer-info.js';
 import { COLOR_SCHEME } from '../colors.js';
 import { arr } from 'lively.lang';
 import { singleSelectKeyPressed, zoomKeyPressed } from '../keys.js';
 import { Sequence, Keyframe } from '../index.js';
 import { EasingSelection } from '../components/easing-selection.js';
 import { QinoqMorph } from '../qinoq-morph.js';
-import index from 'https://jspm.dev/npm:fs@0.0.2!cjs';
 
 export class Timeline extends QinoqMorph {
   static get properties () {
