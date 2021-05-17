@@ -30,16 +30,16 @@ describe('Inspector', () => {
   });
 
   it('can animate a predefined property', () => {
-    expect('opacity' in inspector.propertiesToDisplay).to.be.ok;
+    expect('opacity' in inspector.ui.animationsInspector.propertiesToDisplay).to.be.ok;
   });
 
   it('can animate a property defined as animateAs', () => {
-    expect('testProp' in inspector.propertiesToDisplay).to.be.ok;
-    expect(inspector.propertiesToDisplay.testProp).to.equal('number');
+    expect('testProp' in inspector.ui.animationsInspector.propertiesToDisplay).to.be.ok;
+    expect(inspector.ui.animationsInspector.propertiesToDisplay.testProp).to.equal('number');
   });
 
   it('can not animate a new property not defined as animateAs', () => {
-    expect('testProp2' in inspector.propertiesToDisplay).to.not.be.ok;
+    expect('testProp2' in inspector.ui.animationsInspector.propertiesToDisplay).to.not.be.ok;
   });
 
   it('targets a morph in the interactive when a halo is shown', async () => {
