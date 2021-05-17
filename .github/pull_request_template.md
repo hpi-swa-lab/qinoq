@@ -125,8 +125,11 @@ Closes [fill in your issues here]
 ### Inspector
 
 - [ ] the tree leaves can be selected to inspect with the target selector
+- [ ] there is one tab for animations and one for styling
+- [ ] in the styling tab there are alignment buttons which are disabled
 - [ ] in the sequence view, a morph that is not part of the currently open sequence cannot be selected with the target picker
 - [ ] when selecting a morph in the sequence via halo, that morph is shown in the inspector
+    - [ ] the styling buttons work as expected
 - [ ] correct values for position, extent and opacity are shown
 - [ ] when setting two keyframes for different position values at different scroll positions, an animation is created and can be viewed
 - [ ] when scrolling in the scrollytelling, created keyframes are shown by a different icon in the inspector
