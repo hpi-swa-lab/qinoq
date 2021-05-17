@@ -721,7 +721,7 @@ export class SequenceTimeline extends Timeline {
       })
     });
     const label = new Label({
-      textString: 'Create content here by dragging a Morph into the Preview, creating a new one or pasting it from the clipboard.',
+      textString: 'Create content here by dragging a Morph into the Preview, creating a new one in the Preview or pasting it from the clipboard.',
       fontWeight: 'bold',
       fontSize: 15
     });
