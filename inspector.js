@@ -57,7 +57,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
             this.ui.headline.textString = `Inspecting ${morph.toString()}`;
 
             this.ui.animationsInspector.initialize();
-            this.ui.propertyInspector.initialize();
+            this.ui.styleInspector.initialize();
           }
         }
       }
@@ -92,19 +92,19 @@ export class InteractiveMorphInspector extends QinoqMorph {
     });
 
     await this.buildAnimationsInspector();
-    await this.buildPropertyInspector();
+    await this.buildStyleInspector();
     this.ui.animationsInspectorTab.selected = true;
     this.addMorph(this.ui.tabContainer);
   }
 
-  async buildPropertyInspector () {
-    this.ui.propertyInspector = new PropertyInspector({
+  async buildStyleInspector () {
+    this.ui.styleInspector = new StyleInspector({
       inspector: this,
       _editor: this.editor
     });
-    this.ui.propertyInspectorTab = await this.ui.tabContainer.addTab('styling', this.ui.propertyInspector);
+    this.ui.styleInspectorTab = await this.ui.tabContainer.addTab('styling', this.ui.styleInspector);
 
-    this.ui.propertyInspectorTab.closeable = false;
+    this.ui.styleInspectorTab.closeable = false;
   }
 
   async buildAnimationsInspector () {
@@ -445,11 +445,11 @@ class AnimationsInspector extends QinoqMorph {
   }
 }
 
-class PropertyInspector extends QinoqMorph {
+class StyleInspector extends QinoqMorph {
   static get properties () {
     return {
       name: {
-        defaultValue: 'property inspector'
+        defaultValue: 'style inspector'
       },
       inspector: {},
       ui: {
@@ -478,7 +478,7 @@ class PropertyInspector extends QinoqMorph {
 
   build () {
     this.ui.buttons = [];
-    this.layout = new VerticalLayout({
+    this.layout = new HorizontalLayout({
       spacing: 2,
       align: 'center'
     });
