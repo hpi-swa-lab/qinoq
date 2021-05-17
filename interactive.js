@@ -5,6 +5,7 @@ import { newUUID } from 'lively.lang/string.js';
 
 import { arr } from 'lively.lang';
 import { DeserializationAwareMorph } from './utilities/deserialization-morph.js';
+import { zoomKeyPressed } from './keys.js';
 
 export class Interactive extends DeserializationAwareMorph {
   static async base (props = {}) {
@@ -369,7 +370,17 @@ class InteractiveScrollHolder extends Morph {
     return $world.getSubmorphNamed('lively top bar');
   }
 
-  onScroll () {
+  onMouseWheel (event) {
+    if (zoomKeyPressed(event)) {
+      event.domEvt.preventDefault();
+      // TODO: fixup for aspect ratio
+      this.interactive.extent = pt(this.interactive.extent.x - event.domEvt.deltaY, this.interactive.extent.y + event.domEvt.deltaY);
+      // TODO: fixup, this is just trash
+      this.extent = pt(500, 300);
+    }
+  }
+
+  onScroll (event) {
     if (!this.interactive.blockScrollEvents) {
       this.interactive.scrollPosition = this.scroll.y;
       this.interactive.onInternalScrollChange(this.interactive.scrollPosition);
