@@ -13,6 +13,7 @@ import { arrowRightPressed, arrowLeftPressed } from './keys.js';
 import { Clipboard } from './utilities/clipboard.js';
 import { QinoqMorph } from './qinoq-morph.js';
 import { QinoqButton } from './components/qinoq-button.js';
+import { EasingSelection } from './components/easing-selection.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -652,7 +653,71 @@ export class InteractivesEditor extends QinoqMorph {
 
           this.ui.globalTimeline.createTimelineSequenceInHand(newSequence);
         }
+      },
+      {
+        name: 'show keybindings',
+        exec: async () => {
+          const textSize = 18;
+          const headingSize = textSize + 2;
+          const textForEasingSelection = this.keybindingStringFromObject(EasingSelection.keybindings());
+          const textForEditor = this.keybindingStringFromObject(this.keybindings);
+
+          await this.owner.toggleFader(true);
+
+          const fader = this.owner.get('fader');
+          fader.onMouseDown = function () {
+            this.owner.toggleFader(false);
+          };
+          fader.fill = fader.fill.withA(0.7);
+          fader.layout = new VerticalLayout({
+            direction: 'centered',
+            align: 'left',
+            autoResize: false,
+            spacing: textSize
+          });
+          fader.addMorph(new Label({
+            textString: 'List of available Keybindings in the Editor',
+            fontWeight: 'bold',
+            fontColor: COLOR_SCHEME.BACKGROUND,
+            fontSize: headingSize
+          }));
+          fader.addMorph(new Label({
+            textString: textForEditor,
+            fontColor: COLOR_SCHEME.BACKGROUND,
+            fontSize: textSize
+          }));
+          fader.addMorph(new Label({
+            textString: 'List of available Keybindings in the Easing Selection',
+            fontWeight: 'bold',
+            fontColor: COLOR_SCHEME.BACKGROUND,
+            fontSize: headingSize
+          }));
+          fader.addMorph(new Label({
+            textString: textForEasingSelection,
+            fontColor: COLOR_SCHEME.BACKGROUND,
+            fontSize: textSize
+          }));
+          fader.addMorph(new Label({
+            textString: 'List of available mouse interactions',
+            fontWeight: 'bold',
+            fontColor: COLOR_SCHEME.BACKGROUND,
+            fontSize: headingSize
+          }));
+          const textForMouseInteractions = ['Alt-Left — Add an Item to selection',
+            'Alt-Left — Add an Item to selection',
+            'Ctrl-Mousewheel — Zoom in the timeline',
+            'Alt-Mousewheel — Scroll horizontally in the timeline'].map(string => '\t' + string).join('\n');
+          fader.addMorph(new Label({
+            textString: textForMouseInteractions,
+            fontColor: COLOR_SCHEME.BACKGROUND,
+            fontSize: textSize
+          }));
+        }
       }];
+  }
+
+  keybindingStringFromObject (keybindings) {
+    return keybindings.map(keybinding => `\t${keybinding.keys} — ${keybinding.command.command ? keybinding.command.command : keybinding.command}`).join('\n');
   }
 
   // Focus on a specific item in the interactive
@@ -965,6 +1030,15 @@ class MenuBar extends QinoqMorph {
       icon: 'fast-forward',
       name: 'gotoEndButton',
       container: 'scrollPositionToolbar'
+    });
+
+    this.buildIconButton({
+      tooltip: 'Show Kyeybindings',
+      target: this.editor,
+      command: 'show keybindings',
+      icon: 'keyboard',
+      name: 'showKeybindingList',
+      container: 'rightContainer'
     });
 
     this.buildIconButton({
