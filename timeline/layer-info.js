@@ -195,23 +195,21 @@ export class SequenceTimelineLayerInfo extends TimelineLayerInfo {
 
   menuItems () {
     const menuOptions = [];
-    if (this.isInSequenceTimeline) {
-      menuOptions.push(['🔍 Select morph in inspector', () => {
-        this.editor.ui.inspector.targetMorph = this.morph;
-        if (this.morph.world()) this.morph.show();
-      }]);
-      menuOptions.push(['❌ Remove morph', async () => await this.abandonMorph()]);
-      menuOptions.push(['✏️ Rename morph', async () => await this.promptMorphName()]);
-      menuOptions.push(['▭ Show halo for morph', () => $world.showHaloFor(this.morph)]);
-      if (this.timelineLayer.isOverviewLayer) {
-        menuOptions.push(['🗐 Copy Morph', () => this.editor.copyMorph(this.morph)]);
-        menuOptions.push(['✂️ Cut Morph', () => this.editor.cutMorph(this.morph)]);
-        if (this.editor.clipboard.containsMorph) menuOptions.push(['✏️ Paste Morph', () => this.editor.pasteMorphFromClipboard()]);
-        if (this.timelineLayer.mayBeExpanded) {
-          menuOptions.push(['➕ Expand view', () => this.timelineLayer.isExpanded = true]);
-        } else if (this.timelineLayer.isExpanded) {
-          menuOptions.push(['➖ Collapse view', () => this.timelineLayer.isExpanded = false]);
-        }
+    menuOptions.push(['🔍 Select morph in inspector', () => {
+      this.editor.ui.inspector.targetMorph = this.morph;
+      if (this.morph.world()) this.morph.show();
+    }]);
+    menuOptions.push(['❌ Remove morph', async () => await this.abandonMorph()]);
+    menuOptions.push(['✏️ Rename morph', async () => await this.promptMorphName()]);
+    menuOptions.push(['▭ Show halo for morph', () => $world.showHaloFor(this.morph)]);
+    if (this.timelineLayer.isOverviewLayer) {
+      menuOptions.push(['🗐 Copy Morph', () => this.editor.copyMorph(this.morph)]);
+      menuOptions.push(['✂️ Cut Morph', () => this.editor.cutMorph(this.morph)]);
+      if (this.editor.clipboard.containsMorph) menuOptions.push(['✏️ Paste Morph', () => this.editor.pasteMorphFromClipboard()]);
+      if (this.timelineLayer.mayBeExpanded) {
+        menuOptions.push(['➕ Expand view', () => this.timelineLayer.isExpanded = true]);
+      } else if (this.timelineLayer.isExpanded) {
+        menuOptions.push(['➖ Collapse view', () => this.timelineLayer.isExpanded = false]);
       }
     }
     return menuOptions;
