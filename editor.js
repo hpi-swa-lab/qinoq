@@ -943,6 +943,13 @@ class Preview extends QinoqMorph {
       placeholderCaption: {
         defaultValue: 'Open an Interactive by grab-and-dropping it here, or...'
       },
+      clipMode: {
+        set (clipMode) {
+          debugger;
+          this.setProperty('clipMode', clipMode);
+        },
+        defautValue: 'scroll'
+      },
       _editor: {
         set (editor) {
           this.setProperty('_editor', editor);
@@ -987,6 +994,8 @@ class Preview extends QinoqMorph {
     interactive.position = pt(0, 0);
     // trigger correct bounds on scrollable content of interactive
     interactive.updateInteractiveLength();
+    // TODO: fixup
+    this.clipMode = 'scroll';
   }
 
   showEmptyPreviewPlaceholder () {
