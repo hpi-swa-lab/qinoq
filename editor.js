@@ -14,6 +14,7 @@ import { Clipboard } from './utilities/clipboard.js';
 import { QinoqMorph } from './qinoq-morph.js';
 import { QinoqButton } from './components/qinoq-button.js';
 import { EasingSelection } from './components/easing-selection.js';
+import KeyHandler from 'lively.morphic/events/KeyHandler.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -661,6 +662,10 @@ export class InteractivesEditor extends QinoqMorph {
           const headingSize = textSize + 2;
           const textForEasingSelection = this.keybindingStringFromObject(EasingSelection.keybindings());
           const textForEditor = this.keybindingStringFromObject(this.keybindings);
+          const textForMouseInteractions = [`${KeyHandler.prettyCombo('Alt')}Mouseclick — Add an Item to selection`,
+            `${KeyHandler.prettyCombo('Alt')}Mouseclick — Add an Item to selection`,
+            `${KeyHandler.prettyCombo('Alt')}Mousewheel — Zoom in the timeline`,
+            `${KeyHandler.prettyCombo('Alt')}Mousewheel — Scroll horizontally in the timeline`].map(string => '\t' + string).join('\n');
 
           await this.owner.toggleFader(true);
 
@@ -717,7 +722,7 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   keybindingStringFromObject (keybindings) {
-    return keybindings.map(keybinding => `\t${keybinding.keys} — ${keybinding.command.command ? keybinding.command.command : keybinding.command}`).join('\n');
+    return keybindings.map(keybinding => `\t${KeyHandler.prettyCombo(keybinding.keys)} — ${keybinding.command.command ? keybinding.command.command : keybinding.command}`).join('\n');
   }
 
   // Focus on a specific item in the interactive
