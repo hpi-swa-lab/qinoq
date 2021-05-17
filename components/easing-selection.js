@@ -23,6 +23,17 @@ const CONSTANTS = {
 };
 
 export class EasingSelection extends Morph {
+  static keybindings () {
+    return [
+      { keys: 'Enter', command: 'confirm selection' },
+      { keys: 'Escape', command: 'cancel selection' },
+      { keys: 'Up', command: 'go up one easing' },
+      { keys: 'Down', command: 'go down one easing' },
+      { keys: 'Ctrl-Up', command: 'go to top of the list' },
+      { keys: 'Ctrl-Down', command: 'go to bottom of the list' }
+    ];
+  }
+
   static get properties () {
     return {
       fill: {
@@ -119,10 +130,10 @@ export class EasingSelection extends Morph {
     this.addMorph(this.ui.confirmPane);
     this.ui.confirmPane.layout = new HorizontalLayout({ spacing: 20 });
     this.ui.okButton = new Button({ label: 'Ok', master: 'styleguide://SystemPrompts/green button' });
-    this.ui.okButton.action = () => this.execCommand('confirm');
+    this.ui.okButton.action = () => this.execCommand('confirm selection');
     this.ui.confirmPane.addMorph(this.ui.okButton);
     this.ui.cancelButton = new Button({ label: 'Cancel', master: 'styleguide://SystemPrompts/red button' });
-    this.ui.cancelButton.action = () => this.execCommand('cancel');
+    this.ui.cancelButton.action = () => this.execCommand('cancel selection');
     this.ui.confirmPane.addMorph(this.ui.cancelButton);
   }
 
@@ -176,7 +187,7 @@ export class EasingSelection extends Morph {
   get commands () {
     return [
       {
-        name: 'confirm',
+        name: 'confirm selection',
         exec: () => {
           if (this.selection) {
             this.resolve(this.selection);
@@ -185,14 +196,14 @@ export class EasingSelection extends Morph {
         }
       },
       {
-        name: 'cancel',
+        name: 'cancel selection',
         exec: () => {
           this.resolve(null);
           this.abandon(true);
         }
       },
       {
-        name: 'up',
+        name: 'go up one easing',
         exec: () => {
           if (!this.selection) {
             this.execCommand('go to bottom');
@@ -202,7 +213,7 @@ export class EasingSelection extends Morph {
         }
       },
       {
-        name: 'down',
+        name: 'go down one easing',
         exec: () => {
           if (!this.selection) {
             this.execCommand('go to top');
@@ -212,13 +223,13 @@ export class EasingSelection extends Morph {
         }
       },
       {
-        name: 'go to top',
+        name: 'go to top of the list',
         exec: () => {
           this.select(this.visibleListItems[0]);
         }
       },
       {
-        name: 'go to bottom',
+        name: 'go to bottom of the list',
         exec: () => {
           this.select(this.visibleListItems[this.visibleListItems.length - 1]);
         }
@@ -250,14 +261,7 @@ export class EasingSelection extends Morph {
   }
 
   get keybindings () {
-    return [
-      { keys: 'Enter', command: 'confirm' },
-      { keys: 'Escape', command: 'cancel' },
-      { keys: 'Up', command: 'up' },
-      { keys: 'Down', command: 'down' },
-      { keys: 'Ctrl-Up', command: 'go to top' },
-      { keys: 'Ctrl-Down', command: 'go to bottom' }
-    ].concat(super.keybindings);
+    return EasingSelection.keybindings().concat(super.keybindings);
   }
 
   resolve (arg) {
