@@ -135,7 +135,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
         uiElement.remove();
       }
     });
-    this.targetMorph = undefined;
+    this.targetMorph = null;
     this.build();
   }
 
