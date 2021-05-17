@@ -10,6 +10,7 @@ import { Sequence, Keyframe } from './index.js';
 import { animatedPropertiesAndTypes, getColorForProperty } from './properties.js';
 import { QinoqMorph } from './qinoq-morph.js';
 import { resource } from 'lively.resources';
+import { QinoqButton } from './components/qinoq-button.js';
 
 const CONSTANTS = {
   LABEL_X: 10,
@@ -56,6 +57,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
             this.ui.headline.textString = `Inspecting ${morph.toString()}`;
 
             this.ui.animationsInspector.initialize();
+            this.ui.propertyInspector.initialize();
           }
         }
       }
@@ -86,16 +88,33 @@ export class InteractiveMorphInspector extends QinoqMorph {
       position: pt(0, 38),
       extent: pt(this.width, this.height - this.ui.headlinePane.height),
       showNewTabButton: false,
-      tabHeight: 20
+      tabHeight: 25
     });
+
+    await this.buildAnimationsInspector();
+    await this.buildPropertyInspector();
+    this.ui.animationsInspectorTab.selected = true;
+    this.addMorph(this.ui.tabContainer);
+  }
+
+  async buildPropertyInspector () {
+    this.ui.propertyInspector = new PropertyInspector({
+      inspector: this,
+      _editor: this.editor
+    });
+    this.ui.propertyInspectorTab = await this.ui.tabContainer.addTab('styling', this.ui.propertyInspector);
+
+    this.ui.propertyInspectorTab.closeable = false;
+  }
+
+  async buildAnimationsInspector () {
     this.ui.animationsInspector = new AnimationsInspector({
       inspector: this,
       _editor: this.editor
     });
     this.ui.animationsInspectorTab = await this.ui.tabContainer.addTab('animations', this.ui.animationsInspector);
-    this.ui.animationsInspectorTab.closeable = false;
 
-    this.addMorph(this.ui.tabContainer);
+    this.ui.animationsInspectorTab.closeable = false;
   }
 
   selectMorphThroughHalo (morph) {
@@ -423,6 +442,97 @@ class AnimationsInspector extends QinoqMorph {
     this.withAllSubmorphsDo(submorph => {
       if (submorph.isKeyframeButton && submorph.animation == animation) submorph.setMode();
     });
+  }
+}
+
+class PropertyInspector extends QinoqMorph {
+  static get properties () {
+    return {
+      name: {
+        defaultValue: 'property inspector'
+      },
+      inspector: {},
+      ui: {
+        initialize () {
+          if (this._deserializing) return;
+          this.ui = {};
+          this.build();
+        }
+      },
+      clipMode: {
+        defaultValue: 'auto'
+      },
+      enable: {
+        defaultValue: false,
+        set (bool) {
+          this.setProperty('enable', bool);
+          this.initialize();
+        }
+      }
+    };
+  }
+
+  get targetMorph () {
+    return this.inspector.targetMorph;
+  }
+
+  build () {
+    this.ui.buttons = [];
+    this.layout = new VerticalLayout({
+      spacing: 2,
+      align: 'center'
+    });
+
+    const centerButton = new QinoqButton({
+      icon: 'border-all',
+      tooltip: 'Center the selected morph',
+      name: 'centerButton',
+      action: 'centerMorph',
+      target: this,
+      fontSize: 20
+    });
+    centerButton.disable();
+    this.ui.buttons.push(this.addMorph(centerButton));
+
+    const verticalCenterButton = new QinoqButton({
+      icon: 'arrows-alt-h',
+      tooltip: 'Center the selected morph vertically',
+      name: 'verticalCenterButton',
+      action: 'centerMorphVertically',
+      target: this,
+      fontSize: 20
+    });
+    verticalCenterButton.disable();
+    this.ui.buttons.push(this.addMorph(verticalCenterButton));
+
+    const horizontalCenterButton = new QinoqButton({
+      icon: 'arrows-alt-v',
+      tooltip: 'Center the selected morph horizontally',
+      name: 'horizontalCenterButton',
+      action: 'centerMorphHorizontally',
+      target: this,
+      fontSize: 20
+    });
+    horizontalCenterButton.disable();
+    this.ui.buttons.push(this.addMorph(horizontalCenterButton));
+  }
+
+  initialize () {
+    this.ui.buttons.forEach(button => {
+      button.enable();
+    });
+  }
+
+  centerMorph () {
+    this.targetMorph.center = this.interactive.center;
+  }
+
+  centerMorphHorizontally () {
+    this.targetMorph.center = pt(this.targetMorph.center.x, this.interactive.center.y);
+  }
+
+  centerMorphVertically () {
+    this.targetMorph.center = pt(this.interactive.center.x, this.targetMorph.center.y);
   }
 }
 
