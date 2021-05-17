@@ -29,7 +29,10 @@ const CONSTANTS = {
   DEFAULT_SCROLL_STEP: 1,
   LARGE_SCROLL_STEP: 10,
   MENU_BAR_WIDGET_WIDTH: 100,
-  MENU_BAR_WIDGET_HEIGHT: 25
+  MENU_BAR_WIDGET_HEIGHT: 25,
+  FONT_SIZE_TEXT: 18,
+  FONT_SIZE_HEADINGS: 20
+
 };
 CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
 CONSTANTS.TIMELINE_HEIGHT = CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT - CONSTANTS.MENU_BAR_HEIGHT;
@@ -626,8 +629,6 @@ export class InteractivesEditor extends QinoqMorph {
       {
         name: 'show keybindings',
         exec: async () => {
-          const textSize = 18;
-          const headingSize = textSize + 2;
           const textForEasingSelection = this.keybindingStringFromObject(EasingSelection.keybindings());
           const textForEditor = this.keybindingStringFromObject(this.keybindings);
           const textForMouseInteractions = [`${KeyHandler.prettyCombo('Alt')}Mouseclick — Add an Item to selection`,
@@ -646,40 +647,40 @@ export class InteractivesEditor extends QinoqMorph {
             direction: 'centered',
             align: 'left',
             autoResize: false,
-            spacing: textSize
+            spacing: CONSTANTS.FONT_SIZE_TEXT
           });
           fader.addMorph(new Label({
             textString: 'List of available Keybindings in the Editor',
             fontWeight: 'bold',
             fontColor: COLOR_SCHEME.BACKGROUND,
-            fontSize: headingSize
+            fontSize: CONSTANTS.FONT_SIZE_HEADINGS
           }));
           fader.addMorph(new Label({
             textString: textForEditor,
             fontColor: COLOR_SCHEME.BACKGROUND,
-            fontSize: textSize
+            fontSize: CONSTANTS.FONT_SIZE_TEXT
           }));
           fader.addMorph(new Label({
             textString: 'List of available mouse interactions',
             fontWeight: 'bold',
             fontColor: COLOR_SCHEME.BACKGROUND,
-            fontSize: headingSize
+            fontSize: CONSTANTS.FONT_SIZE_HEADINGS
           }));
           fader.addMorph(new Label({
             textString: textForMouseInteractions,
             fontColor: COLOR_SCHEME.BACKGROUND,
-            fontSize: textSize
+            fontSize: CONSTANTS.FONT_SIZE_TEXT
           }));
           fader.addMorph(new Label({
             textString: 'List of available Keybindings in the Easing Selection',
             fontWeight: 'bold',
             fontColor: COLOR_SCHEME.BACKGROUND,
-            fontSize: textSize
+            fontSize: CONSTANTS.FONT_SIZE_TEXT
           }));
           fader.addMorph(new Label({
             textString: textForEasingSelection,
             fontColor: COLOR_SCHEME.BACKGROUND,
-            fontSize: textSize - 2
+            fontSize: CONSTANTS.FONT_SIZE_TEXT - 2
           }));
         }
       }];
