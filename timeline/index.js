@@ -12,6 +12,7 @@ import { singleSelectKeyPressed, zoomKeyPressed } from '../keys.js';
 import { Sequence, Keyframe } from '../index.js';
 import { EasingSelection } from '../components/easing-selection.js';
 import { QinoqMorph } from '../qinoq-morph.js';
+import index from 'https://jspm.dev/npm:fs@0.0.2!cjs';
 
 export class Timeline extends QinoqMorph {
   static get properties () {
@@ -189,15 +190,12 @@ export class Timeline extends QinoqMorph {
 
   addTimelineLayer (timelineLayer, index = 0, name) {
     this.ui.layerContainer.addMorphAt(timelineLayer, index);
-    let layerInfo;
-    if (this.isGlobalTimeline) {
-      layerInfo = new GlobalTimelineLayerInfo({ timelineLayer, name });
-    } else {
-      layerInfo = new SequenceTimelineLayerInfo({ timelineLayer, name });
-    }
-    timelineLayer.layerInfo = layerInfo;
-    this.ui.layerInfoContainer.addMorphAt(layerInfo, index);
+    this.addLayerInfoFor(timelineLayer, name, index);
     return timelineLayer;
+  }
+
+  addLayerInfoFor (timelineLayer, name, index) {
+    throw new Error('Subclass resposibility');
   }
 
   loadContent (content) {
@@ -417,6 +415,12 @@ export class GlobalTimeline extends Timeline {
     });
 
     return this.addTimelineLayer(timelineLayer);
+  }
+
+  addLayerInfoFor (timelineLayer, name, index) {
+    const layerInfo = new GlobalTimelineLayerInfo({ timelineLayer, name });
+    timelineLayer.layerInfo = layerInfo;
+    this.ui.layerInfoContainer.addMorphAt(layerInfo, index);
   }
 
   onLoadContent (interactive) {
@@ -745,6 +749,12 @@ export class SequenceTimeline extends Timeline {
     const placeholder = this.get('placeholder');
     if (placeholder) placeholder.remove();
     this.ui.scrollableContainer.clipMode = 'auto';
+  }
+
+  addLayerInfoFor (timelineLayer, name, index) {
+    const layerInfo = new SequenceTimelineLayerInfo({ timelineLayer, name });
+    timelineLayer.layerInfo = layerInfo;
+    this.ui.layerInfoContainer.addMorphAt(layerInfo, index);
   }
 
   deselectAllTimelineKeyframesExcept (timelineKeyframe) {
