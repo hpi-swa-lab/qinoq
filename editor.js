@@ -578,12 +578,10 @@ export class InteractivesEditor extends QinoqMorph {
       {
         name: 'find keyframe',
         exec: async () => {
-          const allKeyframes = this.interactive.sequences.flatMap(sequence => sequence.animations).flatMap(animation => animation.keyframes);
-          const keyframeSearchStrings = this.interactive.sequences.flatMap(sequence => sequence.animations).map(animation => animation.keyframes.map(keyframe => `${keyframe.name} - ${animation.property} on ${animation.target.name} [${animation.sequence.name}]`)).flat();
+          const keyframeSearchStrings = this.interactive.sequences.flatMap(sequence => sequence.animations).map(animation => animation.keyframes.map(keyframe => { return { isListItem: true, string: `${keyframe.name} - ${animation.property} on ${animation.target.name} [${animation.sequence.name}]`, value: keyframe }; })).flat();
           const result = await $world.listPrompt('Select a keyframe', keyframeSearchStrings, { filterable: true });
           if (result.selected.length > 0) {
-            const keyframe = allKeyframes[keyframeSearchStrings.indexOf(result.selected[0])];
-            await this.goto(keyframe);
+            await this.goto(result.selected[0]);
           }
         }
       },
