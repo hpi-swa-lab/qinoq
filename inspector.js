@@ -103,7 +103,6 @@ export class InteractiveMorphInspector extends QinoqMorph {
       _editor: this.editor
     });
     this.ui.styleInspectorTab = await this.ui.tabContainer.addTab('styling', this.ui.styleInspector);
-
     this.ui.styleInspectorTab.closeable = false;
   }
 
@@ -113,7 +112,6 @@ export class InteractiveMorphInspector extends QinoqMorph {
       _editor: this.editor
     });
     this.ui.animationsInspectorTab = await this.ui.tabContainer.addTab('animations', this.ui.animationsInspector);
-
     this.ui.animationsInspectorTab.closeable = false;
   }
 
@@ -484,7 +482,7 @@ class StyleInspector extends QinoqMorph {
     });
 
     const centerButton = new QinoqButton({
-      icon: 'border-all',
+      icon: 'arrows-alt',
       tooltip: 'Center the selected morph',
       name: 'centerButton',
       action: 'centerMorph',
