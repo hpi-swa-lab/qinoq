@@ -431,7 +431,7 @@ export class GlobalTimeline extends Timeline {
     this.updateLayerPositions();
   }
 
-  toggleVisbilityForSelection () {
+  toggleVisibilityForSelection () {
     const undo = this.undoStart('sequence-visibility');
     this.selectedTimelineSequences.forEach(timelineSequence => {
       undo.addTarget(timelineSequence);

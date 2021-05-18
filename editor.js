@@ -195,7 +195,7 @@ export class InteractivesEditor extends QinoqMorph {
   positionChanged () {
     if (this.interactive) {
       // interactive has a fixed position in the editor
-      // we need to manually keep the scrolloverlay at the correct position
+      // we need to manually keep the scrollOverlay at the correct position
       this.interactive.scrollOverlay.globalPosition = this.interactive.globalPosition;
     }
   }
@@ -235,14 +235,14 @@ export class InteractivesEditor extends QinoqMorph {
     this.onDisplayedTimelineChange(this.ui.globalTimeline);
   }
 
-  // call this to propagate changes to the scrollposition to the actual interactive
+  // call this to propagate changes to the scrollPosition to the actual interactive
   onInternalScrollChange (scrollPosition) {
     if (!this.interactive) return;
     this.interactive.onExternalScrollChange(scrollPosition);
     this.onScrollChange(scrollPosition);
   }
 
-  // hook to change the scrollposition from within the editor
+  // hook to change the scrollPosition from within the editor
   // use this method for any editor elements that want to change the scroll position
   // e.g., menubar buttons or context menus
   internalScrollChangeWithGUIUpdate (scrollPosition) {
@@ -596,7 +596,7 @@ export class InteractivesEditor extends QinoqMorph {
       },
       {
         name: 'scroll to start',
-        doc: 'set scrollposition to start of sequence of sequence view or start of interactive',
+        doc: 'set scrollPosition to start of sequence of sequence view or start of interactive',
         exec: () => {
           this.internalScrollChangeWithGUIUpdate(this.currentSequence ? this.currentSequence.start : 0);
         }

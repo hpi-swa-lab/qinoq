@@ -729,10 +729,10 @@ export class TimelineSequence extends QinoqMorph {
     return overlappingSequences.filter(sequence => sequence != this);
   }
 
-  sequenceVisbilityMenuString () {
+  sequenceVisibilityMenuString () {
     if (this.timeline.selectedTimelineSequences.every(sequence => sequence.isHidden == false)) return '🙈 Hide Selected Sequences';
     if (this.timeline.selectedTimelineSequences.every(sequence => sequence.isHidden != false)) return '🐵 Show Selected Sequences';
-    return (this.isHidden ? '🐵' : '🙈').concat('Toggle Visbility of Selected Sequences');
+    return (this.isHidden ? '🐵' : '🙈').concat('Toggle Visibility of Selected Sequences');
   }
 
   menuItems () {
@@ -741,7 +741,7 @@ export class TimelineSequence extends QinoqMorph {
       ['❌ Delete Sequence', () => this.timeline.deleteSelectedItems()],
       ['↔️ Edit duration', async () => await this.timeline.promptDurationForSelection()],
       ['🏁 Edit start position', async () => await this.timeline.promptStartForSelection()],
-      [this.sequenceVisbilityMenuString(), () => this.timeline.toggleVisbilityForSelection()]];
+      [this.sequenceVisibilityMenuString(), () => this.timeline.toggleVisibilityForSelection()]];
     if (this.timeline.getSelectedTimelineSequences().length === 1) {
       items = items.concat([{ isDivider: true },
         ['🔍 View sequence', () => this.openSequenceView()],

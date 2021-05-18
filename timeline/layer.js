@@ -69,7 +69,7 @@ export class TimelineLayer extends QinoqMorph {
     }));
     // when the active area increases in width, the underlying layer will not automatically increase as well
     // therefore, just setting reactsToPointer will not work here, since there will be no underlying morph handling the clickevents
-    // and we have to manually steer the clickevents to the underlying layer
+    // and we have to manually steer the click events to the underlying layer
     inactiveArea.onDragStart = event => this.onDragStart(event);
     inactiveArea.onDrag = event => this.onDrag(event);
     inactiveArea.onDragEnd = event => this.onDragEnd(event);
@@ -230,7 +230,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
   }
 
   updateTooltip () {
-    throw new Error('Subclass resposibility');
+    throw new Error('Subclass responsibility');
   }
 
   onMorphNameChange () {
