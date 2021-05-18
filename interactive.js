@@ -27,7 +27,7 @@ export class Interactive extends DeserializationAwareMorph {
 
   static get properties () {
     return {
-      // if this is true, changes to the scrollposition of the interactive will not be propagated to the scroll overlay
+      // if this is true, changes to the scrollPosition of the interactive will not be propagated to the scroll overlay
       blockScrollEvents: {
         defaultValue: false
       },
@@ -93,7 +93,7 @@ export class Interactive extends DeserializationAwareMorph {
     };
   }
 
-  // this is to be called if the scrollposition is changed via any means that are not natural scrolling
+  // this is to be called if the scrollPosition is changed via any means that are not natural scrolling
   onExternalScrollChange (scrollPosition) {
     this.blockScrollEvents = true;
 
@@ -103,7 +103,7 @@ export class Interactive extends DeserializationAwareMorph {
     this.scrollOverlay.setProperty('scroll', pt(0, scrollPosition));
   }
 
-  // this can be listened to to get changes to the scrollposition due to natural scrolling
+  // this can be listened to to get changes to the scrollPosition due to natural scrolling
   onInternalScrollChange (scrollPosition) {}
 
   get scrollOverlay () {

@@ -643,8 +643,6 @@ class KeyframeButton extends QinoqMorph {
     this.setMode();
   }
 
-  // The rest is styling. This may be improved with a master component. See styleguides/keyframe-inspector.json
-
   onMouseDown (event) {
     super.onMouseDown(event);
     this.styleSet = 'click';

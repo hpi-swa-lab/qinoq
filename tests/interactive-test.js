@@ -36,7 +36,7 @@ describe('Interactive', () => {
     expect(interactive.isInteractive).to.be.true;
   });
 
-  it('correctly sorts sequences after their layer indizes', () => {
+  it('correctly sorts sequences after their layer indices', () => {
     expect(interactive.sequences).equals([sequenceOne, sequenceTwo]);
     background.zIndex = 11;
     expect(interactive.sequences).equals([sequenceTwo, sequenceOne]);
@@ -169,7 +169,7 @@ describe('Interactive', () => {
       expect(morph.fontSize).to.be.equal(initialFontSize);
     });
 
-    it('does not change textsizes when saved and loaded', () => {
+    it('does not change text sizes when saved and loaded', () => {
       // this assumes that the DeserializationAwareMorph works as expected
       // just calling deserialize(serialize(interactive)) did not achieve the same behavior as reloading the world in the browser
       interactive.height = interactive.height * 3;

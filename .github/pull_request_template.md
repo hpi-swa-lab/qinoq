@@ -20,7 +20,7 @@ Closes [fill in your issues here]
 - [ ] can be opened in the world
 - [ ] is scrollable
 - [ ] mouseDown on the leaves makes them darker, the cursor changes to a pointer
-- [ ] mouseUp on the leaves makes them ligher again (it is expected that the color is not green anymore)
+- [ ] mouseUp on the leaves makes them lighter again (it is expected that the color is not green anymore)
 - [ ] hovering over the clouds blurs them
 - [ ] moving the mouse away from the clouds removes the blur  
 - [ ] the interactive can be resized by a fixed aspect ratio
@@ -48,7 +48,7 @@ Closes [fill in your issues here]
 
 - [ ] scrolls when scrolling in the interactive
 - [ ] with open interactive, scroll position (and cursor position) may be changed with arrow keys
-- [ ] the number in the menubar is consistent with the cursorposition
+- [ ] the number in the menubar is consistent with the cursor position
 
 ### Sequences
 
@@ -68,14 +68,14 @@ Closes [fill in your issues here]
 
 #### Sequences in GlobalTimeline
 
-- [ ] the tree sequence is resizeable both left and right, this can be reversed
+- [ ] the tree sequence is resizable both left and right, this can be reversed
 - [ ] when 3 sequences are selected and one tries to resize all get deselected except the one that gets resized
 - [ ] the day sequence can't be dragged or resized onto the night sequence, instead it will snap to the night sequence and the snap indicator is shown
   - [ ] snapping may be disabled with the snap toggle button in the menu bar
   - [ ] toggling the button again enables snapping
 - [ ] the day sequence can be dragged to the middle layer onto a free spot
 - [ ] the night sequence can't be dragged or resized beyond the left timeline bounds
-- [ ] when clicking the "Add Sequence" button a sequence is in the hand, which can only be dropped on a timelinelayer and changes color when you are not able to place the sequence
+- [ ] when clicking the "Add Sequence" button a sequence is in the hand, which can only be dropped on a timelineLayer and changes color when you are not able to place the sequence
   - [ ] this can be cancelled by pressing ESC
 - [ ] right clicking on a sequence brings up a context menu
 - [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the interactive/beginning of the next/previous sequence
@@ -87,7 +87,7 @@ Closes [fill in your issues here]
 
 - [ ] there are three OverviewLayers (one per Morph in the sky sequence)
 - [ ] they hold two to three keyframelines each
-  - [ ] when changing the zoom, the keyframelines update accordingly 
+  - [ ] when changing the zoom, the keyframelines update accordingly
 - [ ] clicking on the triangle expands those into two new layers with two keyframes each
 - [ ] right-clicking a keyframe shows a context menu
   - [ ] right-clicking on the last keyframe of the sun's position animation, an option to select easing is shown
@@ -109,7 +109,7 @@ Closes [fill in your issues here]
   - [ ] it is possible to add a lottie morph with the top bar
   - [ ] the newly created morph is also added to the timeline as an own layer
 - [ ] it is possible to add a new morph to the interactive by grab-and-drop
-  - [ ] when a morph is grabed onto the interactive while the global timeline is active, an error message appears and the morph returns to its original position
+  - [ ] when a morph is grabbed onto the interactive while the global timeline is active, an error message appears and the morph returns to its original position
 - [ ] it is still possible to draw morphs in the world
 - [ ] it is possible to remove a morph using the layer info context menu
 - [ ] it is possible to remove a morph from the interactive by grabbing it
