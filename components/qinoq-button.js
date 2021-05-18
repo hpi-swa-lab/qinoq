@@ -51,6 +51,13 @@ export class QinoqButton extends Label {
       },
       previousMouseUpTime: {
         defaultValue: 0
+      },
+      enabled: {
+        after: ['styleSet'],
+        set (enabled) {
+          this.setProperty('enabled', enabled);
+          if (enabled) this.enable(); else this.disable();
+        }
       }
     };
   }
