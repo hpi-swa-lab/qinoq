@@ -127,7 +127,7 @@ describe('Interactive', () => {
   describe('resizing', () => {
     let morph;
     beforeEach(() => {
-      morph = new Text({ extent: pt(20, 20) });
+      morph = new Text({ extent: pt(20, 20), name: 'text morph' });
       sequenceOne.addMorph(morph);
       interactive.redraw();
       interactive.openInWorld(); // Layouting is only applied when the interactive is open
@@ -167,6 +167,16 @@ describe('Interactive', () => {
       expect(morph.fontSize > initialFontSize).to.be.true;
       interactive.height = initialInteractiveHeight;
       expect(morph.fontSize).to.be.equal(initialFontSize);
+    });
+
+    it('does not change textsizes when saved and loaded', () => {
+      // this assumes that the DeserializationAwareMorph works as expected
+      // just calling deserialize(serialize(interactive)) did not achieve the same behavior as reloading the world in the browser
+      interactive.height = interactive.height * 3;
+      const initialFontSize = morph.fontSize;
+      interactive._deserializing = true;
+      interactive.height = interactive.height / 3;
+      expect(interactive.get('text morph').fontSize).to.be.equal(initialFontSize);
     });
   });
 
