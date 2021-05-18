@@ -6,7 +6,7 @@ import { COLOR_SCHEME } from './colors.js';
 import { arr } from 'lively.lang';
 import { DeserializationAwareMorph } from './utilities/deserialization-morph.js';
 
-export class Interactive extends Morph {
+export class Interactive extends DeserializationAwareMorph {
   static async base (props = {}) {
     const interactive = new Interactive(props);
     const { exampleForegroundLayer, exampleBackgroundLayer } = await System.import('qinoq/examples.js');
@@ -61,7 +61,9 @@ export class Interactive extends Morph {
             extent.x = extent.y * this.fixedAspectRatio;
           }
           this.setProperty('extent', extent);
-          this.scaleText(previousHeight);
+          if (!this._deserializing) {
+            this.scaleText(previousHeight);
+          }
         }
       },
       sequences: {
