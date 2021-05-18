@@ -441,7 +441,6 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   moveMorphOutOfInteractive (morph) {
-    debugger;
     const sequenceOfMorph = Sequence.getSequenceOfMorph(morph);
     this.prepareToRemoveMorph(morph, sequenceOfMorph);
     sequenceOfMorph.abandonMorph(morph, true);

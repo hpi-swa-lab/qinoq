@@ -584,7 +584,7 @@ export class Sequence extends DeserializationAwareMorph {
   }
 
   static getSequenceOfMorph (morph) {
-    return morph ? (morph.ownerChain().find(m => m.isSequence)) : undefined;
+    return morph ? morph.ownerChain().find(m => m.isSequence) : undefined;
   }
 
   static baseSequence (props = {}) {
