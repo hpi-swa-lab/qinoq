@@ -208,6 +208,7 @@ export class InteractivesEditor extends QinoqMorph {
 
     interactive.sequences.forEach(sequence => {
       sequence.withAllSubmorphsDo(submorph => {
+        if (submorph.isSequence) return;
         connect(submorph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' });
       });
     });
@@ -269,6 +270,7 @@ export class InteractivesEditor extends QinoqMorph {
 
     this.interactive.sequences.forEach(sequence => {
       sequence.withAllSubmorphsDo(submorph => {
+        if (submorph.isSequence) return;
         disconnect(submorph, 'onAbandon', this, 'removeMorphFromInteractive');
       });
     });
