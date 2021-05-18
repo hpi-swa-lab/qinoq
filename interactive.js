@@ -93,18 +93,6 @@ export class Interactive extends DeserializationAwareMorph {
     };
   }
 
-  initializeMorphSequences () {
-    this.sequences.forEach(sequence => {
-      sequence.initializeMorphSequences();
-    });
-  }
-
-  clearMorphSequences () {
-    this.sequences.forEach(sequence => {
-      sequence.clearMorphSequences();
-    });
-  }
-
   // this is to be called if the scrollposition is changed via any means that are not natural scrolling
   onExternalScrollChange (scrollPosition) {
     this.blockScrollEvents = true;
@@ -596,7 +584,7 @@ export class Sequence extends DeserializationAwareMorph {
   }
 
   static getSequenceOfMorph (morph) {
-    return morph ? (morph._sequence || morph.ownerChain().find(m => m.isSequence)) : undefined;
+    return morph ? (morph.ownerChain().find(m => m.isSequence)) : undefined;
   }
 
   static baseSequence (props = {}) {
@@ -635,7 +623,6 @@ export class Sequence extends DeserializationAwareMorph {
   *  while not calling abandon on the morph
   **/
   abandonMorph (morph, doNotAbandonMorph = false) {
-    morph._sequence = null;
     if (doNotAbandonMorph) morph.remove(); else morph.abandon(true);
     this.animations.filter(animation => animation.target == morph).forEach(animation => this.removeAnimation(animation));
   }
@@ -711,22 +698,8 @@ export class Sequence extends DeserializationAwareMorph {
     return (scrollPosition - this.start) / this.duration;
   }
 
-  clearMorphSequences () {
-    this.withAllSubmorphsDo(morphInSequence => {
-      morphInSequence._sequence = null;
-    });
-  }
-
-  initializeMorphSequences () {
-    this.withAllSubmorphsDo(morphInSequence => {
-      morphInSequence._sequence = this;
-    });
-  }
-
   onLoad () {
     // while saving the easings itself get lost and we need to recreate them
     this.animations.forEach(animation => animation.keyframes.forEach(keyframe => keyframe.setEasing(keyframe.easingName)));
-    // same is true for the _sequence property on submorphs since its not a real property
-    this.initializeMorphSequences();
   }
 }
