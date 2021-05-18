@@ -474,6 +474,9 @@ export class GlobalTimeline extends Timeline {
         previousTimelineLayer: timelineSequence.timelineLayer,
         isMove: true
       });
+      if (timelineSequence.sequence.start > 0 && timelineSequence.sequence.start + scrollStepSize < 0) {
+        scrollStepSize = -timelineSequence.sequence.start;
+      }
 
       timelineSequence.position = pt(timelineSequence.position.x + timelineSequence.timeline.getWidthFromDuration(scrollStepSize),
         timelineSequence.position.y);
