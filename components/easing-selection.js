@@ -392,7 +392,8 @@ export class EasingListItem extends Morph {
     }
   }
 
-  onMouseDown () {
+  onMouseDown (event) {
+    super.onMouseDown(event);
     if (this.isSelected) {
       this.isSelected = false;
       this.styleSet = 'hover';
@@ -400,5 +401,10 @@ export class EasingListItem extends Morph {
       this.isSelected = true;
       this.styleSet = 'selected';
     }
+  }
+
+  onDoubleMouseDown () {
+    this.isSelected = true;
+    this.browser.execCommand('confirm');
   }
 }
