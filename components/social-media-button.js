@@ -74,6 +74,10 @@ export class SocialMediaButton extends Label {
       preset: {
         type: 'Enum',
         values: Object.values(PRESETS).map(preset => preset.name),
+        after: ['tooltip', 'tokens', 'submorphs'],
+        initialize () {
+          this.preset = PRESETS.TWITTER;
+        },
         set (presetOrPresetName) {
           const preset = typeof presetOrPresetName === 'string'
             ? Object.values(PRESETS).find(preset => preset.name === presetOrPresetName)
