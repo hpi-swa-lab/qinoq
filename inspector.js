@@ -53,12 +53,14 @@ export class InteractiveMorphInspector extends QinoqMorph {
           }
 
           if (morph && morph != this.targetMorph) {
-            this.animationsInspector.disbandConnections();
+            this.ui.animationsInspector.disbandConnections();
+
+            this.ui.styleInspector.onTargetMorphChange(morph);
             this.setProperty('targetMorph', morph);
+			
             this.ui.headline.textString = `Inspecting ${morph.toString()}`;
-            this.animationsInspector.initialize();
-            this.styleInspector.initialize();
-            this.ui.animationsInspectorTab.selected = true;
+            this.ui.animationsInspector.initialize();
+			this.ui.animationsInspectorTab.selected = true;
           }
           // this allows us to set the targetMorph to null when no morph is currently inspected
           if (!morph) {
@@ -521,6 +523,7 @@ class StyleInspector extends QinoqMorph {
       },
       inspector: {},
       ui: {
+        after: ['submorphs'],
         initialize () {
           if (this._deserializing) return;
           this.ui = {};
@@ -545,11 +548,138 @@ class StyleInspector extends QinoqMorph {
   }
 
   build () {
-    this.ui.buttons = [];
-    this.layout = new HorizontalLayout({
-      spacing: 2,
-      align: 'center'
+    this.ui.panels = {};
+
+    this.layout = new VerticalLayout({
+      resizeSubmorphs: true
     });
+
+    this.ui.panels.alignment = this.addMorph(new AlignmentPanel({
+      inspector: this.inspector,
+      _editor: this.editor,
+      title: 'Alignment'
+    }));
+
+    this.ui.panels.alignment = this.addMorph(new KeyValuePanel({
+      inspector: this.inspector,
+      _editor: this.editor,
+      title: 'Share Settings'
+    }));
+  }
+
+  initialize () {
+    Object.values(this.ui.panels).forEach(panel => {
+      panel.initialize();
+    });
+  }
+
+  onTargetMorphChange (targetMorph) {
+    Object.values(this.ui.panels).forEach(panel => {
+      panel.onTargetMorphChange(targetMorph);
+    });
+  }
+}
+
+class InspectorPanel extends QinoqMorph {
+  static get properties () {
+    return {
+      ui: {
+        after: ['submorphs'],
+        initialize () {
+          this.ui = {};
+          this.build();
+        }
+      },
+      title: {
+        after: ['ui'],
+        set (title) {
+          this.setProperty('title', title);
+          if (!this.getSubmorphNamed('title')) this.buildTitleMorph();
+          if (!title) {
+            this.ui.title.abandon();
+            delete this.ui.title;
+            return;
+          }
+          this.ui.title.textString = title;
+          this.ui.title.tooltip = title;
+        }
+      },
+      layout: {
+        initialize () {
+          this.layout = new VerticalLayout({
+            autoResize: true,
+            resizeSubmorphs: true,
+            spacing: 5
+          });
+        }
+      },
+      acceptsDrops: {
+        defaultValue: false
+      },
+      inspector: { },
+      enabled: {
+        defaultValue: true,
+        set (enabled) {
+          this.onEnabledChange(enabled);
+          this.setProperty('enabled', enabled);
+        }
+      },
+      displayed: {
+        after: ['_latestOwner'],
+        defaultValue: true,
+        set (displayed) {
+          if (displayed && this._latestOwner) this._latestOwner.addMorph(this);
+          if (!displayed) this.remove();
+        }
+      },
+      _latestOwner: { }
+    };
+  }
+
+  get targetMorph () {
+    return this.inspector.targetMorph;
+  }
+
+  onOwnerChanged (newOwner) {
+    if (newOwner) this._latestOwner = newOwner;
+  }
+
+  build () {
+    this.initialize();
+  }
+
+  buildTitleMorph () {
+    if (this.getSubmorphNamed('title')) return;
+    this.ui.title = new Label({
+      fontWeight: 'bolder'
+    });
+    this.addMorphAt(this.ui.title, 0);
+  }
+
+  initialize () {
+
+  }
+
+  onTargetMorphChange (targetMorph) {
+
+  }
+
+  onEnabledChange (enabled) {
+
+  }
+}
+
+class AlignmentPanel extends InspectorPanel {
+  build () {
+    const buttons = this.ui.buttons = [];
+    const buttonContainer = this.ui.container = this.addMorph(
+      new QinoqMorph({
+        _editor: this.editor,
+        layout: new HorizontalLayout({
+          autoResize: true
+        })
+      })
+    );
 
     const centerButton = new QinoqButton({
       icon: 'arrows-alt',
@@ -560,7 +690,7 @@ class StyleInspector extends QinoqMorph {
       fontSize: 20
     });
     centerButton.disable();
-    this.ui.buttons.push(this.addMorph(centerButton));
+    buttons.push(buttonContainer.addMorph(centerButton));
 
     const horizontalCenterButton = new QinoqButton({
       icon: 'arrows-alt-h',
@@ -571,7 +701,7 @@ class StyleInspector extends QinoqMorph {
       fontSize: 20
     });
     horizontalCenterButton.disable();
-    this.ui.buttons.push(this.addMorph(horizontalCenterButton));
+    buttons.push(buttonContainer.addMorph(horizontalCenterButton));
 
     const verticalCenterButton = new QinoqButton({
       icon: 'arrows-alt-v',
@@ -582,13 +712,21 @@ class StyleInspector extends QinoqMorph {
       fontSize: 20
     });
     verticalCenterButton.disable();
-    this.ui.buttons.push(this.addMorph(verticalCenterButton));
+    buttons.push(buttonContainer.addMorph(verticalCenterButton));
+
+    super.build();
   }
 
   initialize () {
-    this.ui.buttons.forEach(button => {
-      button.enable();
-    });
+    this.ui.buttons.forEach(button => button.enabled = false);
+  }
+
+  onTargetMorphChange (targetMorph) {
+    this.enabled = !!targetMorph.position;
+  }
+
+  onEnabledChange (enabled) {
+    this.ui.buttons.forEach(button => button.enabled = enabled);
   }
 
   centerMorph () {
@@ -601,6 +739,70 @@ class StyleInspector extends QinoqMorph {
 
   centerMorphHorizontally () {
     this.targetMorph.center = pt(this.interactive.center.x, this.targetMorph.center.y);
+  }
+}
+
+class KeyValuePanel extends InspectorPanel {
+  /*
+    Allows to edit a collection of key-value-pairs, where the value is a string
+  */
+
+  build () {
+    this.ui.container = this.addMorph(
+      new QinoqMorph({
+        _editor: this.editor,
+        layout: new HorizontalLayout({
+          autoResize: true
+        })
+      })
+    );
+
+    super.build();
+  }
+
+  buildLabel (text) {
+    this.ui.container.addMorph(new Label({
+      textString: text
+    }));
+  }
+
+  buildTextField (name, value) {
+    this.buildLabel(name);
+    this.ui.container.addMorph(new StringWidget({
+      stringValue: value
+    }));
+  }
+
+  initialize () {
+    this.displayed = false;
+  }
+
+  clear () {
+    this.ui.container.withAllSubmorphsDo(submorph => submorph.abandon());
+  }
+
+  onTargetMorphChange (targetMorph) {
+    if (!targetMorph.tokens) {
+      this.displayed = false;
+      return;
+    }
+
+    this.clear();
+
+    const tokens = Array.isArray(targetMorph.tokens)
+      ? targetMorph.tokens
+      : Object.values(targetMorph.tokens);
+
+    tokens.forEach(token => {
+      if (!token.symbol) return;
+      this.buildTextField(token.symbol, token.value || '');
+    });
+
+    this.displayed = true;
+  }
+
+  onEnabledChange (enabled) {
+    this.displayed = enabled;
   }
 }
 
