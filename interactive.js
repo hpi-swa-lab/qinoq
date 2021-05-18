@@ -416,7 +416,7 @@ class InteractiveScrollHolder extends Morph {
       this.topbar.attachToTarget(this);
       // used for creation of morph that get created via single click (e.g. label)
       connect(this.topbar, 'handleShapeCreation', this, 'setNewMorph');
-      // should not be neccessary, this is a bug in upstream lively
+      // should not be necessary, this is a bug in upstream lively
       this.topbar.setEditMode(this.topbar.editMode);
     }
   }
@@ -427,7 +427,7 @@ class InteractiveScrollHolder extends Morph {
       this.topbar.attachToTarget($world);
 
       disconnect(this.topbar, 'handleShapeCreation', this, 'setNewMorph');
-      // should not be neccessary, this is a bug in upstream lively
+      // should not be necessary, this is a bug in upstream lively
       this.topbar.setEditMode(this.topbar.editMode);
     }
   }
@@ -551,7 +551,7 @@ export class Sequence extends DeserializationAwareMorph {
         }
       },
       _originalOpacity: { defaultValue: 1 },
-      _originalGrayscale: { defualtValue: 0 },
+      _originalGrayscale: { defaultValue: 0 },
       opacity: {
         defaultValue: 1,
         set (opacity) {
@@ -663,7 +663,7 @@ export class Sequence extends DeserializationAwareMorph {
   }
 
   // Generic interface to add a keyframe to a sequence
-  async addKeyframeForMorph (keyframe, morph, property, proptype = 'point') {
+  async addKeyframeForMorph (keyframe, morph, property, propType = 'point') {
     const existingAnimation = this.getAnimationForMorphProperty(morph, property);
 
     if (existingAnimation) {
@@ -671,7 +671,7 @@ export class Sequence extends DeserializationAwareMorph {
       return existingAnimation;
     }
     const { createAnimationForPropertyType } = await System.import('qinoq/animations.js');
-    const newAnimation = createAnimationForPropertyType(proptype, morph, property);
+    const newAnimation = createAnimationForPropertyType(propType, morph, property);
     newAnimation.addKeyframe(keyframe);
     this.addAnimation(newAnimation);
     return newAnimation;
