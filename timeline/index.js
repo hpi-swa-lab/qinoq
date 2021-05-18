@@ -642,11 +642,11 @@ export class SequenceTimeline extends Timeline {
   }
 
   get keyframes () {
-    return this.timelineLayers.flatMap(timelineLayer => !timelineLayer.isOverviewLayer && timelineLayer.keyframes);
+    return this.timelineLayers.flatMap(timelineLayer => timelineLayer.keyframes).filter(Boolean);
   }
 
   getTimelineKeyframe (keyframe) {
-    return this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe === keyframe);
+    return this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe.equals(keyframe));
   }
 
   get isSequenceTimeline () {
@@ -752,7 +752,7 @@ export class SequenceTimeline extends Timeline {
   async scrollToKeyframe (keyframe, animation) {
     const overviewLayer = this.overviewLayers.find(overviewLayer => overviewLayer.morph === animation.target);
     if (!overviewLayer.isExpanded) overviewLayer.isExpanded = true;
-    const timelineKeyframe = this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe === keyframe);
+    const timelineKeyframe = this.getTimelineKeyframe(keyframe);
 
     // Make sure that the layout is applied, thus layer positions are set
     if (!this.ui.layerContainer.layout.active) this.ui.layerContainer.layout.apply();

@@ -293,7 +293,7 @@ export class Interactive extends Morph {
     for (const sequence of this.sequences) {
       let foundAnimation;
       for (const animation of sequence.animations) {
-        if (animation.keyframes.includes(keyframe)) {
+        if (animation.keyframes.find(anotherKeyframe => anotherKeyframe.equals(keyframe))) {
           foundAnimation = animation;
           break;
         }
