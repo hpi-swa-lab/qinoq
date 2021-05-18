@@ -3,8 +3,8 @@ Closes [fill in your issues here]
 
 - [ ] I have added additional features that should now be part of the PR template. I made the necessary changes to the template.
 - [ ] I have fixed a bug/the added functionality should not be part of the PR template.
-  - [ ] I added a test/ tests
-- [ ] I have run all our tests and they still work
+  - [ ] I added a test/ tests.
+- [ ] I have run all our tests and they still work.
 
 ## Todos before merging
 
@@ -33,37 +33,6 @@ Closes [fill in your issues here]
 - [ ] can be loaded in the editor via drag and drop
 - [ ] an interactive can be grabbed out of the editor and placed in the world with both the editor and interactive still working. The editor is cleared
 
-### Sequences in GlobalTimeline
-
-- [ ] the tree sequence is resizeable both left and right, this can be reversed
-- [ ] when 3 sequences are selected and one tries to resize all get deselected except the one that gets resized
-- [ ] the day sequence can't be dragged or resized onto the night sequence, instead it will snap to the night sequence and the snap indicator is shown
-  - [ ] snapping may be disabled with the snap toggle button in the menu bar
-  - [ ] toggling the button again enables snapping
-- [ ] the day sequence can be dragged to the middle layer onto a free spot
-- [ ] the night sequence can't be dragged or resized beyond the left timeline bounds
-- [ ] when clicking the "Add Sequence" button a sequence is in the hand, which can only be dropped on a timelinelayer and changes color when you are not able to place the sequence
-  - [ ] this can be cancelled by pressing ESC
-- [ ] right clicking on a sequence brings up a context menu
-- [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the interactive/beginning of the next/previous sequence
-- [ ] moving a sequence to the right will make the active area (light grey) larger
-- [ ] When making the zoom factor higher/lower with the input field, the length of the sequences adapt accordingly, the cursor updates its position and the whole scrollytelling can still be scrolled through
-- [ ] double clicking on the sky sequence brings you to a new tab named 'sky sequence' containing the sequence view
-
-#### Selection of sequences
-
-- [ ] an unselected (default) sequence can be selected by clicking on it
-- [ ] the selected sequence can be moved by one scroll unit with the left/right arrows and by 10 scroll units when holding shift simultaneously
-- [ ] when clicking another sequence, the first sequence is no longer selected, but the second one is
-- [ ] when selecting a sequence with the `Alt` key pressed, the previous selection is not removed
-- [ ] when clicking while pressing `Alt` on a selected sequence, the sequence is deselected
-- [ ] all sequences can be selected with `Ctrl + A`
-- [ ] when all sequences are selected, `Ctrl + A` deselects all sequences
-- [ ] in the standard sequence setup, clicking on the night background and then clicking on the tree sequence while pressing `Shift` selects tree sequence, night background and day background
-- [ ] selected Sequences can be deleted with `Del`
-- [ ] when multiple sequences are selected the context menu renames all of them
-- [ ] having multiple sequences selected dragging one drags all and they snap in all possible positions
-
 ### TimelineLayer
 
 - [ ] one can bring the background layer to the front via drag and drop and the tree is not visible afterwards
@@ -81,11 +50,44 @@ Closes [fill in your issues here]
 - [ ] with open interactive, scroll position (and cursor position) may be changed with arrow keys
 - [ ] the number in the menubar is consistent with the cursorposition
 
-### Sequence View
+### Sequences
+
+#### Selection of Sequences
+
+- [ ] an unselected (default) sequence can be selected by clicking on it
+- [ ] the selected sequence can be moved by one scroll unit with the left/right arrows and by 10 scroll units when holding shift simultaneously
+- [ ] when clicking another sequence, the first sequence is no longer selected, but the second one is
+- [ ] when selecting a sequence with the `Alt` key pressed, the previous selection is not removed
+- [ ] when clicking while pressing `Alt` on a selected sequence, the sequence is deselected
+- [ ] all sequences can be selected with `Ctrl + A`
+- [ ] when all sequences are selected, `Ctrl + A` deselects all sequences
+- [ ] in the standard sequence setup, clicking on the night background and then clicking on the tree sequence while pressing `Shift` selects tree sequence, night background and day background
+- [ ] selected Sequences can be deleted with `Del`
+- [ ] when multiple sequences are selected the context menu renames all of them
+- [ ] having multiple sequences selected dragging one drags all and they snap in all possible positions
+
+#### Sequences in GlobalTimeline
+
+- [ ] the tree sequence is resizeable both left and right, this can be reversed
+- [ ] when 3 sequences are selected and one tries to resize all get deselected except the one that gets resized
+- [ ] the day sequence can't be dragged or resized onto the night sequence, instead it will snap to the night sequence and the snap indicator is shown
+  - [ ] snapping may be disabled with the snap toggle button in the menu bar
+  - [ ] toggling the button again enables snapping
+- [ ] the day sequence can be dragged to the middle layer onto a free spot
+- [ ] the night sequence can't be dragged or resized beyond the left timeline bounds
+- [ ] when clicking the "Add Sequence" button a sequence is in the hand, which can only be dropped on a timelinelayer and changes color when you are not able to place the sequence
+  - [ ] this can be cancelled by pressing ESC
+- [ ] right clicking on a sequence brings up a context menu
+- [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the interactive/beginning of the next/previous sequence
+- [ ] moving a sequence to the right will make the active area (light grey) larger
+- [ ] when making the zoom factor higher/lower with the input field, the length of the sequences adapt accordingly, the cursor updates its position and the whole scrollytelling can still be scrolled through
+- [ ] double clicking on the sky sequence brings you to a new tab named 'sky sequence' containing the sequence view
+
+#### Sequence View
 
 - [ ] there are three OverviewLayers (one per Morph in the sky sequence)
-- [ ] they hold two to three keyframelines each
-  - [ ] a keyframeline consists of small keyframes and a colored line for the respective property
+- [ ] they hold two to three keyframelines each property
+  - [ ] when changing the zoom, the keyframelines update accordingly 
 - [ ] clicking on the triangle expands those into two new layers with two keyframes each
 - [ ] right-clicking a keyframe shows a context menu
   - [ ] right-clicking on the last keyframe of the sun's position animation, an option to select easing is shown
@@ -99,7 +101,7 @@ Closes [fill in your issues here]
 - [ ] when changing to a sequence timelines tab, the scrollposition is always set to the beginning of this sequence
 - [ ] when clicking on a single keyframe this one is highlighted with a blue border
 - [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the sequence and to the prev/next keyframe
-- [ ] When making the zoom factor higher/lower with the input field, the length of the active area adapt accordingly as well as the position of the keyframes and the cursor updates its position
+- [ ] when making the zoom factor higher/lower with the input field, the length of the active area adapt accordingly as well as the position of the keyframes and the cursor updates its position
 - [ ] it is possible to select more than one keyframe using `Alt`
 - [ ] when more than two keyframes are selected, the context menu allows changing of relative positions, where entering a relative position changes the position of all selected keyframes - this works with all menu items and is undoable as expected (one undo for all selected keyframes)
 - [ ] having more than one keyframe selected and dragging one moves all keyframes, this is undoable
@@ -108,13 +110,13 @@ Closes [fill in your issues here]
   - [ ] the newly created morph is also added to the timeline as an own layer
 - [ ] it is possible to add a new morph to the interactive by grab-and-drop
   - [ ] when a morph is grabed onto the interactive while the global timeline is active, an error message appears and the morph returns to its original position
+- [ ] it is still possible to draw morphs in the world
 - [ ] it is possible to remove a morph using the layer info context menu
 - [ ] it is possible to rename a morph
   - [ ] using the halo
   - [ ] using the context menu on the layer info (both these options affect labels and tooltips)
-- [ ] it is still possible to draw morphs in the world
-- [ ] Context menu of OverviewLayers holds a Cut Morph Option and a Copy Morph Option
-  - [ ] clicking it will remove the layer and the morph immediately
+- [ ] context menu of OverviewLayers holds a Cut Morph Option and a Copy Morph Option
+  - [ ] clicking cut morph will remove the layer and the morph immediately
   - [ ] in another sequenceview as well as on a layer-info, paste morph can be clicked in a context menu
   - [ ] the morph, its layers and keyframes appear
     - [ ] the interactive can still be scrolled and a keyframe in the pasted morph can be moved
