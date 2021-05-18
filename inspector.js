@@ -68,6 +68,14 @@ export class InteractiveMorphInspector extends QinoqMorph {
     return Sequence.getSequenceOfMorph(this.targetMorph);
   }
 
+  get animationsInspector () {
+    return this.ui.animationsInspector;
+  }
+
+  get styleInspector () {
+    return this.ui.styleInspector;
+  }
+
   buildTargetPicker () {
     this.ui.targetPicker = new TargetPicker({ inspector: this });
   }
