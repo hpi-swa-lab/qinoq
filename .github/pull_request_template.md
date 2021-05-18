@@ -86,7 +86,7 @@ Closes [fill in your issues here]
 #### Sequence View
 
 - [ ] there are three OverviewLayers (one per Morph in the sky sequence)
-- [ ] they hold two to three keyframelines each property
+- [ ] they hold two to three keyframelines each
   - [ ] when changing the zoom, the keyframelines update accordingly 
 - [ ] clicking on the triangle expands those into two new layers with two keyframes each
 - [ ] right-clicking a keyframe shows a context menu
