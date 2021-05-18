@@ -3,6 +3,7 @@ import { arr } from 'lively.lang';
 import { Sequence } from './interactive.js';
 import { easings, stringToEasing } from 'lively.morphic';
 import { animatedProperties } from './properties.js';
+import { newUUID } from 'lively.lang/string.js';
 
 class Animation {
   constructor (targetMorph, property, useRelativeValues = false) {
@@ -141,6 +142,7 @@ export function createAnimationForPropertyType (propType, targetMorph, property)
 export class Keyframe {
   constructor (position, value, spec = {}) {
     const { name = 'aKeyframe', easing = 'inOutSine' } = spec;
+    this.id = newUUID();
     this.position = position;
     this.value = value;
     this.name = name;
@@ -162,6 +164,10 @@ export class Keyframe {
 
   get isKeyframe () {
     return true;
+  }
+
+  equals (keyframe) {
+    return this.id === keyframe.id;
   }
 
   copy () {
