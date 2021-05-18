@@ -437,7 +437,7 @@ export class InteractivesEditor extends QinoqMorph {
 
   cutMorph (morphToCut) {
     this.copyMorph(morphToCut);
-    this.removeMorphFromInteractive(morphToCut, true);
+    this.removeMorphFromInteractive(morphToCut, false);
   }
 
   moveMorphOutOfInteractive (morph) {
@@ -446,10 +446,10 @@ export class InteractivesEditor extends QinoqMorph {
     sequenceOfMorph.abandonMorph(morph, true);
   }
 
-  removeMorphFromInteractive (morph, doNotAbandonMorph = false) {
+  removeMorphFromInteractive (morph, abandonMorph = true) {
     const sequenceOfMorph = Sequence.getSequenceOfMorph(morph);
+    sequenceOfMorph.abandonMorph(morph, !abandonMorph);
     this.prepareToRemoveMorph(morph, sequenceOfMorph);
-    sequenceOfMorph.abandonMorph(morph, doNotAbandonMorph);
   }
 
   prepareToRemoveMorph (morph, sequenceOfMorph) {
@@ -463,7 +463,6 @@ export class InteractivesEditor extends QinoqMorph {
     if (this.ui.inspector.targetMorph == morph) {
       this.ui.inspector.deselect();
     }
-    sequenceOfMorph.abandonMorph(morph, doNotAbandonMorph);
     if (sequenceOfMorph.isEmpty && tab) {
       const timeline = this.getTimelineFor(tab);
       timeline.addPlaceholder();
