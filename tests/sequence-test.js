@@ -20,7 +20,7 @@ describe('Sequence object', () => {
     expect(sequence.end).equals(start + duration);
   });
 
-  it('calculates the progres', () => {
+  it('calculates the progress', () => {
     expect(sequence.progress).equals(0);
     sequence.updateProgress(5);
     expect(sequence.progress).equals(0.5);
