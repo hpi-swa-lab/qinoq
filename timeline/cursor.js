@@ -1,4 +1,4 @@
-import { HorizontalLayout, Morph, Label } from 'lively.morphic';
+import { HorizontalLayout, Label } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
 import { pt } from 'lively.graphics';
 import { arr } from 'lively.lang';

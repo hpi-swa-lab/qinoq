@@ -1,7 +1,7 @@
 /* global it, describe, before, after */
 import { expect } from 'mocha-es6';
 import { Morph } from 'lively.morphic';
-import { Interactive, exampleInteractive, InteractivesEditor } from 'qinoq';
+import { exampleInteractive, InteractivesEditor } from 'qinoq';
 
 class InspectorTestMorph extends Morph {
   static get properties () {

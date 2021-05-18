@@ -2,7 +2,6 @@
 import { expect } from 'mocha-es6';
 import { exampleInteractive, Interactive, InteractivesEditor } from '../index.js';
 import { pt } from 'lively.graphics';
-import { Clipboard } from '../utilities/clipboard.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 import { serialize, deserialize } from 'lively.serializer2';
 import { LottieMorph } from '../interactive-morphs/lottie-morph.js';
