@@ -18,15 +18,15 @@ class Animation {
     return this.keyframes.find(keyframe => keyframe.position === position);
   }
 
-  addKeyframe (newKeyframe, doNotSort = false) {
-    const existingKeyframe = this.getKeyframeAt(newKeyframe.position);
+  addKeyframe (keyframe, doNotSort = false) {
+    const existingKeyframe = this.getKeyframeAt(keyframe.position);
     if (existingKeyframe) {
       arr.remove(this.keyframes, existingKeyframe);
     }
-    this.keyframes.push(newKeyframe);
+    this.keyframes.push(keyframe);
 
-    if (newKeyframe.hasDefaultName() && this.interactive) {
-      newKeyframe.name = `Keyframe ${this.interactive.nextKeyframeNumber++}`;
+    if (keyframe.hasDefaultName() && this.interactive) {
+      keyframe.name = `Keyframe ${this.interactive.nextKeyframeNumber++}`;
     }
 
     if (!doNotSort) {
