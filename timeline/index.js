@@ -474,6 +474,9 @@ export class GlobalTimeline extends Timeline {
         previousTimelineLayer: timelineSequence.timelineLayer,
         isMove: true
       });
+
+      // check if the sequence is less than scrollStepSize and more than 0 units away from the left timeline bounds
+      // if so move it to 0
       if (timelineSequence.sequence.start > 0 && timelineSequence.sequence.start + scrollStepSize < 0) {
         scrollStepSize = -timelineSequence.sequence.start;
       }
