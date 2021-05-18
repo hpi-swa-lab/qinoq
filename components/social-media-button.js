@@ -15,7 +15,9 @@ const PRESETS = {
   LINKED_IN: {
     name: 'LinkedIn',
     icon: 'linkedin-in',
-    href: 'https://www.linkedin.com/shareArticle?mini=true&url={url}&title={title}&summary={text}&source=https%3A%2F%2Ftypeshift.io'
+    // url sharing is deprecated and only supports an URL
+    // make sure that the website is properly designed with og tags
+    href: 'https://www.linkedin.com/shareArticle?mini=true&url={url}'
   },
   XING: {
     name: 'Xing',
@@ -40,7 +42,7 @@ const PRESETS = {
   E_MAIL: {
     name: 'E-mail',
     icon: 'envelope',
-    href: 'mailto:?subject={title}&body={text}%20{url}'
+    href: 'mailto:?subject={subject}&body={text}%20{url}'
   },
   TUMBLR: {
     name: 'tumblr',
