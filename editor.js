@@ -147,6 +147,7 @@ export class InteractivesEditor extends QinoqMorph {
       tabHeight: 28,
       visible: false
     });
+    this.ui.tabContainer.getSubmorphNamed('tab content container').acceptsDrops = false;
     connect(this.ui.tabContainer, 'onSelectedTabChange', this, 'onDisplayedTimelineChange', {
       updater: `($update, selectedAndPreviousTab) => {
         selectedAndPreviousTab.prev ? 
