@@ -441,7 +441,7 @@ class AnimationsInspector extends QinoqMorph {
     this._updatingMorph = false;
   }
 
-  updateRespectedAnimations () {
+  updateRespectiveAnimations () {
     this.displayedProperties.forEach(property => this.propertyControls[property].keyframe.updateAnimation());
   }
 
