@@ -66,19 +66,19 @@ export class Timeline extends QinoqMorph {
   }
 
   getDisplayValueFromScroll (scrollPosition) {
-    throw new Error('Subclass resposibility');
+    throw new Error('Subclass responsibility');
   }
 
   getPositionFromScroll (scrollPosition) {
-    throw new Error('Subclass resposibility');
+    throw new Error('Subclass responsibility');
   }
 
   getScrollFromPosition (positionPosition) {
-    throw new Error('Subclass resposibility');
+    throw new Error('Subclass responsibility');
   }
 
   getNewTimelineLayer () {
-    throw new Error('Subclass resposibility');
+    throw new Error('Subclass responsibility');
   }
 
   get timelineLayers () {
@@ -212,19 +212,19 @@ export class Timeline extends QinoqMorph {
   }
 
   onLoadContent (content) {
-    throw new Error('Subclass resposibility');
+    throw new Error('Subclass responsibility');
   }
 
   deselectAllItems () {
-    throw new Error('Subclass resposibility');
+    throw new Error('Subclass responsibility');
   }
 
   selectAllItems () {
-    throw new Error('Subclass resposibility');
+    throw new Error('Subclass responsibility');
   }
 
   deleteSelectedItems () {
-    throw new Error('Subclass resposibility');
+    throw new Error('Subclass responsibility');
   }
 
   renameSelection (newName) {
