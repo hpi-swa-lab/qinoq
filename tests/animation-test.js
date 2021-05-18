@@ -96,7 +96,7 @@ describe('Typewriter animation', () => {
     stringAnimation.progress = 0;
     expect(mockMorph.textString).to.be.equal(string1);
     stringAnimation.progress = 0.5;
-    expect(mockMorph.textString).to.be.undefined;
+    expect(mockMorph.textString).to.be.equal(string1);
     stringAnimation.progress = 1;
     expect(mockMorph.textString).to.be.equal(string3);
   });

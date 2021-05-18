@@ -241,7 +241,7 @@ export class TypewriterAnimation extends Animation {
     if (start.value.startsWith(end.value)) {
       return 'reverse';
     }
-    $world.setStatusMessage('Can not animate the string transition. Can only interpolate between two strings if the start or end of the strings match!');
+    return 'no-interpolation';
   }
 
   interpolate (progress, start, end) {
@@ -256,6 +256,8 @@ export class TypewriterAnimation extends Animation {
         return `${start.value}${end.value.slice(start.value.length, start.value.length + shownChars)}`;
       case 'reverse':
         return `${end.value}${start.value.slice(end.value.length, start.value.length - shownChars)}`;
+      case 'no-interpolation':
+        return start.value;
     }
   }
 
