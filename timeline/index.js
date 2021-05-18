@@ -703,7 +703,7 @@ export class SequenceTimeline extends Timeline {
 
   onLoadContent (sequence) {
     this._sequence = sequence;
-    this.sequence.submorphs.length !== 0
+    !this.sequence.isEmpty
       ? this.sequence.submorphs.forEach(morph => this.createOverviewTimelineLayer(morph))
       : this.addPlaceholder();
   }
