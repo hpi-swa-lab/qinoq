@@ -1,4 +1,3 @@
-import { Morph } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
 import { pt, Color } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';

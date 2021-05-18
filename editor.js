@@ -8,7 +8,7 @@ import { arr } from 'lively.lang';
 import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
 import { Sequence, LottieMorph, Keyframe, NumberAnimation, Interactive, Layer } from './index.js';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
-import { Button } from 'lively.components';
+
 import { arrowRightPressed, arrowLeftPressed } from './keys.js';
 import { Clipboard } from './utilities/clipboard.js';
 import { QinoqMorph } from './qinoq-morph.js';

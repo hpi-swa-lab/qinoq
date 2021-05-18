@@ -1,5 +1,5 @@
 import { Label, Icon } from 'lively.morphic';
-import { Color, rect } from 'lively.graphics';
+import { rect } from 'lively.graphics';
 import { COLOR_SCHEME } from '../colors.js';
 
 export class QinoqButton extends Label {
