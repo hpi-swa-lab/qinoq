@@ -349,6 +349,16 @@ describe('Editor', () => {
     expect(newAnimation.keyframes.length).to.be.equal(2);
   });
 
+  it('does not add an animation when adding a lottie morph which already has an animation', async () => {
+    const skyTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'sky sequence');
+    const skySequence = skyTimelineSequence.sequence;
+    await skyTimelineSequence.openSequenceView();
+    editor.copyMorph(skySequence.get('lottie stars'));
+    const pastedMorph = editor.pasteMorphFromClipboard();
+    const progressAnimations = skySequence.getAnimationsForMorph(pastedMorph).filter(animation => animation.property == 'progress');
+    expect(progressAnimations.length).to.be.equal(1);
+  });
+
   after(() => {
     editor.ui.window.close();
   });
