@@ -492,19 +492,8 @@ class StyleInspector extends QinoqMorph {
     centerButton.disable();
     this.ui.buttons.push(this.addMorph(centerButton));
 
-    const verticalCenterButton = new QinoqButton({
-      icon: 'arrows-alt-h',
-      tooltip: 'Center the selected morph vertically',
-      name: 'verticalCenterButton',
-      action: 'centerMorphVertically',
-      target: this,
-      fontSize: 20
-    });
-    verticalCenterButton.disable();
-    this.ui.buttons.push(this.addMorph(verticalCenterButton));
-
     const horizontalCenterButton = new QinoqButton({
-      icon: 'arrows-alt-v',
+      icon: 'arrows-alt-h',
       tooltip: 'Center the selected morph horizontally',
       name: 'horizontalCenterButton',
       action: 'centerMorphHorizontally',
@@ -513,6 +502,17 @@ class StyleInspector extends QinoqMorph {
     });
     horizontalCenterButton.disable();
     this.ui.buttons.push(this.addMorph(horizontalCenterButton));
+
+    const verticalCenterButton = new QinoqButton({
+      icon: 'arrows-alt-v',
+      tooltip: 'Center the selected morph vertically',
+      name: 'verticalCenterButton',
+      action: 'centerMorphVertically',
+      target: this,
+      fontSize: 20
+    });
+    verticalCenterButton.disable();
+    this.ui.buttons.push(this.addMorph(verticalCenterButton));
   }
 
   initialize () {
@@ -525,11 +525,11 @@ class StyleInspector extends QinoqMorph {
     this.targetMorph.center = this.interactive.center;
   }
 
-  centerMorphHorizontally () {
+  centerMorphVertically () {
     this.targetMorph.center = pt(this.targetMorph.center.x, this.interactive.center.y);
   }
 
-  centerMorphVertically () {
+  centerMorphHorizontally () {
     this.targetMorph.center = pt(this.interactive.center.x, this.targetMorph.center.y);
   }
 }
