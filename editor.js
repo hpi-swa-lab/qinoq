@@ -675,18 +675,22 @@ export class InteractivesEditor extends QinoqMorph {
     // TODO: only filter our connections, maybe some are wanted
     const connections = morph.attributeConnections;
     morph.attributeConnections = [];
+
     const copiedMorph = morph.copy();
     morph.attributeConnections = connections;
-
-    this.addMorphToInteractive(copiedMorph);
+    // it is important that the animations are setup before the copiedMorph is added to the Interactive
+    // this way it is ensured that the automatic progress animations on lottie morphs work as expected
     const copiedAnimations = animations.map(animation => animation.copy());
     copiedAnimations.forEach((animation) => {
       animation.target = copiedMorph;
       this.currentSequence.addAnimation(animation);
     });
+    this.addMorphToInteractive(copiedMorph);
+
     const layer = this.displayedTimeline.timelineLayers.find(timelineLayer => timelineLayer.morph === copiedMorph);
     layer.addTimelineKeyframes();
     this.ui.inspector.animationsInspector.updateRespectiveAnimations();
+    return copiedMorph;
   }
 
   __after_deserialize__ (snapshot, ref, pool) {
