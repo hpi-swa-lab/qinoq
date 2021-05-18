@@ -104,6 +104,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
     });
     this.ui.styleInspectorTab = await this.ui.tabContainer.addTab('styling', this.ui.styleInspector);
     this.ui.styleInspectorTab.closeable = false;
+    this.ui.styleInspectorTab.renamable = false;
   }
 
   async buildAnimationsInspector () {
@@ -113,6 +114,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
     });
     this.ui.animationsInspectorTab = await this.ui.tabContainer.addTab('animations', this.ui.animationsInspector);
     this.ui.animationsInspectorTab.closeable = false;
+    this.ui.animationsInspectorTab.renamable = false;
   }
 
   selectMorphThroughHalo (morph) {
