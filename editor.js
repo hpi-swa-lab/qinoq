@@ -202,7 +202,6 @@ export class InteractivesEditor extends QinoqMorph {
 
   initializeInteractive (interactive) {
     if (!interactive) return;
-    this.interactive.initializeMorphSequences();
     this.ui.preview.loadContent(interactive);
     this.ui.globalTimeline.loadContent(interactive);
 
@@ -210,8 +209,10 @@ export class InteractivesEditor extends QinoqMorph {
 
     interactive.sequences.forEach(sequence => {
       sequence.withAllSubmorphsDo(submorph => {
-        connect(submorph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' });
-        connect(submorph, 'remove', this, 'moveMorphOutOfInteractive', { converter: '() => source' });
+        if (!submorph.isSequence) {
+          connect(submorph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' });
+          connect(submorph, 'onRemove', this, 'moveMorphOutOfInteractive', { converter: '() => source' });
+        }
       });
     });
 
@@ -268,13 +269,14 @@ export class InteractivesEditor extends QinoqMorph {
 
   clearInteractive () {
     if (!this.interactive) return;
-    this.interactive.clearMorphSequences();
     this.interactiveInEditMode = false;
 
     this.interactive.sequences.forEach(sequence => {
       sequence.withAllSubmorphsDo(submorph => {
-        disconnect(submorph, 'onAbandon', this, 'removeMorphFromInteractive');
-        disconnect(submorph, 'remove', this, 'moveMorphOutOfInteractive');
+        if (!submorph.isSequence) {
+          disconnect(submorph, 'onAbandon', this, 'removeMorphFromInteractive');
+          disconnect(submorph, 'onRemove', this, 'moveMorphOutOfInteractive');
+        }
       });
     });
 
@@ -407,14 +409,13 @@ export class InteractivesEditor extends QinoqMorph {
   addMorphToInteractive (morph) {
     this.displayedTimeline.removePlaceholder();
     this.currentSequence.addMorph(morph);
-    morph._sequence = this.currentSequence;
     this.onMorphAddition(morph); // Additional actions that are morph specific
     this.ui.inspector.targetMorph = morph;
     this.displayedTimeline._createOverviewLayers = true;
     const newLayer = this.displayedTimeline.createOverviewTimelineLayer(morph);
     this.displayedTimeline._createOverviewLayers = false;
     this.displayedTimeline.onActiveAreaWidthChange();
-    connect(morph, 'remove', this, 'moveMorphOutOfInteractive', { converter: '() => source' });
+    connect(morph, 'onRemove', this, 'moveMorphOutOfInteractive', { converter: '() => source' });
     connect(morph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' });
     newLayer.redraw();
   }
@@ -440,19 +441,20 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   moveMorphOutOfInteractive (morph) {
+    debugger;
     const sequenceOfMorph = Sequence.getSequenceOfMorph(morph);
-    this.morphRemoval(morph, sequenceOfMorph);
+    this.prepareToRemoveMorph(morph, sequenceOfMorph);
     sequenceOfMorph.abandonMorph(morph, true);
   }
 
   removeMorphFromInteractive (morph, doNotAbandonMorph = false) {
     const sequenceOfMorph = Sequence.getSequenceOfMorph(morph);
-    this.morphRemoval(morph, sequenceOfMorph);
+    this.prepareToRemoveMorph(morph, sequenceOfMorph);
     sequenceOfMorph.abandonMorph(morph, doNotAbandonMorph);
   }
 
-  morphRemoval (morph, sequenceOfMorph) {
-    disconnect(morph, 'remove', this, 'moveMorphOutOfInteractive');
+  prepareToRemoveMorph (morph, sequenceOfMorph) {
+    disconnect(morph, 'onRemove', this, 'moveMorphOutOfInteractive');
     disconnect(morph, 'onAbandon', this, 'removeMorphFromInteractive');
     const tab = this.getTabFor(sequenceOfMorph);
     if (tab) {
