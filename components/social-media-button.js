@@ -75,7 +75,7 @@ export class SocialMediaButton extends Label {
     return {
       preset: {
         type: 'Enum',
-        values: Object.values(PRESETS).map(preset => preset.name),
+        values: this.presetValues,
         after: ['tooltip', 'tokens', 'submorphs'],
         initialize () {
           this.preset = PRESETS.TWITTER;
@@ -100,6 +100,10 @@ export class SocialMediaButton extends Label {
 
   get link () {
     return this.populateTokens(this.preset.href);
+  }
+
+  get presetValues () {
+    return Object.values(PRESETS).map(preset => preset.name);
   }
 
   populateTokens (link) {

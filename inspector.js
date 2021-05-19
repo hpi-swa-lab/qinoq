@@ -11,6 +11,8 @@ import { animatedPropertiesAndTypes, notAnimatableOnTextMorph, getColorForProper
 import { QinoqMorph } from './qinoq-morph.js';
 import { resource } from 'lively.resources';
 import { QinoqButton } from './components/qinoq-button.js';
+import { string } from 'lively.lang';
+import { DropDownSelector } from 'lively.components/widgets.js';
 
 const CONSTANTS = {
   LABEL_X: 10,
@@ -560,7 +562,7 @@ class StyleInspector extends QinoqMorph {
       title: 'Alignment'
     }));
 
-    this.ui.panels.share = this.addMorph(new KeyValuePanel({
+    this.ui.panels.share = this.addMorph(new ShareSettingsPanel({
       inspector: this.inspector,
       _editor: this.editor,
       title: 'Share Settings'
@@ -752,7 +754,6 @@ class KeyValuePanel extends InspectorPanel {
   */
 
   build () {
-    debugger;
     this.ui.container = this.addMorph(
       new QinoqMorph({
         name: 'widgetContainer',
@@ -767,9 +768,10 @@ class KeyValuePanel extends InspectorPanel {
     super.build();
   }
 
-  buildLabel (text) {
-    this.ui.container.addMorph(new Label({
-      textString: text
+  buildLabel (text, container = undefined) {
+    const owner = container || this.ui.container;
+    return owner.addMorph(new Label({
+      textString: string.camelize(text[0].toUpperCase() + text.substring(1))
     }));
   }
 
@@ -781,10 +783,12 @@ class KeyValuePanel extends InspectorPanel {
       fixedHeight: true,
       extent: CONSTANTS.WIDGET_EXTENT,
       fontFamilty: 'Sans-Serif',
-      fontSize: 16,
+      fontSize: 14,
+      padding: rect(1, 1, 0, 0),
       fill: COLOR_SCHEME.SURFACE,
       stringValue: value,
       borderColor: COLOR_SCHEME.PRIMARY,
+      fontColor: COLOR_SCHEME.ON_SURFACE,
       borderStyle: 'solid'
     }));
     connect(field, 'inputChanged', this, 'changeTokenValue', {
@@ -792,6 +796,7 @@ class KeyValuePanel extends InspectorPanel {
         return { symbol: '${title}', value: change.args[1][0] }
       }`
     });
+    return field;
   }
 
   initialize () {
@@ -835,6 +840,38 @@ class KeyValuePanel extends InspectorPanel {
     const token = Object.values(this.targetMorph.tokens)
       .find(token => token.symbol === symbol);
     token.value = value;
+  }
+}
+
+class ShareSettingsPanel extends KeyValuePanel {
+  build () {
+    this.ui.presetDropDown = this.addMorph(new DropDownSelector());
+    this.ui.presetDropDown.getSubmorphNamed('currentValue').fontSize = 14;
+    this.ui.presetDropDown.dropDownLabel.fontSize = 14;
+    connect(this.ui.presetDropDown, 'selectedValue', this, 'onPresetChange');
+
+    super.build();
+  }
+
+  onTargetMorphChange (newTargetMorph) {
+    super.onTargetMorphChange(newTargetMorph);
+    if (!newTargetMorph.preset || !newTargetMorph.tokens) return;
+
+    this._prohibitTargetMorphChange = true;
+
+    this.ui.presetDropDown.selectedValue = newTargetMorph.preset.name;
+    this.ui.presetDropDown.values = newTargetMorph.presetValues;
+
+    delete this._prohibitTargetMorphChange;
+  }
+
+  onPresetChange (presetName) {
+    this.targetMorph.preset = presetName;
+    if (!this._prohibitTargetMorphChange) this.onTargetMorphChange(this.targetMorph);
+  }
+
+  abandon () {
+    disconnect(this.ui.presetDropDown, 'selectedValue', this, 'onPresetChange');
   }
 }
 
