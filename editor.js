@@ -32,7 +32,6 @@ const CONSTANTS = {
   MENU_BAR_WIDGET_HEIGHT: 25,
   FONT_SIZE_TEXT: 18,
   FONT_SIZE_HEADINGS: 20
-
 };
 CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
 CONSTANTS.TIMELINE_HEIGHT = CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT - CONSTANTS.MENU_BAR_HEIGHT;
@@ -999,7 +998,7 @@ class MenuBar extends QinoqMorph {
     });
 
     this.buildIconButton({
-      tooltip: 'Show Kyeybindings',
+      tooltip: 'Show Keybindings',
       target: this.editor,
       command: 'show keybindings',
       icon: 'keyboard',
