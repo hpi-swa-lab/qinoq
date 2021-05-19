@@ -59,6 +59,10 @@ export class InteractiveMorphInspector extends QinoqMorph {
             this.ui.animationsInspector.initialize();
             this.ui.styleInspector.initialize();
           }
+          // this allows us to set the targetMorph to null when no morph is currently inspected
+          if (!morph) {
+            this.setProperty('targetMorph', null);
+          }
         }
       }
     };
