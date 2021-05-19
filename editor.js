@@ -667,10 +667,11 @@ export class InteractivesEditor extends QinoqMorph {
           });
           fader.addMorph(fader.ui.rightContainer);
           const closeLabel = new Label({
-            position: pt(fader.ui.rightContainer.width - CONSTANTS.FONT_SIZE_HEADINGS, 0),
+            position: pt(fader.ui.rightContainer.width - CONSTANTS.FONT_SIZE_HEADINGS - 15, 15),
             fontWeight: 'bold',
             fontColor: COLOR_SCHEME.BACKGROUND,
-            fontSize: CONSTANTS.FONT_SIZE_HEADINGS
+            fontSize: CONSTANTS.FONT_SIZE_HEADINGS,
+            nativeCursor: 'pointer'
           });
           Icon.setIcon(closeLabel, 'times');
           fader.ui.rightContainer.addMorph(closeLabel);
