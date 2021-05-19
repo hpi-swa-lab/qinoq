@@ -453,11 +453,20 @@ class InteractiveScrollHolder extends Morph {
   onMouseDown (event) {
     super.onMouseDown(event);
     this.lastMouseDownTarget = this.getUnderlyingMorph(event.hand.position);
+
+    // allows to select text in text morphs by dragging in sequence view
+    if (!this.passThroughMorph || this.topbar.editMode == 'Halo' || this.topbar.editMode == 'Hand') this.updateEventDispatcherState();
     this.lastMouseDownTarget.onMouseDown(event);
   }
 
   onDoubleMouseDown (event) {
     if (this.getUnderlyingMorph(event.hand.position) == this.lastMouseDownTarget) this.lastMouseDownTarget.onDoubleMouseDown(event);
+  }
+
+  onMouseMove (event) {
+    this.lastMouseDownTarget = this.getUnderlyingMorph(event.hand.position);
+    this.updateEventDispatcherState();
+    this.lastMouseDownTarget.onMouseMove(event);
   }
 
   onMouseUp (event) {
@@ -468,6 +477,14 @@ class InteractiveScrollHolder extends Morph {
     const underlyingMorph = this.getUnderlyingMorph(event.hand.position);
     event.targetMorphs.unshift(underlyingMorph);
     underlyingMorph.onContextMenu(event);
+  }
+
+  // some morphs (like textMorphs) check some state that is saved here to determine if they are focused or not
+  // just changing the values in the events that are passed around does not suffice
+  // therefore we change this state here with the values that we need for the event delegation
+  updateEventDispatcherState () {
+    this.env.eventDispatcher.eventState.focusedMorph = this.lastMouseDownTarget;
+    this.env.eventDispatcher.eventState.clickedOnMorph = this.lastMouseDownTarget;
   }
 
   setNewMorph () {
