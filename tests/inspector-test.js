@@ -74,6 +74,12 @@ describe('Inspector', () => {
     anotherMorph.abandon();
   });
 
+  it('sets the targetMorph to null after deselect is called', () => {
+    expect(inspector.targetMorph).to.be.ok;
+    inspector.deselect();
+    expect(inspector.targetMorph).to.be.null;
+  });
+
   after(() => {
     editor.owner.close();
   });
