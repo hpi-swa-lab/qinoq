@@ -349,21 +349,6 @@ class InteractiveScrollHolder extends Morph {
     return $world.getSubmorphNamed('lively top bar');
   }
 
-  onMouseMoving (mousePosition) {
-    const morphUnderMouse = this.getUnderlyingMorph(mousePosition);
-    if (morphUnderMouse == this.previousMorphUnderMouse) return;
-    if (morphUnderMouse) {
-      morphUnderMouse.onHoverIn({ hand: $world.firstHand });
-      this.nativeCursor = morphUnderMouse.nativeCursor;
-    }
-    if (this.previousMorphUnderMouse) this.previousMorphUnderMouse.onHoverOut({ hand: $world.firstHand });
-    this.previousMorphUnderMouse = morphUnderMouse;
-  }
-
-  abandon () {
-    disconnect($world.firstHand, 'position', this, 'onMouseMoving');
-  }
-
   onScroll () {
     if (!this.interactive.blockScrollEvents) {
       this.interactive.scrollPosition = this.scroll.y;
@@ -411,7 +396,6 @@ class InteractiveScrollHolder extends Morph {
   }
 
   onHoverIn (event) {
-    connect(event.hand, 'position', this, 'onMouseMoving');
     if (this.passThroughMorph && this.topbar) {
       this.topbar.attachToTarget(this);
       // used for creation of morph that get created via single click (e.g. label)
@@ -422,7 +406,6 @@ class InteractiveScrollHolder extends Morph {
   }
 
   onHoverOut (event) {
-    disconnect(event.hand, 'position', this, 'onMouseMoving');
     if (this.passThroughMorph && this.topbar) {
       this.topbar.attachToTarget($world);
 
@@ -464,9 +447,15 @@ class InteractiveScrollHolder extends Morph {
   }
 
   onMouseMove (event) {
+    // for not absolutely clear reasons it is important that this comes before the hover handling
     this.lastMouseDownTarget = this.getUnderlyingMorph(event.hand.position);
     this.updateEventDispatcherState();
     this.lastMouseDownTarget.onMouseMove(event);
+
+    if (this.lastMouseDownTarget == this.previousMorphUnderMouse) return;
+    if (this.lastMouseDownTarget) this.lastMouseDownTarget.onHoverIn({ hand: $world.firstHand });
+    if (this.previousMorphUnderMouse) this.previousMorphUnderMouse.onHoverOut({ hand: $world.firstHand });
+    this.previousMorphUnderMouse = this.lastMouseDownTarget;
   }
 
   onMouseUp (event) {
