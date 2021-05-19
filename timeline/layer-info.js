@@ -37,14 +37,18 @@ export class TimelineLayerInfo extends QinoqMorph {
 
   initialize () {
     this.ui = {};
+    this.layout = new VerticalLayout({
+      spacing: 4,
+      autoResize: false,
+      orderByIndex: true
+    });
+
     this.ui.label = new Label({
       textString: this.name,
       reactsToPointer: false
     });
-    this.addMorph(this.ui.label);
+    this.addMorphAt(this.ui.label, 0);
     this.updateLabel();
-
-    this.layout = new VerticalLayout({ spacing: 4, autoResize: false });
   }
 
   updateLabel () {
@@ -73,14 +77,13 @@ export class GlobalTimelineLayerInfo extends TimelineLayerInfo {
 
   initializeVisibilityButton () {
     this.ui.hideButton = new QinoqButton({
-      position: pt(10, 10),
       name: 'hide button',
       tooltip: 'Hide layer in interactive',
       target: this,
       action: 'toggleLayerVisibility',
       icon: 'eye'
     });
-    this.addMorph(this.ui.hideButton);
+    this.addMorphAt(this.ui.hideButton, 1);
     this.restyleAfterHideToggle();
   }
 
@@ -159,14 +162,13 @@ export class SequenceTimelineLayerInfo extends TimelineLayerInfo {
 
   addCollapseToggle () {
     this.ui.collapseButton = new QinoqButton({
-      position: pt(10, 10),
       fontSize: 15,
       name: 'collapse button',
       target: this.timelineLayer,
       action: 'toggleExpand',
       icon: 'caret-right'
     });
-    this.addMorph(this.ui.collapseButton);
+    this.addMorphAt(this.ui.collapseButton, 1);
     this.disableCollapseButton();
   }
 
