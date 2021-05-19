@@ -1,9 +1,7 @@
 // This code was adapted from typeshift.components
 
 import { HTMLMorph } from 'lively.morphic';
-import { resource } from 'lively.resources';
-
-import Lottie from 'https://jspm.dev/lottie-web';
+import { resource, importModuleViaNative } from 'lively.resources';
 
 export class LottieMorph extends HTMLMorph {
   static get properties () {
@@ -62,6 +60,7 @@ export class LottieMorph extends HTMLMorph {
     // if (!this.world()) return; // do not initialize an animation on morphs not rendered
     await this.whenRendered();
     this.domNode.innerHTML = '';
+    const Lottie = await importModuleViaNative('https://jspm.dev/lottie-web');
     this.lottieAnimation = Lottie.loadAnimation({
       animationData: this.animationData,
       renderer: 'svg',
