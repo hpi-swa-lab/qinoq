@@ -464,6 +464,12 @@ class InteractiveScrollHolder extends Morph {
     this.getUnderlyingMorph(event.hand.position).onMouseUp(event);
   }
 
+  onContextMenu (event) {
+    const underlyingMorph = this.getUnderlyingMorph(event.hand.position);
+    event.targetMorphs.unshift(underlyingMorph);
+    underlyingMorph.onContextMenu(event);
+  }
+
   setNewMorph () {
     if (this.passThroughMorph) {
       const newMorph = this.submorphs.filter(submorph => submorph.name !== 'scrollable content')[0];
