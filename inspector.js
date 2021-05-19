@@ -224,19 +224,19 @@ class AnimationsInspector extends QinoqMorph {
     this.ui.propertyPane.submorphs.forEach(morph => morph.withAllSubmorphsDo(submorph => submorph.remove()));
     const props = Object.keys(this.propertiesToDisplay);
     props.forEach(propToInspect => {
-      const propType = this.propertiesToDisplay[propToInspect];
-      this.buildPropertyControl(propToInspect, propType);
+      const propertyType = this.propertiesToDisplay[propToInspect];
+      this.buildPropertyControl(propToInspect, propertyType);
     });
   }
 
-  buildPropertyControl (property, propType) {
+  buildPropertyControl (property, propertyType) {
     this.propertyControls[property] = {};
     this.propertyControls[property].label = new Label({
       name: `${property} label`,
       textString: property,
       position: pt(CONSTANTS.LABEL_X, 0)
     });
-    switch (propType) {
+    switch (propertyType) {
       case 'point':
         // extent and autofit are necessary for the correct layouting to be applied
         this.propertyControls[property].x = new NumberWidget({
@@ -265,7 +265,7 @@ class AnimationsInspector extends QinoqMorph {
       position: pt(CONSTANTS.KEYFRAME_BUTTON_X, CONSTANTS.WIDGET_ONE_Y),
       inspector: this.inspector,
       property,
-      propType,
+      propertyType,
       sequence: this.inspector.sequence,
       _editor: this.editor
     });
@@ -320,9 +320,9 @@ class AnimationsInspector extends QinoqMorph {
       const sequenceOfTarget = this.inspector.sequence;
       this.displayedProperties.forEach(inspectedProperty => {
         this.propertyControls[inspectedProperty].keyframe.remove();
-        const propType = this.propertiesToDisplay[inspectedProperty];
+        const propertyType = this.propertiesToDisplay[inspectedProperty];
         disconnect(this.targetMorph, inspectedProperty, this, 'updateInInspector');
-        switch (propType) {
+        switch (propertyType) {
           case 'point':
             disconnect(this.propertyControls[inspectedProperty].x, 'number', this, 'updateInMorph');
             disconnect(this.propertyControls[inspectedProperty].y, 'number', this, 'updateInMorph');
@@ -345,9 +345,9 @@ class AnimationsInspector extends QinoqMorph {
   createConnections () {
     connect(this.targetMorph, 'name', this.inspector.ui.headline, 'textString', { converter: '() => {return `Inspecting ${targetMorph.toString()}`}', varMapping: { targetMorph: this.targetMorph } });
     this.displayedProperties.forEach(inspectedProperty => {
-      const propType = this.propertiesToDisplay[inspectedProperty];
-      connect(this.targetMorph, inspectedProperty, this, 'updateInInspector', { converter: '() => {return {property, propType}}', varMapping: { property: inspectedProperty, propType } });
-      switch (propType) {
+      const propertyType = this.propertiesToDisplay[inspectedProperty];
+      connect(this.targetMorph, inspectedProperty, this, 'updateInInspector', { converter: '() => {return {property, propertyType}}', varMapping: { property: inspectedProperty, propertyType } });
+      switch (propertyType) {
         case 'point':
           connect(this.propertyControls[inspectedProperty].x, 'number', this, 'updateInMorph');
           connect(this.propertyControls[inspectedProperty].y, 'number', this, 'updateInMorph');
@@ -365,9 +365,9 @@ class AnimationsInspector extends QinoqMorph {
     });
   }
 
-  updatePropertyInInspector (property, propType) {
+  updatePropertyInInspector (property, propertyType) {
     this._updatingInspector = true;
-    switch (propType) {
+    switch (propertyType) {
       case 'point':
         this.propertyControls[property].x.number = this.targetMorph[property].x;
         this.propertyControls[property].y.number = this.targetMorph[property].y;
@@ -396,8 +396,8 @@ class AnimationsInspector extends QinoqMorph {
     if (!spec) {
       return;
     }
-    const { property, propType } = spec;
-    this.updatePropertyInInspector(property, propType);
+    const { property, propertyType } = spec;
+    this.updatePropertyInInspector(property, propertyType);
   }
 
   refreshAllPropertiesInInspector () {
@@ -406,8 +406,8 @@ class AnimationsInspector extends QinoqMorph {
     }
     this._updatingInspector = true;
     this.displayedProperties.forEach(property => {
-      const propType = this.propertiesToDisplay[property];
-      this.updatePropertyInInspector(property, propType);
+      const propertyType = this.propertiesToDisplay[property];
+      this.updatePropertyInInspector(property, propertyType);
     });
     this._updatingInspector = false;
   }
@@ -418,8 +418,8 @@ class AnimationsInspector extends QinoqMorph {
     }
     this._updatingMorph = true;
     this.displayedProperties.forEach(property => {
-      const propType = this.propertiesToDisplay[property];
-      switch (propType) {
+      const propertyType = this.propertiesToDisplay[property];
+      switch (propertyType) {
         case 'point':
           this.targetMorph[property] = pt(this.propertyControls[property].x.number, this.propertyControls[property].y.number);
           break;
@@ -605,7 +605,7 @@ class KeyframeButton extends QinoqMorph {
           this.tooltip = `Create a keyframe for the ${property} property`;
         }
       },
-      propType: {},
+      propertyType: {},
       styleSet: {
         defaultValue: 'default',
         set (styleSet) {
@@ -631,8 +631,8 @@ class KeyframeButton extends QinoqMorph {
   async onMouseUp () {
     this.mode = 'activated';
     const newKeyframe = new Keyframe(this.sequence.progress, this.currentValue);
-    this.animation = await this.sequence.addKeyframeForMorph(newKeyframe, this.target, this.property, this.propType);
-    if (this.animation.useRelativeValues && this.propType == 'point') {
+    this.animation = await this.sequence.addKeyframeForMorph(newKeyframe, this.target, this.property, this.propertyType);
+    if (this.animation.useRelativeValues && this.propertyType == 'point') {
       newKeyframe.value = pt(this.currentValue.x / this.sequence.width, this.currentValue.y / this.sequence.height);
     }
     this.editor.getTimelineForSequence(this.sequence).updateAnimationLayer(this.animation);
