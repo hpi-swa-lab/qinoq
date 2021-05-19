@@ -41,9 +41,6 @@ export const animatedProperties = {
   fontSize: {
     type: 'number'
   },
-  lineHeight: {
-    type: 'number'
-  },
   fontColor: {
     type: 'color'
   },
