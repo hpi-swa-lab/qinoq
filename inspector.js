@@ -185,8 +185,7 @@ class AnimationsInspector extends QinoqMorph {
 
   get propertiesToDisplay () {
     const defaultPropertiesAndTypesInMorph = Object.entries(animatedPropertiesAndTypes())
-      .filter(propertyAndType => propertyAndType[0] in this.targetMorph)
-      .filter(propertyAndType => !this.propertyNotAnimatableForTargetMorph(propertyAndType[0]));
+      .filter(propertyAndType => propertyAndType[0] in this.targetMorph && !this.propertyNotAnimatableForTargetMorph(propertyAndType[0]));
     const additionalProperties = Object.entries(this.targetMorph.propertiesAndPropertySettings().properties)
       .filter(propertyAndSettings => 'animateAs' in propertyAndSettings[1])
       .map(propertyAndSettings => [propertyAndSettings[0], propertyAndSettings[1].animateAs]);
