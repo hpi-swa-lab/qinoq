@@ -474,7 +474,7 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   get inputFieldClasses () {
-    return ['ValueScrubber', 'ColorPropertyView', 'TabCaption', 'StringWidget'];
+    return ['ValueScrubber', 'ColorPropertyView', 'TabCaption', 'StringWidget', 'Text'];
   }
 
   inputFieldFocused () {
@@ -578,16 +578,18 @@ export class InteractivesEditor extends QinoqMorph {
       {
         name: 'find keyframe',
         exec: async () => {
-          const keyframeSearchStrings = this.interactive.sequences.
-            flatMap(sequence => sequence.animations).
-            flatMap(animation => animation.keyframes.
-              map(keyframe => { return {
-                isListItem: true,
-                string: `${keyframe.name} - ${animation.property} on ${animation.target.name} [${animation.sequence.name}]`,
-                value: keyframe
-              };}
-            )
-          );
+          const keyframeSearchStrings = this.interactive.sequences
+            .flatMap(sequence => sequence.animations)
+            .flatMap(animation => animation.keyframes
+              .map(keyframe => {
+                return {
+                  isListItem: true,
+                  string: `${keyframe.name} - ${animation.property} on ${animation.target.name} [${animation.sequence.name}]`,
+                  value: keyframe
+                };
+              }
+              )
+            );
           const result = await $world.listPrompt('Select a keyframe', keyframeSearchStrings, { filterable: true });
           if (result.selected.length > 0) {
             await this.goto(result.selected[0]);
