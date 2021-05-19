@@ -435,27 +435,27 @@ class InteractiveScrollHolder extends Morph {
 
   onMouseDown (event) {
     super.onMouseDown(event);
-    this.lastMouseDownTarget = this.getUnderlyingMorph(event.hand.position);
+    this.currentMouseTarget = this.getUnderlyingMorph(event.hand.position);
 
     // allows to select text in text morphs by dragging in sequence view
     if (!this.passThroughMorph || this.topbar.editMode == 'Halo' || this.topbar.editMode == 'Hand') this.updateEventDispatcherState();
-    this.lastMouseDownTarget.onMouseDown(event);
+    this.currentMouseTarget.onMouseDown(event);
   }
 
   onDoubleMouseDown (event) {
-    if (this.getUnderlyingMorph(event.hand.position) == this.lastMouseDownTarget) this.lastMouseDownTarget.onDoubleMouseDown(event);
+    if (this.getUnderlyingMorph(event.hand.position) == this.currentMouseTarget) this.currentMouseTarget.onDoubleMouseDown(event);
   }
 
   onMouseMove (event) {
     // for not absolutely clear reasons it is important that this comes before the hover handling
-    this.lastMouseDownTarget = this.getUnderlyingMorph(event.hand.position);
+    this.currentMouseTarget = this.getUnderlyingMorph(event.hand.position);
     this.updateEventDispatcherState();
-    this.lastMouseDownTarget.onMouseMove(event);
+    this.currentMouseTarget.onMouseMove(event);
 
-    if (this.lastMouseDownTarget == this.previousMorphUnderMouse) return;
-    if (this.lastMouseDownTarget) this.lastMouseDownTarget.onHoverIn({ hand: $world.firstHand });
+    if (this.currentMouseTarget == this.previousMorphUnderMouse) return;
+    if (this.currentMouseTarget) this.currentMouseTarget.onHoverIn({ hand: $world.firstHand });
     if (this.previousMorphUnderMouse) this.previousMorphUnderMouse.onHoverOut({ hand: $world.firstHand });
-    this.previousMorphUnderMouse = this.lastMouseDownTarget;
+    this.previousMorphUnderMouse = this.currentMouseTarget;
   }
 
   onMouseUp (event) {
@@ -472,8 +472,8 @@ class InteractiveScrollHolder extends Morph {
   // just changing the values in the events that are passed around does not suffice
   // therefore we change this state here with the values that we need for the event delegation
   updateEventDispatcherState () {
-    this.env.eventDispatcher.eventState.focusedMorph = this.lastMouseDownTarget;
-    this.env.eventDispatcher.eventState.clickedOnMorph = this.lastMouseDownTarget;
+    this.env.eventDispatcher.eventState.focusedMorph = this.currentMouseTarget;
+    this.env.eventDispatcher.eventState.clickedOnMorph = this.currentMouseTarget;
   }
 
   setNewMorph () {
