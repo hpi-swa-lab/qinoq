@@ -4,7 +4,7 @@ import { COLOR_SCHEME } from './colors.js';
 import { NumberWidget, StringWidget } from 'lively.ide/value-widgets.js';
 import { Button } from 'lively.components';
 import { InteractiveMorphSelector } from 'lively.halos';
-import { disconnect, connect } from 'lively.bindings';
+import { disconnect, disconnectAll, connect } from 'lively.bindings';
 import { ColorPickerField } from 'lively.ide/styling/color-picker.js';
 import { Sequence, Keyframe } from './index.js';
 import { animatedPropertiesAndTypes, notAnimatableOnTextMorph, getColorForProperty } from './properties.js';
@@ -560,11 +560,13 @@ class StyleInspector extends QinoqMorph {
       title: 'Alignment'
     }));
 
-    this.ui.panels.alignment = this.addMorph(new KeyValuePanel({
+    this.ui.panels.share = this.addMorph(new KeyValuePanel({
       inspector: this.inspector,
       _editor: this.editor,
       title: 'Share Settings'
     }));
+
+    this.initialize();
   }
 
   initialize () {
@@ -647,7 +649,7 @@ class InspectorPanel extends QinoqMorph {
   }
 
   build () {
-    this.initialize();
+
   }
 
   buildTitleMorph () {
@@ -750,11 +752,14 @@ class KeyValuePanel extends InspectorPanel {
   */
 
   build () {
+    debugger;
     this.ui.container = this.addMorph(
       new QinoqMorph({
+        name: 'widgetContainer',
         _editor: this.editor,
-        layout: new HorizontalLayout({
-          autoResize: true
+        layout: new VerticalLayout({
+          autoResize: true,
+          resizeSubmorphs: true
         })
       })
     );
@@ -768,11 +773,25 @@ class KeyValuePanel extends InspectorPanel {
     }));
   }
 
-  buildTextField (name, value) {
-    this.buildLabel(name);
-    this.ui.container.addMorph(new StringWidget({
-      stringValue: value
+  buildTextField (title, value) {
+    this.buildLabel(title);
+    const field = this.ui.container.addMorph(new StringWidget({
+      position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
+      fixedWidth: true,
+      fixedHeight: true,
+      extent: CONSTANTS.WIDGET_EXTENT,
+      fontFamilty: 'Sans-Serif',
+      fontSize: 16,
+      fill: COLOR_SCHEME.SURFACE,
+      stringValue: value,
+      borderColor: COLOR_SCHEME.PRIMARY,
+      borderStyle: 'solid'
     }));
+    connect(field, 'inputChanged', this, 'changeTokenValue', {
+      converter: `(change) => {
+        return { symbol: '${title}', value: change.args[1][0] }
+      }`
+    });
   }
 
   initialize () {
@@ -780,7 +799,11 @@ class KeyValuePanel extends InspectorPanel {
   }
 
   clear () {
-    this.ui.container.withAllSubmorphsDo(submorph => submorph.abandon());
+    this.ui.container.withAllSubmorphsDo(submorph => {
+      if (submorph === this.ui.container) return;
+      disconnectAll(submorph);
+      submorph.abandon();
+    });
   }
 
   onTargetMorphChange (targetMorph) {
@@ -796,7 +819,7 @@ class KeyValuePanel extends InspectorPanel {
       : Object.values(targetMorph.tokens);
 
     tokens.forEach(token => {
-      if (!token.symbol) return;
+      if (!token.symbol || !token.active) return;
       this.buildTextField(token.symbol, token.value || '');
     });
 
@@ -805,6 +828,13 @@ class KeyValuePanel extends InspectorPanel {
 
   onEnabledChange (enabled) {
     this.displayed = enabled;
+  }
+
+  changeTokenValue (change) {
+    const { symbol, value } = change;
+    const token = Object.values(this.targetMorph.tokens)
+      .find(token => token.symbol === symbol);
+    token.value = value;
   }
 }
 
