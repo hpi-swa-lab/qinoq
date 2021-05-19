@@ -114,17 +114,22 @@ export class SocialMediaButton extends Label {
     // like {text}, {share link}, ...
     const tokenNames = (this.preset.href || '').match(/(?<={)[\w\s]+/g) || [];
 
-    const tokens = tokenNames.map(tokenName => {
+    const newTokens = tokenNames.map(tokenName => {
       return {
         id: tokenName[0].toLowerCase() + string.camelize(tokenName).substring(1),
         symbol: tokenName
       };
     });
 
-    Object.values(tokens).forEach(token => {
+    Object.values(this.tokens)
+      .filter(token => typeof token === 'object') // skip values from keys like _rev
+      .forEach(token => token.active = false);
+
+    Object.values(newTokens).forEach(token => {
       const tokenId = token.id;
       delete token.id;
       token.value = (this.tokens[tokenId] ? this.tokens[tokenId].value : '') || '';
+      token.active = true;
       this.tokens[tokenId] = token;
     });
   }
