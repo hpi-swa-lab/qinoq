@@ -674,41 +674,67 @@ export class InteractivesEditor extends QinoqMorph {
             this.owner.toggleFader(false);
           };
           fader.fill = fader.fill.withA(0.7);
-          fader.layout = new VerticalLayout({
-            direction: 'centered',
-            align: 'left',
-            autoResize: false,
-            spacing: CONSTANTS.FONT_SIZE_TEXT
+          fader.ui = {};
+          fader.layout = new HorizontalLayout({
+            autoResize: false
           });
-          fader.addMorph(new Label({
+          fader.ui.leftContainer = new QinoqMorph({
+            layout: new VerticalLayout({
+              direction: 'centered',
+              align: 'left',
+              autoResize: false,
+              spacing: CONSTANTS.FONT_SIZE_TEXT
+            }),
+            name: 'left container',
+            fill: COLOR_SCHEME.TRANSPARENT,
+            borderWidth: 0,
+            extent: pt(this.width / 2, this.height)
+          });
+          fader.addMorph(fader.ui.leftContainer);
+          fader.ui.rightContainer = new QinoqMorph({
+            name: 'right container',
+            fill: COLOR_SCHEME.TRANSPARENT,
+            borderWidth: 0,
+            extent: pt(this.width / 2, this.height)
+          });
+          fader.addMorph(fader.ui.rightContainer);
+          const closeLabel = new Label({
+            position: pt(fader.ui.rightContainer.width - CONSTANTS.FONT_SIZE_HEADINGS, 0),
+            fontWeight: 'bold',
+            fontColor: COLOR_SCHEME.BACKGROUND,
+            fontSize: CONSTANTS.FONT_SIZE_HEADINGS
+          });
+          Icon.setIcon(closeLabel, 'times');
+          fader.ui.rightContainer.addMorph(closeLabel);
+          fader.ui.leftContainer.addMorph(new Label({
             textString: 'List of available Keybindings in the Editor',
             fontWeight: 'bold',
             fontColor: COLOR_SCHEME.BACKGROUND,
             fontSize: CONSTANTS.FONT_SIZE_HEADINGS
           }));
-          fader.addMorph(new Label({
+          fader.ui.leftContainer.addMorph(new Label({
             textString: textForEditor,
             fontColor: COLOR_SCHEME.BACKGROUND,
             fontSize: CONSTANTS.FONT_SIZE_TEXT
           }));
-          fader.addMorph(new Label({
+          fader.ui.leftContainer.addMorph(new Label({
             textString: 'List of available mouse interactions',
             fontWeight: 'bold',
             fontColor: COLOR_SCHEME.BACKGROUND,
             fontSize: CONSTANTS.FONT_SIZE_HEADINGS
           }));
-          fader.addMorph(new Label({
+          fader.ui.leftContainer.addMorph(new Label({
             textString: textForMouseInteractions,
             fontColor: COLOR_SCHEME.BACKGROUND,
             fontSize: CONSTANTS.FONT_SIZE_TEXT
           }));
-          fader.addMorph(new Label({
+          fader.ui.leftContainer.addMorph(new Label({
             textString: 'List of available Keybindings in the Easing Selection',
             fontWeight: 'bold',
             fontColor: COLOR_SCHEME.BACKGROUND,
             fontSize: CONSTANTS.FONT_SIZE_TEXT
           }));
-          fader.addMorph(new Label({
+          fader.ui.leftContainer.addMorph(new Label({
             textString: textForEasingSelection,
             fontColor: COLOR_SCHEME.BACKGROUND,
             fontSize: CONSTANTS.FONT_SIZE_TEXT - 2
