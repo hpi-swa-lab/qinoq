@@ -41,6 +41,7 @@ export class TimelineLayerInfo extends QinoqMorph {
       textString: this.name,
       reactsToPointer: false
     });
+    this.addMorph(this.ui.label);
     this.updateLabel();
 
     this.layout = new VerticalLayout({ spacing: 4, autoResize: false });
@@ -48,7 +49,6 @@ export class TimelineLayerInfo extends QinoqMorph {
 
   updateLabel () {
     this.ui.label.textString = this.name;
-    this.addMorph(this.ui.label);
   }
 }
 
