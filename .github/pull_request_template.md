@@ -19,7 +19,7 @@ Closes [fill in your issues here]
 
 - [ ] can be opened in the world
 - [ ] is scrollable
-- [ ] mouseDown on the leaves makes them darker
+- [ ] mouseDown on the leaves makes them darker, the cursor changes to a pointer
 - [ ] mouseUp on the leaves makes them ligher again (it is expected that the color is not green anymore)
 - [ ] hovering over the clouds blurs them
 - [ ] moving the mouse away from the clouds removes the blur  
@@ -130,7 +130,7 @@ Closes [fill in your issues here]
 - [ ] in the styling tab there are alignment buttons which are disabled
 - [ ] in the sequence view, a morph that is not part of the currently open sequence cannot be selected with the target picker
 - [ ] when selecting a morph in the sequence via halo, that morph is shown in the inspector
-    - [ ] the styling buttons work as expected
+  - [ ] the styling buttons work as expected
 - [ ] correct values for position, extent and opacity are shown
 - [ ] when setting two keyframes for different position values at different scroll positions, an animation is created and can be viewed
 - [ ] when scrolling in the scrollytelling, created keyframes are shown by a different icon in the inspector
