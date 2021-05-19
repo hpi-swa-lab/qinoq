@@ -83,7 +83,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
   async build () {
     this.buildTargetPicker();
 
-    this.ui.headlinePane = new QinoqMorph({ name: 'headline pane' });
+    this.ui.headlinePane = new QinoqMorph({ name: 'headline pane', fill: COLOR_SCHEME.TRANSPARENT });
     this.ui.headline = new Label({ name: 'headline', textString: 'No morph selected', fontWeight: 'bold' });
     this.ui.headlinePane.layout = new HorizontalLayout({ spacing: 5, align: 'center' });
     this.ui.headlinePane.addMorph(this.ui.targetPicker);
