@@ -360,7 +360,7 @@ describe('Editor', () => {
 
   it('removes animations after a morph has been removed from the interactive', () => {
     const dayBackgroundSequence = interactive.sequences.find(sequence => sequence.name == 'day background');
-    dayBackgroundSequence.submorphs[0].remove();
+    dayBackgroundSequence.submorphs[0].abandon();
     expect(dayBackgroundSequence.animations).to.be.empty;
   });
 
