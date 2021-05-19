@@ -472,7 +472,7 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   get inputFieldClasses () {
-    return ['ValueScrubber', 'ColorPropertyView', 'TabCaption', 'StringWidget'];
+    return ['ValueScrubber', 'ColorPropertyView', 'TabCaption', 'StringWidget', 'Text'];
   }
 
   inputFieldFocused () {
