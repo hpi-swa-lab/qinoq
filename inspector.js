@@ -7,7 +7,7 @@ import { InteractiveMorphSelector } from 'lively.halos';
 import { disconnect, connect } from 'lively.bindings';
 import { ColorPickerField } from 'lively.ide/styling/color-picker.js';
 import { Sequence, Keyframe } from './index.js';
-import { animatedPropertiesAndTypes, getColorForProperty } from './properties.js';
+import { animatedPropertiesAndTypes, notAnimatableOnTextMorph, getColorForProperty } from './properties.js';
 import { QinoqMorph } from './qinoq-morph.js';
 import { resource } from 'lively.resources';
 import { QinoqButton } from './components/qinoq-button.js';
@@ -197,8 +197,7 @@ class AnimationsInspector extends QinoqMorph {
   // that are animatable on other target morphs
   propertyNotAnimatableForTargetMorph (property) {
     if (this.targetMorph.isText) {
-      const notAnimatable = ['textString', 'fontSize'];
-      return notAnimatable.includes(property);
+      return notAnimatableOnTextMorph.includes(property);
     }
     return false;
   }
