@@ -663,7 +663,7 @@ export class Sequence extends DeserializationAwareMorph {
   }
 
   // Generic interface to add a keyframe to a sequence
-  async addKeyframeForMorph (keyframe, morph, property, propType = 'point') {
+  async addKeyframeForMorph (keyframe, morph, property, propertyType = 'point') {
     const existingAnimation = this.getAnimationForMorphProperty(morph, property);
 
     if (existingAnimation) {
@@ -671,7 +671,7 @@ export class Sequence extends DeserializationAwareMorph {
       return existingAnimation;
     }
     const { createAnimationForPropertyType } = await System.import('qinoq/animations.js');
-    const newAnimation = createAnimationForPropertyType(propType, morph, property);
+    const newAnimation = createAnimationForPropertyType(propertyType, morph, property);
     newAnimation.addKeyframe(keyframe);
     this.addAnimation(newAnimation);
     return newAnimation;

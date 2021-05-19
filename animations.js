@@ -124,9 +124,9 @@ class Animation {
   }
 }
 
-export function createAnimationForPropertyType (propType, targetMorph, property) {
+export function createAnimationForPropertyType (propertyType, targetMorph, property) {
   const additionalPropertySpec = animatedProperties[property];
-  switch (propType) {
+  switch (propertyType) {
     case 'point':
       // extent and position need to be scalable with the interactive thus we use relative values
       return new PointAnimation(targetMorph, property, additionalPropertySpec && additionalPropertySpec.defaultRelative);
