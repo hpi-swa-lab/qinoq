@@ -61,14 +61,19 @@ export class GlobalTimelineLayerInfo extends TimelineLayerInfo {
     return true;
   }
 
+  initialize () {
+    super.initialize();
+    this.initializeVisibilityButton();
+  }
+
   updateLabel () {
     this.name = this.layer.name;
     super.updateLabel();
-    if (!this.ui.hideButton) this.initializeVisibilityButton();
   }
 
   initializeVisibilityButton () {
     this.ui.hideButton = new QinoqButton({
+      position: pt(10, 10),
       name: 'hide button',
       tooltip: 'Hide layer in interactive',
       target: this,
