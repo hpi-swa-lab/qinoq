@@ -67,7 +67,7 @@ export function treeExample () {
   const treeSequence = new Sequence({ name: 'tree sequence', start: 0, duration: 500 });
   const stemMorph = new Morph({ fill: Color.rgbHex('734c30'), extent: pt(30, 60), name: 'stem' });
   const vertices = [pt(60, 0), pt(90, 50), pt(70, 50), pt(100, 100), pt(70, 100), pt(110, 150), pt(10, 150), pt(50, 100), pt(20, 100), pt(50, 50), pt(30, 50)];
-  const crownMorph = new CrownMorph({ fill: Color.rgbHex('74a57f'), vertices: vertices, name: 'leafs' });
+  const crownMorph = new CrownMorph({ fill: Color.rgbHex('74a57f'), vertices: vertices, name: 'leafs', nativeCursor: 'pointer' });
 
   treeSequence.addMorph(stemMorph);
   treeSequence.addMorph(crownMorph);

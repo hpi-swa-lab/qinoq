@@ -352,7 +352,10 @@ class InteractiveScrollHolder extends Morph {
   onMouseMoving (mousePosition) {
     const morphUnderMouse = this.getUnderlyingMorph(mousePosition);
     if (morphUnderMouse == this.previousMorphUnderMouse) return;
-    if (morphUnderMouse) morphUnderMouse.onHoverIn({ hand: $world.firstHand });
+    if (morphUnderMouse) {
+      morphUnderMouse.onHoverIn({ hand: $world.firstHand });
+      this.nativeCursor = morphUnderMouse.nativeCursor;
+    }
     if (this.previousMorphUnderMouse) this.previousMorphUnderMouse.onHoverOut({ hand: $world.firstHand });
     this.previousMorphUnderMouse = morphUnderMouse;
   }
