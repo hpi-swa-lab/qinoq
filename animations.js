@@ -15,7 +15,7 @@ class Animation {
 
   // TODO: Maybe use some epsilon to accept keyframes within an interval
   getKeyframeAt (position) {
-    return this.keyframes.find(keyframe => keyframe.position === position);
+    return this.keyframes.find(keyframe => this.sequence.getAbsolutePositionFor(keyframe) === this.sequence.getAbsolutePosition(position));
   }
 
   addKeyframe (keyframe, doNotSort = false) {
