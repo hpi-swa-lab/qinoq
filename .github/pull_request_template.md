@@ -105,6 +105,7 @@ Closes [fill in your issues here]
 - [ ] it is possible to select more than one keyframe using `Alt`
 - [ ] when more than two keyframes are selected, the context menu allows changing of relative positions, where entering a relative position changes the position of all selected keyframes - this works with all menu items and is undoable as expected (one undo for all selected keyframes)
 - [ ] having more than one keyframe selected and dragging one moves all keyframes, this is undoable
+  - [ ] keyframes will snap to other keyframes, this can be disabled with the snap toggle in the menu bar
 - [ ] it is possible to add a new morph to the interactive using the top bar
   - [ ] it is possible to add a lottie morph with the top bar
   - [ ] the newly created morph is also added to the timeline as an own layer
