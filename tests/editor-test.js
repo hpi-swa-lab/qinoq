@@ -173,13 +173,7 @@ describe('Editor', () => {
         expect(editor.currentSequence.submorphs).to.not.include(morphToCut);
       });
 
-      it('removes morph animations from sequence', () => {
-        expect(editor.currentSequence.submorphs).to.include(morphToCut);
-        editor.cutMorph(morphToCut);
-        expect(editor.currentSequence.submorphs).to.not.include(morphToCut);
-      });
-
-      it('places morph in clipboard', async () => {
+      it('removes morph animations from sequence', async () => {
         const { Keyframe } = await System.import('qinoq/animations.js');
         const someKeyframe = new Keyframe(0, 0);
         const animation = await editor.currentSequence.addKeyframeForMorph(someKeyframe, morphToCut, 'opacity', 'number');
@@ -187,9 +181,15 @@ describe('Editor', () => {
         editor.cutMorph(morphToCut);
         expect(editor.currentSequence.animations).not.to.include(animation);
       });
+
+      it('places morph in clipboard', async () => {
+        editor.cutMorph(morphToCut);
+        expect(editor.clipboard.content.morph).to.be.deep.equal(morphToCut);
+        expect(editor.clipboard.content.animation).to.not.be.ok;
+      });
     });
 
-    after(async () => {
+    afterEach(async () => {
       closeEditor();
       await openNewEditorWithExampleInteractive();
     });
