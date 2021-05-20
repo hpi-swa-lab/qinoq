@@ -145,21 +145,17 @@ describe('Editor', () => {
     describe('cutting a morph', () => {
       let morphToCut;
 
-      class CutTestMorph extends Morph {
-        abandon (bool) {
-          this._abandonHasBeenCalled = true;
-          super.abandon(bool);
-        }
-      }
-
       beforeEach(async () => {
         const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'night background');
         await nightBackgroundTimelineSequence.openSequenceView();
-        morphToCut = new CutTestMorph();
+        morphToCut = new Morph();
         editor.addMorphToInteractive(morphToCut);
       });
 
       it('does not trigger abandon', () => {
+        morphToCut.abandon = function (bool) {
+          this._abandonHasBeenCalled = true;
+        };
         expect(morphToCut._abandonHasBeenCalled).to.not.be.ok;
         editor.cutMorph(morphToCut);
         expect(morphToCut._abandonHasBeenCalled).to.not.be.ok;
@@ -186,6 +182,17 @@ describe('Editor', () => {
         editor.cutMorph(morphToCut);
         expect(editor.clipboard.content.morph).to.be.deep.equal(morphToCut);
         expect(editor.clipboard.content.animation).to.not.be.ok;
+      });
+
+      it('and pasting it again sets _sequence on animation to null', async () => {
+        const { Keyframe } = await System.import('qinoq/animations.js');
+        const someKeyframe = new Keyframe(0, 0);
+        const animation = await editor.currentSequence.addKeyframeForMorph(someKeyframe, morphToCut, 'opacity', 'number');
+        editor.cutMorph(morphToCut);
+        expect(editor.currentSequence.animations.length).to.be.equal(0);
+        editor.pasteMorphFromClipboard();
+        expect(editor.currentSequence.animations.length).to.be.equal(1);
+        expect(editor.currentSequence.animations[0]._sequence).to.be.undefined;
       });
     });
 
