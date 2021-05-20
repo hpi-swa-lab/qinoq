@@ -13,6 +13,7 @@ import { resource } from 'lively.resources';
 import { QinoqButton } from './components/qinoq-button.js';
 import { string } from 'lively.lang';
 import { DropDownSelector } from 'lively.components/widgets.js';
+import { PRESETS } from './components/social-media-button.js';
 
 const CONSTANTS = {
   LABEL_X: 10,
@@ -803,7 +804,7 @@ class KeyValuePanel extends InspectorPanel {
     }));
     connect(field, 'inputChanged', this, 'changeTokenValue', {
       converter: `(change) => {
-        return { symbol: '${title}', value: change.args[1][0] }
+        return { symbol: '${title}', value: source.textString }
       }`
     });
     return field;
