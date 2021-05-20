@@ -24,6 +24,10 @@ export class SequenceGraph extends QinoqMorph {
     };
   }
 
+  get isSequenceGraph () {
+    return true;
+  }
+
   buildTree (treeData = this.generateTreeData()) {
     if (!treeData) return;
     this.removeTree();
@@ -40,7 +44,7 @@ export class SequenceGraph extends QinoqMorph {
     this.interactive.withAllSubmorphsDo(morph => {
       if (morph && morph.attributeConnections) {
         morph.attributeConnections.filter(connection =>
-          connection.targetObj == this ||
+          connection.targetObj.isSequenceGraph ||
           connection.targetMethodName == 'onInteractiveStructureUpdate')
           .forEach(connection => connection.disconnect());
       }
@@ -103,11 +107,17 @@ export class SequenceGraph extends QinoqMorph {
     };
   }
 
+  onNameChange (item) {
+    const node = find(this.tree.treeData.root, (node) => node.target == item, this.childGetter);
+    node.container.refresh();
+  }
+
   sequenceToNode (sequence) {
     connect(sequence, 'addMorph', this, 'onInteractiveStructureUpdate', { converter: '(morph) => {return {addedNode : morph, parent: source.id}}' });
     connect(sequence, 'onMorphRemoval', this, 'onInteractiveStructureUpdate', { converter: '(morph) => {return {removedNode : morph, parent: source.id}}' });
     connect(sequence, 'onAnimationAddition', this, 'onInteractiveStructureUpdate', { converter: '(animation) => {return {addedNode : animation, parent: animation.target.id}}' });
     connect(sequence, 'onAnimationRemoval', this, 'onInteractiveStructureUpdate', { converter: '(animation) => {return {removedNode : animation, parent: animation.target.id}}' });
+    connect(sequence, 'name', this, 'onNameChange', { converter: '() => source' });
     return {
       name: sequence.id,
       target: sequence,
@@ -122,6 +132,7 @@ export class SequenceGraph extends QinoqMorph {
   morphInInteractiveToNode (morph, sequenceOfMorph) {
     connect(morph, 'addMorph', this, 'onInteractiveStructureUpdate', { converter: '(morph) => {return {addedNode : morph, parent: source.id}}' });
     if (!morph.owner.isSequence) connect(morph, 'onAbandon', this, 'onInteractiveStructureUpdate', { converter: '(morph) => {return {removedNode : null, parent: source.id}}' });
+    connect(morph, 'name', this, 'onNameChange', { converter: '() => source' });
     return {
       name: morph.id,
       target: morph,
