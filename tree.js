@@ -5,6 +5,7 @@ import { morph, Morph } from 'lively.morphic';
 import { InteractiveTree, InteractiveTreeData } from 'InteractiveTree';
 import { rect } from 'lively.graphics';
 import { connect } from 'lively.bindings';
+import { filter, prewalk } from 'lively.lang/tree.js';
 
 export class SequenceTree extends QinoqMorph {
   static get properties () {
@@ -24,36 +25,46 @@ export class SequenceTree extends QinoqMorph {
     };
   }
 
-  buildTree () {
-    if (!this.treeData) return;
+  buildTree (treeData = this.treeData) {
+    if (!treeData) return;
     this.removeTree();
-    this.tree = new InteractiveTree({ treeData: this.treeData, extent: this.extent, borderWidth: this.borderWidth, borderColor: this.borderColor });
+    this.tree = new InteractiveTree({ treeData: treeData, extent: this.extent, borderWidth: this.borderWidth, borderColor: this.borderColor });
 
     this.addMorph(this.tree);
   }
 
   removeTree () {
-    this.removeConnections();
     if (this.tree) this.tree.remove();
   }
 
   removeConnections () {
     this.interactive.withAllSubmorphsDo(morph => {
       if (morph && morph.attributeConnections) {
-        morph.attributeConnections.filter(connection => connection.targetObj == this).forEach(connection => connection.disconnect());
+        morph.attributeConnections.filter(connection => connection.targetObj == this || connection.targetMethodName == 'onInteractiveStructureUpdate').forEach(connection => connection.disconnect());
       }
     });
   }
 
   onInteractiveStructureUpdate () {
-    this.buildTree();
+    const previousTreeData = this.tree.treeData;
+    const newTreeData = this.treeData;
+    const collapsedNodeNames = filter(previousTreeData.root,
+      (node) => node.isCollapsed == false,
+      (node) => node.children)
+      .map(node => node.name);
+    prewalk(newTreeData.root, (node) => {
+      if (collapsedNodeNames.includes(node.name)) {
+        newTreeData.collapse(node, false);
+      }
+    }, (node) => node.children);
+    this.buildTree(newTreeData);
   }
 
   interactiveToNode (interactive) {
     connect(interactive, 'onSequenceAddition', this, 'onInteractiveStructureUpdate');
     connect(interactive, 'onSequenceRemoval', this, 'onInteractiveStructureUpdate');
     return {
-      name: interactive.name,
+      name: `Interactive: ${interactive.name}`,
       isCollapsed: false,
       visible: true,
       children: interactive.sequences.map(sequence => this.sequenceToNode(sequence)),
@@ -67,7 +78,7 @@ export class SequenceTree extends QinoqMorph {
     connect(sequence, 'onAnimationAddition', this, 'onInteractiveStructureUpdate');
     connect(sequence, 'onAnimationRemoval', this, 'onInteractiveStructureUpdate');
     return {
-      name: sequence.name,
+      name: `Sequence: ${sequence.name}`,
       isCollapsed: false,
       visible: true,
       container: this.renderContainerFor(sequence),
@@ -79,7 +90,7 @@ export class SequenceTree extends QinoqMorph {
     connect(morph, 'addMorph', this, 'onInteractiveStructureUpdate');
     connect(morph, 'onAbandon', this, 'onInteractiveStructureUpdate');
     return {
-      name: morph.name,
+      name: `Morph: ${morph.name}`,
       isCollapsed: true,
       visible: true,
       container: this.renderContainerFor(morph),
@@ -104,7 +115,8 @@ export class SequenceTree extends QinoqMorph {
       isCollapsed: false,
       visible: true,
       container: this.renderContainerFor(keyframe),
-      children: []
+      children: [],
+      isLeaf: true
     };
   }
 
@@ -134,6 +146,7 @@ export class SequenceTree extends QinoqMorph {
 
   get treeData () {
     if (!this.interactive) return null;
+    this.removeConnections();
     return new InteractiveTreeData(this.interactiveToNode(this.interactive));
   }
 }

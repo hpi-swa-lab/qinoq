@@ -320,6 +320,7 @@ export class InteractivesEditor extends QinoqMorph {
 
     this.ui.inspector.deselect();
     this.ui.sequenceTree.removeTree();
+    this.ui.sequenceTree.removeConnections();
 
     this.ui.preview.showEmptyPreviewPlaceholder();
     this.ui.menuBar.disableUIElements();
