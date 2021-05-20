@@ -874,6 +874,7 @@ class ShareSettingsPanel extends KeyValuePanel {
   }
 
   onPresetChange (presetName) {
+    if (!this.targetMorph) return;
     this.targetMorph.preset = presetName;
     if (!this._prohibitTargetMorphChange) this.onTargetMorphChange(this.targetMorph);
   }
