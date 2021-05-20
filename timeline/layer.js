@@ -542,8 +542,14 @@ export class PropertyTimelineLayer extends SequenceTimelineLayer {
   }
 
   drawPointCurves () {
-    const xStyle = { color: COLOR_SCHEME.KEYFRAME_FILL };
+    const xStyle = { color: COLOR_SCHEME.KEYFRAME_FILL, baseline: 'top' };
     const yStyle = { color: COLOR_SCHEME.KEYFRAME_BORDER };
+
+    this.activeArea.text('x', pt(0, 0), xStyle);
+    this.activeArea.text('y', pt(0, this.activeArea.height), yStyle);
+
+    this.activeArea.text('x', pt(this.activeArea.width, 0), { align: 'end', ...xStyle });
+    this.activeArea.text('y', pt(this.activeArea.width, this.activeArea.height), { align: 'end', ...yStyle });
 
     const flipCurve = animatedProperties[this.animation.property] && animatedProperties[this.animation.property].flipCurve;
 
