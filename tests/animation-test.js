@@ -1,6 +1,6 @@
 /* global it, describe, beforeEach */
 import { expect } from 'mocha-es6';
-import { Morph } from 'lively.morphic';
+import { Morph, Label } from 'lively.morphic';
 import { NumberAnimation, TypewriterAnimation, Keyframe } from '../animations.js';
 
 // TODO:
@@ -57,12 +57,12 @@ describe('Typewriter animation', () => {
   const string1 = 'Hello';
   const string2 = 'Hello World';
   const string3 = 'Something else';
-  let mockMorph;
+  let label;
   beforeEach(() => {
-    mockMorph = {
+    label = new Label({
       textString: 'Something'
-    };
-    stringAnimation = new TypewriterAnimation(mockMorph, 'textString');
+    });
+    stringAnimation = new TypewriterAnimation(label, 'textString');
   });
 
   it('interpolates between strings forward', () => {
@@ -70,11 +70,11 @@ describe('Typewriter animation', () => {
     const keyframe2 = new Keyframe(1, string2, { name: 'Keyframe 2' });
     stringAnimation.addKeyframes([keyframe1, keyframe2]);
     stringAnimation.progress = 0;
-    expect(mockMorph.textString).to.be.equal('Hello');
+    expect(label.textString).to.be.equal('Hello');
     stringAnimation.progress = 0.5;
-    expect(mockMorph.textString).to.be.equal('Hello Wo');
+    expect(label.textString).to.be.equal('Hello Wo');
     stringAnimation.progress = 1;
-    expect(mockMorph.textString).to.be.equal('Hello World');
+    expect(label.textString).to.be.equal('Hello World');
   });
 
   it('interpolates between strings in reverse', () => {
@@ -82,11 +82,11 @@ describe('Typewriter animation', () => {
     const keyframe2 = new Keyframe(1, string1, { name: 'Keyframe 2' });
     stringAnimation.addKeyframes([keyframe1, keyframe2]);
     stringAnimation.progress = 1;
-    expect(mockMorph.textString).to.be.equal('Hello');
+    expect(label.textString).to.be.equal('Hello');
     stringAnimation.progress = 0.5;
-    expect(mockMorph.textString).to.be.equal('Hello Wo');
+    expect(label.textString).to.be.equal('Hello Wo');
     stringAnimation.progress = 0;
-    expect(mockMorph.textString).to.be.equal('Hello World');
+    expect(label.textString).to.be.equal('Hello World');
   });
 
   it('can not interpolate between strings with no matching starts or ends', () => {
@@ -94,10 +94,10 @@ describe('Typewriter animation', () => {
     const keyframe2 = new Keyframe(0.9, string3, { name: 'Keyframe 2' });
     stringAnimation.addKeyframes([keyframe1, keyframe2]);
     stringAnimation.progress = 0;
-    expect(mockMorph.textString).to.be.equal(string1);
+    expect(label.textString).to.be.equal(string1);
     stringAnimation.progress = 0.5;
-    expect(mockMorph.textString).to.be.equal(string1);
+    expect(label.textString).to.be.equal(string1);
     stringAnimation.progress = 1;
-    expect(mockMorph.textString).to.be.equal(string3);
+    expect(label.textString).to.be.equal(string3);
   });
 });
