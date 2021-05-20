@@ -405,6 +405,6 @@ export class EasingListItem extends Morph {
 
   onDoubleMouseDown () {
     this.isSelected = true;
-    this.browser.execCommand('confirm');
+    this.browser.execCommand('confirm selection');
   }
 }
