@@ -73,6 +73,12 @@ const PRESETS = {
 export class SocialMediaButton extends Label {
   static get properties () {
     return {
+      fontSize: {
+        defaultValue: 22
+      },
+      nativeCursor: {
+        defaultValue: 'pointer'
+      },
       preset: {
         type: 'Enum',
         values: this.presetValues,
