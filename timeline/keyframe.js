@@ -58,6 +58,9 @@ export class TimelineKeyframe extends QinoqMorph {
       _snapIndicators: {
         defaultValue: []
       },
+      _snapLinesIndicators: {
+        defaultValue: []
+      },
       layer: {},
       _lockModelUpdate: {
         after: ['animation', '_editor', '_keyframe'],
@@ -308,6 +311,9 @@ export class TimelineKeyframe extends QinoqMorph {
   removeSnapIndicators () {
     this._snapIndicators.forEach(indicator => indicator.abandon());
     this._snapIndicators = [];
+
+    this.__snapLinesIndicators.forEach(indicator => indicator.fill = COLOR_SCHEME.KEYFRAME_BORDER);
+    this.__snapLinesIndicators = [];
   }
 
   buildSnapIndicators () {
@@ -318,6 +324,15 @@ export class TimelineKeyframe extends QinoqMorph {
         this._snapIndicators.push(timelineKeyframe.owner.addMorph(timelineKeyframe.buildSnapIndicator()));
       }
     });
+
+    this.timeline.overviewLayers
+      .flatMap(overviewLayer => overviewLayer.keyframeLines)
+      .flatMap(keyframeLine => keyframeLine.submorphs)
+      .filter(submorph => submorph.position.x + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET == this.position.x)
+      .forEach(keyframe => {
+        keyframe.fill = COLOR_SCHEME.PRIMARY;
+        this._snapLinesIndicators.push(keyframe);
+      });
     if (snapIndicator) this._snapIndicators.push(this.owner.addMorph(this.buildSnapIndicator()));
   }
 
