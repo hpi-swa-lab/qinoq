@@ -1,4 +1,4 @@
-/* global it, describe, before, after */
+/* global it, describe, beforeEach, afterEach */
 import { expect } from 'mocha-es6';
 import { Morph } from 'lively.morphic';
 import { exampleInteractive, InteractivesEditor } from 'qinoq';
@@ -20,7 +20,7 @@ class InspectorTestMorph extends Morph {
 
 describe('Inspector', () => {
   let morph, editor, interactive, inspector;
-  before(async () => {
+  beforeEach(async () => {
     editor = await new InteractivesEditor().initialize();
     interactive = await exampleInteractive();
     editor.interactive = interactive;
@@ -90,7 +90,20 @@ describe('Inspector', () => {
     expect(keyFramebuttonForFill.fill).to.not.be.deep.equal(COLOR_SCHEME.KEYFRAME_FILL);
   });
 
-  after(() => {
+  it('it colors a keyframebutton if a keyframe resides at a position which results in the scrollposition', async () => {
+    const dayBackgroundTimelineSequence = editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence).find(timelineSequence => timelineSequence.sequence.name == 'day background');
+    const dayBackgroundSequence = dayBackgroundTimelineSequence.sequence;
+    // sequence is 250 long, therefore this results in a scrollposition which is not a whole number
+    dayBackgroundSequence.animations[0].keyframes[0].position = 0.33;
+    // sets the scrollPosition to the beginning of the day background
+    await dayBackgroundTimelineSequence.openSequenceView();
+    inspector.targetMorph = dayBackgroundSequence.submorphs[0];
+    editor.internalScrollChangeWithGUIUpdate(333);
+    const keyFramebuttonForFill = inspector.animationsInspector.propertyControls.fill.keyframe;
+    expect(keyFramebuttonForFill.fill).to.not.be.deep.equal(COLOR_SCHEME.KEYFRAME_FILL);
+  });
+
+  afterEach(() => {
     editor.owner.close();
   });
 });
