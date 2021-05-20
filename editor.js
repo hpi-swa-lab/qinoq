@@ -505,6 +505,8 @@ export class InteractivesEditor extends QinoqMorph {
 
   onZoomChange (newZoom) {
     let undo;
+    // when grabbing in sequence view an undo is already in progress
+    // a new undo might destroy the grab halo
     if (!this.env.undoManager.undoInProgress) { undo = this.undoStart('interactive-editor-change-zoom'); }
     this.displayedTimeline.zoomFactor = newZoom;
     if (undo) this.undoStop('interactive-editor-change-zoom');
