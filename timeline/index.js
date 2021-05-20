@@ -723,6 +723,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   addPlaceholder () {
+    if (this.getSubmorphNamed('placeholder')) return;
     const placeholder = new Morph({
       name: 'placeholder',
       fill: COLOR_SCHEME.BACKGROUND_VARIANT,
