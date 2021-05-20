@@ -15,6 +15,7 @@ import { QinoqMorph } from './qinoq-morph.js';
 import { QinoqButton } from './components/qinoq-button.js';
 import { EasingSelection } from './components/easing-selection.js';
 import KeyHandler from 'lively.morphic/events/KeyHandler.js';
+import { SequenceTree } from './tree.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -111,7 +112,7 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   async initializePanels () {
-    this.ui.sequenceOverview = this.addMorph(new SequenceOverview({ position: pt(0, 0) }));
+    this.ui.sequenceTree = this.addMorph(new SequenceTree({ position: pt(0, 0), extent: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT), borderWidth: CONSTANTS.BORDER_WIDTH }));
 
     this.ui.preview = this.addMorph(new Preview({ _editor: this }));
 
@@ -297,7 +298,7 @@ export class InteractivesEditor extends QinoqMorph {
 
     disconnect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
 
-    const morphsToClear = [this.ui.tabContainer, this.ui.menuBar, this.ui.inspector, this.ui.sequenceOverview];
+    const morphsToClear = [this.ui.tabContainer, this.ui.menuBar, this.ui.inspector, this.ui.sequenceTree];
     morphsToClear.forEach(morph =>
       morph.withAllSubmorphsDo(submorph => {
         if (submorph.attributeConnections) {
@@ -1190,24 +1191,5 @@ class MenuBar extends QinoqMorph {
     });
     this.ui.zoomInput.borderColor = COLOR_SCHEME.SECONDARY;
     this.ui.scrollPositionInput.borderColor = COLOR_SCHEME.SECONDARY;
-  }
-}
-
-class SequenceOverview extends QinoqMorph {
-  static get properties () {
-    return {
-      name: {
-        defaultValue: 'sequence overview'
-      },
-      extent: {
-        defaultValue: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT)
-      },
-      borderColor: {
-        defaultValue: COLOR_SCHEME.BACKGROUND_VARIANT
-      },
-      borderWidth: {
-        defaultValue: CONSTANTS.BORDER_WIDTH
-      }
-    };
   }
 }
