@@ -39,7 +39,6 @@ export class InteractiveMorphInspector extends QinoqMorph {
         initialize () {
           if (this._deserializing) return;
           this.ui = {};
-          this.build();
           connect($world, 'showHaloFor', this, 'selectMorphThroughHalo');
         }
       },
@@ -52,11 +51,11 @@ export class InteractiveMorphInspector extends QinoqMorph {
           }
 
           if (morph && morph != this.targetMorph) {
-            this.ui.animationsInspector.disbandConnections();
+            this.animationsInspector.disbandConnections();
             this.setProperty('targetMorph', morph);
             this.ui.headline.textString = `Inspecting ${morph.toString()}`;
-            this.ui.animationsInspector.initialize();
-            this.ui.styleInspector.initialize();
+            this.animationsInspector.initialize();
+            this.styleInspector.initialize();
           }
         }
       }
@@ -106,26 +105,26 @@ export class InteractiveMorphInspector extends QinoqMorph {
     this.ui.styleInspectorTab.closeable = false;
     this.ui.styleInspectorTab.renamable = false;
 
-    await this.initializeAnimationsInspector();
-    await this.initializeStyleInspector();
+    this.initializeAnimationsInspector();
+    this.initializeStyleInspector();
     this.ui.animationsInspectorTab.selected = true;
     this.addMorph(this.ui.tabContainer);
   }
 
-  async initializeStyleInspector () {
+  initializeStyleInspector () {
     this.ui.styleInspector = new StyleInspector({
       inspector: this,
       _editor: this.editor
     });
-    this.ui.styleInspectorTab.content = this.ui.styleInspector;
+    this.ui.styleInspectorTab.content = this.styleInspector;
   }
 
-  async initializeAnimationsInspector () {
+  initializeAnimationsInspector () {
     this.ui.animationsInspector = new AnimationsInspector({
       inspector: this,
       _editor: this.editor
     });
-    this.ui.animationsInspectorTab.content = this.ui.animationsInspector;
+    this.ui.animationsInspectorTab.content = this.animationsInspector;
   }
 
   selectMorphThroughHalo (morph) {
@@ -136,17 +135,17 @@ export class InteractiveMorphInspector extends QinoqMorph {
   }
 
   updateInMorph () {
-    this.ui.animationsInspector.updateInMorph();
+    this.animationsInspector.updateInMorph();
   }
 
   deselect () {
-    if (!this.ui.animationsInspector) return;
-    this.ui.animationsInspector.disbandConnections();
+    if (!this.animationsInspector) return;
+    this.animationsInspector.disbandConnections();
     this.ui.headline.textString = 'No morph selected';
 
-    this.ui.animationsInspector.remove();
+    this.animationsInspector.remove();
     this.initializeAnimationsInspector();
-    this.ui.styleInspector.remove();
+    this.styleInspector.remove();
     this.initializeStyleInspector();
 
     this.targetMorph = undefined;
