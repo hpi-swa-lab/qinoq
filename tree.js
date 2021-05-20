@@ -1,6 +1,5 @@
 import { QinoqMorph } from './qinoq-morph.js';
 import { COLOR_SCHEME } from './colors.js';
-
 import { InteractiveTree, InteractiveTreeData } from 'InteractiveTree';
 import { rect } from 'lively.graphics';
 import { connect } from 'lively.bindings';
@@ -25,7 +24,7 @@ export class SequenceGraph extends QinoqMorph {
     };
   }
 
-  buildTree (treeData = this.treeData) {
+  buildTree (treeData = this.generateTreeData()) {
     if (!treeData) return;
     this.removeTree();
     this.tree = new SequenceTree({ treeData: treeData, extent: this.extent, borderWidth: this.borderWidth, borderColor: this.borderColor });
@@ -40,31 +39,21 @@ export class SequenceGraph extends QinoqMorph {
   removeConnections () {
     this.interactive.withAllSubmorphsDo(morph => {
       if (morph && morph.attributeConnections) {
-        morph.attributeConnections.filter(connection => connection.targetObj == this || connection.targetMethodName == 'onInteractiveStructureUpdate').forEach(connection => connection.disconnect());
+        morph.attributeConnections.filter(connection =>
+          connection.targetObj == this ||
+          connection.targetMethodName == 'onInteractiveStructureUpdate')
+          .forEach(connection => connection.disconnect());
       }
     });
   }
 
   onInteractiveStructureUpdate (changeSpecification = {}) {
-    const previousTreeData = this.tree.treeData;
     const previousScroll = this.tree.scroll;
 
     const patchable = ('parent' in changeSpecification);
 
     if (!patchable) {
-      // Rebuild tree completly, apply collapse status
-      const newTreeData = this.treeData;
-
-      const collapsedNodeNames = filter(previousTreeData.root,
-        (node) => node.isCollapsed == false,
-        this.childGetter)
-        .map(node => node.name);
-      prewalk(newTreeData.root, (node) => {
-        if (collapsedNodeNames.includes(node.name)) {
-          newTreeData.collapse(node, false);
-        }
-      }, this.childGetter);
-      this.buildTree(newTreeData);
+      this.rebuildTree();
     } else {
       const parent = find(this.tree.treeData.root, (node) => node.name === changeSpecification.parent, this.childGetter);
       if (!parent) return;
@@ -85,6 +74,22 @@ export class SequenceGraph extends QinoqMorph {
     this.tree.scroll = previousScroll;
   }
 
+  rebuildTree () {
+    const previousTreeData = this.tree.treeData;
+    const newTreeData = this.generateTreeData();
+
+    const collapsedNodeNames = filter(previousTreeData.root,
+      (node) => node.isCollapsed == false,
+      this.childGetter)
+      .map(node => node.name);
+    prewalk(newTreeData.root, (node) => {
+      if (collapsedNodeNames.includes(node.name)) {
+        newTreeData.collapse(node, false);
+      }
+    }, this.childGetter);
+    this.buildTree(newTreeData);
+  }
+
   interactiveToNode (interactive) {
     connect(interactive, 'onSequenceAddition', this, 'onInteractiveStructureUpdate', { converter: '(sequence) => {return {addedNode : sequence, parent: source.id}}' });
     connect(interactive, 'onSequenceRemoval', this, 'onInteractiveStructureUpdate', { converter: '(sequence) => {return {removedNode : sequence, parent: source.id}}' });
@@ -94,7 +99,7 @@ export class SequenceGraph extends QinoqMorph {
       isCollapsed: false,
       visible: true,
       children: this.generateChildrenOfNode(interactive),
-      container: this.renderContainerFor(interactive)
+      container: this.buildContainerFor(interactive)
     };
   }
 
@@ -109,7 +114,7 @@ export class SequenceGraph extends QinoqMorph {
       isCollapsed: false,
       sequence: sequence,
       visible: true,
-      container: this.renderContainerFor(sequence),
+      container: this.buildContainerFor(sequence),
       children: this.generateChildrenOfNode(sequence)
     };
   }
@@ -123,7 +128,7 @@ export class SequenceGraph extends QinoqMorph {
       isCollapsed: true,
       sequence: sequenceOfMorph,
       visible: true,
-      container: this.renderContainerFor(morph),
+      container: this.buildContainerFor(morph),
       children: this.generateChildrenOfNode(morph, { sequence: sequenceOfMorph })
     };
   }
@@ -134,7 +139,7 @@ export class SequenceGraph extends QinoqMorph {
       target: animation,
       isCollapsed: true,
       visible: true,
-      container: this.renderContainerFor(animation),
+      container: this.buildContainerFor(animation),
       children: this.generateChildrenOfNode(animation)
     };
   }
@@ -145,7 +150,7 @@ export class SequenceGraph extends QinoqMorph {
       target: keyframe,
       isCollapsed: false,
       visible: true,
-      container: this.renderContainerFor(keyframe),
+      container: this.buildContainerFor(keyframe),
       children: [],
       isLeaf: true
     };
@@ -157,7 +162,6 @@ export class SequenceGraph extends QinoqMorph {
     if (item.isSequence) return this.sequenceToNode(item);
     if (item.isInteractive) return this.interactiveToNode(item);
     if (item.isMorph) return this.morphInInteractiveToNode(item, parent.sequence);
-    console.warn('Could not match input to node!');
   }
 
   generateChildrenOfNode (item, additionalParams = {}) {
@@ -169,34 +173,21 @@ export class SequenceGraph extends QinoqMorph {
       return [item.submorphs.map(morphInInteractive => this.morphInInteractiveToNode(morphInInteractive, additionalParams.sequence)),
         additionalParams.sequence.getAnimationsForMorph(item).map(animation => this.animationToNode(animation))].flat();
     }
-    console.warn('Could not match input to node!');
   }
 
-  renderContainerFor (submorph = morph({ name: 'root' }), embedded = true) {
+  buildContainerFor (item, embedded = true) {
     const container = new TreeItemContainer({
       tree: this,
       fill: COLOR_SCHEME.TRANSPARENT,
-      target: submorph,
+      target: item,
       fontColor: COLOR_SCHEME.ON_SURFACE,
-      opacity: submorph.visible ? 1 : 0.5,
       _editor: this.editor
     });
-    if (submorph._data) {
-      container._data = submorph._data;
-      submorph._data.container = container;
-    } else {
-      container._data = {
-        name: submorph.name,
-        isCollapsed: true,
-        container,
-        children: []
-      };
-    }
     container.refresh();
     return container;
   }
 
-  get treeData () {
+  generateTreeData () {
     if (!this.interactive) return null;
     this.removeConnections();
     return new InteractiveTreeData(this.interactiveToNode(this.interactive));
@@ -234,7 +225,6 @@ class TreeItemContainer extends QinoqMorph {
       this.buildLabel()
     ];
     this.height = 20;
-    this.opacity = this.target.visible ? 1 : 0.5;
   }
 
   getLabel () {
@@ -242,7 +232,7 @@ class TreeItemContainer extends QinoqMorph {
   }
 
   buildLabel () {
-    const l = this.getSubmorphNamed('name label') || morph({
+    const label = this.getSubmorphNamed('name label') || morph({
       type: 'label',
       name: 'name label',
       reactsToPointer: false,
@@ -251,8 +241,8 @@ class TreeItemContainer extends QinoqMorph {
       fontSize: this.tree.fontSize
     });
 
-    l.value = this.target.isAnimation ? this.getAnimationName() : this.target.name;
-    return l;
+    label.value = this.target.isAnimation ? this.getAnimationName() : this.target.name;
+    return label;
   }
 
   getAnimationName () {
