@@ -81,7 +81,7 @@ describe('Inspector', () => {
     expect(inspector.targetMorph).to.be.null;
   });
 
-  it('it colors a keyframebutton if a keyframe resides exactly at the scrollposition', async () => {
+  it('colors a keyframebutton if a keyframe resides exactly at the scrollposition', async () => {
     const dayBackgroundTimelineSequence = editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence).find(timelineSequence => timelineSequence.sequence.name == 'day background');
     // sets the scrollPosition to the beginning of the day background
     await dayBackgroundTimelineSequence.openSequenceView();
@@ -90,7 +90,7 @@ describe('Inspector', () => {
     expect(keyFramebuttonForFill.fill).to.not.be.deep.equal(COLOR_SCHEME.KEYFRAME_FILL);
   });
 
-  it('it colors a keyframebutton if a keyframe resides at a position which results in the scrollposition', async () => {
+  it('colors a keyframebutton if a keyframe resides at a position which results in the scrollposition', async () => {
     const dayBackgroundTimelineSequence = editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence).find(timelineSequence => timelineSequence.sequence.name == 'day background');
     const dayBackgroundSequence = dayBackgroundTimelineSequence.sequence;
     // sequence is 250 long, therefore this results in a scrollposition which is not a whole number
