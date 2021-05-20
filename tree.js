@@ -28,7 +28,7 @@ export class SequenceGraph extends QinoqMorph {
   buildTree (treeData = this.treeData) {
     if (!treeData) return;
     this.removeTree();
-    this.tree = new InteractiveTree({ treeData: treeData, extent: this.extent, borderWidth: this.borderWidth, borderColor: this.borderColor });
+    this.tree = new SequenceTree({ treeData: treeData, extent: this.extent, borderWidth: this.borderWidth, borderColor: this.borderColor });
 
     this.addMorph(this.tree);
   }
@@ -150,6 +150,12 @@ export class SequenceGraph extends QinoqMorph {
     if (!this.interactive) return null;
     this.removeConnections();
     return new InteractiveTreeData(this.interactiveToNode(this.interactive));
+  }
+}
+
+class SequenceTree extends InteractiveTree {
+  onHoverOut (event) {
+    // prevent default
   }
 }
 
