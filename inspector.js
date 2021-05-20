@@ -283,6 +283,7 @@ class AnimationsInspector extends QinoqMorph {
       sequence: this.inspector.sequence,
       _editor: this.editor
     });
+    this.propertyControls[property].keyframe.setMode();
     this.ui[property] = new QinoqMorph();
     Object.values(this.propertyControls[property]).forEach(morph => this.ui[property].addMorph(morph));
     this.ui.propertyPane.addMorph(this.ui[property]);
