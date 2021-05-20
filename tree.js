@@ -88,7 +88,8 @@ export class SequenceTree extends QinoqMorph {
       fill: COLOR_SCHEME.TRANSPARENT,
       target: submorph,
       fontColor: COLOR_SCHEME.ON_SURFACE,
-      opacity: submorph.visible ? 1 : 0.5
+      opacity: submorph.visible ? 1 : 0.5,
+      _editor: this.editor
     });
     if (submorph._data) {
       container._data = submorph._data;
@@ -111,7 +112,7 @@ export class SequenceTree extends QinoqMorph {
   }
 }
 
-class TreeItemContainer extends Morph {
+class TreeItemContainer extends QinoqMorph {
   static get properties () {
     return {
       target: {},
@@ -121,6 +122,9 @@ class TreeItemContainer extends Morph {
 
   toggleSelected (active) {
     this.getLabel().fontColor = active ? COLOR_SCHEME.ON_SECONDARY : COLOR_SCHEME.ON_SURFACE;
+    if (active) {
+      this.editor.goto(this.target);
+    }
   }
 
   refresh () {
