@@ -80,12 +80,15 @@ describe('Editor', () => {
       expect(placeholder).to.be.ok;
     });
 
-    it('inserts placeholder when last morph in sequence is removed', async () => {
+    it('inserts exactly one placeholder when last morph in sequence is removed', async () => {
       const dayBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'day background');
       await dayBackgroundTimelineSequence.openSequenceView();
       expect(editor.getSubmorphNamed('placeholder')).to.not.be.ok;
       editor.removeMorphFromInteractive(dayBackgroundTimelineSequence.sequence.submorphs[0]);
       expect(editor.getSubmorphNamed('placeholder')).to.be.ok;
+      const placeholder = [];
+      editor.withAllSubmorphsDo((submorph) => { if (submorph.name === 'placeholder') placeholder.push(submorph); });
+      expect(placeholder.length).to.be.equal(1);
     });
 
     it('removes placeholder when morph is added to the sequence', async () => {
