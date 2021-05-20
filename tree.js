@@ -7,11 +7,11 @@ import { rect } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 import { filter, prewalk } from 'lively.lang/tree.js';
 
-export class SequenceTree extends QinoqMorph {
+export class SequenceGraph extends QinoqMorph {
   static get properties () {
     return {
       name: {
-        defaultValue: 'sequence tree'
+        defaultValue: 'sequence graph'
       },
       borderColor: {
         defaultValue: COLOR_SCHEME.BACKGROUND_VARIANT
@@ -48,6 +48,7 @@ export class SequenceTree extends QinoqMorph {
   onInteractiveStructureUpdate () {
     const previousTreeData = this.tree.treeData;
     const newTreeData = this.treeData;
+    const previousScroll = this.tree.scroll;
     const collapsedNodeNames = filter(previousTreeData.root,
       (node) => node.isCollapsed == false,
       (node) => node.children)
@@ -58,6 +59,7 @@ export class SequenceTree extends QinoqMorph {
       }
     }, (node) => node.children);
     this.buildTree(newTreeData);
+    this.tree.scroll = previousScroll;
   }
 
   interactiveToNode (interactive) {
