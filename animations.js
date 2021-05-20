@@ -122,6 +122,10 @@ class Animation {
     copiedAnimation.addKeyframes(copiedKeyframes);
     return copiedAnimation;
   }
+
+  get isAnimation () {
+    return true;
+  }
 }
 
 export function createAnimationForPropertyType (propertyType, targetMorph, property) {
