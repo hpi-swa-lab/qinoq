@@ -21,7 +21,8 @@ const CONSTANTS = {
   TARGET_PICKER_DIAMETER: 25,
   TARGET_PICKER_BORDER_RADIUS: 15,
   WIDGET_WIDTH: 100,
-  WIDGET_HEIGHT: 25
+  WIDGET_HEIGHT: 25,
+  TAB_HEADER_HEIGHT: 25
 };
 CONSTANTS.WIDGET_EXTENT = pt(CONSTANTS.WIDGET_WIDTH, CONSTANTS.WIDGET_HEIGHT);
 
@@ -98,7 +99,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
     this.ui.tabContainer = await resource('part://tabs/tabs').read();
     Object.assign(this.ui.tabContainer, {
       position: pt(0, 38),
-      extent: pt(this.width, this.height - this.ui.headlinePane.height),
+      extent: pt(this.width, this.height - this.ui.headlinePane.height - CONSTANTS.TAB_HEADER_HEIGHT),
       showNewTabButton: false,
       tabHeight: 25
     });
