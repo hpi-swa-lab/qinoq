@@ -770,6 +770,19 @@ export class InteractivesEditor extends QinoqMorph {
       await new Promise(r => setTimeout(r, 30));
 
       this.getTimelineFor(tab).scrollToKeyframe(keyframe, animation);
+      return;
+    }
+    if (item.isSequence) {
+      const sequence = item;
+      const tab = this.getTabFor(sequence) || await this.initializeSequenceView(sequence);
+      tab.selected = true;
+      return;
+    }
+    if (Interactive.isMorphInInteractive(item)) {
+      const sequence = Sequence.getSequenceOfMorph(item);
+      await this.goto(sequence);
+      this.ui.inspector.targetMorph = item;
+      item.show();
     }
   }
 
