@@ -13,9 +13,12 @@ class Animation {
     this.useRelativeValues = useRelativeValues;
   }
 
-  // TODO: Maybe use some epsilon to accept keyframes within an interval
   getKeyframeAt (position) {
-    return this.keyframes.find(keyframe => this.sequence.getAbsolutePositionFor(keyframe) === this.sequence.getAbsolutePosition(position));
+    return this.sequence
+      ? this.keyframes.find(keyframe => this.sequence.getAbsolutePositionFor(keyframe) === this.sequence.getAbsolutePosition(position))
+      // this path should never be executed with an actual editor and interactive
+      // without however it is not possible anymore to test the animations separately
+      : this.keyframes.find(keyframe => keyframe.position === position);
   }
 
   addKeyframe (keyframe, doNotSort = false) {
