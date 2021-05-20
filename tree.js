@@ -18,6 +18,7 @@ export class SequenceGraph extends QinoqMorph {
       tree: {
         after: ['_editor'],
         initialize () {
+          this.removeConnections();
           this.buildTree();
         }
       }
@@ -41,6 +42,7 @@ export class SequenceGraph extends QinoqMorph {
   }
 
   removeConnections () {
+    if (!this.interactive) return;
     this.interactive.withAllSubmorphsDo(morph => {
       if (morph && morph.attributeConnections) {
         morph.attributeConnections.filter(connection =>
