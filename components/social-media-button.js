@@ -1,7 +1,7 @@
 import { Label, Icon } from 'lively.morphic';
 import { string } from 'lively.lang';
 
-const PRESETS = {
+export const PRESETS = {
   FACEBOOK: {
     name: 'Facebook',
     icon: 'facebook-f',
@@ -64,8 +64,7 @@ const PRESETS = {
     icon: 'vk',
     href: 'http://vk.com/share.php?title={text}&url={url}'
   },
-  CUSTOM: {
-    name: 'Custom',
+  UNDEFINED: {
     icon: 'question'
   }
 };
@@ -81,7 +80,9 @@ export class SocialMediaButton extends Label {
       },
       preset: {
         type: 'Enum',
-        values: this.presetValues,
+        values: Object.values(PRESETS)
+          .filter(preset => preset.name)
+          .map(preset => preset.name),
         after: ['tooltip', 'tokens', 'submorphs'],
         initialize () {
           this.preset = PRESETS.TWITTER;
@@ -90,7 +91,7 @@ export class SocialMediaButton extends Label {
           const preset = typeof presetOrPresetName === 'string'
             ? Object.values(PRESETS).find(preset => preset.name === presetOrPresetName)
             : presetOrPresetName;
-          this.setProperty('preset', preset || PRESETS.CUSTOM);
+          this.setProperty('preset', preset || PRESETS.UNDEFINED);
           this.updateIcon();
           this.updateTooltip();
           this.generateTokens();
@@ -109,7 +110,9 @@ export class SocialMediaButton extends Label {
   }
 
   get presetValues () {
-    return Object.values(PRESETS).map(preset => preset.name);
+    return Object.values(PRESETS)
+      .filter(preset => preset.name)
+      .map(preset => preset.name);
   }
 
   populateTokens (link) {
@@ -120,6 +123,10 @@ export class SocialMediaButton extends Label {
   }
 
   generateTokens () {
+    Object.values(this.tokens)
+      .filter(token => typeof token === 'object') // skip values from keys like _rev
+      .forEach(token => token.active = false);
+
     // matchs all words with whitespace in it sourrounded by {}
     // like {text}, {share link}, ...
     const tokenNames = (this.preset.href || '').match(/(?<={)[\w\s]+/g) || [];
@@ -130,10 +137,6 @@ export class SocialMediaButton extends Label {
         symbol: tokenName
       };
     });
-
-    Object.values(this.tokens)
-      .filter(token => typeof token === 'object') // skip values from keys like _rev
-      .forEach(token => token.active = false);
 
     Object.values(newTokens).forEach(token => {
       const tokenId = token.id;
