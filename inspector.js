@@ -40,6 +40,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
         initialize () {
           if (this._deserializing) return;
           this.ui = {};
+          this.build();
           connect($world, 'showHaloFor', this, 'selectMorphThroughHalo');
         }
       },
