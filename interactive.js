@@ -248,6 +248,7 @@ export class Interactive extends DeserializationAwareMorph {
       sequence.layer = this.layers[0];
     }
     sequence.interactive = this;
+    signal(this, 'onSequenceAddition');
     connect(this, 'extent', sequence, 'extent');
   }
 
@@ -256,6 +257,7 @@ export class Interactive extends DeserializationAwareMorph {
     disconnect(this, 'extent', sequence, 'extent');
     arr.remove(this.sequences, sequence);
     sequence.remove();
+    signal(this, 'onSequenceRemoval');
     this.updateInteractiveLength();
   }
 
@@ -651,6 +653,7 @@ export class Sequence extends DeserializationAwareMorph {
   abandonMorph (morph, doNotAbandonMorph = false) {
     if (doNotAbandonMorph) morph.remove(); else morph.abandon(true);
     this.animations.filter(animation => animation.target == morph).forEach(animation => this.removeAnimation(animation));
+    signal(this, 'onMorphRemoval');
   }
 
   applyUnfocusedEffect () {
@@ -682,10 +685,12 @@ export class Sequence extends DeserializationAwareMorph {
 
   addAnimation (animation) {
     this.animations.push(animation);
+    signal(this, 'onAnimationAddition');
   }
 
   removeAnimation (animation) {
     arr.remove(this.animations, animation);
+    signal(this, 'onAnimationRemoval');
   }
 
   getAnimationForMorphProperty (morph, property) {

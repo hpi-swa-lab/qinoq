@@ -4,6 +4,7 @@ import { COLOR_SCHEME } from './colors.js';
 import { morph, Morph } from 'lively.morphic';
 import { InteractiveTree, InteractiveTreeData } from 'InteractiveTree';
 import { rect } from 'lively.graphics';
+import { connect } from 'lively.bindings';
 
 export class SequenceTree extends QinoqMorph {
   static get properties () {
@@ -32,10 +33,25 @@ export class SequenceTree extends QinoqMorph {
   }
 
   removeTree () {
+    this.removeConnections();
     if (this.tree) this.tree.remove();
   }
 
+  removeConnections () {
+    this.interactive.withAllSubmorphsDo(morph => {
+      if (morph && morph.attributeConnections) {
+        morph.attributeConnections.filter(connection => connection.targetObj == this).forEach(connection => connection.disconnect());
+      }
+    });
+  }
+
+  onInteractiveStructureUpdate () {
+    this.buildTree();
+  }
+
   interactiveToNode (interactive) {
+    connect(interactive, 'onSequenceAddition', this, 'onInteractiveStructureUpdate');
+    connect(interactive, 'onSequenceRemoval', this, 'onInteractiveStructureUpdate');
     return {
       name: interactive.name,
       isCollapsed: false,
@@ -46,6 +62,10 @@ export class SequenceTree extends QinoqMorph {
   }
 
   sequenceToNode (sequence) {
+    connect(sequence, 'addMorph', this, 'onInteractiveStructureUpdate');
+    connect(sequence, 'onMorphRemoval', this, 'onInteractiveStructureUpdate');
+    connect(sequence, 'onAnimationAddition', this, 'onInteractiveStructureUpdate');
+    connect(sequence, 'onAnimationRemoval', this, 'onInteractiveStructureUpdate');
     return {
       name: sequence.name,
       isCollapsed: false,
@@ -56,6 +76,8 @@ export class SequenceTree extends QinoqMorph {
   }
 
   morphInInteractiveToNode (morph, sequenceOfMorph) {
+    connect(morph, 'addMorph', this, 'onInteractiveStructureUpdate');
+    connect(morph, 'onAbandon', this, 'onInteractiveStructureUpdate');
     return {
       name: morph.name,
       isCollapsed: true,
