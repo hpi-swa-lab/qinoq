@@ -209,6 +209,7 @@ export class InteractivesEditor extends QinoqMorph {
     if (!interactive) return;
     this.ui.preview.loadContent(interactive);
     this.ui.globalTimeline.loadContent(interactive);
+    this.ui.sequenceTree.buildTree();
 
     this.ui.tabContainer.visible = true;
 
@@ -318,6 +319,7 @@ export class InteractivesEditor extends QinoqMorph {
     });
 
     this.ui.inspector.deselect();
+    this.ui.sequenceTree.removeTree();
 
     this.ui.preview.showEmptyPreviewPlaceholder();
     this.ui.menuBar.disableUIElements();
