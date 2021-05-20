@@ -403,7 +403,8 @@ export class EasingListItem extends Morph {
     }
   }
 
-  onDoubleMouseDown () {
+  onDoubleMouseDown (event) {
+    event.stop();
     this.isSelected = true;
     this.browser.execCommand('confirm selection');
   }
