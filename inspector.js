@@ -7,7 +7,7 @@ import { InteractiveMorphSelector } from 'lively.halos';
 import { disconnect, disconnectAll, connect } from 'lively.bindings';
 import { ColorPickerField } from 'lively.ide/styling/color-picker.js';
 import { Sequence, Keyframe } from './index.js';
-import { animatedPropertiesAndTypes, notAnimatableOnTextMorph, getColorForProperty } from './properties.js';
+import { animatedPropertiesAndTypes, notAnimatableOnLabelMorphWithIcon, notAnimatableOnTextMorph, getColorForProperty } from './properties.js';
 import { QinoqMorph } from './qinoq-morph.js';
 import { resource } from 'lively.resources';
 import { QinoqButton } from './components/qinoq-button.js';
@@ -207,10 +207,13 @@ class AnimationsInspector extends QinoqMorph {
 
   get propertiesToDisplay () {
     const defaultPropertiesAndTypesInMorph = Object.entries(animatedPropertiesAndTypes())
-      .filter(propertyAndType => propertyAndType[0] in this.targetMorph && !this.propertyNotAnimatableForTargetMorph(propertyAndType[0]));
-    const additionalProperties = Object.entries(this.targetMorph.propertiesAndPropertySettings().properties)
-      .filter(propertyAndSettings => 'animateAs' in propertyAndSettings[1])
-      .map(propertyAndSettings => [propertyAndSettings[0], propertyAndSettings[1].animateAs]);
+      .filter(propertyAndType => propertyAndType[0] in this.targetMorph &&
+         !this.propertyNotAnimatableForTargetMorph(propertyAndType[0]));
+    const additionalProperties =
+      Object.entries(this.targetMorph.propertiesAndPropertySettings().properties)
+        .filter(propertyAndSettings => 'animateAs' in propertyAndSettings[1])
+        .map(propertyAndSettings =>
+          [propertyAndSettings[0], propertyAndSettings[1].animateAs]);
     const propertyList = defaultPropertiesAndTypesInMorph.concat(additionalProperties);
     return Object.fromEntries(propertyList);
   }
@@ -221,6 +224,11 @@ class AnimationsInspector extends QinoqMorph {
     if (this.targetMorph.isText) {
       return notAnimatableOnTextMorph.includes(property);
     }
+
+    if (this.targetMorph.isIcon) {
+      return notAnimatableOnLabelMorphWithIcon.includes(property);
+    }
+
     return false;
   }
 

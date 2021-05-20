@@ -65,6 +65,7 @@ export const animatedProperties = {
 };
 
 export const notAnimatableOnTextMorph = ['textString', 'fontSize'];
+export const notAnimatableOnLabelMorphWithIcon = ['textString'];
 
 // Get a direct mapping property -> type
 export function animatedPropertiesAndTypes () {
