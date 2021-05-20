@@ -654,7 +654,7 @@ export class InteractivesEditor extends QinoqMorph {
       },
       {
         name: 'create new sequence',
-        exec: () => {
+        exec: (_, args = { openInHand: true }) => {
           if (!this.interactive) return;
 
           // Assign a valid position to the new sequence
@@ -665,7 +665,9 @@ export class InteractivesEditor extends QinoqMorph {
           newSequence.layer = this.interactive.layers[0];
           this.interactive.addSequence(newSequence);
 
-          this.ui.globalTimeline.createTimelineSequenceInHand(newSequence);
+          if (args.openInHand) this.ui.globalTimeline.createTimelineSequenceInHand(newSequence);
+
+          return newSequence;
         }
       },
       {
