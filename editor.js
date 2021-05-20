@@ -112,7 +112,7 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   async initializePanels () {
-    this.ui.sequenceTree = this.addMorph(new SequenceTree({ position: pt(0, 0), extent: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT), borderWidth: CONSTANTS.BORDER_WIDTH }));
+    this.ui.sequenceTree = this.addMorph(new SequenceTree({ position: pt(0, 0), extent: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT), borderWidth: CONSTANTS.BORDER_WIDTH, _editor: this }));
 
     this.ui.preview = this.addMorph(new Preview({ _editor: this }));
 
