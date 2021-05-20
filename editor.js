@@ -1169,7 +1169,6 @@ class MenuBar extends QinoqMorph {
   onSequenceView () {
     this.ui.addSequenceButton.disable();
     this.ui.addLayerButton.disable();
-    this.ui.toggleSnappingButton.disable();
     this.ui.gotoNextButton.tooltip = 'Go to next keyframe';
     this.ui.gotoPrevButton.tooltip = 'Go to previous keyframe';
   }

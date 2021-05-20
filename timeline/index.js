@@ -659,6 +659,13 @@ export class SequenceTimeline extends Timeline {
     return this.timelineLayers.flatMap(timelineLayer => timelineLayer.keyframes).filter(Boolean);
   }
 
+  get allKeyframes () {
+    return this.interactive.sequences
+      .filter(sequence => sequence === this.sequence)
+      .flatMap(sequence => sequence.animations)
+      .flatMap(animation => animation.keyframes);
+  }
+
   getTimelineKeyframe (keyframe) {
     return this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe.equals(keyframe));
   }
