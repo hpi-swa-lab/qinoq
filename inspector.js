@@ -283,7 +283,6 @@ class AnimationsInspector extends QinoqMorph {
       sequence: this.inspector.sequence,
       _editor: this.editor
     });
-    this.propertyControls[property].keyframe.setMode();
     this.ui[property] = new QinoqMorph();
     Object.values(this.propertyControls[property]).forEach(morph => this.ui[property].addMorph(morph));
     this.ui.propertyPane.addMorph(this.ui[property]);
@@ -601,6 +600,7 @@ class KeyframeButton extends QinoqMorph {
         initialize () {
           if (!this._deserializing) {
             this.animation = this.sequence.getAnimationForMorphProperty(this.target, this.property);
+            this.setMode();
           }
         }
       },
