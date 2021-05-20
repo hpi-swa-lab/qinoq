@@ -24,7 +24,7 @@ export class LottieMorph extends HTMLMorph {
         }
       },
       progress: {
-        defaultValue: 0,
+        defaultValue: 0.5,
         min: 0,
         max: 1,
         isFloat: true,
