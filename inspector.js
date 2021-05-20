@@ -56,7 +56,6 @@ export class InteractiveMorphInspector extends QinoqMorph {
             this.ui.animationsInspector.disbandConnections();
             this.setProperty('targetMorph', morph);
             this.ui.headline.textString = `Inspecting ${morph.toString()}`;
-
             this.ui.animationsInspector.initialize();
             this.ui.styleInspector.initialize();
           }
@@ -104,30 +103,34 @@ export class InteractiveMorphInspector extends QinoqMorph {
       tabHeight: 25
     });
 
-    await this.buildAnimationsInspector();
-    await this.buildStyleInspector();
+    this.ui.animationsInspectorTab = await this.ui.tabContainer.addTab('animations');
+    this.ui.animationsInspectorTab.closeable = false;
+    this.ui.animationsInspectorTab.renamable = false;
+
+    this.ui.styleInspectorTab = await this.ui.tabContainer.addTab('styling');
+    this.ui.styleInspectorTab.closeable = false;
+    this.ui.styleInspectorTab.renamable = false;
+
+    await this.initializeAnimationsInspector();
+    await this.initializeStyleInspector();
     this.ui.animationsInspectorTab.selected = true;
     this.addMorph(this.ui.tabContainer);
   }
 
-  async buildStyleInspector () {
+  async initializeStyleInspector () {
     this.ui.styleInspector = new StyleInspector({
       inspector: this,
       _editor: this.editor
     });
-    this.ui.styleInspectorTab = await this.ui.tabContainer.addTab('styling', this.ui.styleInspector);
-    this.ui.styleInspectorTab.closeable = false;
-    this.ui.styleInspectorTab.renamable = false;
+    this.ui.styleInspectorTab.content = this.ui.styleInspector;
   }
 
-  async buildAnimationsInspector () {
+  async initializeAnimationsInspector () {
     this.ui.animationsInspector = new AnimationsInspector({
       inspector: this,
       _editor: this.editor
     });
-    this.ui.animationsInspectorTab = await this.ui.tabContainer.addTab('animations', this.ui.animationsInspector);
-    this.ui.animationsInspectorTab.closeable = false;
-    this.ui.animationsInspectorTab.renamable = false;
+    this.ui.animationsInspectorTab.content = this.ui.animationsInspector;
   }
 
   selectMorphThroughHalo (morph) {
@@ -142,14 +145,16 @@ export class InteractiveMorphInspector extends QinoqMorph {
   }
 
   deselect () {
+    if (!this.ui.animationsInspector) return;
     this.ui.animationsInspector.disbandConnections();
-    Object.values(this.ui).forEach(uiElement => {
-      if (uiElement.isMorph) {
-        uiElement.remove();
-      }
-    });
-    this.targetMorph = null;
-    this.build();
+    this.ui.headline.textString = 'No morph selected';
+
+    this.ui.animationsInspector.remove();
+    this.initializeAnimationsInspector();
+    this.ui.styleInspector.remove();
+    this.initializeStyleInspector();
+
+    this.targetMorph = undefined;
   }
 
   abandon () {
