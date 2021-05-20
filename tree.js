@@ -109,14 +109,6 @@ export class SequenceTree extends QinoqMorph {
     if (!this.interactive) return;
     return new InteractiveTreeData(this.interactiveToNode(this.interactive));
   }
-
-  toggleSelected (active) {
-    if (!this.tree) return;
-    const { selectionFontColor, nonSelectionFontColor } = this.tree;
-    this.submorphs.filter(m => !m._isControlElement && m.styleClasses.includes('Label')).forEach(m => {
-      m.fontColor = active ? selectionFontColor : nonSelectionFontColor;
-    });
-  }
 }
 
 class TreeItemContainer extends Morph {
@@ -127,16 +119,24 @@ class TreeItemContainer extends Morph {
     };
   }
 
+  toggleSelected (active) {
+    this.getLabel().fontColor = active ? COLOR_SCHEME.ON_SECONDARY : COLOR_SCHEME.ON_SURFACE;
+  }
+
   refresh () {
     if (!this.target) return;
     this.submorphs = [
-      this.getLabel()
+      this.buildLabel()
     ];
     this.height = 20;
     this.opacity = this.target.visible ? 1 : 0.5;
   }
 
   getLabel () {
+    return this.getSubmorphNamed('name label');
+  }
+
+  buildLabel () {
     const l = this.getSubmorphNamed('name label') || morph({
       type: 'label',
       name: 'name label',
