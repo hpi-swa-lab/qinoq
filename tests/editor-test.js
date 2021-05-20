@@ -192,7 +192,7 @@ describe('Editor', () => {
         expect(editor.currentSequence.animations.length).to.be.equal(0);
         editor.pasteMorphFromClipboard();
         expect(editor.currentSequence.animations.length).to.be.equal(1);
-        expect(editor.currentSequence.animations[0]._sequence).to.be.undefined;
+        expect(editor.currentSequence.animations[0]._sequence).to.not.be.ok;
       });
     });
 
