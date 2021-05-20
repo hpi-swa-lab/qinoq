@@ -504,9 +504,10 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   onZoomChange (newZoom) {
-    this.undoStart('interactive-editor-change-zoom');
+    let undo;
+    if (!this.env.undoManager.undoInProgress) { undo = this.undoStart('interactive-editor-change-zoom'); }
     this.displayedTimeline.zoomFactor = newZoom;
-    this.undoStop('interactive-editor-change-zoom');
+    if (undo) this.undoStop('interactive-editor-change-zoom');
   }
 
   updateZoomInputNumber (zoomFactor) {
