@@ -47,17 +47,38 @@ export class SequenceTree extends QinoqMorph {
       isCollapsed: false,
       visible: true,
       container: this.renderContainerFor(sequence),
-      children: sequence.submorphs.map(morphInInteractive => this.morphInInteractiveToNode(morphInInteractive))
+      children: sequence.submorphs.map(morphInInteractive => this.morphInInteractiveToNode(morphInInteractive, sequence))
     };
   }
 
-  morphInInteractiveToNode (morph) {
+  morphInInteractiveToNode (morph, sequenceOfMorph) {
     return {
       name: morph.name,
-      isCollapsed: false,
+      isCollapsed: true,
       visible: true,
       container: this.renderContainerFor(morph),
-      children: morph.submorphs.map(morphInInteractive => this.morphInInteractiveToNode(morphInInteractive))
+      children: [morph.submorphs.map(morphInInteractive => this.morphInInteractiveToNode(morphInInteractive, sequenceOfMorph)),
+        sequenceOfMorph.getAnimationsForMorph(morph).map(animation => this.animationToNode(animation))].flat()
+    };
+  }
+
+  animationToNode (animation) {
+    return {
+      name: `${animation.type} animation on ${animation.property}`,
+      isCollapsed: true,
+      visible: true,
+      container: this.renderContainerFor(animation),
+      children: animation.keyframes.map(keyframe => this.keyframeToNode(keyframe))
+    };
+  }
+
+  keyframeToNode (keyframe) {
+    return {
+      name: keyframe.name,
+      isCollapsed: false,
+      visible: true,
+      container: this.renderContainerFor(keyframe),
+      children: []
     };
   }
 
@@ -125,7 +146,11 @@ class TreeItemContainer extends Morph {
       fontSize: this.tree.fontSize
     });
 
-    l.value = this.target.name;
+    l.value = this.target.isAnimation ? this.getAnimationName() : this.target.name;
     return l;
+  }
+
+  getAnimationName () {
+    return `${this.target.type} animation on ${this.target.property}`;
   }
 }
