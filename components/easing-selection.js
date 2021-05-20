@@ -99,7 +99,6 @@ export class EasingSelection extends Morph {
     });
 
     connect(this.ui.searchField, 'onChange', this, 'onFilterChange');
-
     this.addMorph(this.ui.searchField);
   }
 
@@ -276,7 +275,7 @@ export class EasingSelection extends Morph {
       e.answer.resolve = resolve;
       e.answer.reject = reject;
     });
-    e.focus();
+    e.ui.searchField.focus();
     return { morph: e, promise };
   }
 
