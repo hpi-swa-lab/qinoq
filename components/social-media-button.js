@@ -1,5 +1,6 @@
 import { Label, Icon } from 'lively.morphic';
 import { string } from 'lively.lang';
+import { COLOR_SCHEME } from '../colors.js';
 
 export const PRESETS = {
   FACEBOOK: {

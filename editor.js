@@ -16,6 +16,7 @@ import { QinoqButton } from './components/qinoq-button.js';
 import { EasingSelection } from './components/easing-selection.js';
 import KeyHandler from 'lively.morphic/events/KeyHandler.js';
 import { InteractiveGraph } from './tree.js';
+import { SocialMediaButton } from './components/social-media-button.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -109,6 +110,7 @@ export class InteractivesEditor extends QinoqMorph {
   customizeTopBar () {
     const bar = $world.get('lively top bar');
     bar.registerCustomShape('Lottie Animation', LottieMorph, 'A', ['camera-retro', { paddingTop: '1px' }]);
+    bar.registerCustomShape('Share Button', SocialMediaButton, 'S', ['share-alt', { paddingTop: '1px' }]);
   }
 
   async initializePanels () {
