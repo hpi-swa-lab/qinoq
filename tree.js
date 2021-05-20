@@ -111,7 +111,7 @@ export class SequenceTree extends QinoqMorph {
   }
 
   get treeData () {
-    if (!this.interactive) return;
+    if (!this.interactive) return null;
     return new InteractiveTreeData(this.interactiveToNode(this.interactive));
   }
 }

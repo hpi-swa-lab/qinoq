@@ -783,11 +783,16 @@ export class InteractivesEditor extends QinoqMorph {
       tab.selected = true;
       return;
     }
-    if (Interactive.isMorphInInteractive(item)) {
+    if (item.isMorph && Interactive.isMorphInInteractive(item)) {
       const sequence = Sequence.getSequenceOfMorph(item);
       await this.goto(sequence);
       this.ui.inspector.targetMorph = item;
       item.show();
+    }
+    if (item.isAnimation) {
+      if (item.keyframes.length > 0) {
+        await this.goto(item.keyframes[0]);
+      }
     }
   }
 
