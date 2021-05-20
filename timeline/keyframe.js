@@ -4,6 +4,8 @@ import { CONSTANTS } from './constants.js';
 import { singleSelectKeyPressed } from '../keys.js';
 import { getColorForProperty } from '../properties.js';
 import { QinoqMorph } from '../qinoq-morph.js';
+import { Polygon } from 'lively.morphic';
+import { arr } from 'lively.lang';
 
 export class TimelineKeyframe extends QinoqMorph {
   static get properties () {
@@ -52,6 +54,9 @@ export class TimelineKeyframe extends QinoqMorph {
       },
       draggable: {
         defaultValue: true
+      },
+      _snapIndicators: {
+        defaultValue: []
       },
       layer: {},
       _lockModelUpdate: {
@@ -186,12 +191,16 @@ export class TimelineKeyframe extends QinoqMorph {
       }
       return state;
     });
+
+    this.prepareSnappingData(event);
   }
 
   onDragEnd (event) {
     if (!event.hand.dragKeyframeStates) return;
     this.undoStop('move-keyframe');
     this._dragged = true;
+    this.clearSnappingData();
+    event.hand.dragKeyframeStates.forEach(dragKeyframeState => dragKeyframeState.timelineKeyframe.removeSnapIndicators());
     delete event.hand.dragKeyframeStates;
   }
 
@@ -225,6 +234,8 @@ export class TimelineKeyframe extends QinoqMorph {
       }
     });
 
+    this.handleSnapping(event.hand.dragKeyframeStates);
+
     if (!this.isValidDrag(event.hand.dragKeyframeStates)) {
       event.hand.dragKeyframeStates.forEach(stateForKeyframe => {
         stateForKeyframe.timelineKeyframe.position = stateForKeyframe.previousPosition;
@@ -234,6 +245,92 @@ export class TimelineKeyframe extends QinoqMorph {
         stateForKeyframe.previousPosition = stateForKeyframe.timelineKeyframe.position;
       });
     }
+  }
+
+  handleSnapping (dragKeyframeStates) {
+    if (!this.editor.snappingEnabled) return;
+    dragKeyframeStates.forEach(dragKeyframeState => dragKeyframeState.timelineKeyframe.removeSnapIndicators());
+    if (this._otherKeyframesSortedByPosition.length == 0) return;
+    const positionsOfSnapTargets = dragKeyframeStates.map(dragKeyframeState => dragKeyframeState.keyframe.position);
+    const snapPosition = this.timeline.getPositionFromKeyframe(this.getClosestKeyframe(positionsOfSnapTargets));
+    if (snapPosition) dragKeyframeStates.forEach(dragKeyframeState => dragKeyframeState.timelineKeyframe.snapTo(snapPosition));
+    dragKeyframeStates.forEach(dragKeyframeState => dragKeyframeState.timelineKeyframe.buildSnapIndicators());
+  }
+
+  getClosestKeyframe (positionsOfSnapTargets) {
+    let closestKeyframe;
+    let diff = -1;
+
+    positionsOfSnapTargets.forEach(snapTargetPosition => {
+      const candidate = arr.binarySearchFor(
+        this._otherKeyframesSortedByPosition,
+        snapTargetPosition,
+        (element) => element.position,
+        true
+      );
+
+      const diffOfCandidate = Math.abs(candidate.position - snapTargetPosition);
+
+      if (!closestKeyframe || diffOfCandidate < diff) {
+        closestKeyframe = candidate;
+        diff = diffOfCandidate;
+      }
+    });
+    return closestKeyframe;
+  }
+
+  snapTo (snapPosition) {
+    const diff = Math.abs(this.position.x - snapPosition);
+
+    if (CONSTANTS.SNAPPING_THRESHOLD < diff) {
+      return;
+    }
+
+    this.timeline.selectedTimelineKeyframes.filter(k => k !== this).forEach(timelineKeyframe =>
+      timelineKeyframe.position = pt(
+        Math.abs(this.position.x - snapPosition - timelineKeyframe.position.x),
+        this.timelineKeyframeY));
+
+    this.position = pt(snapPosition, this.timelineKeyframeY);
+  }
+
+  prepareSnappingData (event) {
+    if (!this.editor.snappingEnabled) return;
+    const otherKeyframes = this.timeline.allKeyframes.filter(keyframe => !event.hand.dragKeyframeStates.map(dragKeyframeState => dragKeyframeState.keyframe).includes(keyframe));
+    this._otherKeyframesSortedByPosition = [...otherKeyframes].sort((a, b) => a.position - b.position);
+  }
+
+  clearSnappingData () {
+    if (!this.editor.snappingEnabled) return;
+    delete this._otherKeyframesSortedByPosition;
+  }
+
+  removeSnapIndicators () {
+    this._snapIndicators.forEach(indicator => indicator.abandon());
+    this._snapIndicators = [];
+  }
+
+  buildSnapIndicators () {
+    let snapIndicator = false;
+    this.timeline.keyframes.filter(keyframe => keyframe !== this).forEach(timelineKeyframe => {
+      if (this.keyframe.position == timelineKeyframe.keyframe.position) {
+        snapIndicator = true;
+        this._snapIndicators.push(timelineKeyframe.owner.addMorph(timelineKeyframe.buildSnapIndicator()));
+      }
+    });
+    if (snapIndicator) this._snapIndicators.push(this.owner.addMorph(this.buildSnapIndicator()));
+  }
+
+  buildSnapIndicator () {
+    const spacing = CONSTANTS.SNAP_INDICATOR_SPACING;
+    const mid = CONSTANTS.SNAP_INDICATOR_WIDTH / 2;
+    const vertices = [pt(-mid, -spacing), pt(mid, -spacing), pt(mid / 4, 0), pt(mid / 4, CONSTANTS.SEQUENCE_HEIGHT), pt(mid, CONSTANTS.SEQUENCE_HEIGHT + spacing), pt(-mid, CONSTANTS.SEQUENCE_HEIGHT + spacing), pt(-mid / 4, CONSTANTS.SEQUENCE_HEIGHT), pt(-mid / 4, 0)];
+    return new Polygon({
+      fill: COLOR_SCHEME.PRIMARY,
+      position: pt(this.center.x - CONSTANTS.SNAP_INDICATOR_WIDTH / 2,
+        0),
+      vertices
+    });
   }
 
   get isTimelineKeyframe () {
