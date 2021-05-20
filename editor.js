@@ -121,7 +121,6 @@ export class InteractivesEditor extends QinoqMorph {
       borderWidth: CONSTANTS.BORDER_WIDTH,
       _editor: this
     });
-    await this.ui.inspector.build();
     this.addMorph(this.ui.inspector);
 
     this.ui.menuBar = new MenuBar({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), _editor: this });
