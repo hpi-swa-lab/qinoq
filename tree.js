@@ -25,10 +25,14 @@ export class SequenceTree extends QinoqMorph {
 
   buildTree () {
     if (!this.treeData) return;
-    if (this.tree) this.tree.remove();
+    this.removeTree();
     this.tree = new InteractiveTree({ treeData: this.treeData, extent: this.extent, borderWidth: this.borderWidth, borderColor: this.borderColor });
 
     this.addMorph(this.tree);
+  }
+
+  removeTree () {
+    if (this.tree) this.tree.remove();
   }
 
   interactiveToNode (interactive) {
