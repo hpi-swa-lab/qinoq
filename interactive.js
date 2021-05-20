@@ -677,7 +677,7 @@ export class Sequence extends DeserializationAwareMorph {
   }
 
   getAbsolutePosition (progress) {
-    return (this.duration * progress) + this.start;
+    return Math.round((this.duration * progress) + this.start);
   }
 
   addAnimation (animation) {
@@ -726,7 +726,7 @@ export class Sequence extends DeserializationAwareMorph {
   }
 
   getAbsolutePositionFor (keyframe) {
-    return this.start + (this.duration * keyframe.position);
+    return Math.round(this.start + (this.duration * keyframe.position));
   }
 
   getRelativePositionFor (scrollPosition) {
