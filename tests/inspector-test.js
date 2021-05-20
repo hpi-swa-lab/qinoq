@@ -2,6 +2,7 @@
 import { expect } from 'mocha-es6';
 import { Morph } from 'lively.morphic';
 import { exampleInteractive, InteractivesEditor } from 'qinoq';
+import { COLOR_SCHEME } from '../colors.js';
 
 class InspectorTestMorph extends Morph {
   static get properties () {
@@ -78,6 +79,15 @@ describe('Inspector', () => {
     expect(inspector.targetMorph).to.be.ok;
     inspector.deselect();
     expect(inspector.targetMorph).to.be.null;
+  });
+
+  it('it colors a keyframebutton if a keyframe resides exactly at the scrollposition', async () => {
+    const dayBackgroundTimelineSequence = editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence).find(timelineSequence => timelineSequence.sequence.name == 'day background');
+    // sets the scrollPosition to the beginning of the day background
+    await dayBackgroundTimelineSequence.openSequenceView();
+    inspector.targetMorph = dayBackgroundTimelineSequence.sequence.submorphs[0];
+    const keyFramebuttonForFill = inspector.animationsInspector.propertyControls.fill.keyframe;
+    expect(keyFramebuttonForFill.fill).to.not.be.deep.equal(COLOR_SCHEME.KEYFRAME_FILL);
   });
 
   after(() => {
