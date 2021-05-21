@@ -59,6 +59,20 @@ export class InteractiveGraph extends QinoqMorph {
   }
 
   onInteractiveStructureUpdate (changeSpecification = {}) {
+    /**
+     * Is called through connections, when the tree of the interactive is changed,
+     * e.g. addition/removal of morphs, animations, sequences
+     *
+     * When a changeSpecification is provided, the tree does not need to be rebuilt but
+     * can be patched.
+     *
+     * Keys in changeSpecification:
+     * - parent: name in tree of the parent of the node that changed (parent of added or removed node)
+     * - addedNode: object that was added to the interactive (e.g. a new sequence)
+     * - removedNode: object that was removed from the tree. Sometimes the removed object is not available,
+     *  e.g. when a morph was abandoned. The key is then set to null to symbolize a deleted not available item.
+     *
+     */
     const previousScroll = this.tree.scroll;
 
     const patchable = ('parent' in changeSpecification);
@@ -231,7 +245,7 @@ class TreeItemContainer extends QinoqMorph {
   }
 
   toggleSelected (active) {
-    this.getLabel().fontColor = active ? COLOR_SCHEME.ON_SECONDARY : COLOR_SCHEME.ON_SURFACE;
+    this.label.fontColor = active ? COLOR_SCHEME.ON_SECONDARY : COLOR_SCHEME.ON_SURFACE;
     if (active) {
       this.editor.goto(this.target);
     }
@@ -245,12 +259,12 @@ class TreeItemContainer extends QinoqMorph {
     this.height = 20;
   }
 
-  getLabel () {
+  get label () {
     return this.getSubmorphNamed('name label');
   }
 
   buildLabel () {
-    const label = this.getSubmorphNamed('name label') || morph({
+    const label = this.label || morph({
       type: 'label',
       name: 'name label',
       reactsToPointer: false,
