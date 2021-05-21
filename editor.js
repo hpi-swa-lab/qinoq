@@ -15,7 +15,7 @@ import { QinoqMorph } from './qinoq-morph.js';
 import { QinoqButton } from './components/qinoq-button.js';
 import { EasingSelection } from './components/easing-selection.js';
 import KeyHandler from 'lively.morphic/events/KeyHandler.js';
-import { SequenceGraph } from './tree.js';
+import { InteractiveGraph } from './tree.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -112,7 +112,12 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   async initializePanels () {
-    this.ui.sequenceGraph = this.addMorph(new SequenceGraph({ position: pt(0, 0), extent: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT), borderWidth: CONSTANTS.BORDER_WIDTH, _editor: this }));
+    this.ui.interactiveGraph = this.addMorph(new InteractiveGraph({
+      position: pt(0, 0),
+      extent: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT),
+      borderWidth: CONSTANTS.BORDER_WIDTH,
+      _editor: this
+    }));
 
     this.ui.preview = this.addMorph(new Preview({ _editor: this }));
 
@@ -209,7 +214,7 @@ export class InteractivesEditor extends QinoqMorph {
     if (!interactive) return;
     this.ui.preview.loadContent(interactive);
     this.ui.globalTimeline.loadContent(interactive);
-    this.ui.sequenceGraph.buildTree();
+    this.ui.interactiveGraph.buildTree();
 
     this.ui.tabContainer.visible = true;
 
@@ -299,7 +304,7 @@ export class InteractivesEditor extends QinoqMorph {
 
     disconnect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
 
-    const morphsToClear = [this.ui.tabContainer, this.ui.menuBar, this.ui.inspector, this.ui.sequenceGraph];
+    const morphsToClear = [this.ui.tabContainer, this.ui.menuBar, this.ui.inspector, this.ui.interactiveGraph];
     morphsToClear.forEach(morph =>
       morph.withAllSubmorphsDo(submorph => {
         if (submorph.attributeConnections) {
@@ -319,8 +324,8 @@ export class InteractivesEditor extends QinoqMorph {
     });
 
     this.ui.inspector.deselect();
-    this.ui.sequenceGraph.removeTree();
-    this.ui.sequenceGraph.removeConnections();
+    this.ui.interactiveGraph.removeTree();
+    this.ui.interactiveGraph.removeConnections();
 
     this.ui.preview.showEmptyPreviewPlaceholder();
     this.ui.menuBar.disableUIElements();
