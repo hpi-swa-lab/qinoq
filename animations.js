@@ -126,6 +126,14 @@ class Animation {
   get isAnimation () {
     return true;
   }
+
+  get name () {
+    return `${this.type} animation on ${this.property}`;
+  }
+
+  get type () {
+    throw new Error('subclass responsibility');
+  }
 }
 
 export function createAnimationForPropertyType (propertyType, targetMorph, property) {
