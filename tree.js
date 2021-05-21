@@ -148,7 +148,7 @@ export class SequenceGraph extends QinoqMorph {
 
   animationToNode (animation) {
     return {
-      name: `${animation.type} animation on ${animation.property}`,
+      name: animation.name,
       target: animation,
       isCollapsed: true,
       visible: true,
@@ -213,7 +213,7 @@ export class SequenceGraph extends QinoqMorph {
 
 class SequenceTree extends InteractiveTree {
   onHoverOut (event) {
-    // prevent default
+    // prevent onHoverOut in InteractiveTree, which triggers selection
   }
 }
 
@@ -254,11 +254,7 @@ class TreeItemContainer extends QinoqMorph {
       fontSize: this.tree.fontSize
     });
 
-    label.value = this.target.isAnimation ? this.getAnimationName() : this.target.name;
+    label.value = this.target.name;
     return label;
-  }
-
-  getAnimationName () {
-    return `${this.target.type} animation on ${this.target.property}`;
   }
 }
