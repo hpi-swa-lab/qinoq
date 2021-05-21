@@ -6,7 +6,7 @@ import { connect } from 'lively.bindings';
 import { filter, find, prewalk } from 'lively.lang/tree.js';
 import { morph } from 'lively.morphic';
 
-export class SequenceGraph extends QinoqMorph {
+export class InteractiveGraph extends QinoqMorph {
   static get properties () {
     return {
       name: {
@@ -25,14 +25,19 @@ export class SequenceGraph extends QinoqMorph {
     };
   }
 
-  get isSequenceGraph () {
+  get isInteractiveGraph () {
     return true;
   }
 
   buildTree (treeData = this.generateTreeData()) {
     if (!treeData) return;
     this.removeTree();
-    this.tree = new SequenceTree({ treeData: treeData, extent: this.extent, borderWidth: this.borderWidth, borderColor: this.borderColor });
+    this.tree = new QinoqTree({
+      treeData: treeData,
+      extent: this.extent,
+      borderWidth: this.borderWidth,
+      borderColor: this.borderColor
+    });
 
     this.addMorph(this.tree);
   }
@@ -46,7 +51,7 @@ export class SequenceGraph extends QinoqMorph {
     this.interactive.withAllSubmorphsDo(morph => {
       if (morph && morph.attributeConnections) {
         morph.attributeConnections.filter(connection =>
-          connection.targetObj.isSequenceGraph ||
+          connection.targetObj.isInteractiveGraph ||
           connection.targetMethodName == 'onInteractiveStructureUpdate')
           .forEach(connection => connection.disconnect());
       }
@@ -211,7 +216,7 @@ export class SequenceGraph extends QinoqMorph {
   }
 }
 
-class SequenceTree extends InteractiveTree {
+class QinoqTree extends InteractiveTree {
   onHoverOut (event) {
     // prevent onHoverOut in InteractiveTree, which triggers selection
   }

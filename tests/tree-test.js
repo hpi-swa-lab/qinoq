@@ -13,7 +13,7 @@ async function openNewEditorWithExampleInteractive () {
   editor.interactive = interactive;
 }
 
-describe('Sequence graph', () => {
+describe('Interactive graph', () => {
   before(async () => {
     await openNewEditorWithExampleInteractive();
   });
@@ -27,7 +27,7 @@ describe('Sequence graph', () => {
   }
 
   function graph () {
-    return editor.ui.sequenceGraph;
+    return editor.ui.interactiveGraph;
   }
 
   function treeData () {
@@ -39,7 +39,7 @@ describe('Sequence graph', () => {
   }
 
   it('exists', () => {
-    expect(editor.ui.sequenceGraph.isSequenceGraph).to.be.true;
+    expect(editor.ui.interactiveGraph.isInteractiveGraph).to.be.true;
   });
 
   it('has nodes for all sequences', () => {
