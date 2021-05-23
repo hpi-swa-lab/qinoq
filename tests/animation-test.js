@@ -59,9 +59,7 @@ describe('Typewriter animation', () => {
   const string3 = 'Something else';
   let label;
   beforeEach(() => {
-    label = new Label({
-      textString: 'Something'
-    });
+    label = new Label({ textString: 'Something' });
     stringAnimation = new TypewriterAnimation(label, 'textString');
   });
 
