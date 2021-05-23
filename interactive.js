@@ -175,9 +175,13 @@ export class Interactive extends DeserializationAwareMorph {
     this.sequences.forEach(sequence => {
       sequence.updateProgress(this.scrollPosition);
       if (sequence.isDisplayed()) {
+        if (sequence.owner !== this) {
+          sequence.onSequenceEnter();
+        }
         this.addMorph(sequence);
-      } else {
+      } else if (sequence.owner == this) {
         sequence.remove();
+        sequence.onSequenceLeave();
       }
     });
   }
@@ -657,6 +661,15 @@ export class Sequence extends DeserializationAwareMorph {
   updateProgress (scrollPosition) {
     this._progress = (scrollPosition - this.start) / this.duration;
     this.animations.forEach(animation => animation.progress = this.progress);
+    this.submorphs.forEach(submorph => typeof submorph.onInteractiveScrollChange === 'function' && submorph.onInteractiveScrollChange(scrollPosition));
+  }
+
+  onSequenceEnter () {
+    this.submorphs.forEach(submorph => typeof submorph.onSequenceEnter === 'function' && submorph.onSequenceEnter());
+  }
+
+  onSequenceLeave () {
+    this.submorphs.forEach(submorph => typeof submorph.onSequenceLeave === 'function' && submorph.onSequenceLeave());
   }
 
   getAbsolutePosition (progress) {
