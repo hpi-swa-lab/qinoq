@@ -93,6 +93,10 @@ export class Interactive extends DeserializationAwareMorph {
     };
   }
 
+  fitBounds (extent) {
+    this.extent = extent;
+  }
+
   // this is to be called if the scrollPosition is changed via any means that are not natural scrolling
   onExternalScrollChange (scrollPosition) {
     this.blockScrollEvents = true;
