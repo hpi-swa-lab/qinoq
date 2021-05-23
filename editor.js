@@ -882,10 +882,11 @@ class Preview extends QinoqMorph {
     this.withAllSubmorphsDo(submorph => {
       if (submorph !== this) submorph.remove();
     });
+
     this.addMorph(interactive);
+    interactive.fitBounds(this.extent);
     this.addMorph(interactive.scrollOverlay);
     interactive.position = pt(0, 0);
-    this.extent = interactive.extent;
     // trigger correct bounds on scrollable content of interactive
     interactive.updateInteractiveLength();
   }
