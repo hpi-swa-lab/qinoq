@@ -30,6 +30,10 @@ describe('Inspector', () => {
     inspector.targetMorph = morph;
   });
 
+  function getDayBackgroundTimelineSequence () {
+    return editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence).find(timelineSequence => timelineSequence.sequence.name == 'day background');
+  }
+
   it('can animate a predefined property', () => {
     expect('opacity' in inspector.ui.animationsInspector.propertiesToDisplay).to.be.ok;
   });
@@ -82,7 +86,7 @@ describe('Inspector', () => {
   });
 
   it('colors a keyframebutton if a keyframe resides exactly at the scrollposition', async () => {
-    const dayBackgroundTimelineSequence = editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence).find(timelineSequence => timelineSequence.sequence.name == 'day background');
+    const dayBackgroundTimelineSequence = getDayBackgroundTimelineSequence();
     // sets the scrollPosition to the beginning of the day background
     await dayBackgroundTimelineSequence.openSequenceView();
     inspector.targetMorph = dayBackgroundTimelineSequence.sequence.submorphs[0];
@@ -91,7 +95,7 @@ describe('Inspector', () => {
   });
 
   it('colors a keyframebutton if a keyframe resides at a position which results in the scrollposition', async () => {
-    const dayBackgroundTimelineSequence = editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence).find(timelineSequence => timelineSequence.sequence.name == 'day background');
+    const dayBackgroundTimelineSequence = getDayBackgroundTimelineSequence();
     const dayBackgroundSequence = dayBackgroundTimelineSequence.sequence;
     // sequence is 250 long, therefore this results in a scrollposition which is not a whole number
     dayBackgroundSequence.animations[0].keyframes[0].position = 0.33;
