@@ -70,6 +70,69 @@ describe('Interactive', () => {
     expect(interactive.getPrevSequenceStart(5)).to.equal(0);
   });
 
+  describe('with morph notifications', () => {
+    let morph;
+    let sequenceEnterCount;
+    let sequenceLeaveCount;
+    beforeEach(() => {
+      morph = new Morph();
+      sequenceTwo.addMorph(morph);
+
+      sequenceEnterCount = 0;
+      sequenceLeaveCount = 0;
+
+      morph.onSequenceEnter = () => sequenceEnterCount++;
+      morph.onSequenceLeave = () => sequenceLeaveCount++;
+    });
+
+    it('notifies morphs when they enter the interactive', () => {
+      interactive.scrollPosition = 0;
+      interactive.redraw();
+      expect(sequenceEnterCount).to.be.equal(0);
+      interactive.scrollPosition = 5;
+      expect(sequenceEnterCount).to.be.equal(0);
+      interactive.scrollPosition = 9;
+      expect(sequenceEnterCount).to.be.equal(1);
+      interactive.scrollPosition = 5;
+      expect(sequenceEnterCount).to.be.equal(1);
+      interactive.scrollPosition = 9;
+      expect(sequenceEnterCount).to.be.equal(2);
+    });
+
+    it('notifies morphs when they leave the interactive', () => {
+      interactive.scrollPosition = 0;
+      interactive.redraw();
+      expect(sequenceLeaveCount).to.be.equal(0);
+      interactive.scrollPosition = 5;
+      expect(sequenceLeaveCount).to.be.equal(0);
+      interactive.scrollPosition = 9;
+      expect(sequenceLeaveCount).to.be.equal(0);
+      interactive.scrollPosition = 5;
+      expect(sequenceLeaveCount).to.be.equal(1);
+      interactive.scrollPosition = 9;
+      expect(sequenceLeaveCount).to.be.equal(1);
+      interactive.scrollPosition = 5;
+      expect(sequenceLeaveCount).to.be.equal(2);
+    });
+
+    it('notifies morphs with current scroll position', () => {
+      interactive.scrollPosition = 0;
+      interactive.redraw();
+      let morphScrollPosition;
+      morph.onInteractiveScrollChange = (value) => morphScrollPosition = value;
+      interactive.scrollPosition = 1;
+      expect(morphScrollPosition).to.be.equal(1);
+      interactive.scrollPosition = 5;
+      expect(morphScrollPosition).to.be.equal(5);
+      interactive.scrollPosition = 9;
+      expect(morphScrollPosition).to.be.equal(9);
+    });
+
+    afterEach(() => {
+      morph.abandon();
+    });
+  });
+
   describe('with animations', () => {
     let animation1;
     let animation2;
