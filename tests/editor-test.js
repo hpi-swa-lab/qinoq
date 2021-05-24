@@ -86,9 +86,9 @@ describe('Editor', () => {
       expect(editor.getSubmorphNamed('placeholder')).to.not.be.ok;
       editor.removeMorphFromInteractive(dayBackgroundTimelineSequence.sequence.submorphs[0]);
       expect(editor.getSubmorphNamed('placeholder')).to.be.ok;
-      const placeholder = [];
-      editor.withAllSubmorphsDo((submorph) => { if (submorph.name === 'placeholder') placeholder.push(submorph); });
-      expect(placeholder.length).to.be.equal(1);
+      const placeholders = [];
+      editor.withAllSubmorphsDo((submorph) => { if (submorph.name === 'placeholder') placeholders.push(submorph); });
+      expect(placeholders.length).to.be.equal(1);
     });
 
     it('removes placeholder when morph is added to the sequence', async () => {
