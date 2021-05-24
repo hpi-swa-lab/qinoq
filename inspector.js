@@ -656,7 +656,7 @@ class InspectorPanel extends QinoqMorph {
   onOwnerChanged () {
     // when the panel is removed, the world becomes owner
     // we still want to keep the actual owner
-    if (this.owner && (this.owner !== $world || !this._latestOwner)) {
+    if (this.owner && (!this.owner.isWorld || !this._latestOwner)) {
       this._latestOwner = this.owner;
     }
   }
