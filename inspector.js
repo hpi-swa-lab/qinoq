@@ -629,7 +629,7 @@ class InspectorPanel extends QinoqMorph {
       acceptsDrops: {
         defaultValue: false
       },
-      inspector: { },
+      inspector: {},
       enabled: {
         defaultValue: true,
         set (enabled) {
@@ -645,7 +645,7 @@ class InspectorPanel extends QinoqMorph {
           if (!displayed) this.remove();
         }
       },
-      _latestOwner: { }
+      _latestOwner: {}
     };
   }
 
@@ -793,7 +793,7 @@ class KeyValuePanel extends InspectorPanel {
       fixedWidth: true,
       fixedHeight: true,
       extent: CONSTANTS.WIDGET_EXTENT,
-      fontFamilty: 'Sans-Serif',
+      fontFamily: 'Sans-Serif',
       fontSize: 14,
       padding: rect(1, 1, 0, 0),
       fill: COLOR_SCHEME.SURFACE,
