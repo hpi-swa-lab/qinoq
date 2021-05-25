@@ -756,9 +756,10 @@ export class InteractivesEditor extends QinoqMorph {
           const textForEasingSelection = this.keybindingStringFromObject(EasingSelection.keybindings());
           const textForEditor = this.keybindingStringFromObject(this.keybindings);
           const textForMouseInteractions = [`${KeyHandler.prettyCombo('Alt')}Mouseclick — Add an Item to selection`,
-            `${KeyHandler.prettyCombo('Alt')}Mouseclick — Add an Item to selection`,
-            `${KeyHandler.prettyCombo('Alt')}Mousewheel — Zoom in the timeline`,
-            `${KeyHandler.prettyCombo('Alt')}Mousewheel — Scroll horizontally in the timeline`].map(string => '\t' + string).join('\n');
+            `${KeyHandler.prettyCombo('Shift')}Mouseclick — Blockselection (in global Timeline)`,
+            `${KeyHandler.prettyCombo('Ctrl')}Mousewheel — Zoom in the timeline`,
+            `${KeyHandler.prettyCombo('Alt')}Mousewheel — Scroll horizontally in the timeline`,
+            `${KeyHandler.prettyCombo('Ctrl')}Mousewheel — Zoom in the Interactive`].map(string => '\t' + string).join('\n');
 
           await this.owner.toggleFader(true);
 
