@@ -1195,9 +1195,10 @@ class MenuBar extends QinoqMorph {
   }
 
   buildIconButton (options = {}) {
-    const { action, doubleAction, command, doubleCommand, target, tooltip, name, morphName = 'aButton', icon, container, filled } = options;
+    const { name, morphName = 'aButton', filled, container } = options;
     this.ui[name] = new QinoqButton({
       fontSize: 20,
+      name: morphName,
       ...options
     });
     if (filled) this.ui[name].filled = true;
@@ -1216,8 +1217,8 @@ class MenuBar extends QinoqMorph {
   onSequenceView () {
     this.ui.addSequenceButton.disable();
     this.ui.addLayerButton.disable();
-    this.ui.gotoStartButton.tooltip = 'Go to start\nDouble click to go to previous Sequence';
-    this.ui.gotoEndButton.tooltip = 'Go to end\nDouble click to go to next Sequence';
+    this.ui.gotoStartButton.tooltip = 'Go to start\nDouble click to open previous Sequence';
+    this.ui.gotoEndButton.tooltip = 'Go to end\nDouble click to open next Sequence';
     this.ui.gotoNextButton.tooltip = 'Go to next keyframe';
     this.ui.gotoPrevButton.tooltip = 'Go to previous keyframe';
   }
