@@ -317,6 +317,29 @@ describe('Editor', () => {
     });
   });
 
+  describe('with Interactive in Preview', () => {
+    beforeEach(async () => {
+      closeEditor();
+      editor = await new InteractivesEditor().initialize();
+      interactive = await exampleInteractive();
+    });
+
+    it('resizes interactive without aspect ratio to fit preview exactly', () => {
+      interactive.fixedAspectRatio = null;
+      interactive.extent = pt(500, 500);
+      const previewExtent = editor.ui.preview.extent;
+      editor.interactive = interactive;
+      expect(interactive.extent).to.be.equal(previewExtent);
+    });
+
+    it('resizes interactive with fixed aspect ratio to same height as preview', () => {
+      interactive.fixedAspectRatio = 16 / 9;
+      const previewHeight = editor.ui.preview.height;
+      editor.interactive = interactive;
+      expect(interactive.height).to.be.equal(previewHeight);
+    });
+  });
+
   it('moves scroll holder', () => {
     expect(interactive.scrollOverlay.globalPosition.equals(editor.ui.preview.globalPosition)).to.be.ok;
     editor.ui.window.moveBy(pt(100, 100));
