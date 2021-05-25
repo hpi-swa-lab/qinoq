@@ -944,11 +944,7 @@ class Preview extends QinoqMorph {
         defaultValue: 'Open an Interactive by grab-and-dropping it here, or...'
       },
       clipMode: {
-        set (clipMode) {
-          debugger;
-          this.setProperty('clipMode', clipMode);
-        },
-        defautValue: 'scroll'
+        defautValue: 'auto'
       },
       _editor: {
         set (editor) {
@@ -994,8 +990,9 @@ class Preview extends QinoqMorph {
     interactive.position = pt(0, 0);
     // trigger correct bounds on scrollable content of interactive
     interactive.updateInteractiveLength();
-    // TODO: fixup
-    this.clipMode = 'scroll';
+
+    // this should not be necessary, but setting this via defaultValue does not suffice
+    this.clipMode = 'auto';
   }
 
   showEmptyPreviewPlaceholder () {
