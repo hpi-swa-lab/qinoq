@@ -57,6 +57,34 @@ describe('Interactive graph', () => {
     expect(interactive.sequences).to.be.equal(nodeSequences);
   });
 
+  describe('item container', () => {
+    let dayBackgroundSequence;
+    let dayBackgroundNode;
+    let dayBackgroundNodeContainer;
+    before(() => {
+      dayBackgroundSequence = interactive.sequences.find(sequence => sequence.name == 'day background');
+      dayBackgroundNode = nodes().find(node => node.target == dayBackgroundSequence);
+      dayBackgroundNodeContainer = dayBackgroundNode.container;
+    });
+
+    it('exists', () => {
+      expect(dayBackgroundNodeContainer).to.be.ok;
+    });
+
+    it('changes label when the sequence is renamed', () => {
+      expect(dayBackgroundNodeContainer.label.value).to.be.equal(dayBackgroundSequence.name);
+      dayBackgroundSequence.name = 'A new name';
+      expect(dayBackgroundNodeContainer.label.value).to.be.equal(dayBackgroundSequence.name);
+      dayBackgroundSequence.name = 'day background';
+    });
+
+    it('takes one to the sequence tab when selected', async () => {
+      expect(editor.currentSequence).to.not.be.ok;
+      await dayBackgroundNodeContainer.toggleSelected(true);
+      expect(editor.currentSequence).to.be.equal(dayBackgroundSequence);
+    });
+  });
+
   after(() => {
     editor.ui.window.close();
   });
