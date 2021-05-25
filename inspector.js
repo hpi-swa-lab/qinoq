@@ -671,7 +671,7 @@ class InspectorPanel extends QinoqMorph {
   }
 
   build () {
-
+    /* hook to build the panel's UI components once at the creation of the panel */
   }
 
   buildTitleMorph () {
@@ -683,15 +683,15 @@ class InspectorPanel extends QinoqMorph {
   }
 
   initialize () {
-
+    /* hook to initialize state of the panel and its components once after creation */
   }
 
   onTargetMorphChange (targetMorph) {
-
+    /* hook called before the inspector's targetMorph changes */
   }
 
   onEnabledChange (enabled) {
-
+    /* hook called before the panel is disabled or enabled */
   }
 }
 
