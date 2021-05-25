@@ -146,10 +146,11 @@ describe('Editor', () => {
     });
 
     describe('cutting a morph', () => {
-      let morphToCut;
+      let morphToCut, dayBackgroundTimelineSequence;
 
       beforeEach(async () => {
         const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'night background');
+        dayBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'day background');
         await nightBackgroundTimelineSequence.openSequenceView();
         morphToCut = new Morph();
         editor.addMorphToInteractive(morphToCut);
@@ -187,15 +188,16 @@ describe('Editor', () => {
         expect(editor.clipboard.content.animation).to.not.be.ok;
       });
 
-      it('and pasting it again sets _sequence on animation to null', async () => {
+      it('and pasting it in another sequence sets _sequence on animation to the correct value', async () => {
         const { Keyframe } = await System.import('qinoq/animations.js');
         const someKeyframe = new Keyframe(0, 0);
         const animation = await editor.currentSequence.addKeyframeForMorph(someKeyframe, morphToCut, 'opacity', 'number');
         editor.cutMorph(morphToCut);
         expect(editor.currentSequence.animations.length).to.be.equal(0);
+        await dayBackgroundTimelineSequence.openSequenceView();
         editor.pasteMorphFromClipboard();
-        expect(editor.currentSequence.animations.length).to.be.equal(1);
-        expect(editor.currentSequence.animations[0]._sequence).to.not.be.ok;
+        expect(editor.currentSequence.animations.length).to.be.equal(2);
+        expect(editor.currentSequence.animations[1].sequence).to.be.deep.equal(editor.currentSequence);
       });
     });
 
