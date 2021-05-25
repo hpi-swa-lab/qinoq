@@ -375,8 +375,22 @@ class InteractiveScrollHolder extends Morph {
       event.domEvt.preventDefault();
       // TODO: fixup for aspect ratio
       this.interactive.extent = pt(this.interactive.extent.x - event.domEvt.deltaY, this.interactive.extent.y + event.domEvt.deltaY);
-      // TODO: fixup, this is just trash
-      this.extent = pt(500, 300);
+
+      this.fitScrollOverlayToInteractive();
+    }
+  }
+
+  fitScrollOverlayToInteractive () {
+    // this method only makes sense for interactives which are in the editor
+    if (!this._editor) return;
+    const preview = this.interactive._editor.ui.preview;
+    this.scrollOverlay.topLeft = this.worldPoint(preview.topLeft);
+    const previewExtent = preview.extent;
+    if (this.interactive.extent.x <= previewExtent.x - preview.scrollbarOffset.x) {
+      this.extent.x = this.interactive.extent.x;
+    }
+    if (this.interactive.extent.y <= previewExtent.y - preview.scrollbarOffset.y) {
+      this.extent.y = this.interactive.extent.y;
     }
   }
 
