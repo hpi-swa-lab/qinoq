@@ -369,17 +369,17 @@ class AnimationsInspector extends QinoqMorph {
       connect(this.targetMorph, inspectedProperty, this, 'updateInInspector', { converter: '() => {return {property, propertyType}}', varMapping: { property: inspectedProperty, propertyType } });
       switch (propertyType) {
         case 'point':
-          connect(this.propertyControls[inspectedProperty].x, 'number', this, 'updateInMorph');
-          connect(this.propertyControls[inspectedProperty].y, 'number', this, 'updateInMorph');
+          connect(this.propertyControls[inspectedProperty].x, 'number', this, 'updateInMorph', { converter: '() => {return property }', varMapping: { property: inspectedProperty } });
+          connect(this.propertyControls[inspectedProperty].y, 'number', this, 'updateInMorph', { converter: '() => {return property }', varMapping: { property: inspectedProperty } });
           break;
         case 'color':
-          connect(this.propertyControls[inspectedProperty].color, 'colorValue', this, 'updateInMorph');
+          connect(this.propertyControls[inspectedProperty].color, 'colorValue', this, 'updateInMorph', { converter: '() => {return property }', varMapping: { property: inspectedProperty } });
           break;
         case 'number':
-          connect(this.propertyControls[inspectedProperty].number, 'number', this, 'updateInMorph');
+          connect(this.propertyControls[inspectedProperty].number, 'number', this, 'updateInMorph', { converter: '() => {return property }', varMapping: { property: inspectedProperty } });
           break;
         case 'string':
-          connect(this.propertyControls[inspectedProperty].string, 'inputAccepted', this, 'updateInMorph');
+          connect(this.propertyControls[inspectedProperty].string, 'inputAccepted', this, 'updateInMorph', { converter: '() => {return property }', varMapping: { property: inspectedProperty } });
           break;
       }
     });
@@ -432,11 +432,12 @@ class AnimationsInspector extends QinoqMorph {
     this._updatingInspector = false;
   }
 
-  updateInMorph () {
+  updateInMorph (property = undefined) {
     if (this._updatingInspector) {
       return;
     }
     this._updatingMorph = true;
+
     this.displayedProperties.forEach(property => {
       const propertyType = this.propertiesToDisplay[property];
       switch (propertyType) {
@@ -459,6 +460,57 @@ class AnimationsInspector extends QinoqMorph {
       }
     });
     this._updatingMorph = false;
+
+    this.highlightUnsavedChanges(property);
+  }
+
+  highlightUnsavedChanges (changedProperty) {
+    this.displayedProperties.forEach(property => {
+      const propertyType = this.propertiesToDisplay[property];
+      let animationOnProperty;
+      switch (propertyType) {
+        case 'point':
+          animationOnProperty = this.inspector.sequence.getAnimationForMorphProperty(this.targetMorph, property);
+          if (animationOnProperty && !animationOnProperty.getKeyframeAt(this.inspector.sequence.progress) && changedProperty == property) {
+            this.propertyControls[property].x.borderWidth = 1;
+            this.propertyControls[property].y.borderWidth = 1;
+            this.propertyControls[property].x.borderColor = COLOR_SCHEME.ERROR;
+            this.propertyControls[property].y.borderColor = COLOR_SCHEME.ERROR;
+          } else {
+            this.propertyControls[property].x.borderWidth = 0;
+            this.propertyControls[property].y.borderWidth = 0;
+            this.propertyControls[property].x.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
+            this.propertyControls[property].y.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
+          }
+          break;
+        case 'color':
+          animationOnProperty = this.inspector.sequence.getAnimationForMorphProperty(this.targetMorph, property);
+          if (animationOnProperty && !animationOnProperty.getKeyframeAt(this.inspector.sequence.progress) && changedProperty == property) {
+            this.propertyControls[property].color.borderColor = COLOR_SCHEME.ERROR;
+          } else {
+            this.propertyControls[property].color.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
+          }
+          break;
+        case 'number':
+          animationOnProperty = this.inspector.sequence.getAnimationForMorphProperty(this.targetMorph, property);
+          if (animationOnProperty && !animationOnProperty.getKeyframeAt(this.inspector.sequence.progress) && changedProperty == property) {
+            this.propertyControls[property].number.borderWidth = 1;
+            this.propertyControls[property].number.borderColor = COLOR_SCHEME.ERROR;
+          } else {
+            this.propertyControls[property].number.borderWidth = 0;
+            this.propertyControls[property].number.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
+          }
+          break;
+        case 'string':
+          animationOnProperty = this.inspector.sequence.getAnimationForMorphProperty(this.targetMorph, property);
+          if (animationOnProperty && !animationOnProperty.getKeyframeAt(this.inspector.sequence.progress) && changedProperty == property) {
+            this.propertyControls[property].string.borderStyle = 'solid';
+            this.propertyControls[property].string.borderColor = COLOR_SCHEME.ERROR;
+          } else {
+            this.propertyControls[property].string.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
+          }
+      }
+    });
   }
 
   updateRespectiveAnimations () {
