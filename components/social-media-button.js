@@ -64,9 +64,6 @@ export const PRESETS = {
     name: 'VK',
     icon: 'vk',
     href: 'http://vk.com/share.php?title={text}&url={url}'
-  },
-  UNDEFINED: {
-    icon: 'question'
   }
 };
 
@@ -81,9 +78,7 @@ export class SocialMediaButton extends Label {
       },
       preset: {
         type: 'Enum',
-        values: Object.values(PRESETS)
-          .filter(preset => preset.name)
-          .map(preset => preset.name),
+        values: Object.values(PRESETS).map(preset => preset.name),
         after: ['tooltip', 'tokens', 'submorphs'],
         initialize () {
           if (!this._deserializing) {
@@ -94,8 +89,12 @@ export class SocialMediaButton extends Label {
           const preset = typeof presetOrPresetName === 'string'
             ? Object.values(PRESETS).find(preset => preset.name === presetOrPresetName)
             : presetOrPresetName;
+          if (!preset) {
+            this.world().setStatusMessage(`Invalid preset: ${presetOrPresetName}`);
+            return;
+          }
+          this.setProperty('preset', preset);
           this.onPresetChange(preset);
-          this.setProperty('preset', preset || PRESETS.UNDEFINED);
         }
       },
       tokens: {
@@ -113,9 +112,7 @@ export class SocialMediaButton extends Label {
   }
 
   get presetValues () {
-    return Object.values(PRESETS)
-      .filter(preset => preset.name)
-      .map(preset => preset.name);
+    return Object.values(PRESETS).map(preset => preset.name);
   }
 
   onPresetChange (preset) {
