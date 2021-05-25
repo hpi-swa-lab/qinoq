@@ -649,14 +649,26 @@ class KeyframeButton extends QinoqMorph {
     return this.target[this.property];
   }
 
-  async onMouseUp () {
+  async onMouseUp (event) {
+    if (event && event.domEvt && event.domEvt.button == 2) return;
     this.mode = 'activated';
-    const newKeyframe = new Keyframe(this.sequence.progress, this.currentValue);
+    this.addOrOverwriteKeyframe();
+  }
+
+  async addOrOverwriteKeyframe (relativePosition = this.sequence.progress) {
+    const newKeyframe = new Keyframe(relativePosition, this.currentValue);
     this.animation = await this.sequence.addKeyframeForMorph(newKeyframe, this.target, this.property, this.propertyType);
     if (this.animation.useRelativeValues && this.propertyType == 'point') {
       newKeyframe.value = pt(this.currentValue.x / this.sequence.width, this.currentValue.y / this.sequence.height);
     }
     this.editor.getTimelineForSequence(this.sequence).updateAnimationLayer(this.animation);
+  }
+
+  async promptForKeyframePosition () {
+    const position = Number(await $world.prompt('Relative keyframe position:', { input: this.sequence.progress }));
+    if (!isNaN(position)) {
+      await this.addOrOverwriteKeyframe(position);
+    }
   }
 
   updateAnimation () {
@@ -667,6 +679,13 @@ class KeyframeButton extends QinoqMorph {
   onMouseDown (event) {
     super.onMouseDown(event);
     this.styleSet = 'click';
+  }
+
+  menuItems () {
+    return [
+      ['◆ Add keyframe', () => this.addOrOverwriteKeyframe()],
+      ['◆ Add keyframe at position', () => this.promptForKeyframePosition()]
+    ];
   }
 
   onHoverIn () {
