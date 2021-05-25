@@ -286,7 +286,7 @@ class AnimationsInspector extends QinoqMorph {
     }
     this.propertyControls[property].keyframe = new KeyframeButton({
       position: pt(CONSTANTS.KEYFRAME_BUTTON_X, CONSTANTS.WIDGET_ONE_Y),
-      inspector: this.inspector,
+      animationsInspector: this,
       property,
       propertyType,
       sequence: this.inspector.sequence,
@@ -492,7 +492,6 @@ class AnimationsInspector extends QinoqMorph {
   }
 
   resetHighlightingForAllUnsavedChanges () {
-    console.log('here');
     this._unsavedChanges.forEach(property => this.resetHighlightingForProperty(property));
   }
 
@@ -661,7 +660,7 @@ class KeyframeButton extends QinoqMorph {
           this.styleSet = mode;
         }
       },
-      inspector: { },
+      animationsInspector: { },
       animation: {
         after: ['sequence', 'property', 'inspector'],
         initialize () {
@@ -699,7 +698,7 @@ class KeyframeButton extends QinoqMorph {
   }
 
   get target () {
-    return this.inspector.targetMorph;
+    return this.animationsInspector.targetMorph;
   }
 
   get isKeyframeButton () {
@@ -723,7 +722,7 @@ class KeyframeButton extends QinoqMorph {
       newKeyframe.value = pt(this.currentValue.x / this.sequence.width, this.currentValue.y / this.sequence.height);
     }
     this.editor.getTimelineForSequence(this.sequence).updateAnimationLayer(this.animation);
-    this.inspector.animationsInspector.resetHighlightingForProperty(this.property);
+    this.animationsInspector.resetHighlightingForProperty(this.property);
   }
 
   async promptForKeyframePosition () {
