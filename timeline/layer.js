@@ -206,6 +206,23 @@ export class GlobalTimelineLayer extends TimelineLayer {
     this.timelineSequences.forEach(timelineSequence => timelineSequence.updateAppearance());
     this.activeArea.fill = this.layer.hidden ? COLOR_SCHEME.BACKGROUND_VARIANT : COLOR_SCHEME.SURFACE_VARIANT;
   }
+
+  tryPasteSequence (position) {
+    const sequence = this.editor.clipboard.content.sequence;
+    if (this.interactive.sequenceWouldBeValidInLayer(null, position, sequence.duration, this.layer)) {
+      this.editor.pasteSequenceAt(position, this.layer);
+    } else {
+      $world.setStatusMessage('Not enough space!', COLOR_SCHEME.ERROR);
+    }
+  }
+
+  menuItems (event) {
+    const menuItems = [];
+    const clickedScrollPosition = this.timeline.getScrollFromPosition(this.localize(event.hand.position).x);
+
+    if (this.editor.clipboard.containsSequence) menuItems.push(['✏️ Paste Sequence', () => this.tryPasteSequence(clickedScrollPosition)]);
+    return menuItems;
+  }
 }
 
 export class SequenceTimelineLayer extends TimelineLayer {
