@@ -204,6 +204,13 @@ export class Interactive extends DeserializationAwareMorph {
     return this.getSequencesInLayer(layer).filter(sequence => (sequence.end >= start && sequence.end <= end) || (sequence.start >= start && sequence.start <= end));
   }
 
+  getSequenceInLayerBefore (sequence) {
+    const sequencesInLayer = this.getSequencesInLayer(sequence.layer);
+    sequencesInLayer.sort((a, b) => a.start - b.start); // Sort in ascending order
+    const sequenceIndex = sequencesInLayer.indexOf(sequence);
+    return sequencesInLayer[sequenceIndex - 1];
+  }
+
   getSequenceInLayerAfter (sequence) {
     const sequencesInLayer = this.getSequencesInLayer(sequence.layer);
     sequencesInLayer.sort((a, b) => a.start - b.start); // Sort in ascending order
