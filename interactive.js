@@ -146,11 +146,7 @@ export class Interactive extends DeserializationAwareMorph {
   }
 
   updateInteractiveLength () {
-    let length = 0;
-    this.sequences.forEach(sequence => {
-      if (sequence.end > length) length = sequence.end;
-    });
-    this._length = length;
+    this._length = Math.max(...this.sequences.map(sequence => sequence.end));
   }
 
   openInWorld () {
@@ -255,6 +251,7 @@ export class Interactive extends DeserializationAwareMorph {
       sequence.layer = this.layers[0];
     }
     sequence.interactive = this;
+    this.updateInteractiveLength();
     signal(this, 'onSequenceAddition', sequence);
     connect(this, 'extent', sequence, 'extent');
   }

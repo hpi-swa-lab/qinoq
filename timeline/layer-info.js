@@ -206,8 +206,8 @@ export class SequenceTimelineLayerInfo extends TimelineLayerInfo {
       this.editor.ui.inspector.targetMorph = this.morph;
       if (this.morph.world()) this.morph.show();
     }]);
-    menuOptions.push(['❌ Remove morph', async () => await this.abandonMorph()]);
     menuOptions.push(['✏️ Rename morph', async () => await this.promptMorphName()]);
+    menuOptions.push(['❌ Remove morph', async () => await this.abandonMorph()]);
     menuOptions.push(['▭ Show halo for morph', () => $world.showHaloFor(this.morph)]);
     if (this.timelineLayer.isOverviewLayer) {
       menuOptions.push(['🗐 Copy Morph', () => this.editor.copyMorph(this.morph)]);
