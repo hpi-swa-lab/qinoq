@@ -98,6 +98,10 @@ export class Interactive extends DeserializationAwareMorph {
     this.extent = extent;
   }
 
+  interactiveZoomed () {
+    // a hook to listen for zooming in the interactive
+  }
+
   // this is to be called if the scrollPosition is changed via any means that are not natural scrolling
   onExternalScrollChange (scrollPosition) {
     this.blockScrollEvents = true;
@@ -374,22 +378,7 @@ class InteractiveScrollHolder extends Morph {
     if (zoomKeyPressed(event)) {
       event.domEvt.preventDefault();
       this.interactive.extent = pt(this.interactive.extent.x - event.domEvt.deltaY, this.interactive.extent.y + event.domEvt.deltaY);
-
-      this.fitScrollOverlayToInteractive();
-    }
-  }
-
-  fitScrollOverlayToInteractive () {
-    // this method only makes sense for interactives which are in the editor
-    if (!this._editor) return;
-    const preview = this.interactive._editor.ui.preview;
-    this.scrollOverlay.topLeft = this.worldPoint(preview.topLeft);
-    const previewExtent = preview.extent;
-    if (this.interactive.extent.x <= previewExtent.x - preview.scrollbarOffset.x) {
-      this.extent.x = this.interactive.extent.x;
-    }
-    if (this.interactive.extent.y <= previewExtent.y - preview.scrollbarOffset.y) {
-      this.extent.y = this.interactive.extent.y;
+      this.interactive.interactiveZoomed();
     }
   }
 

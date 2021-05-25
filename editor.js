@@ -239,13 +239,22 @@ export class InteractivesEditor extends QinoqMorph {
     connect(this.interactive, 'remove', this, 'reset');
     connect(this.interactive, '_length', this.ui.menuBar.ui.scrollPositionInput, 'max').update(this.interactive.length);
     connect(this.ui.preview, 'extent', this.interactive, 'extent');
+    connect(this.interactive, 'interactiveZoomed', this, 'fitScrollOverlayToInteractive');
 
     connect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
 
-    this.interactive._editor = this;
-
     // trigger update of timeline dependents
     this.onDisplayedTimelineChange(this.ui.globalTimeline);
+  }
+
+  fitScrollOverlayToInteractive () {
+    const previewExtent = this.ui.preview.extent;
+    if (this.interactive.extent.x <= previewExtent.x - this.ui.preview.scrollbarOffset.x) {
+      this.interactive.scrollOverlay.extent.x = this.interactive.extent.x;
+    }
+    if (this.interactive.extent.y <= previewExtent.y - this.ui.preview.scrollbarOffset.y) {
+      this.interactive.scrollOverlay.y = this.interactive.extent.y;
+    }
   }
 
   // call this to propagate changes to the scrollPosition to the actual interactive
@@ -288,7 +297,6 @@ export class InteractivesEditor extends QinoqMorph {
     if (!this.interactive) return;
 
     this.interactiveInEditMode = false;
-    delete this.interactive._editor;
 
     this.interactive.sequences.forEach(sequence => {
       sequence.withAllSubmorphsDo(submorph => {
@@ -305,6 +313,7 @@ export class InteractivesEditor extends QinoqMorph {
     disconnect(this.interactive, 'remove', this, 'reset');
 
     disconnect(this.ui.preview, 'extent', this.interactive, 'extent');
+    disconnect(this.interactive, 'interactiveZoomed', this, 'fitScrollOverlayToInteractive');
 
     disconnect(this.interactive, 'name', this.ui.globalTab, 'caption');
     disconnect(this.interactive, 'onLengthChange', this.ui.globalTimeline, '_activeAreaWidth');
