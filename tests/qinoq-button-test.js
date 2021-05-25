@@ -10,10 +10,10 @@ describe('Qinoq Button', () => {
   beforeEach(() => {
     counter = 0;
     target = new Morph();
-    target.commands = [{
+    target.addCommands([{
       name: 'action-command',
       exec: () => { counter = counter + 2; }
-    }];
+    }]);
     target.action = function () { counter++; };
     button = new QinoqButton({ target: target, action: 'action' });
     buttonFilled = new QinoqButton({ target: target, action: 'action', filled: true });
@@ -25,11 +25,13 @@ describe('Qinoq Button', () => {
 
   it('executes a command when pressed', () => {
     button.command = 'action-command';
+    expect(counter).to.be.equal(0);
     button.onMouseUp();
     expect(counter).to.be.equal(2);
   });
 
   it('executes action when pressed and no command is set', () => {
+    expect(counter).to.be.equal(0);
     button.onMouseUp();
     expect(counter).to.be.equal(1);
     button.command = 'action-command';
@@ -49,7 +51,7 @@ describe('Qinoq Button', () => {
     expect(buttonFilled.styleSet).to.be.equal('filled');
   });
 
-  it('can be enabled and disabled', () => {
+  it('can be disabled and enabled', () => {
     button.disable();
     expect(button.styleSet).to.be.equal('disabled');
     expect(button.reactsToPointer).to.be.equal(false);
