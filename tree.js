@@ -130,6 +130,7 @@ export class InteractiveGraph extends QinoqMorph {
 
   onNameChange (item) {
     const node = find(this.tree.treeData.root, (node) => node.target == item, this.childGetter);
+    if (!node) return;
     node.container.refresh();
   }
 
