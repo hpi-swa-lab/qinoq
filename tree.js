@@ -244,10 +244,10 @@ class TreeItemContainer extends QinoqMorph {
     };
   }
 
-  toggleSelected (active) {
+  async toggleSelected (active) {
     this.label.fontColor = active ? COLOR_SCHEME.ON_SECONDARY : COLOR_SCHEME.ON_SURFACE;
     if (active) {
-      this.editor.goto(this.target);
+      await this.editor.goto(this.target);
     }
   }
 
