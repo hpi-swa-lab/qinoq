@@ -94,3 +94,11 @@ birdAnimation.addKeyframes([new Keyframe(0, pt(0, 200), 'start'), new Keyframe(0
 
 skySequence.addAnimation(birdAnimation);
 ```
+
+### Morphs in the interactive
+
+Morphs can simply be added by calling `addMorph` on a sequence. The following methods are called on morphs in an interactive, if they are defined:
+
+- `onInteractiveScrollChange(scrollPosition)` when the scrollPosition in the interactive is changed
+- `onSequenceEnter` is always called when the sequence is now drawn and was previously not drawn. Note that this may also happen when the user scrolls backwards
+- `onSequenceLeave` is called whenever the sequence was previously drawn but is no longer drawn
