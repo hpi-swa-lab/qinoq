@@ -94,10 +94,8 @@ export class SocialMediaButton extends Label {
           const preset = typeof presetOrPresetName === 'string'
             ? Object.values(PRESETS).find(preset => preset.name === presetOrPresetName)
             : presetOrPresetName;
+          this.onPresetChange(preset);
           this.setProperty('preset', preset || PRESETS.UNDEFINED);
-          this.updateIcon();
-          this.updateTooltip();
-          this.generateTokens();
         }
       },
       tokens: {
@@ -118,6 +116,12 @@ export class SocialMediaButton extends Label {
     return Object.values(PRESETS)
       .filter(preset => preset.name)
       .map(preset => preset.name);
+  }
+
+  onPresetChange (preset) {
+    this.updateIcon();
+    this.updateTooltip();
+    this.generateTokens();
   }
 
   populateTokens (link) {
