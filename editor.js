@@ -989,7 +989,7 @@ class Preview extends QinoqMorph {
     });
 
     this.addMorph(interactive);
-    interactive.fitBounds(this.extent);
+    interactive.fitBounds(pt(this.extent.x - this.scrollbarOffset.x, this.extent.y - this.scrollbarOffset.y));
     interactive.position = pt(0, 0);
     // trigger correct bounds on scrollable content of interactive
     interactive.updateInteractiveLength();
