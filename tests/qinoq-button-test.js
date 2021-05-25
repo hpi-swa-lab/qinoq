@@ -9,10 +9,9 @@ function mockClickEventFor (target) {
     targetMorph: target,
     state: {
       clickedMorph: target,
-      prevClick:
-                {
-                  clickCount: 0
-                }
+      prevClick: {
+        clickCount: 0
+      }
     }
   };
 }
@@ -27,7 +26,7 @@ describe('Qinoq Button', () => {
       exec: () => { counter = counter + 2; }
     }]);
     target.action = function () { counter++; };
-    button = new QinoqButton({ target: target, action: 'action' });
+    button = new QinoqButton({ target: target, action: 'action', doubleAction: 'action' });
     buttonFilled = new QinoqButton({ target: target, action: 'action', filled: true });
   });
 
@@ -48,6 +47,16 @@ describe('Qinoq Button', () => {
     expect(counter).to.be.equal(1);
     button.command = 'action-command';
     button.onMouseUp();
+    expect(counter).to.be.equal(3);
+  });
+
+  it('reacts to double clicks with correct precedence', () => {
+    expect(counter).to.be.equal(0);
+    button.onDoubleMouseDown();
+    expect(counter).to.be.equal(1);
+
+    button.doubleCommand = 'action-command';
+    button.onDoubleMouseDown();
     expect(counter).to.be.equal(3);
   });
 
