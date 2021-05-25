@@ -403,6 +403,7 @@ export class GlobalTimeline extends Timeline {
     hand.grab(newTimelineSequence);
     newTimelineSequence.onGrabStart(hand);
     newTimelineSequence.center = pt(0, 0);
+    this.show();
   }
 
   createGlobalLayer (layer) {
