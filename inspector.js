@@ -185,6 +185,9 @@ class AnimationsInspector extends QinoqMorph {
       },
       clipMode: {
         defaultValue: 'auto'
+      },
+      _unsavedChanges: {
+        defaultValue: []
       }
     };
   }
@@ -360,6 +363,7 @@ class AnimationsInspector extends QinoqMorph {
         delete this.propertyControls[inspectedProperty];
       });
     }
+    disconnect(this.editor, 'onScrollChange', this, 'resetHighlitingForAllUnsavedChanges');
   }
 
   createConnections () {
@@ -383,6 +387,7 @@ class AnimationsInspector extends QinoqMorph {
           break;
       }
     });
+    connect(this.editor, 'onScrollChange', this, 'resetHighlightingForAllUnsavedChanges');
   }
 
   updatePropertyInInspector (property, propertyType) {
@@ -464,53 +469,57 @@ class AnimationsInspector extends QinoqMorph {
     this.highlightUnsavedChanges(property);
   }
 
+  resetHighlightingForProperty (changedProperty) {
+    const propertyType = this.propertiesToDisplay[changedProperty];
+    this._unsavedChanges = this._unsavedChanges.filter(property => { return property != changedProperty; });
+    switch (propertyType) {
+      case 'point':
+        this.propertyControls[changedProperty].x.borderWidth = 0;
+        this.propertyControls[changedProperty].y.borderWidth = 0;
+        this.propertyControls[changedProperty].x.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
+        this.propertyControls[changedProperty].y.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
+        break;
+      case 'color':
+        this.propertyControls[changedProperty].color.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
+        break;
+      case 'number':
+        this.propertyControls[changedProperty].number.borderWidth = 0;
+        this.propertyControls[changedProperty].number.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
+        break;
+      case 'string':
+        this.propertyControls[changedProperty].string.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
+    }
+  }
+
+  resetHighlightingForAllUnsavedChanges () {
+    console.log('here');
+    this._unsavedChanges.forEach(property => this.resetHighlightingForProperty(property));
+  }
+
   highlightUnsavedChanges (changedProperty) {
-    this.displayedProperties.forEach(property => {
-      const propertyType = this.propertiesToDisplay[property];
-      let animationOnProperty;
+    const propertyType = this.propertiesToDisplay[changedProperty];
+    this._unsavedChanges.push(changedProperty);
+    const animationOnProperty = this.inspector.sequence.getAnimationForMorphProperty(this.targetMorph, changedProperty);
+    if (animationOnProperty && !animationOnProperty.getKeyframeAt(this.inspector.sequence.progress)) {
       switch (propertyType) {
         case 'point':
-          animationOnProperty = this.inspector.sequence.getAnimationForMorphProperty(this.targetMorph, property);
-          if (animationOnProperty && !animationOnProperty.getKeyframeAt(this.inspector.sequence.progress) && changedProperty == property) {
-            this.propertyControls[property].x.borderWidth = 1;
-            this.propertyControls[property].y.borderWidth = 1;
-            this.propertyControls[property].x.borderColor = COLOR_SCHEME.ERROR;
-            this.propertyControls[property].y.borderColor = COLOR_SCHEME.ERROR;
-          } else {
-            this.propertyControls[property].x.borderWidth = 0;
-            this.propertyControls[property].y.borderWidth = 0;
-            this.propertyControls[property].x.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
-            this.propertyControls[property].y.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
-          }
+          this.propertyControls[changedProperty].x.borderWidth = 1;
+          this.propertyControls[changedProperty].y.borderWidth = 1;
+          this.propertyControls[changedProperty].x.borderColor = COLOR_SCHEME.ERROR;
+          this.propertyControls[changedProperty].y.borderColor = COLOR_SCHEME.ERROR;
           break;
         case 'color':
-          animationOnProperty = this.inspector.sequence.getAnimationForMorphProperty(this.targetMorph, property);
-          if (animationOnProperty && !animationOnProperty.getKeyframeAt(this.inspector.sequence.progress) && changedProperty == property) {
-            this.propertyControls[property].color.borderColor = COLOR_SCHEME.ERROR;
-          } else {
-            this.propertyControls[property].color.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
-          }
+          this.propertyControls[changedProperty].color.borderColor = COLOR_SCHEME.ERROR;
           break;
         case 'number':
-          animationOnProperty = this.inspector.sequence.getAnimationForMorphProperty(this.targetMorph, property);
-          if (animationOnProperty && !animationOnProperty.getKeyframeAt(this.inspector.sequence.progress) && changedProperty == property) {
-            this.propertyControls[property].number.borderWidth = 1;
-            this.propertyControls[property].number.borderColor = COLOR_SCHEME.ERROR;
-          } else {
-            this.propertyControls[property].number.borderWidth = 0;
-            this.propertyControls[property].number.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
-          }
+          this.propertyControls[changedProperty].number.borderWidth = 1;
+          this.propertyControls[changedProperty].number.borderColor = COLOR_SCHEME.ERROR;
           break;
         case 'string':
-          animationOnProperty = this.inspector.sequence.getAnimationForMorphProperty(this.targetMorph, property);
-          if (animationOnProperty && !animationOnProperty.getKeyframeAt(this.inspector.sequence.progress) && changedProperty == property) {
-            this.propertyControls[property].string.borderStyle = 'solid';
-            this.propertyControls[property].string.borderColor = COLOR_SCHEME.ERROR;
-          } else {
-            this.propertyControls[property].string.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
-          }
+          this.propertyControls[changedProperty].string.borderStyle = 'solid';
+          this.propertyControls[changedProperty].string.borderColor = COLOR_SCHEME.ERROR;
       }
-    });
+    }
   }
 
   updateRespectiveAnimations () {
@@ -714,6 +723,7 @@ class KeyframeButton extends QinoqMorph {
       newKeyframe.value = pt(this.currentValue.x / this.sequence.width, this.currentValue.y / this.sequence.height);
     }
     this.editor.getTimelineForSequence(this.sequence).updateAnimationLayer(this.animation);
+    this.inspector.animationsInspector.resetHighlightingForProperty(this.property);
   }
 
   async promptForKeyframePosition () {
