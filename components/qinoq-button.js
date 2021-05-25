@@ -33,7 +33,7 @@ export class QinoqButton extends Label {
         defaultValue: 1
       },
       padding: {
-        defaultValue: rect(1, 1, 4, 2)
+        defaultValue: rect(3, 3, 0, 0)
       },
       icon: {
         set (icon) {
