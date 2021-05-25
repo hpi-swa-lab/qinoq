@@ -59,18 +59,19 @@ export class QinoqButton extends Label {
     return true;
   }
 
-  onMouseDown () {
+  onMouseDown (event) {
+    super.onMouseDown(event);
     this.styleSet = this.filled ? 'unfilled' : 'filled';
   }
 
-  onMouseUp () {
+  onDoubleMouseDown () {
+    if (!this.doubleCommand && !this.doubleAction) return;
+    this.doubleCommand ? this.target.execCommand(this.doubleCommand) : this.target[this.doubleAction]();
+  }
 
-    const currentTime = Date.now();
+  onMouseUp () {
     this.styleSet = 'default';
-    if (((currentTime - this.previousMouseUpTime) < 200) && (this.doubleCommand || this.doubleAction)) {
-      this.doubleCommand ? this.target.execCommand(this.doubleCommand) : this.target[this.doubleAction]();
-    } else this.command ? this.target.execCommand(this.command) : this.target[this.action]();
-    this.previousMouseUpTime = currentTime;
+    this.command ? this.target.execCommand(this.command) : this.target[this.action]();
   }
 
   onHoverIn () {
