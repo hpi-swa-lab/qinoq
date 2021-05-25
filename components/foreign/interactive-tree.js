@@ -89,7 +89,6 @@ export class InteractiveTreeContainer extends Morph {
   }
 
   onBeingDroppedOn (hand, recipient) {
-    debugger;
     this.tree._dropInProgress = true;
     super.onBeingDroppedOn(hand, recipient);
     const after = () => {
@@ -370,6 +369,7 @@ export class InteractiveTree extends Tree {
       node.container.width = this.width - 25 - node.container.left;
       if (node.container.toggleSelected) { node.container.toggleSelected(i == this.selectedIndex); }
     });
+    // eslint-disable-next-line no-self-assign
     this.anchors.forEach(a => a.position = a.position);
   }
 }
