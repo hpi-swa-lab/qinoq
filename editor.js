@@ -665,9 +665,7 @@ export class InteractivesEditor extends QinoqMorph {
         exec: async () => {
           if (!this.displayedTimeline.isSequenceTimeline) return;
           const nextSequence = this.interactive.getSequenceInLayerAfter(this.currentSequence);
-          if (nextSequence) {
-            await this.goto(nextSequence);
-          } else $world.setStatusMessage('No following Sequence.');
+          if (nextSequence) await this.goto(nextSequence);
         }
       },
       {
@@ -675,9 +673,7 @@ export class InteractivesEditor extends QinoqMorph {
         exec: async () => {
           if (!this.displayedTimeline.isSequenceTimeline) return;
           const prevSequence = this.interactive.getSequenceInLayerBefore(this.currentSequence);
-          if (prevSequence) {
-            await this.goto(prevSequence);
-          } else $world.setStatusMessage('No previous Sequence.');
+          if (prevSequence) await this.goto(prevSequence);
         }
       },
       {
@@ -1202,14 +1198,7 @@ class MenuBar extends QinoqMorph {
     const { action, doubleAction, command, doubleCommand, target, tooltip, name, morphName = 'aButton', icon, container, filled } = options;
     this.ui[name] = new QinoqButton({
       fontSize: 20,
-      name: morphName,
-      tooltip,
-      target: target,
-      action: action,
-      doubleAction: doubleAction,
-      command: command,
-      doubleCommand: doubleCommand,
-      icon: icon
+      ...options
     });
     if (filled) this.ui[name].filled = true;
     this.ui[container].addMorph(this.ui[name]);
