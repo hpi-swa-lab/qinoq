@@ -58,6 +58,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
             this.ui.headline.textString = `Inspecting ${morph.toString()}`;
             this.animationsInspector.initialize();
             this.styleInspector.initialize();
+            this.ui.animationsInspectorTab.selected = true;
           }
           // this allows us to set the targetMorph to null when no morph is currently inspected
           if (!morph) {
