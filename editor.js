@@ -417,6 +417,32 @@ export class InteractivesEditor extends QinoqMorph {
     return this.displayedTimeline.selectedTimelineSequences;
   }
 
+  copySequence (sequence) {
+    this.clipboard.addSequence(sequence);
+  }
+
+  pasteSequenceAt (start, layer) {
+    const { sequence, animations, morphs } = this.clipboard.content;
+    const sequenceProps = { ...sequence._morphicState, submorphs: [], animations: [], start, layer };
+    const newSequence = new Sequence(sequenceProps);
+    morphs.forEach(morph => {
+      const connections = morph.attributeConnections;
+      morph.attributeConnections = [];
+      const copiedMorph = morph.copy();
+      morph.attributeConnections = connections;
+      newSequence.addMorph(copiedMorph);
+      const animationsTargetingMorph = animations.filter(animation => animation.target == morph);
+      animationsTargetingMorph.forEach(animation => {
+        const copiedAnimation = animation.copy();
+        copiedAnimation.target = copiedMorph;
+        newSequence.addAnimation(copiedAnimation);
+      });
+    });
+    newSequence.name = `copy of ${newSequence.name}`;
+    this.interactive.addSequence(newSequence);
+    const timelineSequence = this.ui.globalTimeline.createTimelineSequence(newSequence);
+  }
+
   addMorphToInteractive (morph) {
     this.displayedTimeline.removePlaceholder();
     this.currentSequence.addMorph(morph);
