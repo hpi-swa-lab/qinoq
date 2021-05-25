@@ -661,6 +661,26 @@ export class InteractivesEditor extends QinoqMorph {
         }
       },
       {
+        name: 'open sequence after the current one',
+        exec: async () => {
+          if (!this.displayedTimeline.isSequenceTimeline) return;
+          const nextSequence = this.interactive.getSequenceInLayerAfter(this.currentSequence);
+          if (nextSequence) {
+            await this.goto(nextSequence);
+          } else $world.setStatusMessage('No following Sequence.');
+        }
+      },
+      {
+        name: 'open sequence before the current one',
+        exec: async () => {
+          if (!this.displayedTimeline.isSequenceTimeline) return;
+          const prevSequence = this.interactive.getSequenceInLayerBefore(this.currentSequence);
+          if (prevSequence) {
+            await this.goto(prevSequence);
+          } else $world.setStatusMessage('No previous Sequence.');
+        }
+      },
+      {
         name: 'create new sequence',
         exec: (_, args = { openInHand: true }) => {
           if (!this.interactive) return;
@@ -1066,6 +1086,7 @@ class MenuBar extends QinoqMorph {
       tooltip: 'Go to start',
       target: this.editor,
       command: 'scroll to start',
+      doubleCommand: 'open sequence before the current one',
       icon: 'fast-backward',
       name: 'gotoStartButton',
       container: 'scrollPositionToolbar'
@@ -1095,6 +1116,7 @@ class MenuBar extends QinoqMorph {
       tooltip: 'Go to end',
       target: this.editor,
       command: 'scroll to end',
+      doubleCommand: 'open sequence after the current one',
       icon: 'fast-forward',
       name: 'gotoEndButton',
       container: 'scrollPositionToolbar'
