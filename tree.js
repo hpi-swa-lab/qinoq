@@ -142,7 +142,7 @@ export class InteractiveGraph extends QinoqMorph {
     return {
       name: sequence.id,
       target: sequence,
-      isCollapsed: false,
+      isCollapsed: true,
       sequence: sequence,
       visible: true,
       container: this.buildContainerFor(sequence),
