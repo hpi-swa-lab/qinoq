@@ -86,7 +86,9 @@ export class SocialMediaButton extends Label {
           .map(preset => preset.name),
         after: ['tooltip', 'tokens', 'submorphs'],
         initialize () {
-          this.preset = PRESETS.TWITTER;
+          if (!this._deserializing) {
+            this.preset = PRESETS.TWITTER;
+          }
         },
         set (presetOrPresetName) {
           const preset = typeof presetOrPresetName === 'string'
@@ -100,7 +102,9 @@ export class SocialMediaButton extends Label {
       },
       tokens: {
         initialize () {
-          this.tokens = { };
+          if (!this._deserializing) {
+            this.tokens = {};
+          }
         }
       }
     };

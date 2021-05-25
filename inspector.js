@@ -547,6 +547,8 @@ class StyleInspector extends QinoqMorph {
       enable: {
         defaultValue: false,
         set (bool) {
+          if (this._deserializing) return;
+
           this.setProperty('enable', bool);
           this.initialize();
         }
@@ -556,6 +558,10 @@ class StyleInspector extends QinoqMorph {
 
   get targetMorph () {
     return this.inspector.targetMorph;
+  }
+
+  __after_deserialize__ (snapshot, ref, pool) {
+    delete ref.realObj.ui.panels._rev;
   }
 
   build () {
@@ -599,13 +605,17 @@ class InspectorPanel extends QinoqMorph {
       ui: {
         after: ['submorphs'],
         initialize () {
-          this.ui = {};
-          this.build();
+          if (!this._deserializing) {
+            this.ui = {};
+            this.build();
+          }
         }
       },
       title: {
         after: ['ui'],
         set (title) {
+          if (this._deserializing) return;
+
           this.setProperty('title', title);
           if (!this.getSubmorphNamed('title')) this.buildTitleMorph();
           if (!title) {
@@ -619,15 +629,14 @@ class InspectorPanel extends QinoqMorph {
       },
       layout: {
         initialize () {
-          this.layout = new VerticalLayout({
-            autoResize: true,
-            resizeSubmorphs: true,
-            spacing: 5
-          });
+          if (!this._deserializing) {
+            this.layout = new VerticalLayout({
+              autoResize: true,
+              resizeSubmorphs: true,
+              spacing: 5
+            });
+          }
         }
-      },
-      acceptsDrops: {
-        defaultValue: false
       },
       inspector: {},
       enabled: {
