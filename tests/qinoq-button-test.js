@@ -4,8 +4,20 @@ import { QinoqButton } from '../components/qinoq-button.js';
 import { Morph } from 'lively.morphic';
 import { Color } from 'lively.graphics';
 
+function mockClickEventFor (target) {
+  return {
+    targetMorph: target,
+    state: {
+      clickedMorph: target,
+      prevClick:
+                {
+                  clickCount: 0
+                }
+    }
+  };
+}
 describe('Qinoq Button', () => {
-  let button, buttonFilled, target, action, counter;
+  let button, buttonFilled, target, action, counter, mockEvent, mockEventFilled;
 
   beforeEach(() => {
     counter = 0;
@@ -40,12 +52,12 @@ describe('Qinoq Button', () => {
   });
 
   it('changes style for duration of click', () => {
-    button.onMouseDown();
+    button.onMouseDown(mockClickEventFor(button));
     expect(button.styleSet).to.be.equal('filled');
     button.onMouseUp();
     expect(button.styleSet).to.be.equal('unfilled');
 
-    buttonFilled.onMouseDown();
+    buttonFilled.onMouseDown(mockClickEventFor(buttonFilled));
     expect(buttonFilled.styleSet).to.be.equal('unfilled');
     buttonFilled.onMouseUp();
     expect(buttonFilled.styleSet).to.be.equal('filled');
@@ -74,12 +86,12 @@ describe('Qinoq Button', () => {
   });
 
   it('resets style if pressed and then hovered out without lifting mouse button', () => {
-    button.onMouseDown();
+    button.onMouseDown(mockClickEventFor(button));
     button.onHoverIn();
     button.onHoverOut();
     expect(button.styleSet).to.be.equal('unfilled');
 
-    buttonFilled.onMouseDown();
+    buttonFilled.onMouseDown(mockClickEventFor(buttonFilled));
     buttonFilled.onHoverIn();
     buttonFilled.onHoverOut();
     expect(buttonFilled.styleSet).to.be.equal('filled');
