@@ -373,7 +373,6 @@ class InteractiveScrollHolder extends Morph {
   onMouseWheel (event) {
     if (zoomKeyPressed(event)) {
       event.domEvt.preventDefault();
-      // TODO: fixup for aspect ratio
       this.interactive.extent = pt(this.interactive.extent.x - event.domEvt.deltaY, this.interactive.extent.y + event.domEvt.deltaY);
 
       this.fitScrollOverlayToInteractive();
