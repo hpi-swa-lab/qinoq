@@ -291,7 +291,7 @@ export class TimelineKeyframe extends QinoqMorph {
 
   prepareSnappingData (event) {
     if (!this.editor.snappingEnabled) return;
-    const otherKeyframes = this.timeline.allKeyframes.filter(keyframe => !event.hand.dragKeyframeStates.map(dragKeyframeState => dragKeyframeState.keyframe).includes(keyframe));
+    const otherKeyframes = this.timeline.sequence.allKeyframes.filter(keyframe => !event.hand.dragKeyframeStates.map(dragKeyframeState => dragKeyframeState.keyframe).includes(keyframe));
     this._otherKeyframesSortedByPosition = [...otherKeyframes].sort((a, b) => a.position - b.position);
   }
 
@@ -324,6 +324,7 @@ export class TimelineKeyframe extends QinoqMorph {
       .forEach(keyframe => {
         keyframe.fill = COLOR_SCHEME.PRIMARY;
         this._snapLinesIndicators.push(keyframe);
+        snapIndicator = true;
       });
     if (snapIndicator) this._snapIndicators.push(this.owner.addMorph(this.buildSnapIndicator()));
   }
