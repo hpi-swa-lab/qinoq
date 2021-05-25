@@ -242,6 +242,8 @@ export class InteractivesEditor extends QinoqMorph {
 
     connect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
 
+    this.interactive._editor = this;
+
     // trigger update of timeline dependents
     this.onDisplayedTimelineChange(this.ui.globalTimeline);
   }
@@ -284,7 +286,9 @@ export class InteractivesEditor extends QinoqMorph {
 
   clearInteractive () {
     if (!this.interactive) return;
+
     this.interactiveInEditMode = false;
+    delete this.interactive._editor;
 
     this.interactive.sequences.forEach(sequence => {
       sequence.withAllSubmorphsDo(submorph => {
