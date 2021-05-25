@@ -1,10 +1,10 @@
 import { QinoqMorph } from './qinoq-morph.js';
 import { COLOR_SCHEME } from './colors.js';
-import { InteractiveTree, InteractiveTreeData } from 'InteractiveTree';
 import { rect } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 import { filter, find, prewalk } from 'lively.lang/tree.js';
 import { morph } from 'lively.morphic';
+import { InteractiveTree, InteractiveTreeData } from "./components/foreign/interactive-tree.js";
 
 export class InteractiveGraph extends QinoqMorph {
   static get properties () {
