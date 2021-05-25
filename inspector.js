@@ -192,6 +192,10 @@ class AnimationsInspector extends QinoqMorph {
     };
   }
 
+  get sequence () {
+    return this.inspector.sequence;
+  }
+
   get displayedProperties () {
     // serialized objects might contain a _rev key that is not removed after deserialization
     return Object.keys(this.propertyControls).filter(property => property !== '_rev');
@@ -289,7 +293,7 @@ class AnimationsInspector extends QinoqMorph {
       animationsInspector: this,
       property,
       propertyType,
-      sequence: this.inspector.sequence,
+      sequence: this.sequence,
       _editor: this.editor
     });
     this.ui[property] = new QinoqMorph();
@@ -340,7 +344,7 @@ class AnimationsInspector extends QinoqMorph {
   disbandConnections () {
     if (this.targetMorph) {
       disconnect(this.targetMorph, 'name', this.inspector.ui.headline, 'textString');
-      const sequenceOfTarget = this.inspector.sequence;
+      const sequenceOfTarget = this.sequence;
       this.displayedProperties.forEach(inspectedProperty => {
         this.propertyControls[inspectedProperty].keyframe.remove();
         const propertyType = this.propertiesToDisplay[inspectedProperty];
@@ -363,7 +367,7 @@ class AnimationsInspector extends QinoqMorph {
         delete this.propertyControls[inspectedProperty];
       });
     }
-    disconnect(this.editor, 'onScrollChange', this, 'resetHighlitingForAllUnsavedChanges');
+    disconnect(this.editor, 'onScrollChange', this, 'resetHighlightingForAllUnsavedChanges');
   }
 
   createConnections () {
@@ -437,33 +441,32 @@ class AnimationsInspector extends QinoqMorph {
     this._updatingInspector = false;
   }
 
-  updateInMorph (property = undefined) {
+  updateInMorph (property) {
     if (this._updatingInspector) {
       return;
     }
     this._updatingMorph = true;
 
-    this.displayedProperties.forEach(property => {
-      const propertyType = this.propertiesToDisplay[property];
-      switch (propertyType) {
-        case 'point':
-          this.targetMorph[property] = pt(this.propertyControls[property].x.number, this.propertyControls[property].y.number);
-          break;
-        case 'color':
-          this.targetMorph[property] = this.propertyControls[property].color.colorValue;
-          break;
-        case 'number':
-          if (this.propertyControls[property].number.unit == '%') {
-            this.targetMorph[property] = this.propertyControls[property].number.number / 100;
-          } else {
-            this.targetMorph[property] = this.propertyControls[property].number.number;
-          }
-          break;
-        case 'string':
-          this.targetMorph[property] = this.propertyControls[property].string.stringValue;
-          break;
-      }
-    });
+    const propertyType = this.propertiesToDisplay[property];
+    switch (propertyType) {
+      case 'point':
+        this.targetMorph[property] = pt(this.propertyControls[property].x.number, this.propertyControls[property].y.number);
+        break;
+      case 'color':
+        this.targetMorph[property] = this.propertyControls[property].color.colorValue;
+        break;
+      case 'number':
+        if (this.propertyControls[property].number.unit == '%') {
+          this.targetMorph[property] = this.propertyControls[property].number.number / 100;
+        } else {
+          this.targetMorph[property] = this.propertyControls[property].number.number;
+        }
+        break;
+      case 'string':
+        this.targetMorph[property] = this.propertyControls[property].string.stringValue;
+        break;
+    }
+
     this._updatingMorph = false;
 
     this.highlightUnsavedChanges(property);
@@ -481,9 +484,10 @@ class AnimationsInspector extends QinoqMorph {
   }
 
   highlightUnsavedChanges (changedProperty) {
+    if (this._unsavedChanges.includes(changedProperty)) return;
     this._unsavedChanges.push(changedProperty);
-    const animationOnProperty = this.inspector.sequence.getAnimationForMorphProperty(this.targetMorph, changedProperty);
-    if (animationOnProperty && !animationOnProperty.getKeyframeAt(this.inspector.sequence.progress)) {
+    const animationOnProperty = this.sequence.getAnimationForMorphProperty(this.targetMorph, changedProperty);
+    if (animationOnProperty && !animationOnProperty.getKeyframeAt(this.sequence.progress)) {
       this.propertyControls[changedProperty].highlight = new Label({
         position: pt(this.propertyControls[changedProperty].keyframe.topRight.x + 5, 5),
         fontColor: COLOR_SCHEME.ERROR
