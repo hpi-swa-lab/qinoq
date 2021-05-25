@@ -377,17 +377,17 @@ class AnimationsInspector extends QinoqMorph {
       connect(this.targetMorph, inspectedProperty, this, 'updateInInspector', { converter: '() => {return {property, propertyType}}', varMapping: { property: inspectedProperty, propertyType } });
       switch (propertyType) {
         case 'point':
-          connect(this.propertyControls[inspectedProperty].x, 'number', this, 'updateInMorph', { converter: '() => {return property }', varMapping: { property: inspectedProperty } });
-          connect(this.propertyControls[inspectedProperty].y, 'number', this, 'updateInMorph', { converter: '() => {return property }', varMapping: { property: inspectedProperty } });
+          connect(this.propertyControls[inspectedProperty].x, 'number', this, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: inspectedProperty, value: this.propertyControls[inspectedProperty].x.number } });
+          connect(this.propertyControls[inspectedProperty].y, 'number', this, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: inspectedProperty, value: this.propertyControls[inspectedProperty].y.number } });
           break;
         case 'color':
-          connect(this.propertyControls[inspectedProperty].color, 'colorValue', this, 'updateInMorph', { converter: '() => {return property }', varMapping: { property: inspectedProperty } });
+          connect(this.propertyControls[inspectedProperty].color, 'colorValue', this, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: inspectedProperty, value: this.propertyControls[inspectedProperty].color } });
           break;
         case 'number':
-          connect(this.propertyControls[inspectedProperty].number, 'number', this, 'updateInMorph', { converter: '() => {return property }', varMapping: { property: inspectedProperty } });
+          connect(this.propertyControls[inspectedProperty].number, 'number', this, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: inspectedProperty, value: this.propertyControls[inspectedProperty].number } });
           break;
         case 'string':
-          connect(this.propertyControls[inspectedProperty].string, 'inputAccepted', this, 'updateInMorph', { converter: '() => {return property }', varMapping: { property: inspectedProperty } });
+          connect(this.propertyControls[inspectedProperty].string, 'inputAccepted', this, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: inspectedProperty, value: this.propertyControls[inspectedProperty].string } });
           break;
       }
     });
@@ -483,14 +483,17 @@ class AnimationsInspector extends QinoqMorph {
     this._unsavedChanges.forEach(property => this.resetHighlightingForProperty(property));
   }
 
-  highlightUnsavedChanges (changedProperty) {
+  highlightUnsavedChanges (changedPropertyAndValue) {
+    const changedProperty = changedPropertyAndValue.property;
+    const changedValue = changedPropertyAndValue.value;
     if (this._unsavedChanges.includes(changedProperty)) return;
     this._unsavedChanges.push(changedProperty);
     const animationOnProperty = this.sequence.getAnimationForMorphProperty(this.targetMorph, changedProperty);
-    if (animationOnProperty && !animationOnProperty.getKeyframeAt(this.sequence.progress)) {
+    if (animationOnProperty && (!animationOnProperty.getKeyframeAt(this.sequence.progress) || animationOnProperty.getKeyframeAt(this.sequence.progress).value !== changedValue)) {
       this.propertyControls[changedProperty].highlight = new Label({
         position: pt(this.propertyControls[changedProperty].keyframe.topRight.x + 5, 5),
-        fontColor: COLOR_SCHEME.ERROR
+        fontColor: COLOR_SCHEME.ERROR,
+        halosEnabled: false
       });
       Icon.setIcon(this.propertyControls[changedProperty].highlight, 'exclamation-triangle'),
       this.propertyControls[changedProperty].keyframe.owner.addMorph(this.propertyControls[changedProperty].highlight);
