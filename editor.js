@@ -1198,8 +1198,8 @@ class MenuBar extends QinoqMorph {
     const { name, morphName = 'aButton', filled, container } = options;
     this.ui[name] = new QinoqButton({
       fontSize: 20,
-      name: morphName,
-      ...options
+      ...options,
+      name: morphName
     });
     if (filled) this.ui[name].filled = true;
     this.ui[container].addMorph(this.ui[name]);
