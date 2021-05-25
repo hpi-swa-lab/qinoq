@@ -149,7 +149,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
     this.styleInspector.remove();
     this.initializeStyleInspector();
 
-    this.targetMorph = undefined;
+    this.targetMorph = null;
   }
 
   abandon () {
