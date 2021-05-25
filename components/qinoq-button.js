@@ -20,6 +20,8 @@ export class QinoqButton extends Label {
       target: {},
       action: {},
       command: {},
+      doubleAction: {},
+      doubleCommand: {},
       nativeCursor: {
         defaultValue: 'pointer'
       },
@@ -46,6 +48,9 @@ export class QinoqButton extends Label {
           this.setProperty('styleSet', styleSet);
           this.updateStyle();
         }
+      },
+      previousMouseUpTime: {
+        defaultValue: 0
       }
     };
   }
@@ -59,8 +64,13 @@ export class QinoqButton extends Label {
   }
 
   onMouseUp () {
+
+    const currentTime = Date.now();
     this.styleSet = 'default';
-    this.command ? this.target.execCommand(this.command) : this.target[this.action]();
+    if (((currentTime - this.previousMouseUpTime) < 200) && (this.doubleCommand || this.doubleAction)) {
+      this.doubleCommand ? this.target.execCommand(this.doubleCommand) : this.target[this.doubleAction]();
+    } else this.command ? this.target.execCommand(this.command) : this.target[this.action]();
+    this.previousMouseUpTime = currentTime;
   }
 
   onHoverIn () {
