@@ -986,7 +986,6 @@ class Preview extends QinoqMorph {
 
     this.addMorph(interactive);
     interactive.fitBounds(this.extent);
-    this.addMorph(interactive.scrollOverlay);
     interactive.position = pt(0, 0);
     // trigger correct bounds on scrollable content of interactive
     interactive.updateInteractiveLength();
