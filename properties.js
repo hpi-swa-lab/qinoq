@@ -5,7 +5,7 @@ export const animatedProperties = {
   extent: {
     type: 'point',
     defaultRelative: true,
-    color: Color.rgbHex('6447B3')
+    color: Color.rgbHex('2B7A6D')
   },
   position: {
     type: 'point',
@@ -43,7 +43,7 @@ export const animatedProperties = {
   },
   scale: {
     type: 'number',
-    color: Color.rgbHex('B3476D')
+    color: Color.rgbHex('E28743')
   },
   textString: {
     type: 'string',
