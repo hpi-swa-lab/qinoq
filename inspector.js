@@ -649,10 +649,10 @@ class KeyframeButton extends QinoqMorph {
     return this.target[this.property];
   }
 
-  async onMouseUp (event) {
-    if (event && event.domEvt && event.domEvt.button == 2) return;
+  async onMouseUp (event = {}) {
+    if (event.domEvt && event.domEvt.button == 2) return;
     this.mode = 'activated';
-    this.addOrOverwriteKeyframe();
+    await this.addOrOverwriteKeyframe();
   }
 
   async addOrOverwriteKeyframe (relativePosition = this.sequence.progress) {
