@@ -739,6 +739,7 @@ export class TimelineSequence extends QinoqMorph {
     let items = [
       ['✏️ Rename Sequence', async () => await this.timeline.promptRenameForSelection()],
       ['❌ Delete Sequence', () => this.timeline.deleteSelectedItems()],
+      ['🗐 Copy Sequence', () => this.editor.copySequence(this.sequence)],
       ['↔️ Edit duration', async () => await this.timeline.promptDurationForSelection()],
       ['🏁 Edit start position', async () => await this.timeline.promptStartForSelection()],
       [this.sequenceVisibilityMenuString(), () => this.timeline.toggleVisibilityForSelection()]];
