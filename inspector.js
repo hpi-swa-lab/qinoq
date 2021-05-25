@@ -470,24 +470,9 @@ class AnimationsInspector extends QinoqMorph {
   }
 
   resetHighlightingForProperty (changedProperty) {
-    const propertyType = this.propertiesToDisplay[changedProperty];
     this._unsavedChanges = this._unsavedChanges.filter(property => { return property != changedProperty; });
-    switch (propertyType) {
-      case 'point':
-        this.propertyControls[changedProperty].x.borderWidth = 0;
-        this.propertyControls[changedProperty].y.borderWidth = 0;
-        this.propertyControls[changedProperty].x.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
-        this.propertyControls[changedProperty].y.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
-        break;
-      case 'color':
-        this.propertyControls[changedProperty].color.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
-        break;
-      case 'number':
-        this.propertyControls[changedProperty].number.borderWidth = 0;
-        this.propertyControls[changedProperty].number.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
-        break;
-      case 'string':
-        this.propertyControls[changedProperty].string.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
+    if (this.propertyControls[changedProperty].highlight) {
+      this.propertyControls[changedProperty].highlight.abandon();
     }
   }
 
@@ -496,28 +481,15 @@ class AnimationsInspector extends QinoqMorph {
   }
 
   highlightUnsavedChanges (changedProperty) {
-    const propertyType = this.propertiesToDisplay[changedProperty];
     this._unsavedChanges.push(changedProperty);
     const animationOnProperty = this.inspector.sequence.getAnimationForMorphProperty(this.targetMorph, changedProperty);
     if (animationOnProperty && !animationOnProperty.getKeyframeAt(this.inspector.sequence.progress)) {
-      switch (propertyType) {
-        case 'point':
-          this.propertyControls[changedProperty].x.borderWidth = 1;
-          this.propertyControls[changedProperty].y.borderWidth = 1;
-          this.propertyControls[changedProperty].x.borderColor = COLOR_SCHEME.ERROR;
-          this.propertyControls[changedProperty].y.borderColor = COLOR_SCHEME.ERROR;
-          break;
-        case 'color':
-          this.propertyControls[changedProperty].color.borderColor = COLOR_SCHEME.ERROR;
-          break;
-        case 'number':
-          this.propertyControls[changedProperty].number.borderWidth = 1;
-          this.propertyControls[changedProperty].number.borderColor = COLOR_SCHEME.ERROR;
-          break;
-        case 'string':
-          this.propertyControls[changedProperty].string.borderStyle = 'solid';
-          this.propertyControls[changedProperty].string.borderColor = COLOR_SCHEME.ERROR;
-      }
+      this.propertyControls[changedProperty].highlight = new Label({
+        position: pt(this.propertyControls[changedProperty].keyframe.topRight.x + 5, 5),
+        fontColor: COLOR_SCHEME.ERROR
+      });
+      Icon.setIcon(this.propertyControls[changedProperty].highlight, 'exclamation-triangle'),
+      this.propertyControls[changedProperty].keyframe.owner.addMorph(this.propertyControls[changedProperty].highlight);
     }
   }
 
