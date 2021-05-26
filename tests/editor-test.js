@@ -355,17 +355,17 @@ describe('Editor', () => {
       interactive = await exampleInteractive();
     });
 
-    it('resizes interactive without aspect ratio to fit preview exactly', () => {
+    it('resizes interactive without aspect ratio to fit preview exactly (respecting scrollbarOffset)', () => {
       interactive.fixedAspectRatio = null;
       interactive.extent = pt(500, 500);
-      const previewExtent = editor.ui.preview.extent;
+      const previewExtent = pt(editor.ui.preview.extent.x - editor.ui.preview.scrollbarOffset.x, editor.ui.preview.extent.y - editor.ui.preview.scrollbarOffset.y);
       editor.interactive = interactive;
       expect(interactive.extent).to.be.equal(previewExtent);
     });
 
-    it('resizes interactive with fixed aspect ratio to same height as preview', () => {
+    it('resizes interactive with fixed aspect ratio to same height as preview respecting scrollbarOffset', () => {
       interactive.fixedAspectRatio = 16 / 9;
-      const previewHeight = editor.ui.preview.height;
+      const previewHeight = editor.ui.preview.extent.y - editor.ui.preview.scrollbarOffset.y;
       editor.interactive = interactive;
       expect(interactive.height).to.be.equal(previewHeight);
     });
