@@ -4,7 +4,7 @@ import { rect } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 import { filter, find, prewalk } from 'lively.lang/tree.js';
 import { morph } from 'lively.morphic';
-import { InteractiveTree, InteractiveTreeData } from "./components/foreign/interactive-tree.js";
+import { InteractiveTree, InteractiveTreeData } from './components/foreign/interactive-tree.js';
 
 export class InteractiveGraph extends QinoqMorph {
   static get properties () {
@@ -15,11 +15,11 @@ export class InteractiveGraph extends QinoqMorph {
       borderColor: {
         defaultValue: COLOR_SCHEME.BACKGROUND_VARIANT
       },
-      tree: {
-        after: ['_editor'],
-        initialize () {
-          this.removeConnections();
-          this.buildTree();
+      tree: {},
+      _editor: {
+        set (_editor) {
+          this.setProperty('_editor', _editor);
+          this.reinitializeGraph();
         }
       }
     };
@@ -27,6 +27,11 @@ export class InteractiveGraph extends QinoqMorph {
 
   get isInteractiveGraph () {
     return true;
+  }
+
+  reinitializeGraph () {
+    this.removeConnections();
+    this.buildTree();
   }
 
   buildTree (treeData = this.generateTreeData()) {
@@ -129,6 +134,7 @@ export class InteractiveGraph extends QinoqMorph {
   }
 
   onNameChange (item) {
+    if (!this.tree) return;
     const node = find(this.tree.treeData.root, (node) => node.target == item, this.childGetter);
     if (!node) return;
     node.container.refresh();
