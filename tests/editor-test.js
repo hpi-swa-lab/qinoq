@@ -64,6 +64,35 @@ describe('Editor', () => {
       nightBackgroundTimelineSequence.width = initialWidth;
       expect(nightBackgroundTimelineSequence.hasResizers).to.be.ok;
     });
+
+    describe('pasting a sequence', () => {
+      let timelineLayer;
+      before(() => {
+        timelineLayer = editor.withAllSubmorphsSelect(morph => morph.isGlobalTimelineLayer)[0];
+      });
+
+      it('is not possible without copying', () => {
+        expect(editor.clipboard.isEmpty);
+        expect(timelineLayer.menuItems({ hand: { position: pt(0, 0) } }).find(menuItem => menuItem[0].includes('Paste'))).to.not.be.ok;
+      });
+
+      it('is possible when a a sequence has been copied', () => {
+        editor.copySequence(interactive.sequences[0]);
+        expect(timelineLayer.menuItems({ hand: { position: pt(0, 0) } }).find(menuItem => menuItem[0].includes('Paste'))).to.be.ok;
+      });
+
+      it('creates a new sequence', () => {
+        const oldSequence = interactive.sequences[3];// sky sequence
+        editor.copySequence(oldSequence);
+        const previousSequenceCount = interactive.sequences.length;
+        editor.pasteSequenceAt(1000, interactive.layers[0]);
+        expect(interactive.sequences.length).to.be.equal(previousSequenceCount + 1);
+        const newSequence = interactive.sequences[interactive.sequences.length - 1];
+        expect(newSequence.submorphs.length).to.be.equal(oldSequence.submorphs.length);
+        expect(newSequence.animations.length).to.be.equal(oldSequence.animations.length);
+        expect(newSequence.animations.every(animation => animation.sequence == newSequence));
+      });
+    });
   });
 
   describe('with sequence timeline', () => {
