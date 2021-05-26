@@ -35,5 +35,6 @@ export class Clipboard {
     this.animations = null;
     this.sequence = null;
     this.morphs = null;
+    this.contentType = null;
   }
 }
