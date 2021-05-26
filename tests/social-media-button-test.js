@@ -1,5 +1,5 @@
 /* global it, describe, beforeEach, afterEach */
-import { expect, assert } from 'mocha-es6';
+import { expect } from 'mocha-es6';
 import { serialize, deserialize } from 'lively.serializer2';
 import { SocialMediaButton, PRESETS } from '../components/social-media-button.js';
 import { Label, Icon } from 'lively.morphic';
