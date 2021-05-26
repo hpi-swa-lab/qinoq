@@ -401,7 +401,7 @@ export class PropertyTimelineLayer extends SequenceTimelineLayer {
           this.setProperty('animation', animation);
 
           if (!this._deserializing) {
-            this.fill = getColorForProperty(animation.property);
+            this.fill = this.animation.type == 'color' ? COLOR_SCHEME.BACKGROUND_VARIANT : getColorForProperty(animation.property);
             this.inactiveArea.fill = this.fill;
             this.updateTooltip();
             this.layerInfo.updateLabel();
