@@ -139,7 +139,7 @@ export class SocialMediaButton extends Label {
 
     const newTokens = tokenNames.map(tokenName => {
       return {
-        id: tokenName[0].toLowerCase() + string.camelize(tokenName).substring(1),
+        id: tokenName[0].toLowerCase() + string.camelCaseString(tokenName).substring(1),
         symbol: tokenName
       };
     });
