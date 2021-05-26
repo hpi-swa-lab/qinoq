@@ -180,8 +180,8 @@ export class AlignmentPanel extends InspectorPanel {
 
 class KeyValuePanel extends InspectorPanel {
   /*
-      Allows to edit a collection of key-value-pairs, where the value is a string
-    */
+    Allows to edit a collection of key-value-pairs, where the value is a string
+  */
 
   build () {
     this.ui.container = this.addMorph(
