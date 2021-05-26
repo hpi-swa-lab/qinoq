@@ -1,9 +1,6 @@
 import { getColorForString } from './colors.js';
 import { Color } from 'lively.graphics';
 
-// light and neutral color used for color properties so that the color curve is visible
-const neutralColor = Color.rgbHex('F5F5F5');
-
 export const animatedProperties = {
   extent: {
     type: 'point',
@@ -18,7 +15,7 @@ export const animatedProperties = {
   },
   fill: {
     type: 'color',
-    color: neutralColor
+    color: Color.rgbHex('90CCD1')
   },
   blur: {
     type: 'number',
@@ -58,7 +55,7 @@ export const animatedProperties = {
   },
   fontColor: {
     type: 'color',
-    color: neutralColor
+    color: Color.rgbHex('F7D183')
   },
   progress: {
     type: 'number',
