@@ -34,7 +34,7 @@ Closes [fill in your issues here]
 - [ ] a new scrollytelling can be created with a button
 - [ ] can be loaded in the editor via drag and drop
 - [ ] an interactive can be grabbed out of the editor and placed in the world with both the editor and interactive still working. The editor is cleared
-- [ ] when the interactive is loaded into the preview, one can zoom into it/out of it by using Ctrl + Mousewheel over it
+- [ ] when the interactive is loaded into the preview, one can zoom in/ out of it by using Ctrl + Mousewheel over it
 
 ### TimelineLayer
 
