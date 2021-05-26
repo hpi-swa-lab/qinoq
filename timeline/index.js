@@ -682,6 +682,10 @@ export class SequenceTimeline extends Timeline {
     return (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.sequence.getRelativePositionFor(scrollPosition) * this.zoomFactor) + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
   }
 
+  getPositionFromRelativePosition (relativePosition) {
+    return this.getPositionFromScroll(this.sequence.getAbsolutePosition(relativePosition));
+  }
+
   getScrollDeltaFromDistance (distance) {
     return (this.sequence.duration * distance) * this.zoomFactor;
   }
@@ -881,7 +885,7 @@ export class SequenceTimeline extends Timeline {
     const undo = this.undoStart('move-keyframe');
     this.selectedTimelineKeyframes.forEach(timelineKeyframe => {
       undo.addTarget(timelineKeyframe);
-      timelineKeyframe.changeKeyframePosition(newPosition, false);
+      timelineKeyframe.position = pt(this.getPositionFromRelativePosition(newPosition), timelineKeyframe.timelineKeyframeY);
     });
     this.undoStop('move-keyframe');
   }
