@@ -400,7 +400,7 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   getTimelineFor (tab) {
-    return tab.content;
+    return tab && tab.content;
   }
 
   getTimelineForSequence (sequence) {
