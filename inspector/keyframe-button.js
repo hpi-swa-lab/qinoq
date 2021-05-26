@@ -2,7 +2,7 @@ import { QinoqMorph } from '../qinoq-morph.js';
 import { pt } from 'lively.graphics';
 import { COLOR_SCHEME } from '../colors.js';
 import { connect, disconnect } from 'lively.bindings';
-import { Keyframe } from 'qinoq';
+import { Keyframe } from '../index.js';
 import { getColorForProperty } from '../properties.js';
 
 export class KeyframeButton extends QinoqMorph {
