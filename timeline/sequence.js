@@ -569,7 +569,7 @@ export class TimelineSequence extends QinoqMorph {
       this.setOverlappingAppearance();
       return;
     }
-    if (morphBeneath.name === 'active area' || morphBeneath.name === 'inactive area' || morphBeneath.isTimelineLayer) {
+    if (morphBeneath.isTimelineLayer) {
       const timelineLayer = morphBeneath.isTimelineLayer ? morphBeneath : morphBeneath.owner;
       const layer = timelineLayer.layer;
 
