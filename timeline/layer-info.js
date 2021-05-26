@@ -35,7 +35,6 @@ export class TimelineLayerInfo extends QinoqMorph {
   initialize () {
     this.ui = {};
     this.layout = new VerticalLayout({
-      spacing: 4,
       autoResize: false,
       orderByIndex: true
     });
