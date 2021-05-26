@@ -4,11 +4,24 @@ import { serialize, deserialize } from 'lively.serializer2';
 import { SocialMediaButton, PRESETS } from '../components/social-media-button.js';
 import { Label, Icon } from 'lively.morphic';
 
+export const TEST_PRESETS = {
+  CUSTOM: {
+    name: 'Custom',
+    icon: 'question',
+    href: 'https://www.mycustomnetwork.com/share?u={url};t={text input}'
+  }
+};
+
 describe('Social Media Button', () => {
   let button;
 
   beforeEach(() => {
     button = new SocialMediaButton();
+    button.openInWorld();
+  });
+
+  afterEach(() => {
+    button.abandon();
   });
 
   it('has Twitter preset by default', () => {
@@ -21,7 +34,7 @@ describe('Social Media Button', () => {
     expect(button.preset).to.equal(PRESETS.FACEBOOK);
   });
 
-  it('sets correct preset by preset', () => {
+  it('sets correct preset by preset object', () => {
     expect(button.preset).to.equal(PRESETS.TWITTER);
     button.preset = PRESETS.FACEBOOK;
     expect(button.preset).to.equal(PRESETS.FACEBOOK);
@@ -41,30 +54,39 @@ describe('Social Media Button', () => {
   it('changes icon depending on preset', () => {
     const referenceIcon = new Label();
     Icon.setIcon(referenceIcon, PRESETS.TWITTER.icon);
-    expect(button.icon.textString).to.equal(referenceIcon.textString);
-    Icon.setIcon();
-    Icon.setIcon(referenceIcon, PRESETS.TWITTER.icon);
-    expect(button.icon.textString).to.equal(referenceIcon.textString);
+    expect(button.textString).to.equal(referenceIcon.textString);
+    button.preset = 'Facebook';
+    Icon.setIcon(referenceIcon, PRESETS.FACEBOOK.icon);
+    expect(button.textString).to.equal(referenceIcon.textString);
   });
 
   it('generates correct tokens from preset', () => {
-    const preset = {
-      name: 'Custom',
-      icon: 'question',
-      href: 'https://www.mycustomnetwork.com/share?u={url};t={text-input}'
-    };
-    expect(Object.keys(button.tokens)).to.equal(['url', 'textInput']);
-    expect(Object.values(button.tokens)).to.equal([
-      { symbol: 'url', value: '' },
-      { symbol: 'text-input', value: '' }
+    expect(Object.keys(button.tokens)).to.equal(['text', 'url']);
+    expect(Object.values(button.tokens)).to.deep.equal([
+      { symbol: 'text', value: '', active: true },
+      { symbol: 'url', value: '', active: true }
+    ]);
+
+    button.preset = TEST_PRESETS.CUSTOM;
+    expect(Object.keys(button.tokens)).to.equal(['text', 'url', 'textInput']);
+    expect(Object.values(button.tokens)).to.deep.equal([
+      { symbol: 'text', value: '', active: false },
+      { symbol: 'url', value: '', active: true },
+      { symbol: 'text input', value: '', active: true }
     ]);
   });
 
   it('changes tooltip depending on preset', () => {
-
+    expect(button.tooltip).to.be.equal('Share via Twitter');
+    button.preset = 'Facebook';
+    expect(button.tooltip).to.be.equal('Share via Facebook');
   });
 
-  afterEach(() => {
-    button.abandon();
+  it('generates correct link', () => {
+    expect(button.link).to.be.equal('https://twitter.com/intent/tweet/?text=&url=');
+    button.preset = TEST_PRESETS.CUSTOM;
+    button.tokens.url.value = 'test.com';
+    button.tokens.textInput.value = 'I announce: I like trains!';
+    expect(button.link).to.be.equal('https://www.mycustomnetwork.com/share?u=test.com;t=I%20announce%3A%20I%20like%20trains!');
   });
 });
