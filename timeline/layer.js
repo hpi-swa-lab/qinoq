@@ -10,6 +10,7 @@ import { ActiveArea } from './active-area.js';
 export class TimelineLayer extends QinoqMorph {
   static get properties () {
     return {
+      layouter: {},
       layerInfo: {},
       container: {
         initialize () {
@@ -42,7 +43,7 @@ export class TimelineLayer extends QinoqMorph {
   }
 
   get index () {
-    return this.container.submorphs.indexOf(this);
+    return this.container.submorphs.indexOf(this.owner);
   }
 
   get highestIndex () {
@@ -135,7 +136,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
       }
       event.hand.timelineSequenceStates.forEach(timelineSequenceState => {
         if (timelineSequenceState.isMove) {
-          timelineSequenceState.timelineSequence.timelineLayer = this.container.submorphs[timelineSequenceState.timelineSequence.timelineLayer.index + (moveUp ? -1 : 1)];
+          timelineSequenceState.timelineSequence.timelineLayer = this.container.submorphs[timelineSequenceState.timelineSequence.timelineLayer.index + (moveUp ? -1 : 1)].submorphs[0];
         }
       });
     }
