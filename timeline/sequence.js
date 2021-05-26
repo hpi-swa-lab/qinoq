@@ -36,7 +36,7 @@ export class TimelineSequence extends QinoqMorph {
         set (caption) {
           if (!caption) return;
           this.setProperty('caption', caption);
-          this.getSubmorphNamed('aLabel').textString = caption;
+          this.label.textString = caption;
           this.sequence.name = caption;
           this.tooltip = caption;
         }
@@ -122,10 +122,11 @@ export class TimelineSequence extends QinoqMorph {
     const endPosition = startPosition + this.timelineLayer.timeline.getWidthFromDuration(this.sequence.duration);
     this.position = pt(startPosition, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
     this.width = endPosition - startPosition;
-    this.addMorph(new Label({
+    this.label = new Label({
       padding: rect(5, 4, 0, 0),
       reactsToPointer: false
-    }));
+    });
+    this.addMorph(this.label);
     this.timelineLayer.addMorph(this);
     this.caption = this.sequence.name;
     connect(this.sequence, 'name', this, 'caption');
@@ -683,6 +684,7 @@ export class TimelineSequence extends QinoqMorph {
 
   setOverlappingAppearance () {
     this.fill = COLOR_SCHEME.ERROR;
+    this.label.fontColor = COLOR_SCHEME.ON_SECONDARY;
   }
 
   setOutsideEditorAppearance () {
@@ -691,6 +693,7 @@ export class TimelineSequence extends QinoqMorph {
 
   setDefaultAppearance () {
     this.fill = COLOR_SCHEME.SURFACE;
+    this.label.fontColor = COLOR_SCHEME.ON_SURFACE;
   }
 
   setHiddenAppearance () {
