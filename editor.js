@@ -2,7 +2,7 @@ import { ProportionalLayout, config, HorizontalLayout, VerticalLayout, Icon, Lab
 import { connect, disconnectAll, disconnect } from 'lively.bindings';
 import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
-import { InteractiveMorphInspector } from './inspector.js';
+import { InteractiveMorphInspector } from './inspector/index.js';
 import { resource } from 'lively.resources';
 import { arr } from 'lively.lang';
 import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
