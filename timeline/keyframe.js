@@ -282,7 +282,7 @@ export class TimelineKeyframe extends QinoqMorph {
     const diff = Math.abs(this.position.x - snapPositionOnTimeline);
 
     if (CONSTANTS.SNAPPING_THRESHOLD < diff) return;
-    this.timeline.selectedTimelineKeyframes.filter(k => !k.keyframe.equals(this.keyframe)).forEach(timelineKeyframe =>
+    this.timeline.selectedTimelineKeyframes.filter(otherKeyframe => !otherKeyframe.keyframe.equals(this.keyframe)).forEach(timelineKeyframe =>
       timelineKeyframe.position = pt(Math.abs(this.position.x - snapPositionOnTimeline - timelineKeyframe.position.x), this.timelineKeyframeY));
 
     this.position = pt(snapPositionOnTimeline, this.timelineKeyframeY);
