@@ -75,7 +75,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
         defaultValue: true
       },
       height: {
-        defaultValue: CONSTANTS.LAYER_HEIGHT
+        defaultValue: CONSTANTS.GLOBAL_LAYER_HEIGHT
       },
       layer: {
         set (layer) {
@@ -107,7 +107,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
   }
 
   relayout () {
-    this.height = CONSTANTS.LAYER_HEIGHT;
+    this.height = CONSTANTS.GLOBAL_LAYER_HEIGHT;
   }
 
   onHoverIn (event) {
@@ -452,7 +452,7 @@ export class PropertyTimelineLayer extends SequenceTimelineLayer {
   addTimelineKeyframes () {
     const animations = this.sequence.getAnimationsForMorph(this.morph);
     animations.forEach((animation, index) => this.addKeyframesForAnimation(animation));
-    this.height = Math.max(CONSTANTS.LAYER_HEIGHT, CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * animations.length);
+    this.height = Math.max(CONSTANTS.GLOBAL_LAYER_HEIGHT, CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * animations.length);
     this.layerInfo.height = this.height;
     this.redraw();
   }

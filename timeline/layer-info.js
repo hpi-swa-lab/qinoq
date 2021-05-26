@@ -56,7 +56,7 @@ export class GlobalTimelineLayerInfo extends TimelineLayerInfo {
   static get properties () {
     return {
       height: {
-        defaultValue: CONSTANTS.LAYER_HEIGHT
+        defaultValue: CONSTANTS.GLOBAL_LAYER_HEIGHT
       }
     };
   }
