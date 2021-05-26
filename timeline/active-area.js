@@ -29,4 +29,8 @@ export class ActiveArea extends Canvas {
       }
     };
   }
+
+  onMouseDown (event) {
+    this.owner.onMouseDown(event);
+  }
 }

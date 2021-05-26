@@ -232,8 +232,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
   }
 
   onMouseDown (event) {
-    super.onMouseDown(event);
-    if (event.targetMorphs[0] !== this) return;
+    if (event.targetMorphs[1] !== this) return;
     this.editor.ui.inspector.targetMorph = this.morph;
     if (this.morph.world()) this.morph.show();
   }
