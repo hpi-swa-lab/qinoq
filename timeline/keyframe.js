@@ -99,13 +99,9 @@ export class TimelineKeyframe extends QinoqMorph {
     return this.layer.timeline;
   }
 
-  get timelineKeyframeY () {
-    return (CONSTANTS.SEQUENCE_LAYER_HEIGHT / 2) - (Math.sqrt(2) * CONSTANTS.KEYFRAME_EXTENT.x / 2);
-  }
-
   updatePosition () {
     this._lockModelUpdate = true;
-    if (this.layer) this.position = pt(this.timeline.getPositionFromKeyframe(this.keyframe), this.timelineKeyframeY);
+    if (this.layer) this.position = pt(this.timeline.getPositionFromKeyframe(this.keyframe), CONSTANTS.LAYER_KEYFRAME_Y_OFFSET);
     this._lockModelUpdate = false;
   }
 
@@ -208,7 +204,7 @@ export class TimelineKeyframe extends QinoqMorph {
     if (!event.hand.dragKeyframeStates) return;
 
     const { dragStartMorphPosition, absDragDelta } = event.state;
-    this.position = pt(dragStartMorphPosition.x + absDragDelta.x, this.timelineKeyframeY);
+    this.position = pt(dragStartMorphPosition.x + absDragDelta.x, CONSTANTS.LAYER_KEYFRAME_Y_OFFSET);
 
     const referenceDragState = event.hand.dragKeyframeStates.find(dragState => dragState.timelineKeyframe == this);
 
@@ -274,9 +270,9 @@ export class TimelineKeyframe extends QinoqMorph {
 
     if (CONSTANTS.SNAPPING_THRESHOLD < diff) return;
     this.timeline.selectedTimelineKeyframes.filter(otherKeyframe => !otherKeyframe.keyframe.equals(this.keyframe)).forEach(timelineKeyframe =>
-      timelineKeyframe.position = pt(Math.abs(this.position.x - snapPositionOnTimeline - timelineKeyframe.position.x), this.timelineKeyframeY));
+      timelineKeyframe.position = pt(Math.abs(this.position.x - snapPositionOnTimeline - timelineKeyframe.position.x), CONSTANTS.LAYER_KEYFRAME_Y_OFFSET));
 
-    this.position = pt(snapPositionOnTimeline, this.timelineKeyframeY);
+    this.position = pt(snapPositionOnTimeline, CONSTANTS.LAYER_KEYFRAME_Y_OFFSET);
   }
 
   prepareSnappingData (event) {
