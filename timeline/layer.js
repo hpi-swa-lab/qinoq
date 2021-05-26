@@ -6,6 +6,7 @@ import { Canvas } from 'lively.components/canvas.js';
 import { animatedProperties, getColorForProperty } from '../properties.js';
 import { TimelineKeyframe, KeyframeLine } from './keyframe.js';
 import { QinoqMorph } from '../qinoq-morph.js';
+import { ActiveArea } from './active-area.js';
 export class TimelineLayer extends QinoqMorph {
   static get properties () {
     return {
@@ -50,15 +51,7 @@ export class TimelineLayer extends QinoqMorph {
   }
 
   addAreaMorphs () {
-    const activeArea = this.addMorph(new Canvas({
-      extent: pt(CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH, CONSTANTS.LAYER_HEIGHT),
-      position: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0),
-      reactsToPointer: false,
-      fill: COLOR_SCHEME.SURFACE_VARIANT,
-      name: 'active area',
-      borderStyle: { bottom: 'solid', left: 'none', right: 'none', top: 'solid' },
-      acceptsDrops: false
-    }));
+    const activeArea = this.addMorph(new ActiveArea());
     const inactiveArea = this.addMorph(new QinoqMorph({
       draggable: true,
       extent: pt(CONSTANTS.INACTIVE_AREA_WIDTH, CONSTANTS.LAYER_HEIGHT),
