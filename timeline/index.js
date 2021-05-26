@@ -167,8 +167,15 @@ export class Timeline extends QinoqMorph {
         orderByIndex: true
       })
     });
+    connect(this.ui.layerContainer, 'extent', this, 'updateLayerExtent');
 
     this.ui.scrollableContainer.addMorph(this.ui.layerContainer);
+  }
+
+  updateLayerExtent (scrollContainerExtent) {
+    this.timelineLayers.forEach(timelineLayer => {
+      if (timelineLayer.width < scrollContainerExtent.x) timelineLayer.width = scrollContainerExtent.x;
+    });
   }
 
   initializeLayerInfoContainer () {
@@ -252,7 +259,8 @@ export class Timeline extends QinoqMorph {
   onActiveAreaWidthChange () {
     this.timelineLayers.forEach(timelineLayer => {
       timelineLayer.activeArea.width = this._activeAreaWidth;
-      timelineLayer.width = this._activeAreaWidth + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + CONSTANTS.INACTIVE_AREA_WIDTH;
+      const newLayerWidth = this._activeAreaWidth + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + CONSTANTS.INACTIVE_AREA_WIDTH;
+      timelineLayer.width = newLayerWidth < this.owner.width ? this.owner.width : newLayerWidth;
     });
 
     this.updateScrollerExtent();
