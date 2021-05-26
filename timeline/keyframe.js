@@ -249,8 +249,9 @@ export class TimelineKeyframe extends QinoqMorph {
     dragKeyframeStates.forEach(dragKeyframeState => dragKeyframeState.timelineKeyframe.removeSnapIndicators());
     if (this._otherKeyframesSortedByPosition.length == 0) return;
     const positionsOfSnapTargets = dragKeyframeStates.map(dragKeyframeState => dragKeyframeState.keyframe.position);
-    const snapPosition = this.timeline.getPositionFromKeyframe(this.getClosestKeyframe(positionsOfSnapTargets));
-    if (snapPosition) dragKeyframeStates.forEach(dragKeyframeState => dragKeyframeState.timelineKeyframe.snapTo(snapPosition));
+
+    const snapTarget = this.getClosestKeyframe(positionsOfSnapTargets);
+    if (snapTarget) dragKeyframeStates.forEach(dragKeyframeState => dragKeyframeState.timelineKeyframe.snapTo(snapTarget));
     dragKeyframeStates.forEach(dragKeyframeState => dragKeyframeState.timelineKeyframe.buildSnapIndicators());
   }
 
@@ -276,17 +277,15 @@ export class TimelineKeyframe extends QinoqMorph {
     return closestKeyframe;
   }
 
-  snapTo (snapPosition) {
-    const diff = Math.abs(this.position.x - snapPosition);
+  snapTo (keyframe) {
+    const snapPositionOnTimeline = Math.round(this.timeline.getPositionFromKeyframe(keyframe));
+    const diff = Math.abs(this.position.x - snapPositionOnTimeline);
 
     if (CONSTANTS.SNAPPING_THRESHOLD < diff) return;
+    this.timeline.selectedTimelineKeyframes.filter(k => !k.keyframe.equals(this.keyframe)).forEach(timelineKeyframe =>
+      timelineKeyframe.position = pt(Math.abs(this.position.x - snapPositionOnTimeline - timelineKeyframe.position.x), this.timelineKeyframeY));
 
-    this.timeline.selectedTimelineKeyframes.filter(k => k !== this).forEach(timelineKeyframe =>
-      timelineKeyframe.position = pt(
-        Math.abs(this.position.x - snapPosition - timelineKeyframe.position.x),
-        this.timelineKeyframeY));
-
-    this.position = pt(snapPosition, this.timelineKeyframeY);
+    this.position = pt(snapPositionOnTimeline, this.timelineKeyframeY);
   }
 
   prepareSnappingData (event) {
@@ -310,8 +309,8 @@ export class TimelineKeyframe extends QinoqMorph {
 
   buildSnapIndicators () {
     let snapIndicator = false;
-    this.timeline.keyframes.filter(keyframe => keyframe !== this).forEach(timelineKeyframe => {
-      if (this.keyframe.position == timelineKeyframe.keyframe.position) {
+    this.timeline.keyframes.filter(keyframe => !keyframe.keyframe.equals(this.keyframe)).forEach(timelineKeyframe => {
+      if (this.position.x == timelineKeyframe.position.x) {
         snapIndicator = true;
         this._snapIndicators.push(timelineKeyframe.owner.addMorph(timelineKeyframe.buildSnapIndicator()));
       }
