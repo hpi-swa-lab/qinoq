@@ -53,36 +53,14 @@ export class TimelineLayer extends QinoqMorph {
 
   addAreaMorphs () {
     const activeArea = this.addMorph(new ActiveArea());
-    const inactiveArea = this.addMorph(new QinoqMorph({
-      draggable: true,
-      extent: pt(CONSTANTS.INACTIVE_AREA_WIDTH, CONSTANTS.LAYER_HEIGHT),
-      fill: this.fill,
-      name: 'inactive area',
-      borderStyle: { bottom: 'solid', left: 'none', right: 'none', top: 'solid' },
-      acceptsDrops: false
-    }));
-    // when the active area increases in width, the underlying layer will not automatically increase as well
-    // therefore, just setting reactsToPointer will not work here, since there will be no underlying morph handling the clickevents
-    // and we have to manually steer the click events to the underlying layer
-    inactiveArea.onDragStart = event => this.onDragStart(event);
-    inactiveArea.onDrag = event => this.onDrag(event);
-    inactiveArea.onDragEnd = event => this.onDragEnd(event);
-    connect(activeArea, 'extent', inactiveArea, 'position', { converter: '() => source.topRight' });
-  }
-
-  __after_deserialize__ (snapshot, ref, pool) {
-    this.inactiveArea.onDragStart = event => this.onDragStart(event);
-    this.inactiveArea.onDrag = event => this.onDrag(event);
-    this.inactiveArea.onDragEnd = event => this.onDragEnd(event);
-    super.__after_deserialize__(snapshot, ref, pool);
-  }
-
-  get inactiveArea () {
-    return this.getSubmorphNamed('inactive area');
   }
 
   get activeArea () {
     return this.getSubmorphNamed('active area');
+  }
+
+  remove () {
+    this.owner.remove();
   }
 }
 
@@ -143,14 +121,14 @@ export class GlobalTimelineLayer extends TimelineLayer {
   }
 
   changeBorderAppearance () {
-    [this, this.activeArea, this.inactiveArea].forEach(morph => {
+    [this, this.activeArea].forEach(morph => {
       morph.borderWidth = 3;
       morph.borderColor = COLOR_SCHEME.PRIMARY;
     });
   }
 
   resetBorderAppearance () {
-    [this, this.activeArea, this.inactiveArea].forEach(morph => {
+    [this, this.activeArea].forEach(morph => {
       morph.borderWidth = 0;
       morph.borderColor = COLOR_SCHEME.PRIMARY;
     });
@@ -180,7 +158,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
       index = this.container.submorphs.length - 1;
     }
     this.remove();
-    this.container.addMorphAt(this, Math.round(index));
+    this.container.addMorphAt(this.layouter, Math.round(index));
     this.timeline.arrangeLayerInfos();
     this.timeline.updateZIndicesFromTimelineLayerPositions();
 
@@ -316,7 +294,6 @@ export class OverviewTimelineLayer extends SequenceTimelineLayer {
   async redraw () {
     this.layerInfo.height = this.height;
     this.activeArea.height = this.height;
-    this.inactiveArea.height = this.height;
     this.keyframeLines.forEach(keyframeLine => keyframeLine.updatePosition());
   }
 
@@ -417,7 +394,6 @@ export class PropertyTimelineLayer extends SequenceTimelineLayer {
 
           if (!this._deserializing) {
             this.fill = this.animation.type == 'color' ? COLOR_SCHEME.BACKGROUND_VARIANT : getColorForProperty(animation.property);
-            this.inactiveArea.fill = this.fill;
             this.updateTooltip();
             this.layerInfo.updateLabel();
             this.redraw();
