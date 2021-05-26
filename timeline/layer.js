@@ -31,10 +31,6 @@ export class TimelineLayer extends QinoqMorph {
     return true;
   }
 
-  relayout () {
-    throw new Error('Subclass responsibility');
-  }
-
   updateLayerPosition () {
     this.timeline.updateLayerPositions();
   }
@@ -104,10 +100,6 @@ export class GlobalTimelineLayer extends TimelineLayer {
 
   updateTooltip () {
     this.tooltip = this.name;
-  }
-
-  relayout () {
-    this.height = CONSTANTS.GLOBAL_LAYER_HEIGHT;
   }
 
   onHoverIn (event) {
@@ -237,10 +229,6 @@ export class SequenceTimelineLayer extends TimelineLayer {
 
   updateTooltip () {
     throw new Error('Subclass responsibility');
-  }
-
-  relayout () {
-    this.height = CONSTANTS.SEQUENCE_LAYER_HEIGHT;
   }
 
   onMorphNameChange () {
