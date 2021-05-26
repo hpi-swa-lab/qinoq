@@ -164,7 +164,6 @@ export class Timeline extends QinoqMorph {
       layout: new VerticalLayout({
         spacing: 2,
         resizeSubmorphs: true,
-        autoResize: true,
         orderByIndex: true
       })
     });
@@ -188,7 +187,13 @@ export class Timeline extends QinoqMorph {
   }
 
   addTimelineLayer (timelineLayer, index = 0, name) {
-    this.ui.layerContainer.addMorphAt(timelineLayer, index);
+    const layouter = new QinoqMorph({
+      name: 'layouter',
+      acceptsDrops: false
+    });
+    timelineLayer.layouter = layouter;
+    layouter.addMorph(timelineLayer);
+    this.ui.layerContainer.addMorphAt(layouter, index);
     this.addLayerInfoFor(timelineLayer, name, index);
     return timelineLayer;
   }
@@ -247,6 +252,7 @@ export class Timeline extends QinoqMorph {
   onActiveAreaWidthChange () {
     this.timelineLayers.forEach(timelineLayer => {
       timelineLayer.activeArea.width = this._activeAreaWidth;
+      timelineLayer.width = this._activeAreaWidth + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + CONSTANTS.INACTIVE_AREA_WIDTH;
     });
 
     this.updateScrollerExtent();
