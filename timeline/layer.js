@@ -155,7 +155,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
     });
   }
 
-  onDragStart (event) {
+  onDragStart () {
     const undo = this.container.undoStart('overview-layer-drag');
     undo.addTarget(this.timeline);
     this.changeBorderAppearance();
@@ -166,7 +166,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
     this.moveLayerToIndex(index);
   }
 
-  onDragEnd (event) {
+  onDragEnd () {
     this.container.undoStop('overview-layer-drag');
     this.resetBorderAppearance();
   }
