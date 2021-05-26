@@ -81,6 +81,9 @@ Closes [fill in your issues here]
 - [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the interactive/beginning of the next/previous sequence
 - [ ] moving a sequence to the right will make the active area (light grey) larger
 - [ ] when making the zoom factor higher/lower with the input field, the length of the sequences adapt accordingly, the cursor updates its position and the whole scrollytelling can still be scrolled through
+- [ ] a sequence may be copied, and pasted at another spot in the timeline
+  - [ ] pasting fails if there would not be enough space
+  - [ ] otherwise pasting succeeds, the new sequence has copies of the old sequences morphs and animations, while the old sequence is untouched
 - [ ] double clicking on the sky sequence brings you to a new tab named 'sky sequence' containing the sequence view
 
 #### Sequence View
