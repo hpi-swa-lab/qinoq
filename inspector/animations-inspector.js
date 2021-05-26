@@ -133,7 +133,11 @@ export class AnimationsInspector extends QinoqMorph {
         });
         break;
       case 'color':
-        this.propertyControls[property].color = new ColorPickerField({ position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y), colorValue: this.targetMorph[property] });
+        this.propertyControls[property].color = new ColorPickerField({
+          position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
+          colorValue: this.targetMorph[property],
+          dropShadow: new ShadowObject(true)
+        });
         break;
       case 'number':
         this.buildNumberPropertyControl(property);
