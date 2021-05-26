@@ -605,7 +605,7 @@ export class GlobalTimeline extends Timeline {
     const newPositionX = this.getPositionFromScroll(newStart);
     this.selectedTimelineSequences.forEach(timelineSequence => {
       undo.addTarget(timelineSequence);
-      timelineSequence.position = pt(newPositionX, CONSTANTS.SEQUENCE_LAYER_Y_OFFSET);
+      timelineSequence.position = pt(newPositionX, CONSTANTS.LAYER_SEQUENCE_Y_OFFSET);
     });
     this.undoStop();
   }
