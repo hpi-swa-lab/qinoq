@@ -154,7 +154,7 @@ export class AlignmentPanel extends InspectorPanel {
   }
 
   initialize () {
-    this.ui.buttons.forEach(button => button.enabled = false);
+    this.enabled = false;
   }
 
   onTargetMorphChange (targetMorph) {
