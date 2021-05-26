@@ -20,9 +20,6 @@ export class TimelineLayerInfo extends QinoqMorph {
         initialize () {
           if (!this._deserializing) this.initialize();
         }
-      },
-      height: {
-        defaultValue: CONSTANTS.LAYER_HEIGHT
       }
     };
   }
@@ -57,6 +54,14 @@ export class TimelineLayerInfo extends QinoqMorph {
 }
 
 export class GlobalTimelineLayerInfo extends TimelineLayerInfo {
+  static get properties () {
+    return {
+      height: {
+        defaultValue: CONSTANTS.LAYER_HEIGHT
+      }
+    };
+  }
+
   get layer () {
     return this.timelineLayer.layer;
   }
@@ -142,6 +147,14 @@ export class GlobalTimelineLayerInfo extends TimelineLayerInfo {
 }
 
 export class SequenceTimelineLayerInfo extends TimelineLayerInfo {
+  static get properties () {
+    return {
+      height: {
+        defaultValue: CONSTANTS.SEQUENCE_LAYER_HEIGHT
+      }
+    };
+  }
+
   get isInSequenceTimeline () {
     return true;
   }

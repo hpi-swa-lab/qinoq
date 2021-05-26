@@ -100,7 +100,7 @@ export class TimelineKeyframe extends QinoqMorph {
   }
 
   get timelineKeyframeY () {
-    return (CONSTANTS.LAYER_HEIGHT / 2) - (Math.sqrt(2) * CONSTANTS.KEYFRAME_EXTENT.x / 2);
+    return (CONSTANTS.SEQUENCE_LAYER_HEIGHT / 2) - (Math.sqrt(2) * CONSTANTS.KEYFRAME_EXTENT.x / 2);
   }
 
   updatePosition () {
@@ -320,9 +320,9 @@ export class TimelineKeyframe extends QinoqMorph {
   }
 
   buildSnapIndicator () {
-    const spacing = CONSTANTS.SNAP_INDICATOR_SPACING;
+    const spacing = CONSTANTS.KEYFRAME_SNAP_INDICATOR_SPACING;
     const mid = CONSTANTS.SNAP_INDICATOR_WIDTH / 2;
-    const vertices = [pt(-mid, -spacing), pt(mid, -spacing), pt(mid / 4, 0), pt(mid / 4, CONSTANTS.SEQUENCE_HEIGHT), pt(mid, CONSTANTS.SEQUENCE_HEIGHT + spacing), pt(-mid, CONSTANTS.SEQUENCE_HEIGHT + spacing), pt(-mid / 4, CONSTANTS.SEQUENCE_HEIGHT), pt(-mid / 4, 0)];
+    const vertices = [pt(-mid, -spacing), pt(mid, -spacing), pt(mid / 4, 0), pt(mid / 4, CONSTANTS.KEYFRAME_HEIGHT), pt(mid, CONSTANTS.KEYFRAME_HEIGHT + spacing), pt(-mid, CONSTANTS.KEYFRAME_HEIGHT + spacing), pt(-mid / 4, CONSTANTS.KEYFRAME_HEIGHT), pt(-mid / 4, 0)];
     return new Polygon({
       fill: COLOR_SCHEME.PRIMARY,
       position: pt(this.center.x - CONSTANTS.SNAP_INDICATOR_WIDTH / 2,

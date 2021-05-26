@@ -23,9 +23,6 @@ export class TimelineLayer extends QinoqMorph {
       fill: {
         defaultValue: COLOR_SCHEME.BACKGROUND_VARIANT
       },
-      height: {
-        defaultValue: CONSTANTS.LAYER_HEIGHT
-      },
       timeline: {}
     };
   }
@@ -35,7 +32,7 @@ export class TimelineLayer extends QinoqMorph {
   }
 
   relayout () {
-    this.height = CONSTANTS.LAYER_HEIGHT;
+    throw new Error('Subclass responsibility');
   }
 
   updateLayerPosition () {
@@ -77,6 +74,9 @@ export class GlobalTimelineLayer extends TimelineLayer {
       acceptsDrops: {
         defaultValue: true
       },
+      height: {
+        defaultValue: CONSTANTS.LAYER_HEIGHT
+      },
       layer: {
         set (layer) {
           this.setProperty('layer', layer);
@@ -104,6 +104,10 @@ export class GlobalTimelineLayer extends TimelineLayer {
 
   updateTooltip () {
     this.tooltip = this.name;
+  }
+
+  relayout () {
+    this.height = CONSTANTS.LAYER_HEIGHT;
   }
 
   onHoverIn (event) {
@@ -210,6 +214,9 @@ export class GlobalTimelineLayer extends TimelineLayer {
 export class SequenceTimelineLayer extends TimelineLayer {
   static get properties () {
     return {
+      height: {
+        defaultValue: CONSTANTS.SEQUENCE_LAYER_HEIGHT
+      },
       morph: {
         set (morph) {
           this.setProperty('morph', morph);
@@ -230,6 +237,10 @@ export class SequenceTimelineLayer extends TimelineLayer {
 
   updateTooltip () {
     throw new Error('Subclass responsibility');
+  }
+
+  relayout () {
+    this.height = CONSTANTS.SEQUENCE_LAYER_HEIGHT;
   }
 
   onMorphNameChange () {
@@ -324,7 +335,7 @@ export class OverviewTimelineLayer extends SequenceTimelineLayer {
   addTimelineKeyframes () {
     const animations = this.sequence.getAnimationsForMorph(this.morph);
     animations.forEach((animation, index) => this.addKeyframesForAnimation(animation, index));
-    this.height = Math.max(CONSTANTS.LAYER_HEIGHT, CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * animations.length);
+    this.height = Math.max(CONSTANTS.SEQUENCE_LAYER_HEIGHT, CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * animations.length);
     this.layerInfo.height = this.height;
     this.redraw();
   }
@@ -333,7 +344,7 @@ export class OverviewTimelineLayer extends SequenceTimelineLayer {
     this.layerInfo.restyleCollapseToggle();
     this.opacity = 0;
     this.expandedHeight = this.height;
-    this.height = CONSTANTS.LAYER_HEIGHT;
+    this.height = CONSTANTS.SEQUENCE_LAYER_HEIGHT;
 
     this.updateTooltip();
     this.reactsToPointer = false;
