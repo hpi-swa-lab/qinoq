@@ -493,7 +493,8 @@ class AnimationsInspector extends QinoqMorph {
       this.propertyControls[changedProperty].highlight = new Label({
         position: pt(this.propertyControls[changedProperty].keyframe.topRight.x + 5, 5),
         fontColor: COLOR_SCHEME.ERROR,
-        halosEnabled: false
+        halosEnabled: false,
+        tooltip: 'Unsaved changes will be removed when scrolling \ninstead add a keyframe to persist them'
       });
       Icon.setIcon(this.propertyControls[changedProperty].highlight, 'exclamation-triangle'),
       this.propertyControls[changedProperty].keyframe.owner.addMorph(this.propertyControls[changedProperty].highlight);
