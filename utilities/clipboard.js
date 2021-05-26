@@ -30,6 +30,10 @@ export class Clipboard {
     return this.contentType == 'sequence';
   }
 
+  get isEmpty () {
+    return this.content === null;
+  }
+
   clear () {
     this.morph = null;
     this.animations = null;
