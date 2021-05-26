@@ -6,6 +6,7 @@ export function error (message = 'Error!', props = {}) {
   const { color = Color.red, delay = 4000 } = props;
   const statusMessage = new StatusMessage({ message, color, hasFixedPosition: true, ...props });
   Icon.setIcon(statusMessage.submorphs[0], 'times-circle');
+  // eslint-disable-next-line no-console
   console.error(message);
   $world.openStatusMessage(statusMessage, delay);
 }
