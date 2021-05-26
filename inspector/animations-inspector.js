@@ -294,7 +294,8 @@ export class AnimationsInspector extends QinoqMorph {
     this._updatingInspector = false;
   }
 
-  updateInMorph (property) {
+  updateInMorph (updatingSpec = { property: null, value: null }) {
+    const property = updatingSpec.property;
     if (this._updatingInspector) {
       return;
     }
@@ -322,7 +323,7 @@ export class AnimationsInspector extends QinoqMorph {
 
     this._updatingMorph = false;
 
-    this.highlightUnsavedChanges(property);
+    this.highlightUnsavedChanges(updatingSpec);
   }
 
   resetHighlightingForProperty (changedProperty) {
