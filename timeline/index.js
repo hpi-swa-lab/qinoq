@@ -747,7 +747,7 @@ export class SequenceTimeline extends Timeline {
       name: 'placeholder',
       fill: COLOR_SCHEME.BACKGROUND_VARIANT,
       opacity: 0.5,
-      height: CONSTANTS.LAYER_HEIGHT,
+      height: CONSTANTS.SEQUENCE_LAYER_HEIGHT,
       layout: new VerticalLayout({
         align: 'center',
         direction: 'centered',
