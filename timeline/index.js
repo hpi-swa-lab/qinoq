@@ -259,7 +259,7 @@ export class Timeline extends QinoqMorph {
   onActiveAreaWidthChange () {
     this.timelineLayers.forEach(timelineLayer => {
       timelineLayer.activeArea.width = this._activeAreaWidth;
-      const newLayerWidth = this._activeAreaWidth + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + CONSTANTS.INACTIVE_AREA_WIDTH;
+      const newLayerWidth = this._activeAreaWidth + TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + TIMELINE_CONSTANTS.INACTIVE_AREA_WIDTH;
       timelineLayer.width = newLayerWidth < this.owner.width ? this.owner.width : newLayerWidth;
     });
 
