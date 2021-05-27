@@ -1,6 +1,6 @@
 import { pt } from 'lively.graphics';
 import { VerticalLayout, Label, Morph } from 'lively.morphic';
-import { TimelineCursor } from './cursor.js';
+import { TimelineCursor, Ruler } from './cursor.js';
 import { connect, disconnect } from 'lively.bindings';
 import { TimelineSequence } from './sequence.js';
 import { GlobalTimelineLayer, PropertyTimelineLayer, OverviewTimelineLayer } from './layer.js';
@@ -91,7 +91,8 @@ export class Timeline extends QinoqMorph {
     this.ui.scrollableContainer = new QinoqMorph(
       {
         name: 'scrollable container',
-        extent: pt(this.extent.x, this.extent.y - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
+        extent: pt(this.extent.x, this.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
+        position: pt(0, CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
         clipMode: 'auto'
       });
     this.addMorph(this.ui.scrollableContainer);
@@ -100,6 +101,15 @@ export class Timeline extends QinoqMorph {
     this.initializeLayerContainer();
     connect(this.ui.layerContainer, 'extent', this.ui.scrollableContainer, 'height', { converter: ' (extent) => extent.y > timeline.height - scrollbarHeight ? timeline.height - scrollbarHeight : extent.y', varMapping: { timeline: this, scrollbarHeight: TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT } }).update(this.ui.layerContainer.extent);
     this.initializeScrollBar();
+    this.initializeRuler();
+  }
+
+  initializeRuler () {
+    this.ui.ruler = new Ruler({
+      timeline: this,
+      _editor: this.editor
+    });
+    this.addMorph(this.ui.ruler);
   }
 
   initializeScrollBar () {
@@ -150,7 +160,7 @@ export class Timeline extends QinoqMorph {
   }
 
   initializeCursor () {
-    this.ui.cursor = new TimelineCursor({ displayValue: 0, timeline: this });
+    this.ui.cursor = new TimelineCursor({ displayValue: 0, timeline: this, ruler: this.ui.ruler });
     this.ui.layerContainer.addMorph(this.ui.cursor);
     this.ui.cursor.location = this.getPositionFromScroll(0);
     this.ui.cursor.height = this.ui.layerContainer.height;
@@ -263,7 +273,7 @@ export class Timeline extends QinoqMorph {
       const newLayerWidth = this._activeAreaWidth + TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + TIMELINE_CONSTANTS.INACTIVE_AREA_WIDTH;
       timelineLayer.width = newLayerWidth < this.owner.width ? this.owner.width : newLayerWidth;
     });
-
+    this.ui.ruler.updateExtent(this._activeAreaWidth);
     this.updateScrollerExtent();
   }
 
@@ -324,8 +334,9 @@ export class Timeline extends QinoqMorph {
   }
 
   updateScrollerPosition () {
-    const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * TIMELINE_CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
-    this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + TIMELINE_CONSTANTS.SCROLLBAR_MARGIN, TIMELINE_CONSTANTS.SCROLLBAR_MARGIN);
+    const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
+    this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
+    this.ui.ruler.scrollerUpdate(this.ui.layerContainer.scroll.x * relative);
   }
 
   relayout (newWindowExtent) {
