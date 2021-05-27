@@ -46,7 +46,7 @@ describe('Inspector', () => {
     return editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence).find(timelineSequence => timelineSequence.sequence.name == 'day background');
   }
 
-  describe('in the animations tab', () => {
+  describe('in the animations tab mode', () => {
     let animationTab;
 
     beforeEach(() => {
@@ -142,11 +142,11 @@ describe('Inspector', () => {
           text.abandon();
         });
 
-        it('textString', () => {
+        it('textString attribute', () => {
           expect(animationTab.displayedProperties).to.not.contain('textString');
         });
 
-        it('fontSize', () => {
+        it('fontSize attribute', () => {
           expect(animationTab.displayedProperties).to.not.contain('fontSize');
         });
       });
@@ -166,14 +166,14 @@ describe('Inspector', () => {
           label.abandon();
         });
 
-        it('textString', () => {
+        it('textString attribute', () => {
           expect(animationTab.displayedProperties).to.not.contain('textString');
         });
       });
     });
   });
 
-  describe('in the style tab', () => {
+  describe('in the style tab mode', () => {
     let styleTab, alignmentPanel, sharePanel;
 
     beforeEach(() => {
@@ -194,7 +194,7 @@ describe('Inspector', () => {
       expect(alignmentPanel.enabled).to.be.false;
     });
 
-    describe('once a morph was selected', () => {
+    describe('with a selected morph', () => {
       beforeEach(() => {
         inspector.targetMorph = morph;
       });
@@ -254,7 +254,7 @@ describe('Inspector', () => {
           expect(dropDownMenu.selectedValue).to.equal(shareButtonWithValues.preset.name);
         });
 
-        it('and text fields for all changeable tokens', () => {
+        it('shows the share panel with text fields for all changeable tokens', () => {
           const widgetContainer = sharePanel.submorphs[2];
 
           expect(widgetContainer.submorphs[0].textString).to.be.equal('Text');
@@ -279,7 +279,7 @@ describe('Inspector', () => {
           expect(widgetContainer.submorphs[1].name).to.be.equal('aStringWidget');
         });
 
-        it('and the text fields respect present token values', () => {
+        it('shows share panel with text fields which respect present token values', () => {
           inspector.targetMorph = shareButtonWithValues;
 
           const widgetContainer = sharePanel.submorphs[2];
@@ -291,7 +291,7 @@ describe('Inspector', () => {
             'I announce: I like trains!');
         });
 
-        it('and the drop down menu changes the preset and updates the panel', () => {
+        it('shows share panel with drop down menu which changes the preset and updates the panel', () => {
           const dropDownMenu = sharePanel.submorphs[1];
           const widgetContainer = sharePanel.submorphs[2];
 
@@ -302,7 +302,7 @@ describe('Inspector', () => {
           expect(widgetContainer.submorphs[1].textString).to.be.equal('');
         });
 
-        it('and the text field input changes the share button tokens', () => {
+        it('shows share panel with text fields which change the share button tokens on input', () => {
           const widgetContainer = sharePanel.submorphs[2];
 
           expect(shareButton.tokens.url.value).to.be.equal('');
