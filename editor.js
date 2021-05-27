@@ -118,6 +118,8 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   async initializePanels () {
+    this.ui.preview = this.addMorph(new Preview({ _editor: this }));
+
     this.ui.interactiveGraph = this.addMorph(new InteractiveGraph({
       position: pt(0, 0),
       extent: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT),
@@ -130,8 +132,6 @@ export class InteractivesEditor extends QinoqMorph {
         valueOf: (value) => value.left
       }
     }));
-
-    this.ui.preview = this.addMorph(new Preview({ _editor: this }));
 
     this.ui.inspector = new InteractiveMorphInspector({
       position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0),
@@ -203,10 +203,30 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   initializeLayout () {
-    this.layout = new ProportionalLayout({
-      lastExtent: this.extent
-    });
+    connect(this, 'extent', this, 'relayout');
     this.extent = pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT);
+  }
+
+  relayout (extent) {
+    this.ui.inspector.position = pt(extent.x - this.ui.inspector.width, 0);
+
+    this.ui.menuBar.position =
+      pt(this.ui.interactiveGraph.left, this.ui.interactiveGraph.bottom);
+    this.ui.menuBar.extent = pt(extent.x, this.ui.menuBar.height);
+
+    this.ui.tabContainer.position = pt(this.ui.menuBar.left, this.ui.menuBar.bottom);
+    this.ui.tabContainer.extent =
+      pt(extent.x, extent.y - this.ui.interactiveGraph.height -
+      this.ui.menuBar.height);
+
+    this.ui.preview.extent =
+      pt(extent.x - this.ui.interactiveGraph.width - this.ui.inspector.width,
+        this.ui.preview.height);
+    this.ui.preview.position =
+      pt(this.ui.interactiveGraph.right +
+        (this.ui.inspector.left -
+         this.ui.interactiveGraph.right -
+         this.ui.preview.width) / 2, 0);
   }
 
   async createInteractiveWithNamePrompt () {
