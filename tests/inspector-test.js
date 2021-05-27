@@ -139,11 +139,11 @@ describe('Inspector', () => {
         });
 
         it('textString', () => {
-          expect(animationTab.displayedProperties).not.to.contain('textString');
+          expect(animationTab.displayedProperties).to.not.contain('textString');
         });
 
         it('fontSize', () => {
-          expect(animationTab.displayedProperties).not.to.contain('fontSize');
+          expect(animationTab.displayedProperties).to.not.contain('fontSize');
         });
       });
 
@@ -163,7 +163,7 @@ describe('Inspector', () => {
         });
 
         it('textString', () => {
-          expect(animationTab.displayedProperties).not.to.contain('textString');
+          expect(animationTab.displayedProperties).to.not.contain('textString');
         });
       });
     });
@@ -183,7 +183,7 @@ describe('Inspector', () => {
     });
 
     it('has no share panel', () => {
-      expect(styleTab.submorphs).not.to.contain(sharePanel);
+      expect(styleTab.submorphs).to.not.contain(sharePanel);
     });
 
     it('disables alignment options when no targetMorph is set', () => {
@@ -200,7 +200,7 @@ describe('Inspector', () => {
       });
 
       it('still does not show share panel', () => {
-        expect(styleTab.submorphs).not.to.contain(sharePanel);
+        expect(styleTab.submorphs).to.not.contain(sharePanel);
       });
 
       describe('which is a share button', () => {
