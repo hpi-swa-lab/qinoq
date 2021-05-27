@@ -313,6 +313,7 @@ export class InteractivesEditor extends QinoqMorph {
     });
 
     this.interactive.scrollOverlay.scrollToResize = false;
+    this.ui.preview.clipMode = 'hidden';
 
     disconnect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
 
