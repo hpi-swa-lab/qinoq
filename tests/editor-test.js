@@ -371,18 +371,8 @@ describe('Editor', () => {
     });
   });
 
-  it('moves scroll holder', () => {
-    expect(interactive.scrollOverlay.globalPosition.equals(editor.ui.preview.globalPosition)).to.be.ok;
-    editor.ui.window.moveBy(pt(100, 100));
-    expect(interactive.scrollOverlay.globalPosition.equals(editor.ui.preview.globalPosition)).to.be.ok;
-  });
-
-  it('removes scrollholder from world when minimized', () => {
-    expect(interactive.scrollOverlay.world()).to.be.ok;
-    editor.ui.window.toggleMinimize();
-    expect(interactive.scrollOverlay.world()).to.not.be.ok;
-    editor.ui.window.toggleMinimize();
-    expect(interactive.scrollOverlay.world()).to.be.ok;
+  it('scrollholder is submorph of preview', () => {
+    expect(interactive.scrollOverlay.owner).to.be.deep.equal(interactive.owner);
   });
 
   it('changes scroll position when changing tab', async () => {
