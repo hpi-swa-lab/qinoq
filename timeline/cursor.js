@@ -5,6 +5,7 @@ import { arr } from 'lively.lang';
 import { disconnect, connect } from 'lively.bindings';
 import { TIMELINE_CONSTANTS } from './constants.js';
 import { QinoqMorph } from '../qinoq-morph.js';
+import { Canvas } from 'lively.components/canvas.js';
 export class TimelineCursor extends QinoqMorph {
   static get properties () {
     return {
@@ -31,19 +32,12 @@ export class TimelineCursor extends QinoqMorph {
           if (!this._deserializing) this.updatePosition();
         }
       },
+      ruler: {},
       fill: {
-        defaultValue: COLOR_SCHEME.SECONDARY,
-        set (color) {
-          this.setProperty('fill', color);
-          if (!this._deserializing) this.updateColor();
-        }
+        defaultValue: COLOR_SCHEME.SECONDARY
       },
       fontColor: {
-        defaultValue: COLOR_SCHEME.ON_SECONDARY,
-        set (color) {
-          this.setProperty('fontColor', color);
-          if (!this._deserializing) this.updateColor();
-        }
+        defaultValue: COLOR_SCHEME.ON_SECONDARY
       },
       name: {
         defaultValue: 'cursor'
@@ -51,7 +45,6 @@ export class TimelineCursor extends QinoqMorph {
       ui: {
         initialize () {
           if (this._deserializing) return;
-          this.initializeSubmorphs();
           this.initializeAppearance();
         }
       },
@@ -63,7 +56,7 @@ export class TimelineCursor extends QinoqMorph {
     this.ui = {};
     this.ui.label = new Label({
       name: 'cursor/head/text',
-      fontSize: TIMELINE_CONSTANTS.CURSOR_FONT_SIZE,
+      fontSize: CONSTANTS.CURSOR_FONT_SIZE,
       halosEnabled: false,
       reactsToPointer: false
     });
@@ -92,25 +85,17 @@ export class TimelineCursor extends QinoqMorph {
   }
 
   initializeAppearance () {
-    this.extent = pt(TIMELINE_CONSTANTS.CURSOR_WIDTH, 50);
-    this.clipMode = 'overflow';
-    this.ui.headCenter.position = pt(-this.ui.headCenter.width / 2 + 1, this.ui.headCenter.position.y);
+    this.extent = pt(CONSTANTS.CURSOR_WIDTH, 50);
     this.borderStyle = 'none';
-    this.updateColor();
   }
 
   redraw () {
-    this.ui.label.textString = this.displayValue.toString();
     this.updatePosition();
-  }
-
-  updateColor () {
-    this.ui.head.fill = this.fill;
-    this.ui.label.fontColor = this.fontColor;
   }
 
   updatePosition () {
     this.position = pt(this.location - this.width / 2 + 2, this.position.y);
+    this.ruler.updatePosition(this.location, this.displayValue);
   }
 
   onOwnerChanged (newOwner) {
@@ -131,5 +116,90 @@ export class TimelineCursor extends QinoqMorph {
   remove () {
     if (this.owner) disconnect(this.owner, 'extent', this, 'height');
     super.remove();
+  }
+}
+
+export class Ruler extends QinoqMorph {
+  static get properties () {
+    return {
+      name: {
+        defaultValue: 'ruler'
+      },
+      timeline: {},
+      ui: {
+        after: ['timeline'],
+        defaultValue: {},
+        initialize () {
+          if (this._deserializing) return;
+          this.initializeScale();
+          this.initializeHead();
+        }
+      }
+    };
+  }
+
+  initializeHead () {
+    this.ui.label = new Label({
+      name: 'ruler/head/text',
+      fontSize: CONSTANTS.CURSOR_FONT_SIZE,
+      fontColor: COLOR_SCHEME.ON_SECONDARY
+    });
+    this.ui.head = new QinoqMorph({
+      name: 'ruler/head',
+      layout: new HorizontalLayout({
+        spacing: 3,
+        autoResize: true
+      }),
+      borderRadius: 4,
+      fill: COLOR_SCHEME.SECONDARY,
+      submorphs: [this.ui.label]
+    });
+    this.ui.headCenter = new QinoqMorph({
+      extent: pt(20, 40),
+      name: 'ruler/head/center',
+      fill: COLOR_SCHEME.TRANSPARENT,
+      layout: new HorizontalLayout({
+        direction: 'centered'
+      }),
+      submorphs: [this.ui.head]
+    });
+    this.addMorph(this.ui.headCenter);
+  }
+
+  async initializeScale () {
+    this.ui.scale = new Canvas({
+      name: 'ruler/scale',
+      extent: pt(this.timeline.ui.layerContainer.width, this.height)
+    });
+    this.addMorph(this.ui.scale);
+    await this.ui.scale.whenRendered(); this.redrawScale();
+  }
+
+  updatePosition (newLocation, displayValue) {
+    this.ui.label.textString = displayValue.toString();
+    this.ui.headCenter.position = pt(this.timeline.ui.layerContainer.position.x + newLocation - this.ui.headCenter.width / 2, this.ui.headCenter.position.y);
+  }
+
+  scrollerUpdate () {
+    // do magic here
+  }
+
+  updateExtent (newWidth) {
+    this.ui.scale.width = newWidth + 4;
+    this.redrawScale();
+  }
+
+  redraw () {
+    this.redrawScale();
+  }
+
+  redrawScale (newWidth) {
+    if (!this.ui.scale.context) return false;
+    const style = { color: COLOR_SCHEME.KEYFRAME_FILL };
+    this.ui.scale.clear(COLOR_SCHEME.ON_BACKGROUND_VARIANT);
+    for (let i = 0; i <= this.ui.scale.width; i += 10) {
+      const y = (i / 100 == parseInt(i / 100)) ? 0 : 5;
+      this.ui.scale.line(pt((i + 2) * this.timeline.zoomFactor, y), pt((i + 2) * this.timeline.zoomFactor, 10), style);
+    }
   }
 }
