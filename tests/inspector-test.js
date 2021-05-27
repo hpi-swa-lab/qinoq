@@ -147,7 +147,7 @@ describe('Inspector', () => {
         });
       });
 
-      describe('icon buttons', () => {
+      describe('labels with icons', () => {
         let label;
 
         beforeEach(() => {
