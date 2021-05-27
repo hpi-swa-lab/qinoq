@@ -120,7 +120,7 @@ export class TimelineSequence extends QinoqMorph {
   initialize () {
     const startPosition = this.timelineLayer.timeline.getPositionFromScroll(this.sequence.start);
     const endPosition = startPosition + this.timelineLayer.timeline.getWidthFromDuration(this.sequence.duration);
-    this.position = pt(startPosition, TIMELINE_CONSTANTS.LAYER_SEQUENCE_Y_OFFSET);
+    this.position = pt(startPosition, TIMELINE_CONSTANTS.SEQUENCE_Y_OFFSET);
     this.width = endPosition - startPosition;
     this.label = new Label({
       padding: rect(5, 4, 0, 0),
@@ -285,18 +285,18 @@ export class TimelineSequence extends QinoqMorph {
     if (!event.hand.timelineSequenceStates) return;
 
     const { dragStartMorphPosition, absDragDelta } = event.state;
-    this.position = pt(dragStartMorphPosition.x + absDragDelta.x, TIMELINE_CONSTANTS.LAYER_SEQUENCE_Y_OFFSET);
+    this.position = pt(dragStartMorphPosition.x + absDragDelta.x, TIMELINE_CONSTANTS.SEQUENCE_Y_OFFSET);
     const dragDeltaX = absDragDelta.x;
     event.hand.timelineSequenceStates.filter(dragState => dragState.timelineSequence !== this).forEach(dragState => {
-      dragState.timelineSequence.position = pt(dragState.previousPosition.x + dragDeltaX, TIMELINE_CONSTANTS.LAYER_SEQUENCE_Y_OFFSET);
+      dragState.timelineSequence.position = pt(dragState.previousPosition.x + dragDeltaX, TIMELINE_CONSTANTS.SEQUENCE_Y_OFFSET);
     });
 
     if (event.hand.leftMostSequenceStates[0].timelineSequence.position.x <= TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
-      event.hand.leftMostSequenceStates[0].timelineSequence.position = pt(TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, TIMELINE_CONSTANTS.LAYER_SEQUENCE_Y_OFFSET);
+      event.hand.leftMostSequenceStates[0].timelineSequence.position = pt(TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, TIMELINE_CONSTANTS.SEQUENCE_Y_OFFSET);
       event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.showWarning('left', event.hand.position.x));
 
       event.hand.timelineSequenceStates.forEach(dragState => {
-        dragState.timelineSequence.position = pt(TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + dragState.previousPosition.x - event.hand.leftMostSequenceStates[0].previousPosition.x, TIMELINE_CONSTANTS.LAYER_SEQUENCE_Y_OFFSET);
+        dragState.timelineSequence.position = pt(TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + dragState.previousPosition.x - event.hand.leftMostSequenceStates[0].previousPosition.x, TIMELINE_CONSTANTS.SEQUENCE_Y_OFFSET);
       });
     } else {
       event.hand.leftMostSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.hideWarning('left'));
@@ -407,16 +407,16 @@ export class TimelineSequence extends QinoqMorph {
         this.timeline.getSelectedTimelineSequences(s => s !== this).forEach(timelineSequence =>
           timelineSequence[snapTarget] = pt(
             Math.abs(this[snapTarget].x - snapPosition - timelineSequence[snapTarget].x),
-            TIMELINE_CONSTANTS.LAYER_SEQUENCE_Y_OFFSET));
+            TIMELINE_CONSTANTS.SEQUENCE_Y_OFFSET));
 
-        this[snapTarget] = pt(snapPosition, TIMELINE_CONSTANTS.LAYER_SEQUENCE_Y_OFFSET);
+        this[snapTarget] = pt(snapPosition, TIMELINE_CONSTANTS.SEQUENCE_Y_OFFSET);
         break;
       }
 
       case 'resizeLeft': {
         if (!startIsCloserThanEnd) return;
         const newWidth = this.topRight.x - snapPosition;
-        this.position = pt(snapPosition, TIMELINE_CONSTANTS.LAYER_SEQUENCE_Y_OFFSET);
+        this.position = pt(snapPosition, TIMELINE_CONSTANTS.SEQUENCE_Y_OFFSET);
         this.width = newWidth;
         break;
       }
@@ -477,16 +477,16 @@ export class TimelineSequence extends QinoqMorph {
     if (newSequenceWidth < TIMELINE_CONSTANTS.MINIMAL_SEQUENCE_WIDTH) {
       this.showWarning('left', -dragDelta);
       this.extent = pt(TIMELINE_CONSTANTS.MINIMAL_SEQUENCE_WIDTH, this.height);
-      this.position = pt(previousTopRight.x - TIMELINE_CONSTANTS.MINIMAL_SEQUENCE_WIDTH, TIMELINE_CONSTANTS.LAYER_SEQUENCE_Y_OFFSET);
+      this.position = pt(previousTopRight.x - TIMELINE_CONSTANTS.MINIMAL_SEQUENCE_WIDTH, TIMELINE_CONSTANTS.SEQUENCE_Y_OFFSET);
     }
 
     // stop resizing due to end of timeline
     else if (sequenceState.previousPosition.x + dragDelta < TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
       this.showWarning('left', dragDelta);
-      this.position = pt(TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, TIMELINE_CONSTANTS.LAYER_SEQUENCE_Y_OFFSET);
+      this.position = pt(TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, TIMELINE_CONSTANTS.SEQUENCE_Y_OFFSET);
       this.extent = pt(previousTopRight.x - TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, this.height);
     } else {
-      this.position = pt(sequenceState.previousPosition.x + dragDelta, TIMELINE_CONSTANTS.LAYER_SEQUENCE_Y_OFFSET);
+      this.position = pt(sequenceState.previousPosition.x + dragDelta, TIMELINE_CONSTANTS.SEQUENCE_Y_OFFSET);
       this.extent = pt(newSequenceWidth, this.height);
       this.hideWarning('left');
     }
@@ -606,7 +606,7 @@ export class TimelineSequence extends QinoqMorph {
       }
       recipient.addMorph(this);
       const xPosition = Math.round(Math.max(this.position.x, TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET));
-      this.position = pt(xPosition, TIMELINE_CONSTANTS.LAYER_SEQUENCE_Y_OFFSET);
+      this.position = pt(xPosition, TIMELINE_CONSTANTS.SEQUENCE_Y_OFFSET);
       this.timelineLayer = this.owner;
       if (this.isOverlappingOtherSequence()) {
         $world.setStatusMessage('Find a free spot!', COLOR_SCHEME.ERROR);
