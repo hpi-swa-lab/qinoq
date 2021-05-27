@@ -366,7 +366,10 @@ class InteractiveScrollHolder extends Morph {
         defaultValue: false
       },
       // holds morphs that are created with the topbar for the editor to subscribe to
-      newMorph: {}
+      newMorph: {},
+      scrollToResize: {
+        defaultValue: false
+      }
     };
   }
 
@@ -375,7 +378,7 @@ class InteractiveScrollHolder extends Morph {
   }
 
   onMouseWheel (event) {
-    if (zoomKeyPressed(event)) {
+    if (this.scrollToResize && zoomKeyPressed(event)) {
       event.domEvt.preventDefault();
       this.interactive.extent = pt(this.interactive.extent.x - event.domEvt.deltaY, this.interactive.extent.y + event.domEvt.deltaY);
       this.interactive.interactiveZoomed();
