@@ -231,6 +231,8 @@ export class InteractivesEditor extends QinoqMorph {
       });
     });
 
+    this.interactive.scrollOverlay.scrollToResize = true;
+
     connect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
 
     connect(this.interactive, 'name', this.ui.globalTab, 'caption').update(this.interactive.name);
@@ -306,6 +308,8 @@ export class InteractivesEditor extends QinoqMorph {
         }
       });
     });
+
+    this.interactive.scrollOverlay.scrollToResize = false;
 
     disconnect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
 
