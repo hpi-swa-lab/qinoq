@@ -3,6 +3,9 @@ import { Canvas } from 'lively.components/canvas.js';
 import { pt } from 'lively.graphics';
 import { COLOR_SCHEME } from '../colors.js';
 
+// To work as expected, instances of this class need to be submorphs of a Timeline Layer
+// The main purpose of this class is acting as an event propagator that delegates Events from here to the owner (Layer).
+// This is a cleaner way instead of just creating a morph and add the event delegating functions.
 export class ActiveArea extends Canvas {
   static get properties () {
     return {
@@ -13,7 +16,7 @@ export class ActiveArea extends Canvas {
         defaultValue: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0)
       },
       reactsToPointer: {
-        defaultValue: false
+        defaultValue: true
       },
       fill: {
         defaultValue: COLOR_SCHEME.SURFACE_VARIANT
