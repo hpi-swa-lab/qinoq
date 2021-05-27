@@ -559,7 +559,8 @@ class InteractiveScrollHolder extends Morph {
     return targetedMorph;
   }
 
-  onOwnerChanged () {
+  onOwnerChanged (newOwner) {
+    if (!newOwner) return;
     // for unkown reasons, the scrollOverlay escaped the editor on some interactions
     // this catches it back it
     if (this.owner != this.interactive.owner) {
