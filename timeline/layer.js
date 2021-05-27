@@ -61,6 +61,7 @@ export class TimelineLayer extends QinoqMorph {
 
   remove () {
     this.owner.remove();
+    super.remove();
   }
 }
 

@@ -26,8 +26,15 @@ export class ActiveArea extends Canvas {
       },
       acceptsDrops: {
         defaultValue: false
+      },
+      halosEnabeld: {
+        defaultValue: false
       }
     };
+  }
+
+  get isActiveArea () {
+    return true;
   }
 
   onMouseDown (event) {
