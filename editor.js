@@ -366,6 +366,7 @@ export class InteractivesEditor extends QinoqMorph {
       { keys: 'Right', command: { command: 'move sequence right or increase scroll position', args: { stepSize: CONSTANTS.DEFAULT_SCROLL_STEP } } },
       { keys: 'Shift-Right', command: { command: 'move sequence right or increase scroll position', args: { stepSize: CONSTANTS.LARGE_SCROLL_STEP } } },
       { keys: 'Ctrl-A', command: 'select all items' },
+      { keys: 'Ctrl-C', command: 'copy selection' },
       { keys: 'Delete', command: 'delete selected items' }
     ].concat(super.keybindings);
   }
@@ -720,6 +721,16 @@ export class InteractivesEditor extends QinoqMorph {
           if (args.openInHand) this.ui.globalTimeline.createTimelineSequenceInHand(newSequence);
 
           return newSequence;
+        }
+      },
+      {
+        name: 'copy selection',
+        doc: 'Copy selected items. Currently only works for one selected sequence',
+        exec: () => {
+          const selectedTimelineSequence = this.ui.globalTimeline.selectedTimelineSequences[0];
+          if (selectedTimelineSequence) {
+            this.copySequence(selectedTimelineSequence.sequence);
+          }
         }
       },
       {
