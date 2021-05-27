@@ -593,7 +593,7 @@ export class TimelineSequence extends QinoqMorph {
   onBeingDroppedOn (hand, recipient) {
     if (recipient.isTimelineLayer) {
       const positionInLayer = recipient.localize(hand.position).x;
-      if (this.morphBeneath(hand.position).name != 'active area' && positionInLayer > CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
+      if (!this.morphBeneath(hand.position).isActiveArea && positionInLayer > CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
         this.sequence.start = this.interactive.length;
         const newSequencePosition = recipient.timeline.getPositionFromScroll(this.sequence.start);
         // it is important to calculate the position beforehand since adding the sequence will change the model
