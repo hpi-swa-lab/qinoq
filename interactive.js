@@ -319,6 +319,12 @@ export class Interactive extends DeserializationAwareMorph {
       }
     }
   }
+
+  get thisAndAllSubmorphs () {
+    const result = [this];
+    this.sequences.forEach(sequence => sequence.withAllSubmorphsDo(morph => result.push(morph)));
+    return result;
+  }
 }
 
 class InteractiveScrollHolder extends Morph {

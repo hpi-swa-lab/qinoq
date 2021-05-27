@@ -53,7 +53,7 @@ export class InteractiveGraph extends QinoqMorph {
 
   removeConnections () {
     if (!this.interactive) return;
-    this.interactive.withAllSubmorphsDo(morph => {
+    this.interactive.thisAndAllSubmorphs.forEach(morph => {
       if (morph && morph.attributeConnections) {
         morph.attributeConnections.filter(connection =>
           connection.targetObj.isInteractiveGraph ||
