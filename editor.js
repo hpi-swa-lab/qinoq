@@ -251,18 +251,15 @@ export class InteractivesEditor extends QinoqMorph {
 
   onInteractiveZoomed () {
     const previewExtent = this.ui.preview.extent;
-    // only show scrollbars if they are necessary
-    if (this.interactive.extent.x > previewExtent.x || this.interactive.extent.y > previewExtent.y) {
-      this.ui.preview.clipMode = 'scroll';
-    } else this.ui.preview.clipMode = 'hidden';
 
-    // resizes the scrollOverlay to not block the scrollBars of the Preview
-    if (this.interactive.extent.x <= previewExtent.x - this.ui.preview.scrollbarOffset.x) {
-      this.interactive.scrollOverlay.extent.x = this.interactive.extent.x;
+    // only show scrollbars if they are necessary
+    if (this.interactive.extent.x >= previewExtent.x) {
+      this.ui.preview.clipMode = 'scroll';
     }
-    if (this.interactive.extent.y <= previewExtent.y - this.ui.preview.scrollbarOffset.y) {
-      this.interactive.scrollOverlay.y = this.interactive.extent.y;
+    if (this.interactive.extent.y >= previewExtent.y) {
+      this.ui.preview.clipMode = 'scroll';
     }
+    if (!(this.interactive.extent.x > previewExtent.x) && !(this.interactive.extent.y > previewExtent.y)) this.ui.preview.clipMode = 'hidden';
   }
 
   // call this to propagate changes to the scrollPosition to the actual interactive
