@@ -1,17 +1,17 @@
 import { COLOR_SCHEME } from '../colors.js';
 import { pt } from 'lively.graphics';
-import { CONSTANTS } from './constants.js';
 import { singleSelectKeyPressed } from '../keys.js';
 import { getColorForProperty } from '../properties.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 import { Polygon } from 'lively.morphic';
 import { arr } from 'lively.lang';
+import { TIMELINE_CONSTANTS } from './constants.js';
 
 export class TimelineKeyframe extends QinoqMorph {
   static get properties () {
     return {
       extent: {
-        defaultValue: CONSTANTS.KEYFRAME_EXTENT
+        defaultValue: TIMELINE_CONSTANTS.KEYFRAME_EXTENT
       },
       fill: {
         defaultValue: COLOR_SCHEME.KEYFRAME_FILL
@@ -101,7 +101,7 @@ export class TimelineKeyframe extends QinoqMorph {
 
   updatePosition () {
     this._lockModelUpdate = true;
-    if (this.layer) this.position = pt(this.timeline.getPositionFromKeyframe(this.keyframe), CONSTANTS.LAYER_KEYFRAME_Y_OFFSET);
+    if (this.layer) this.position = pt(this.timeline.getPositionFromKeyframe(this.keyframe), TIMELINE_CONSTANTS.LAYER_KEYFRAME_Y_OFFSET);
     this._lockModelUpdate = false;
   }
 
@@ -204,7 +204,7 @@ export class TimelineKeyframe extends QinoqMorph {
     if (!event.hand.dragKeyframeStates) return;
 
     const { dragStartMorphPosition, absDragDelta } = event.state;
-    this.position = pt(dragStartMorphPosition.x + absDragDelta.x, CONSTANTS.LAYER_KEYFRAME_Y_OFFSET);
+    this.position = pt(dragStartMorphPosition.x + absDragDelta.x, TIMELINE_CONSTANTS.LAYER_KEYFRAME_Y_OFFSET);
 
     const referenceDragState = event.hand.dragKeyframeStates.find(dragState => dragState.timelineKeyframe == this);
 
@@ -268,11 +268,11 @@ export class TimelineKeyframe extends QinoqMorph {
     const snapPositionOnTimeline = Math.round(this.timeline.getPositionFromKeyframe(keyframe));
     const diff = Math.abs(this.position.x - snapPositionOnTimeline);
 
-    if (CONSTANTS.SNAPPING_THRESHOLD < diff) return;
+    if (TIMELINE_CONSTANTS.SNAPPING_THRESHOLD < diff) return;
     this.timeline.selectedTimelineKeyframes.filter(otherKeyframe => !otherKeyframe.keyframe.equals(this.keyframe)).forEach(timelineKeyframe =>
-      timelineKeyframe.position = pt(Math.abs(this.position.x - snapPositionOnTimeline - timelineKeyframe.position.x), CONSTANTS.LAYER_KEYFRAME_Y_OFFSET));
+      timelineKeyframe.position = pt(Math.abs(this.position.x - snapPositionOnTimeline - timelineKeyframe.position.x), TIMELINE_CONSTANTS.LAYER_KEYFRAME_Y_OFFSET));
 
-    this.position = pt(snapPositionOnTimeline, CONSTANTS.LAYER_KEYFRAME_Y_OFFSET);
+    this.position = pt(snapPositionOnTimeline, TIMELINE_CONSTANTS.LAYER_KEYFRAME_Y_OFFSET);
   }
 
   prepareSnappingData (event) {
@@ -306,7 +306,7 @@ export class TimelineKeyframe extends QinoqMorph {
     this.timeline.overviewLayers
       .flatMap(overviewLayer => overviewLayer.keyframeLines)
       .flatMap(keyframeLine => keyframeLine.submorphs)
-      .filter(submorph => submorph.position.x + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET == this.position.x)
+      .filter(submorph => submorph.position.x + TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET == this.position.x)
       .forEach(keyframe => {
         keyframe.fill = COLOR_SCHEME.PRIMARY;
         this._snapLinesIndicators.push(keyframe);
@@ -316,12 +316,12 @@ export class TimelineKeyframe extends QinoqMorph {
   }
 
   buildSnapIndicator () {
-    const spacing = CONSTANTS.KEYFRAME_SNAP_INDICATOR_SPACING;
-    const mid = CONSTANTS.SNAP_INDICATOR_WIDTH / 2;
-    const vertices = [pt(-mid, -spacing), pt(mid, -spacing), pt(mid / 4, 0), pt(mid / 4, CONSTANTS.KEYFRAME_HEIGHT), pt(mid, CONSTANTS.KEYFRAME_HEIGHT + spacing), pt(-mid, CONSTANTS.KEYFRAME_HEIGHT + spacing), pt(-mid / 4, CONSTANTS.KEYFRAME_HEIGHT), pt(-mid / 4, 0)];
+    const spacing = TIMELINE_CONSTANTS.KEYFRAME_SNAP_INDICATOR_SPACING;
+    const mid = TIMELINE_CONSTANTS.SNAP_INDICATOR_WIDTH / 2;
+    const vertices = [pt(-mid, -spacing), pt(mid, -spacing), pt(mid / 4, 0), pt(mid / 4, TIMELINE_CONSTANTS.KEYFRAME_HEIGHT), pt(mid, TIMELINE_CONSTANTS.KEYFRAME_HEIGHT + spacing), pt(-mid, TIMELINE_CONSTANTS.KEYFRAME_HEIGHT + spacing), pt(-mid / 4, TIMELINE_CONSTANTS.KEYFRAME_HEIGHT), pt(-mid / 4, 0)];
     return new Polygon({
       fill: COLOR_SCHEME.PRIMARY,
-      position: pt(this.center.x - CONSTANTS.SNAP_INDICATOR_WIDTH / 2,
+      position: pt(this.center.x - TIMELINE_CONSTANTS.SNAP_INDICATOR_WIDTH / 2,
         0),
       vertices
     });
@@ -364,7 +364,7 @@ export class KeyframeLine extends QinoqMorph {
       layer: {},
       _editor: {},
       height: {
-        defaultValue: CONSTANTS.KEYFRAME_LINE_HEIGHT
+        defaultValue: TIMELINE_CONSTANTS.KEYFRAME_LINE_HEIGHT
       }
     };
   }
@@ -383,11 +383,12 @@ export class KeyframeLine extends QinoqMorph {
 
   addKeyframes () {
     this.animation.keyframes.forEach(keyframe => {
-      const position = pt(this.timeline.getPositionFromKeyframe(keyframe) - this.position.x,
-        -CONSTANTS.KEYFRAME_EXTENT.scaleBy(CONSTANTS.KEYFRAME_LINE_KEYFRAME_SCALE).x / 2 / Math.sqrt(2));
+      const position = pt(
+        this.timeline.getPositionFromKeyframe(keyframe) - this.position.x,
+        -TIMELINE_CONSTANTS.KEYFRAME_EXTENT.scaleBy(TIMELINE_CONSTANTS.KEYFRAME_LINE_KEYFRAME_SCALE).x / 2 / Math.sqrt(2));
       this.addMorph(new QinoqMorph({
         position,
-        extent: CONSTANTS.KEYFRAME_EXTENT.scaleBy(CONSTANTS.KEYFRAME_LINE_KEYFRAME_SCALE),
+        extent: TIMELINE_CONSTANTS.KEYFRAME_EXTENT.scaleBy(TIMELINE_CONSTANTS.KEYFRAME_LINE_KEYFRAME_SCALE),
         fill: COLOR_SCHEME.KEYFRAME_BORDER,
         rotation: Math.PI / 4,
         name: 'aKeyframeLineKeyframe'

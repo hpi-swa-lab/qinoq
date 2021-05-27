@@ -1,10 +1,10 @@
 import { VerticalLayout, Icon, Label } from 'lively.morphic';
-import { CONSTANTS } from './constants.js';
 import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from '../colors.js';
 import { Sequence } from '../index.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 import { QinoqButton } from '../components/qinoq-button.js';
+import { TIMELINE_CONSTANTS } from './constants.js';
 
 export class TimelineLayerInfo extends QinoqMorph {
   static get properties () {
@@ -56,7 +56,7 @@ export class GlobalTimelineLayerInfo extends TimelineLayerInfo {
   static get properties () {
     return {
       height: {
-        defaultValue: CONSTANTS.GLOBAL_LAYER_HEIGHT
+        defaultValue: TIMELINE_CONSTANTS.GLOBAL_LAYER_HEIGHT
       }
     };
   }
@@ -149,7 +149,7 @@ export class SequenceTimelineLayerInfo extends TimelineLayerInfo {
   static get properties () {
     return {
       height: {
-        defaultValue: CONSTANTS.SEQUENCE_LAYER_HEIGHT
+        defaultValue: TIMELINE_CONSTANTS.SEQUENCE_LAYER_HEIGHT
       }
     };
   }

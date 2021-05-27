@@ -3,7 +3,7 @@ import { COLOR_SCHEME } from '../colors.js';
 import { pt } from 'lively.graphics';
 import { arr } from 'lively.lang';
 import { disconnect, connect } from 'lively.bindings';
-import { CONSTANTS } from './constants.js';
+import { TIMELINE_CONSTANTS } from './constants.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 export class TimelineCursor extends QinoqMorph {
   static get properties () {
@@ -63,7 +63,7 @@ export class TimelineCursor extends QinoqMorph {
     this.ui = {};
     this.ui.label = new Label({
       name: 'cursor/head/text',
-      fontSize: CONSTANTS.CURSOR_FONT_SIZE,
+      fontSize: TIMELINE_CONSTANTS.CURSOR_FONT_SIZE,
       halosEnabled: false,
       reactsToPointer: false
     });
@@ -92,7 +92,7 @@ export class TimelineCursor extends QinoqMorph {
   }
 
   initializeAppearance () {
-    this.extent = pt(CONSTANTS.CURSOR_WIDTH, 50);
+    this.extent = pt(TIMELINE_CONSTANTS.CURSOR_WIDTH, 50);
     this.clipMode = 'overflow';
     this.ui.headCenter.position = pt(-this.ui.headCenter.width / 2 + 1, this.ui.headCenter.position.y);
     this.borderStyle = 'none';
