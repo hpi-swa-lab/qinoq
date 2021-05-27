@@ -1,12 +1,13 @@
 import { COLOR_SCHEME } from '../colors.js';
 import { pt, Color } from 'lively.graphics';
-import { CONSTANTS } from './constants.js';
 import { connect, disconnect } from 'lively.bindings';
 import { Canvas } from 'lively.components/canvas.js';
 import { animatedProperties, getColorForProperty } from '../properties.js';
 import { TimelineKeyframe, KeyframeLine } from './keyframe.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 import { ActiveArea } from './active-area.js';
+import { TIMELINE_CONSTANTS } from './constants.js';
+
 export class TimelineLayer extends QinoqMorph {
   static get properties () {
     return {
@@ -71,7 +72,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
         defaultValue: true
       },
       height: {
-        defaultValue: CONSTANTS.GLOBAL_LAYER_HEIGHT
+        defaultValue: TIMELINE_CONSTANTS.GLOBAL_LAYER_HEIGHT
       },
       layer: {
         set (layer) {
@@ -207,7 +208,7 @@ export class SequenceTimelineLayer extends TimelineLayer {
   static get properties () {
     return {
       height: {
-        defaultValue: CONSTANTS.SEQUENCE_LAYER_HEIGHT
+        defaultValue: TIMELINE_CONSTANTS.SEQUENCE_LAYER_HEIGHT
       },
       morph: {
         set (morph) {
@@ -323,7 +324,7 @@ export class OverviewTimelineLayer extends SequenceTimelineLayer {
   addTimelineKeyframes () {
     const animations = this.sequence.getAnimationsForMorph(this.morph);
     animations.forEach((animation, index) => this.addKeyframesForAnimation(animation, index));
-    this.height = Math.max(CONSTANTS.SEQUENCE_LAYER_HEIGHT, CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * animations.length);
+    this.height = Math.max(TIMELINE_CONSTANTS.SEQUENCE_LAYER_HEIGHT, TIMELINE_CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * TIMELINE_CONSTANTS.KEYFRAME_LINE_HEIGHT * animations.length);
     this.layerInfo.height = this.height;
     this.redraw();
   }
@@ -332,7 +333,7 @@ export class OverviewTimelineLayer extends SequenceTimelineLayer {
     this.layerInfo.restyleCollapseToggle();
     this.opacity = 0;
     this.expandedHeight = this.height;
-    this.height = CONSTANTS.SEQUENCE_LAYER_HEIGHT;
+    this.height = TIMELINE_CONSTANTS.SEQUENCE_LAYER_HEIGHT;
 
     this.updateTooltip();
     this.reactsToPointer = false;
@@ -362,7 +363,7 @@ export class OverviewTimelineLayer extends SequenceTimelineLayer {
       _editor: this.editor,
       animation,
       layer: this,
-      yPosition: CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * index
+      yPosition: TIMELINE_CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * TIMELINE_CONSTANTS.KEYFRAME_LINE_HEIGHT * index
     }));
     this.onNumberOfKeyframeLinesChanged();
   }
@@ -440,7 +441,7 @@ export class PropertyTimelineLayer extends SequenceTimelineLayer {
   addTimelineKeyframes () {
     const animations = this.sequence.getAnimationsForMorph(this.morph);
     animations.forEach((animation, index) => this.addKeyframesForAnimation(animation));
-    this.height = Math.max(CONSTANTS.GLOBAL_LAYER_HEIGHT, CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * CONSTANTS.KEYFRAME_LINE_HEIGHT * animations.length);
+    this.height = Math.max(TIMELINE_CONSTANTS.GLOBAL_LAYER_HEIGHT, TIMELINE_CONSTANTS.KEYFRAME_LINE_HEIGHT + 2 * TIMELINE_CONSTANTS.KEYFRAME_LINE_HEIGHT * animations.length);
     this.layerInfo.height = this.height;
     this.redraw();
   }
@@ -494,7 +495,7 @@ export class PropertyTimelineLayer extends SequenceTimelineLayer {
     }
   }
 
-  keyframePositionToActiveAreaPosition (x) { return this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET; }
+  keyframePositionToActiveAreaPosition (x) { return this.timeline.getPositionFromScroll(this.timeline.sequence.getAbsolutePosition(x)) - TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET; }
 
   drawNumberCurve () {
     const style = { color: COLOR_SCHEME.KEYFRAME_FILL };
