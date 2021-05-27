@@ -104,7 +104,8 @@ Closes [fill in your issues here]
 - [ ] when changing to a sequence timelines tab, the scrollposition is always set to the beginning of this sequence
 - [ ] when clicking on a single keyframe this one is highlighted with a blue border
 - [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the sequence and to the prev/next keyframe
-- [ ] when making the zoom factor higher/lower with the input field, the length of the active area adapt accordingly as well as the position of the keyframes and the cursor updates its position
+- [ ] when changing the zoom factor with the input field, the length of the active area adapt accordingly as well as the position of the keyframes and the cursor updates its position
+- [ ] hovering over a property layer that animates position (e.g. position on sun), a graph in the preview is shown that displays the positions of the keyframes and lines between them
 - [ ] it is possible to select more than one keyframe using `Alt`
 - [ ] when more than two keyframes are selected, the context menu allows changing of relative positions, where entering a relative position changes the position of all selected keyframes - this works with all menu items and is undoable as expected (one undo for all selected keyframes)
 - [ ] having more than one keyframe selected and dragging one moves all keyframes, this is undoable
