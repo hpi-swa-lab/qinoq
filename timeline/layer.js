@@ -86,10 +86,6 @@ export class GlobalTimelineLayer extends TimelineLayer {
     };
   }
 
-  get isGlobalTimelineLayer () {
-    return true;
-  }
-
   get timelineSequences () {
     return this.submorphs.filter(submorph => !!submorph.isTimelineSequence);
   }
