@@ -110,10 +110,10 @@ class Animation {
     return transformValue ? this.transformValue(value) : value;
   }
 
-  getValues (sampling = 0.01) {
+  getValues (sampling = 0.01, transformValue = false) {
     const values = {};
     for (let progress = 0; progress <= 1; progress += sampling) {
-      values[progress] = this.getValueForProgress(progress, false);
+      values[progress] = this.getValueForProgress(progress, transformValue);
     }
     return values;
   }
