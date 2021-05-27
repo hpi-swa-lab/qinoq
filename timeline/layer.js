@@ -14,7 +14,7 @@ export class TimelineLayer extends QinoqMorph {
       layerInfo: {},
       container: {
         initialize () {
-          if (!this._deserializing) this.addAreaMorphs();
+          if (!this._deserializing) this.addActiveArea();
         }
       },
       focusable: {
@@ -51,7 +51,7 @@ export class TimelineLayer extends QinoqMorph {
     return (this.container.submorphs.length - 2);
   }
 
-  addAreaMorphs () {
+  addActiveArea () {
     const activeArea = this.addMorph(new ActiveArea());
   }
 
@@ -94,6 +94,11 @@ export class GlobalTimelineLayer extends TimelineLayer {
 
   get timelineSequences () {
     return this.submorphs.filter(submorph => !!submorph.isTimelineSequence);
+  }
+
+  addActiveArea () {
+    super.addActiveArea();
+    this.activeArea.reactsToPointer = false;
   }
 
   updateTooltip () {
