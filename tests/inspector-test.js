@@ -23,6 +23,10 @@ class InspectorTestMorph extends Morph {
 describe('Inspector', () => {
   let morph, editor, interactive, inspector;
 
+  function closeEditor () {
+    editor.ui.window.close();
+  }
+
   beforeEach(async () => {
     editor = await new InteractivesEditor().initialize();
     interactive = await exampleInteractive();
@@ -35,7 +39,7 @@ describe('Inspector', () => {
   });
 
   afterEach(() => {
-    editor.owner.close();
+    closeEditor();
   });
 
   function getDayBackgroundTimelineSequence () {
