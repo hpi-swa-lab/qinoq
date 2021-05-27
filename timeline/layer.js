@@ -7,6 +7,7 @@ import { TimelineKeyframe, KeyframeLine } from './keyframe.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 import { TIMELINE_CONSTANTS } from './constants.js';
 import { ActiveArea } from './active-area.js';
+import { error } from '../utilities/messages.js';
 
 export class TimelineLayer extends QinoqMorph {
   static get properties () {
@@ -195,7 +196,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
     if (this.interactive.sequenceWouldBeValidInLayer(null, position, sequence.duration, this.layer)) {
       this.editor.pasteSequenceAt(position, this.layer);
     } else {
-      $world.setStatusMessage('Not enough space!', COLOR_SCHEME.ERROR);
+      error('Not enough space!');
     }
   }
 

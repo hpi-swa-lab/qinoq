@@ -6,6 +6,7 @@ import { TIMELINE_CONSTANTS } from './constants.js';
 import { arr } from 'lively.lang';
 import { singleSelectKeyPressed, rangeSelectKeyPressed } from '../keys.js';
 import { QinoqMorph } from '../qinoq-morph.js';
+import { error } from '../utilities/messages.js';
 
 export class TimelineSequence extends QinoqMorph {
   static get properties () {
@@ -609,13 +610,13 @@ export class TimelineSequence extends QinoqMorph {
       this.position = pt(xPosition, TIMELINE_CONSTANTS.SEQUENCE_Y_OFFSET);
       this.timelineLayer = this.owner;
       if (this.isOverlappingOtherSequence()) {
-        $world.setStatusMessage('Find a free spot!', COLOR_SCHEME.ERROR);
+        error('Find a free spot!');
         hand.grab(this);
       } else {
         this.onGrabEnd();
       }
     } else {
-      $world.setStatusMessage('Drop it in the timeline!', COLOR_SCHEME.ERROR);
+      error('Drop it in the timeline!');
       hand.grab(this);
     }
   }

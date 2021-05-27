@@ -17,6 +17,7 @@ import { EasingSelection } from './components/easing-selection.js';
 import KeyHandler from 'lively.morphic/events/KeyHandler.js';
 import { InteractiveGraph } from './tree.js';
 import { SocialMediaButton } from './components/social-media-button.js';
+import { error } from './utilities/messages.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -947,7 +948,7 @@ class Preview extends QinoqMorph {
       const { pointerAndShadow } = event.hand._grabbedMorphProperties.get(grabbedMorph) || {};
       Object.assign(grabbedMorph, pointerAndShadow);
     } else {
-      $world.setStatusMessage('You have to drop an interactive here');
+      error('You have to drop an interactive here');
     }
   }
 

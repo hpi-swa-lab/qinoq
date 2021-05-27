@@ -12,6 +12,7 @@ import { singleSelectKeyPressed, zoomKeyPressed } from '../keys.js';
 import { Sequence, Keyframe } from '../index.js';
 import { EasingSelection } from '../components/easing-selection.js';
 import { QinoqMorph } from '../qinoq-morph.js';
+import { error } from '../utilities/messages.js';
 
 export class Timeline extends QinoqMorph {
   static get properties () {
@@ -545,7 +546,7 @@ export class GlobalTimeline extends Timeline {
     if (newName) {
       this.renameSelection(newName);
     } else {
-      $world.setStatusMessage('Name not set', COLOR_SCHEME.ERROR);
+      error('Name not set');
     }
   }
 
@@ -564,7 +565,7 @@ export class GlobalTimeline extends Timeline {
       : Number(await $world.prompt(`Duration of the ${this.selectedTimelineSequences.length} selected Sequences:`));
 
     if (isNaN(newDuration) || typeof newDuration === 'undefined' || newDuration == 0) {
-      $world.setStatusMessage('Enter a positive number', COLOR_SCHEME.ERROR);
+      error('Enter a positive number');
       return;
     }
 
@@ -572,8 +573,8 @@ export class GlobalTimeline extends Timeline {
     if (!invalidDuration) {
       this.setDurationForSelection(newDuration);
     } else {
-      if (newDuration < 1) $world.setStatusMessage('Duration too short (< 1)', COLOR_SCHEME.ERROR);
-      else $world.setStatusMessage('Would overlap a sequence', COLOR_SCHEME.ERROR);
+      if (newDuration < 1) error('Duration too short (< 1)');
+      else error('Would overlap a sequence');
     }
   }
 
@@ -596,7 +597,7 @@ export class GlobalTimeline extends Timeline {
     if (!invalidStart) {
       this.setStartForSelection(newStart);
     } else {
-      $world.setStatusMessage('Start not set', COLOR_SCHEME.ERROR);
+      error('Start not set');
     }
   }
 
@@ -867,7 +868,7 @@ export class SequenceTimeline extends Timeline {
     if (newName) {
       this.renameSelection(newName);
     } else {
-      $world.setStatusMessage('Name not set', COLOR_SCHEME.ERROR);
+      error('Name not set');
     }
   }
 
