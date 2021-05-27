@@ -17,6 +17,10 @@ export class LottieMorph extends HTMLMorph {
             url = resource(baseUrl).join(url).withRelativePartsResolved().url;
           }
           if (this.animationDataUrl == url) return;
+          if (this._licenseTooltipSet) {
+            delete this._licenseTooltipSet;
+            this.tooltip = null;
+          }
           this.setProperty('animationDataUrl', url);
           this.lottieAnimation = null;
           this.animationData = this.fixAssets(await resource(url).readJson(), url);
@@ -36,12 +40,28 @@ export class LottieMorph extends HTMLMorph {
       },
       animationData: {
         serialize: false
+      },
+      borderStyle: {
+        defaultValue: 'none'
       }
     };
   }
 
   get isLottieMorph () {
     return true;
+  }
+
+  onLoad () {
+    if (!this.animationDataUrl) {
+      this.animationDataUrl = 'https://assets6.lottiefiles.com/datafiles/AtGF4p7zA8LpP2R/data.json';
+      if (!this.tooltip) {
+        this.tooltip = 'CC-BY Credit: LK Jing';
+        this._licenseTooltipSet = true;
+      }
+      // CC-BY (https://creativecommons.org/licenses/by/4.0/)
+      // LK Jing (https://lottiefiles.com/user/3313)
+      // https://lottiefiles.com/2523-loading
+    }
   }
 
   menuItems () {
