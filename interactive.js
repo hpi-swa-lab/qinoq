@@ -131,7 +131,7 @@ export class Interactive extends DeserializationAwareMorph {
       acceptsDrops: false
     });
     this.scrollOverlay.addMorph(scrollLengthContainer);
-    connect(this, 'position', this.scrollOverlay, 'globalPosition', { converter: '() => source.globalPosition' });
+    connect(this, 'position', this.scrollOverlay, 'position');
     connect(this, 'onLengthChange', scrollLengthContainer, 'extent', { converter: '(length) => pt(1, length + source.extent.y)', varMapping: { pt } });
     connect(this, 'extent', this, 'updateScrollContainerExtents');
   }
@@ -557,6 +557,14 @@ class InteractiveScrollHolder extends Morph {
       targetedMorph = targetedMorph.morphBeneath(position);
     }
     return targetedMorph;
+  }
+
+  onOwnerChanged () {
+    // for unkown reasons, the scrollOverlay escaped the editor on some interactions
+    // this catches it back it
+    if (this.owner != this.interactive.owner) {
+      this.interactive.owner.addMorph(this);
+    }
   }
 }
 
