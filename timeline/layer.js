@@ -5,8 +5,8 @@ import { Canvas } from 'lively.components/canvas.js';
 import { animatedProperties, getColorForProperty } from '../properties.js';
 import { TimelineKeyframe, KeyframeLine } from './keyframe.js';
 import { QinoqMorph } from '../qinoq-morph.js';
-import { ActiveArea } from './active-area.js';
 import { TIMELINE_CONSTANTS } from './constants.js';
+import { ActiveArea } from './active-area.js';
 
 export class TimelineLayer extends QinoqMorph {
   static get properties () {
@@ -46,7 +46,11 @@ export class TimelineLayer extends QinoqMorph {
   }
 
   addActiveArea () {
-    const activeArea = this.addMorph(new ActiveArea());
+    const activeArea = this.addMorph(new ActiveArea({
+      extent: pt(
+        TIMELINE_CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH,
+        this.isGlobalTimelineLayer ? TIMELINE_CONSTANTS.GLOBAL_LAYER_HEIGHT : TIMELINE_CONSTANTS.SEQUENCE_LAYER_HEIGHT)
+    }));
   }
 
   get activeArea () {
@@ -88,6 +92,10 @@ export class GlobalTimelineLayer extends TimelineLayer {
 
   get timelineSequences () {
     return this.submorphs.filter(submorph => !!submorph.isTimelineSequence);
+  }
+
+  get isGlobalTimelineLayer () {
+    return true;
   }
 
   addActiveArea () {
