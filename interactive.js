@@ -1,8 +1,8 @@
 import { Morph, ProportionalLayout } from 'lively.morphic';
-import { pt } from 'lively.graphics';
+import { pt, Color } from 'lively.graphics';
 import { connect, disconnect, signal, disconnectAll } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
-import { COLOR_SCHEME } from './colors.js';
+
 import { arr } from 'lively.lang';
 import { DeserializationAwareMorph } from './utilities/deserialization-morph.js';
 
@@ -349,7 +349,7 @@ class InteractiveScrollHolder extends Morph {
         defaultValue: 0.001
       },
       fill: {
-        defaultValue: COLOR_SCHEME.TRANSPARENT
+        defaultValue: Color.transparent
       },
       halosEnabled: {
         defaultValue: false
@@ -444,7 +444,7 @@ class InteractiveScrollHolder extends Morph {
         morph.position = properties.prevPosition;
         Object.assign(morph, properties.pointerAndShadow);
       });
-      $world.setStatusMessage('Only add in sequence view', COLOR_SCHEME.ERROR);
+      $world.setStatusMessage('Only add in sequence view');
     }
     event.hand.grabbedMorphs.forEach(grabbedMorph => {
       const { pointerAndShadow } = event.hand._grabbedMorphProperties.get(grabbedMorph) || {};
@@ -567,7 +567,7 @@ export class Sequence extends DeserializationAwareMorph {
         defaultValue: 'unnamed sequence'
       },
       fill: {
-        defaultValue: COLOR_SCHEME.TRANSPARENT
+        defaultValue: Color.transparent
       },
       reactsToPointer: {
         defaultValue: false
