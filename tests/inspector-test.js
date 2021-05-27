@@ -47,24 +47,24 @@ describe('Inspector', () => {
   }
 
   describe('in the animations tab mode', () => {
-    let animationTab;
+    let animationsInspector;
 
     beforeEach(() => {
-      animationTab = inspector.animationsInspector;
+      animationsInspector = inspector.animationsInspector;
       inspector.targetMorph = morph;
     });
 
     it('can animate a predefined property', () => {
-      expect('opacity' in animationTab.propertiesToDisplay).to.be.ok;
+      expect('opacity' in animationsInspector.propertiesToDisplay).to.be.ok;
     });
 
     it('can animate a property defined as animateAs', () => {
-      expect('testProp' in animationTab.propertiesToDisplay).to.be.ok;
-      expect(animationTab.propertiesToDisplay.testProp).to.equal('number');
+      expect('testProp' in animationsInspector.propertiesToDisplay).to.be.ok;
+      expect(animationsInspector.propertiesToDisplay.testProp).to.equal('number');
     });
 
     it('can not animate a new property not defined as animateAs', () => {
-      expect('testProp2' in animationTab.propertiesToDisplay).to.not.be.ok;
+      expect('testProp2' in animationsInspector.propertiesToDisplay).to.not.be.ok;
     });
 
     it('targets a morph in the interactive when a halo is shown', async () => {
@@ -110,7 +110,7 @@ describe('Inspector', () => {
       // sets the scrollPosition to the beginning of the day background
       await dayBackgroundTimelineSequence.openSequenceView();
       inspector.targetMorph = dayBackgroundTimelineSequence.sequence.submorphs[0];
-      const keyFramebuttonForFill = animationTab.propertyControls.fill.keyframe;
+      const keyFramebuttonForFill = animationsInspector.propertyControls.fill.keyframe;
       expect(keyFramebuttonForFill.fill).to.not.be.deep.equal(COLOR_SCHEME.KEYFRAME_FILL);
     });
 
@@ -123,7 +123,7 @@ describe('Inspector', () => {
       await dayBackgroundTimelineSequence.openSequenceView();
       inspector.targetMorph = dayBackgroundSequence.submorphs[0];
       editor.internalScrollChangeWithGUIUpdate(333);
-      const keyFramebuttonForFill = animationTab.propertyControls.fill.keyframe;
+      const keyFramebuttonForFill = animationsInspector.propertyControls.fill.keyframe;
       expect(keyFramebuttonForFill.fill).to.not.be.deep.equal(COLOR_SCHEME.KEYFRAME_FILL);
     });
 
@@ -143,11 +143,11 @@ describe('Inspector', () => {
         });
 
         it('textString attribute', () => {
-          expect(animationTab.displayedProperties).to.not.contain('textString');
+          expect(animationsInspector.displayedProperties).to.not.contain('textString');
         });
 
         it('fontSize attribute', () => {
-          expect(animationTab.displayedProperties).to.not.contain('fontSize');
+          expect(animationsInspector.displayedProperties).to.not.contain('fontSize');
         });
       });
 
@@ -167,27 +167,27 @@ describe('Inspector', () => {
         });
 
         it('textString attribute', () => {
-          expect(animationTab.displayedProperties).to.not.contain('textString');
+          expect(animationsInspector.displayedProperties).to.not.contain('textString');
         });
       });
     });
   });
 
   describe('in the style tab mode', () => {
-    let styleTab, alignmentPanel, sharePanel;
+    let styleInspector, alignmentPanel, sharePanel;
 
     beforeEach(() => {
-      styleTab = inspector.styleInspector;
-      alignmentPanel = styleTab.ui.panels.alignment;
-      sharePanel = styleTab.ui.panels.share;
+      styleInspector = inspector.styleInspector;
+      alignmentPanel = styleInspector.ui.panels.alignment;
+      sharePanel = styleInspector.ui.panels.share;
     });
 
     it('has alignment panel', () => {
-      expect(styleTab.submorphs).to.contain(alignmentPanel);
+      expect(styleInspector.submorphs).to.contain(alignmentPanel);
     });
 
     it('has no share panel', () => {
-      expect(styleTab.submorphs).to.not.contain(sharePanel);
+      expect(styleInspector.submorphs).to.not.contain(sharePanel);
     });
 
     it('disables alignment options when no targetMorph is set', () => {
@@ -204,7 +204,7 @@ describe('Inspector', () => {
       });
 
       it('still does not show share panel', () => {
-        expect(styleTab.submorphs).to.not.contain(sharePanel);
+        expect(styleInspector.submorphs).to.not.contain(sharePanel);
       });
 
       describe('which is a share button', () => {
@@ -239,7 +239,7 @@ describe('Inspector', () => {
         });
 
         it('shows the share panel', () => {
-          expect(styleTab.submorphs).to.contain(sharePanel);
+          expect(styleInspector.submorphs).to.contain(sharePanel);
           expect(sharePanel.title).to.equal('Share Settings');
         });
 
