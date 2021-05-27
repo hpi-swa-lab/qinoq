@@ -196,20 +196,6 @@ export class InteractivesEditor extends QinoqMorph {
     if (name) await this.createInteractive(name);
   }
 
-  onWindowMinimizedChange (minimized) {
-    if (!this.interactive) return;
-    if (minimized) this.interactive.scrollOverlay.remove();
-    else $world.addMorph(this.interactive.scrollOverlay);
-  }
-
-  positionChanged () {
-    if (this.interactive) {
-      // interactive has a fixed position in the editor
-      // we need to manually keep the scrollOverlay at the correct position
-      this.interactive.scrollOverlay.globalPosition = this.interactive.globalPosition;
-    }
-  }
-
   async createInteractive (name) {
     this.interactive = await Interactive.base({ name });
   }
@@ -930,14 +916,6 @@ export class InteractivesEditor extends QinoqMorph {
     layer.addTimelineKeyframes();
     this.ui.inspector.animationsInspector.updateRespectiveAnimations();
     return copiedMorph;
-  }
-
-  __after_deserialize__ (snapshot, ref, pool) {
-    super.__after_deserialize__(snapshot, ref, pool);
-    // Required to position the scrollOverlay correctly. Otherwise the scroll Overlay will be in the center of the screen and possibly misaligned with the interactive/ preview
-    if (this.interactive) {
-      this.interactive.scrollOverlay.globalPosition = this.ui.preview.globalPosition;
-    }
   }
 }
 
