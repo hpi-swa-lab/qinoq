@@ -605,7 +605,7 @@ export class GlobalTimeline extends Timeline {
     const newPositionX = this.getPositionFromScroll(newStart);
     this.selectedTimelineSequences.forEach(timelineSequence => {
       undo.addTarget(timelineSequence);
-      timelineSequence.position = pt(newPositionX, TIMELINE_CONSTANTS.LAYER_SEQUENCE_Y_OFFSET);
+      timelineSequence.position = pt(newPositionX, TIMELINE_CONSTANTS.SEQUENCE_Y_OFFSET);
     });
     this.undoStop();
   }
@@ -899,7 +899,7 @@ export class SequenceTimeline extends Timeline {
     const undo = this.undoStart('move-keyframe');
     this.selectedTimelineKeyframes.forEach(timelineKeyframe => {
       undo.addTarget(timelineKeyframe);
-      timelineKeyframe.position = pt(this.getPositionFromRelativePosition(newPosition), timelineKeyframe.timelineKeyframeY);
+      timelineKeyframe.position = pt(this.getPositionFromRelativePosition(newPosition), TIMELINE_CONSTANTS.KEYFRAME_Y_OFFSET);
     });
     this.undoStop('move-keyframe');
   }
