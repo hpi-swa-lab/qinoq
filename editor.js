@@ -18,6 +18,7 @@ import KeyHandler from 'lively.morphic/events/KeyHandler.js';
 import { InteractiveGraph } from './tree.js';
 import { SocialMediaButton } from './components/social-media-button.js';
 import { error } from './utilities/messages.js';
+import { Canvas } from 'lively.components/canvas.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -934,6 +935,16 @@ class Preview extends QinoqMorph {
           this.setProperty('_editor', editor);
           this.showEmptyPreviewPlaceholder();
         }
+      },
+      animationPreview: {
+        set (animationPreview) {
+          if (!animationPreview && this.animationPreview) {
+            this.animationPreview.remove();
+          } else if (animationPreview) {
+            if (!this._deserializing) this.addMorph(animationPreview);
+          }
+          this.setProperty('animationPreview', animationPreview);
+        }
       }
     };
   }
@@ -1007,6 +1018,78 @@ class Preview extends QinoqMorph {
     });
 
     this.addMorph(container);
+  }
+
+  addAnimationPreview (animation) {
+    if (animation.type != 'point') return;
+
+    this.animationPreview = PositionAnimationPreview.forAnimation(animation, { extent: this.extent });
+  }
+
+  removeAnimationPreview () {
+    this.animationPreview = null;
+  }
+}
+
+class PositionAnimationPreview extends Canvas {
+  static forAnimation (animation, props = {}) {
+    return new PositionAnimationPreview({ animation, ...props });
+  }
+
+  static get properties () {
+    return {
+      fill: {
+        defaultValue: COLOR_SCHEME.opacity
+      },
+      extent: {
+        defaultValue: pt(533, 300)
+      },
+      animation: {
+        set (animation) {
+          this.setProperty('animation', animation);
+          this.whenRendered().then(() => this.drawCurve());
+        }
+      }
+    };
+  }
+
+  diamond (position, extent, fill = '#' + COLOR_SCHEME.KEYFRAME_BORDER.toHexString()) {
+    const context = this.context;
+    const x = position.x;
+    const y = position.y;
+    const width = extent.x;
+    const height = extent.y;
+    context.beginPath();
+    context.moveTo(x, y - height / 2);
+    context.lineTo(x - width / 2, y);
+    context.lineTo(x, y + height / 2);
+    context.lineTo(x + width / 2, y);
+    context.closePath();
+
+    context.fillStyle = fill;
+    context.fill();
+  }
+
+  drawCurve () {
+    if (this.animation.keyframes.length < 2) return;
+    this.clear();
+
+    const values = Object.entries(this.animation.getValues(0.001, true));
+
+    const lineStyle = { color: COLOR_SCHEME.PRIMARY };
+    let previousPosition;
+    values.forEach(positionValuePair => {
+      const currentPosition = positionValuePair[1];
+      if (previousPosition) this.line(previousPosition, currentPosition, lineStyle);
+      previousPosition = currentPosition;
+    });
+
+    this.line(previousPosition, this.animation.keyframes[this.animation.keyframes.length - 1], lineStyle);
+
+    this.animation.keyframes.forEach(keyframe => {
+      const value = this.animation.transformValue(keyframe.value);
+      this.diamond(value, pt(15, 15));
+    });
   }
 }
 

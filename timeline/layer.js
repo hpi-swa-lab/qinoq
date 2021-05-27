@@ -606,6 +606,16 @@ export class PropertyTimelineLayer extends SequenceTimelineLayer {
     });
   }
 
+  onHoverIn () {
+    if (this.animation.property == 'position') {
+      this.editor.ui.preview.addAnimationPreview(this.animation);
+    }
+  }
+
+  onHoverOut () {
+    this.editor.ui.preview.removeAnimationPreview();
+  }
+
   __after_deserialize__ (snapshot, ref, pool) {
     this.redraw();
     super.__after_deserialize__(snapshot, ref, pool);
