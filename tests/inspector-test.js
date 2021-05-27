@@ -243,7 +243,7 @@ describe('Inspector', () => {
           expect(sharePanel.title).to.equal('Share Settings');
         });
 
-        it('with the appropriate Drop Down Menu', () => {
+        it('shows the share panel with the appropriate drop down menu', () => {
           const dropDownMenu = sharePanel.submorphs[1];
 
           expect(dropDownMenu.values).to.equal(shareButton.presetValues);
@@ -291,7 +291,7 @@ describe('Inspector', () => {
             'I announce: I like trains!');
         });
 
-        it('and the Drop Down Menu changes the preset and updates the panel', () => {
+        it('and the drop down menu changes the preset and updates the panel', () => {
           const dropDownMenu = sharePanel.submorphs[1];
           const widgetContainer = sharePanel.submorphs[2];
 
