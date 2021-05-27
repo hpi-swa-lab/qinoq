@@ -4,7 +4,7 @@ import { TimelineCursor } from './cursor.js';
 import { connect, disconnect } from 'lively.bindings';
 import { TimelineSequence } from './sequence.js';
 import { GlobalTimelineLayer, PropertyTimelineLayer, OverviewTimelineLayer } from './layer.js';
-import { CONSTANTS } from './constants.js';
+import { TIMELINE_CONSTANTS } from './constants.js';
 import { SequenceTimelineLayerInfo, GlobalTimelineLayerInfo } from './layer-info.js';
 import { COLOR_SCHEME } from '../colors.js';
 import { arr } from 'lively.lang';
@@ -45,7 +45,7 @@ export class Timeline extends QinoqMorph {
         }
       },
       _activeAreaWidth: {
-        defaultValue: CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH,
+        defaultValue: TIMELINE_CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH,
         set (width) {
           this.setProperty('_activeAreaWidth', width);
           if (this._deserializing) return;
@@ -90,22 +90,22 @@ export class Timeline extends QinoqMorph {
     this.ui.scrollableContainer = new QinoqMorph(
       {
         name: 'scrollable container',
-        extent: pt(this.extent.x, this.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
+        extent: pt(this.extent.x, this.extent.y - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
         clipMode: 'auto'
       });
     this.addMorph(this.ui.scrollableContainer);
     this.initializeLayerInfoContainer();
 
     this.initializeLayerContainer();
-    connect(this.ui.layerContainer, 'extent', this.ui.scrollableContainer, 'height', { converter: ' (extent) => extent.y > timeline.height - scrollbarHeight ? timeline.height - scrollbarHeight : extent.y', varMapping: { timeline: this, scrollbarHeight: CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT } }).update(this.ui.layerContainer.extent);
+    connect(this.ui.layerContainer, 'extent', this.ui.scrollableContainer, 'height', { converter: ' (extent) => extent.y > timeline.height - scrollbarHeight ? timeline.height - scrollbarHeight : extent.y', varMapping: { timeline: this, scrollbarHeight: TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT } }).update(this.ui.layerContainer.extent);
     this.initializeScrollBar();
   }
 
   initializeScrollBar () {
     this.ui.scrollBar = new QinoqMorph({
       name: 'scrollbar',
-      position: pt(CONSTANTS.LAYER_INFO_WIDTH, this.height - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
-      extent: pt(this.width - CONSTANTS.LAYER_INFO_WIDTH - this.scrollbarOffset.x, CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
+      position: pt(TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, this.height - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
+      extent: pt(this.width - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH - this.scrollbarOffset.x, TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
       fill: COLOR_SCHEME.TRANSPARENT,
       borderColor: COLOR_SCHEME.BACKGROUND_VARIANT,
       borderWidth: 1,
@@ -120,8 +120,8 @@ export class Timeline extends QinoqMorph {
     this.ui.scroller = this.ui.scrollBar.addMorph(new QinoqMorph({
       name: 'scroller',
       fill: COLOR_SCHEME.BACKGROUND_VARIANT,
-      position: pt(CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN),
-      extent: pt(0, CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - (2 * CONSTANTS.SCROLLBAR_MARGIN)),
+      position: pt(TIMELINE_CONSTANTS.SCROLLBAR_MARGIN, TIMELINE_CONSTANTS.SCROLLBAR_MARGIN),
+      extent: pt(0, TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - (2 * TIMELINE_CONSTANTS.SCROLLBAR_MARGIN)),
       borderRadius: 10,
       draggable: true
     }));
@@ -134,7 +134,7 @@ export class Timeline extends QinoqMorph {
       name: 'scrollbar cursor',
       fill: COLOR_SCHEME.SECONDARY,
       position: pt(0, 0),
-      extent: pt(10, CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - (2 * CONSTANTS.SCROLLBAR_MARGIN)),
+      extent: pt(10, TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - (2 * TIMELINE_CONSTANTS.SCROLLBAR_MARGIN)),
       borderRadius: 10
     }));
 
@@ -144,7 +144,7 @@ export class Timeline extends QinoqMorph {
         (source.displayedTimeline.getPositionFromScroll(scrollPosition) - initialXOffset) * (scrollbar.width - (2 * scrollbarMargin + target.extent.x)) / source.displayedTimeline._activeAreaWidth + scrollbarMargin, 
         scrollbarMargin)
     }`,
-      varMapping: { pt: pt, scrollbar: this.ui.scrollBar, scrollbarMargin: CONSTANTS.SCROLLBAR_MARGIN, initialXOffset: CONSTANTS.SEQUENCE_INITIAL_X_OFFSET }
+      varMapping: { pt: pt, scrollbar: this.ui.scrollBar, scrollbarMargin: TIMELINE_CONSTANTS.SCROLLBAR_MARGIN, initialXOffset: TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET }
     });
   }
 
@@ -159,8 +159,8 @@ export class Timeline extends QinoqMorph {
     this.ui.layerContainer = new QinoqMorph({
       name: 'layer container',
       clipMode: 'hidden',
-      position: pt(CONSTANTS.LAYER_INFO_WIDTH, 0),
-      extent: pt(this.width - CONSTANTS.LAYER_INFO_WIDTH - this.scrollbarOffset.x, this.height - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
+      position: pt(TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, 0),
+      extent: pt(this.width - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH - this.scrollbarOffset.x, this.height - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
       layout: new VerticalLayout({
         spacing: 2,
         resizeSubmorphs: true,
@@ -182,7 +182,7 @@ export class Timeline extends QinoqMorph {
     this.ui.layerInfoContainer = new QinoqMorph({
       name: 'layer info container',
       position: pt(0, 0),
-      extent: pt(CONSTANTS.LAYER_INFO_WIDTH, this.height - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
+      extent: pt(TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, this.height - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
       layout: new VerticalLayout({
         spacing: 2,
         resizeSubmorphs: true,
@@ -282,11 +282,11 @@ export class Timeline extends QinoqMorph {
     if (zoomKeyPressed(event)) {
       event.domEvt.preventDefault();
 
-      const zoomDelta = event.domEvt.deltaY * CONSTANTS.MOUSE_WHEEL_FACTOR_FOR_ZOOM;
+      const zoomDelta = event.domEvt.deltaY * TIMELINE_CONSTANTS.MOUSE_WHEEL_FACTOR_FOR_ZOOM;
       const layerContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
 
       const cursorPosition = this.ui.layerContainer.localize(event.hand.position).x;
-      const offset = cursorPosition - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+      const offset = cursorPosition - TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
 
       const normalizedOffset = offset / this.zoomFactor;
 
@@ -303,32 +303,32 @@ export class Timeline extends QinoqMorph {
 
   ensureValidScrollerPosition () {
     let positionX = this.ui.scroller.position.x;
-    if (this.ui.scroller.position.x < CONSTANTS.SCROLLBAR_MARGIN) {
-      positionX = CONSTANTS.SCROLLBAR_MARGIN;
+    if (this.ui.scroller.position.x < TIMELINE_CONSTANTS.SCROLLBAR_MARGIN) {
+      positionX = TIMELINE_CONSTANTS.SCROLLBAR_MARGIN;
     }
-    if (this.ui.scroller.extent.x + this.ui.scroller.position.x + CONSTANTS.SCROLLBAR_MARGIN > this.ui.scrollBar.extent.x) {
-      positionX = this.ui.scrollBar.extent.x - CONSTANTS.SCROLLBAR_MARGIN - this.ui.scroller.extent.x;
+    if (this.ui.scroller.extent.x + this.ui.scroller.position.x + TIMELINE_CONSTANTS.SCROLLBAR_MARGIN > this.ui.scrollBar.extent.x) {
+      positionX = this.ui.scrollBar.extent.x - TIMELINE_CONSTANTS.SCROLLBAR_MARGIN - this.ui.scroller.extent.x;
     }
-    this.ui.scroller.position = pt(positionX, CONSTANTS.SCROLLBAR_MARGIN);
+    this.ui.scroller.position = pt(positionX, TIMELINE_CONSTANTS.SCROLLBAR_MARGIN);
 
-    const relative = (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x) / (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN));
+    const relative = (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x) / (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * TIMELINE_CONSTANTS.SCROLLBAR_MARGIN));
     const layerContainerNode = this.ui.layerContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
-    layerContainerNode.scrollLeft = this.ui.scroller.position.x * relative + CONSTANTS.SCROLLBAR_MARGIN;
+    layerContainerNode.scrollLeft = this.ui.scroller.position.x * relative + TIMELINE_CONSTANTS.SCROLLBAR_MARGIN;
     this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
   }
 
   updateScrollerPosition () {
-    const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
-    this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
+    const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * TIMELINE_CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
+    this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + TIMELINE_CONSTANTS.SCROLLBAR_MARGIN, TIMELINE_CONSTANTS.SCROLLBAR_MARGIN);
   }
 
   relayout (newWindowExtent) {
     // Ensure UI has been created
     if (!this.ui.scrollableContainer || !this.ui.scrollBar || !this.ui.layerContainer || !this.owner) return;
 
-    this.ui.scrollableContainer.extent = pt(newWindowExtent.x, this.owner.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT);
-    this.ui.layerContainer.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - CONSTANTS.LAYER_INFO_WIDTH, this.owner.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT);
-    this.ui.scrollBar.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - CONSTANTS.LAYER_INFO_WIDTH, this.ui.scrollBar.extent.y);
+    this.ui.scrollableContainer.extent = pt(newWindowExtent.x, this.owner.extent.y - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT);
+    this.ui.layerContainer.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, this.owner.extent.y - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT);
+    this.ui.scrollBar.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, this.ui.scrollBar.extent.y);
     this.ui.scrollBar.position = this.ui.layerContainer.bottomLeft;
     this.updateScrollerExtent();
   }
@@ -337,7 +337,7 @@ export class Timeline extends QinoqMorph {
     const scrollbarWidth = this.ui.scrollBar.extent.x;
     const visiblePortion = scrollbarWidth / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.scrollbarOffset.x);
     // keep margin at both left and right end of the scrollbar
-    this.ui.scroller.extent = pt((visiblePortion * scrollbarWidth) - (2 * CONSTANTS.SCROLLBAR_MARGIN), this.ui.scroller.extent.y);
+    this.ui.scroller.extent = pt((visiblePortion * scrollbarWidth) - (2 * TIMELINE_CONSTANTS.SCROLLBAR_MARGIN), this.ui.scroller.extent.y);
     this.updateScrollerPosition();
   }
 
@@ -387,11 +387,11 @@ export class GlobalTimeline extends Timeline {
   }
 
   getPositionFromScroll (scrollPosition) {
-    return (scrollPosition * this.zoomFactor) + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+    return (scrollPosition * this.zoomFactor) + TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
   }
 
   getScrollFromPosition (position) {
-    return (position - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) / this.zoomFactor;
+    return (position - TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) / this.zoomFactor;
   }
 
   getWidthFromDuration (duration) {
@@ -520,17 +520,17 @@ export class GlobalTimeline extends Timeline {
     if (faultyTimelineSequences.length > 0) this.env.undoManager.undo();
     faultyTimelineSequences.forEach(timelineSequence => {
       if (scrollStepSize < 0) {
-        timelineSequence.showWarning('left', CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA, true);
+        timelineSequence.showWarning('left', TIMELINE_CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA, true);
         timelineSequence.hideWarning('left');
       } else {
-        timelineSequence.showWarning('right', CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA, true);
+        timelineSequence.showWarning('right', TIMELINE_CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA, true);
         timelineSequence.hideWarning('right');
       }
     });
   }
 
   zoomToFit () {
-    const widthToFit = this.interactive.length + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + CONSTANTS.INACTIVE_AREA_WIDTH;
+    const widthToFit = this.interactive.length + TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + TIMELINE_CONSTANTS.INACTIVE_AREA_WIDTH;
     const widthAvailable = this.ui.layerContainer.width;
     const factor = widthAvailable / widthToFit;
     this.zoomFactor = factor;
@@ -605,7 +605,7 @@ export class GlobalTimeline extends Timeline {
     const newPositionX = this.getPositionFromScroll(newStart);
     this.selectedTimelineSequences.forEach(timelineSequence => {
       undo.addTarget(timelineSequence);
-      timelineSequence.position = pt(newPositionX, CONSTANTS.LAYER_SEQUENCE_Y_OFFSET);
+      timelineSequence.position = pt(newPositionX, TIMELINE_CONSTANTS.LAYER_SEQUENCE_Y_OFFSET);
     });
     this.undoStop();
   }
@@ -688,12 +688,12 @@ export class SequenceTimeline extends Timeline {
 
   getPositionFromScroll (scrollPosition) {
     if (scrollPosition < this.sequence.start) {
-      return CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+      return TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
     }
     if (scrollPosition >= this.sequence.end) {
-      return this._activeAreaWidth + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+      return this._activeAreaWidth + TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
     }
-    return (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.sequence.getRelativePositionFor(scrollPosition) * this.zoomFactor) + CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+    return (TIMELINE_CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.sequence.getRelativePositionFor(scrollPosition) * this.zoomFactor) + TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
   }
 
   getPositionFromRelativePosition (relativePosition) {
@@ -705,7 +705,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   getScrollFromPosition (position) {
-    return (position.x - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) / (CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor);
+    return (position.x - TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) / (TIMELINE_CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor);
   }
 
   getScrollFromKeyframe (keyframe) {
@@ -747,7 +747,7 @@ export class SequenceTimeline extends Timeline {
       name: 'placeholder',
       fill: COLOR_SCHEME.BACKGROUND_VARIANT,
       opacity: 0.5,
-      height: CONSTANTS.SEQUENCE_LAYER_HEIGHT,
+      height: TIMELINE_CONSTANTS.SEQUENCE_LAYER_HEIGHT,
       layout: new VerticalLayout({
         align: 'center',
         direction: 'centered',
@@ -818,8 +818,8 @@ export class SequenceTimeline extends Timeline {
     if (!layerContainerNode) return;
     layerContainerNode.scrollLeft = scrollLeft;
     this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
-    const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
-    this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
+    const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * TIMELINE_CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
+    this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + TIMELINE_CONSTANTS.SCROLLBAR_MARGIN, TIMELINE_CONSTANTS.SCROLLBAR_MARGIN);
   }
 
   scrollVerticallyTo (scrollTop) {
@@ -929,7 +929,7 @@ export class SequenceTimeline extends Timeline {
 
   redraw () {
     super.redraw();
-    this._activeAreaWidth = CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor;
+    this._activeAreaWidth = TIMELINE_CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor;
     this.timelineLayers.forEach(timelineLayer => timelineLayer.redraw());
   }
 
