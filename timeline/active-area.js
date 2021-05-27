@@ -15,9 +15,6 @@ export class ActiveArea extends Canvas {
       position: {
         defaultValue: pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0)
       },
-      reactsToPointer: {
-        defaultValue: true
-      },
       fill: {
         defaultValue: COLOR_SCHEME.SURFACE_VARIANT
       },

@@ -165,7 +165,7 @@ describe('Editor', () => {
                   clickCount: 0
                 }
         },
-        targetMorphs: [timelineLayer],
+        targetMorphs: [{}, timelineLayer],
         targetMorph: timelineLayer
       };
       timelineLayer.onMouseDown(clickEvent);
