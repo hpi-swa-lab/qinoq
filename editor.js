@@ -241,7 +241,7 @@ export class InteractivesEditor extends QinoqMorph {
     connect(this.interactive, 'remove', this, 'reset');
     connect(this.interactive, '_length', this.ui.menuBar.ui.scrollPositionInput, 'max').update(this.interactive.length);
     connect(this.ui.preview, 'extent', this.interactive, 'extent');
-    connect(this.interactive, 'interactiveZoomed', this, 'fitScrollOverlayToInteractive');
+    connect(this.interactive, 'interactiveZoomed', this, 'onInteractiveZoomed');
 
     connect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
 
@@ -249,8 +249,14 @@ export class InteractivesEditor extends QinoqMorph {
     this.onDisplayedTimelineChange(this.ui.globalTimeline);
   }
 
-  fitScrollOverlayToInteractive () {
+  onInteractiveZoomed () {
     const previewExtent = this.ui.preview.extent;
+    // only show scrollbars if they are necessary
+    if (this.interactive.extent.x > previewExtent.x || this.interactive.extent.y > previewExtent.y) {
+      this.ui.preview.clipMode = 'scroll';
+    } else this.ui.preview.clipMode = 'hidden';
+
+    // resizes the scrollOverlay to not block the scrollBars of the Preview
     if (this.interactive.extent.x <= previewExtent.x - this.ui.preview.scrollbarOffset.x) {
       this.interactive.scrollOverlay.extent.x = this.interactive.extent.x;
     }
@@ -317,7 +323,7 @@ export class InteractivesEditor extends QinoqMorph {
     disconnect(this.interactive, 'remove', this, 'reset');
 
     disconnect(this.ui.preview, 'extent', this.interactive, 'extent');
-    disconnect(this.interactive, 'interactiveZoomed', this, 'fitScrollOverlayToInteractive');
+    disconnect(this.interactive, 'interactiveZoomed', this, 'onInteractiveZoomed');
 
     disconnect(this.interactive, 'name', this.ui.globalTab, 'caption');
     disconnect(this.interactive, 'onLengthChange', this.ui.globalTimeline, '_activeAreaWidth');
@@ -1003,13 +1009,13 @@ class Preview extends QinoqMorph {
     });
 
     this.addMorph(interactive);
-    interactive.fitBounds(pt(this.extent.x - this.scrollbarOffset.x, this.extent.y - this.scrollbarOffset.y));
+    interactive.fitBounds(this.extent);
     interactive.position = pt(0, 0);
     // trigger correct bounds on scrollable content of interactive
     interactive.updateInteractiveLength();
 
     // this should not be necessary, but setting this via defaultValue does not suffice
-    this.clipMode = 'auto';
+    this.clipMode = 'hidden';
   }
 
   showEmptyPreviewPlaceholder () {
