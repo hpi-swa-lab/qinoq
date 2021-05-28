@@ -1302,7 +1302,7 @@ class MenuBar extends QinoqMorph {
       icon: 'magnet',
       name: 'toggleSnappingButton',
       container: 'rightContainer',
-      filled: true
+      active: !this._snappingDisabled
     });
 
     this.buildIconButton({
