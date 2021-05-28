@@ -255,7 +255,7 @@ export class InteractiveGraph extends QinoqMorph {
       graph: this,
       fill: COLOR_SCHEME.TRANSPARENT,
       target: item,
-      fontColor: COLOR_SCHEME.ON_SURFACE,
+      fontColor: COLOR_SCHEME.ON_SURFACE_VARIANT,
       _editor: this.editor
     });
     container.refresh();
