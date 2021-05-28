@@ -255,7 +255,7 @@ export class InteractiveGraph extends QinoqMorph {
       tree: this,
       fill: COLOR_SCHEME.TRANSPARENT,
       target: item,
-      fontColor: COLOR_SCHEME.ON_SURFACE,
+      fontColor: COLOR_SCHEME.ON_SURFACE_VARIANT,
       _editor: this.editor
     });
     container.refresh();
@@ -332,11 +332,11 @@ class TreeItemContainer extends QinoqMorph {
   }
 
   async toggleSelected (active) {
-    if (!this._deserializing) {
-      this.label.fontColor = active ? COLOR_SCHEME.ON_SECONDARY : COLOR_SCHEME.ON_SURFACE;
-      if (active) {
-        await this.editor.goto(this.target);
-      }
+    this.label.fontColor = active
+      ? COLOR_SCHEME.ON_SURFACE
+      : COLOR_SCHEME.ON_SURFACE_VARIANT;
+    if (active) {
+      await this.editor.goto(this.target);
     }
   }
 
