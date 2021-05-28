@@ -5,15 +5,10 @@ import { COLOR_SCHEME } from '../colors.js';
 export class QinoqButton extends Label {
   static get properties () {
     return {
-      fontColor: {
-        defaultValue: COLOR_SCHEME.BUTTON_BLUE
-      },
-      // use to show a state e.g. toggle snapping
-      filled: {
-        defaultValue: false,
-        set (filled) {
-          this.setProperty('filled', filled);
-          this.styleSet = 'default';
+      styleSet: {
+        defaultValue: 'default',
+        set (styleSet) {
+          this.setProperty('styleSet', styleSet);
           this.updateStyle();
         }
       },
@@ -28,11 +23,8 @@ export class QinoqButton extends Label {
       borderRadius: {
         defaultValue: 4
       },
-      borderColor: {
-        defaultValue: COLOR_SCHEME.BACKGROUND
-      },
       borderWidth: {
-        defaultValue: 1
+        defaultValue: 0
       },
       padding: {
         defaultValue: rect(3, 3, 0, 0)
@@ -42,21 +34,23 @@ export class QinoqButton extends Label {
           Icon.setIcon(this, icon);
         }
       },
-      styleSet: {
-        defaultValue: 'default',
-        set (styleSet) {
-          this.setProperty('styleSet', styleSet);
-          this.updateStyle();
-        }
-      },
       previousMouseUpTime: {
         defaultValue: 0
       },
       enabled: {
         after: ['styleSet'],
+        defaultValue: true,
         set (enabled) {
           this.setProperty('enabled', enabled);
           if (enabled) this.enable(); else this.disable();
+        }
+      },
+      active: {
+		    after: ['enabled'],
+        defaultValue: false,
+        set (active) {
+          this.setProperty('active', active);
+          this.updateStyle();
         }
       }
     };
@@ -68,12 +62,14 @@ export class QinoqButton extends Label {
 
   onMouseDown (event) {
     super.onMouseDown(event);
-    this.styleSet = this.filled ? 'unfilled' : 'filled';
+    this.styleSet = 'pressed';
   }
 
   onDoubleMouseDown () {
     if (!this.doubleCommand && !this.doubleAction) return;
-    this.doubleCommand ? this.target.execCommand(this.doubleCommand) : this.target[this.doubleAction]();
+    this.doubleCommand
+      ? this.target.execCommand(this.doubleCommand)
+      : this.target[this.doubleAction]();
   }
 
   onMouseUp () {
@@ -82,40 +78,57 @@ export class QinoqButton extends Label {
   }
 
   onHoverIn () {
-    this.borderColor = COLOR_SCHEME.BUTTON_BLUE;
+    this.styleSet = 'hovered';
   }
 
   onHoverOut () {
-    this.borderColor = COLOR_SCHEME.BACKGROUND;
     this.styleSet = 'default';
   }
 
   updateStyle () {
+    if (!this.enabled) {
+      this.fill = COLOR_SCHEME.SURFACE_VARIANT;
+      this.fontColor = COLOR_SCHEME.ON_SURFACE_VARIANT;
+      return;
+    }
+
     switch (this.styleSet) {
       case 'default':
-        this.styleSet = this.filled ? 'filled' : 'unfilled';
+        if (this.active) {
+          this.fill = COLOR_SCHEME.PRIMARY;
+          this.fontColor = COLOR_SCHEME.ON_SURFACE;
+        } else {
+          this.fill = COLOR_SCHEME.SURFACE;
+          this.fontColor = COLOR_SCHEME.PRIMARY;
+        }
         break;
-      case 'unfilled':
-        this.fill = COLOR_SCHEME.BACKGROUND;
-        this.fontColor = COLOR_SCHEME.BUTTON_BLUE;
+      case 'hovered':
+        if (this.active) {
+          this.fill = COLOR_SCHEME.PRIMARY_VARIANT;
+          this.fontColor = COLOR_SCHEME.ON_SURFACE;
+        } else {
+          this.fill = COLOR_SCHEME.SURFACE_VARIANT;
+          this.fontColor = COLOR_SCHEME.PRIMARY;
+        }
         break;
-      case 'disabled':
-        this.fill = COLOR_SCHEME.BACKGROUND;
-        this.fontColor = COLOR_SCHEME.BACKGROUND_VARIANT;
-        break;
-      case 'filled':
-        this.fill = COLOR_SCHEME.BUTTON_BLUE;
-        this.fontColor = COLOR_SCHEME.BACKGROUND;
+      case 'pressed':
+        if (this.active) {
+          this.fill = COLOR_SCHEME.ON_SURFACE_VARIANT;
+          this.fontColor = COLOR_SCHEME.PRIMARY;
+        } else {
+          this.fill = COLOR_SCHEME.PRIMARY;
+          this.fontColor = COLOR_SCHEME.ON_SURFACE;
+        }
     }
   }
 
   enable () {
-    this.styleSet = 'default';
+    this.updateStyle();
     this.reactsToPointer = true;
   }
 
   disable () {
-    this.styleSet = 'disabled';
+    this.updateStyle();
     this.reactsToPointer = false;
   }
 }
