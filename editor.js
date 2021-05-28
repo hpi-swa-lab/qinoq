@@ -647,7 +647,7 @@ export class InteractivesEditor extends QinoqMorph {
         exec: () => {
           this._snappingDisabled = !this._snappingDisabled;
           const toggleSnappingButton = this.ui.menuBar.ui.toggleSnappingButton;
-          toggleSnappingButton.filled = !this._snappingDisabled;
+          toggleSnappingButton.active = !this._snappingDisabled;
         }
       },
       {
