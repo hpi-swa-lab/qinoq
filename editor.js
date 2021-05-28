@@ -1039,7 +1039,7 @@ class PositionAnimationPreview extends Canvas {
   static get properties () {
     return {
       fill: {
-        defaultValue: COLOR_SCHEME.opacity
+        defaultValue: COLOR_SCHEME.TRANSPARENT
       },
       extent: {
         defaultValue: pt(533, 300)
