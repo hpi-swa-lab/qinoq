@@ -151,7 +151,7 @@ describe('Inspector', () => {
         });
       });
 
-      describe('labels with icons', () => {
+      describe('on labels with icons', () => {
         let label;
 
         beforeEach(() => {
@@ -279,7 +279,7 @@ describe('Inspector', () => {
           expect(widgetContainer.submorphs[1].name).to.be.equal('aStringWidget');
         });
 
-        it('shows share panel with text fields which respect present token values', () => {
+        it('shows the share panel with text fields which respect present token values', () => {
           inspector.targetMorph = shareButtonWithValues;
 
           const widgetContainer = sharePanel.submorphs[2];
