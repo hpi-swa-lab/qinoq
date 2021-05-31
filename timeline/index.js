@@ -99,7 +99,7 @@ export class Timeline extends QinoqMorph {
     this.ui.scrollableContainer = new QinoqMorph(
       {
         name: 'scrollable container',
-        extent: pt(this.extent.x, this.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
+        extent: pt(this.width, this.height - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
         position: pt(0, CONSTANTS.RULER_HEIGHT),
         clipMode: 'auto'
       });

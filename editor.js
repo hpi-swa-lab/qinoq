@@ -22,7 +22,7 @@ import { Canvas } from 'lively.components/canvas.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
-  EDITOR_HEIGHT: 550,
+  EDITOR_HEIGHT: 569,
   PREVIEW_WIDTH: 533,
   SUBWINDOW_HEIGHT: 300,
   BORDER_WIDTH: 3,
