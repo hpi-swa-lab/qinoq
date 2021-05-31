@@ -318,6 +318,12 @@ export class Timeline extends QinoqMorph {
     this.ui.layerContainer.setProperty('scroll', pt(layerContainerNode.scrollLeft, layerContainerNode.scrollTop));
   }
 
+  scrollContainerToStart () {
+    this.ui.scroller.position = pt(TIMELINE_CONSTANTS.SCROLLBAR_MARGIN, TIMELINE_CONSTANTS.SCROLLBAR_MARGIN);
+    const layerContainerNode = this.ui.layerContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
+    this.ui.layerContainer.setProperty('scroll', pt(TIMELINE_CONSTANTS.SCROLLBAR_MARGIN, layerContainerNode.scrollTop));
+  }
+
   updateScrollerPosition () {
     const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * TIMELINE_CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
     this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + TIMELINE_CONSTANTS.SCROLLBAR_MARGIN, TIMELINE_CONSTANTS.SCROLLBAR_MARGIN);
@@ -531,6 +537,7 @@ export class GlobalTimeline extends Timeline {
   }
 
   zoomToFit () {
+    this.scrollContainerToStart();
     const widthToFit = this.interactive.length + TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + TIMELINE_CONSTANTS.INACTIVE_AREA_WIDTH;
     const widthAvailable = this.ui.layerContainer.width;
     const factor = widthAvailable / widthToFit;
@@ -834,6 +841,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   zoomToFit () {
+    this.scrollContainerToStart();
     this.zoomFactor = 1;
     this.editor.updateZoomInputNumber(this.zoomFactor);
   }
