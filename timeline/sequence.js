@@ -522,11 +522,19 @@ export class TimelineSequence extends QinoqMorph {
   onResizeEnd (event) {
     this.undoStop('timeline-sequence-resize');
     this.hideWarning('left');
+    this.hideWarning('right');
+    this.resetResizerPositions();
+
     this.handleOverlappingOtherSequence(event.hand.timelineSequenceStates);
-    event.hand.timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.removeSnapIndicators());
+    event.hand.timelineSequenceStates.forEach(
+      timelineSequenceState => timelineSequenceState.timelineSequence.removeSnapIndicators());
     this.clearSnappingData();
 
     delete event.hand.timelineSequenceStates;
+  }
+
+  resetResizerPositions () {
+    this.ui.rightResizer.topRight = pt(this.width, 0);
   }
 
   buildLeftSnapIndicator () {
@@ -688,7 +696,9 @@ export class TimelineSequence extends QinoqMorph {
     if (newWarning) this[warningKey] = showImmediately ? 0 : dragValue;
     const currentDrag = Math.abs(this[warningKey] - dragValue);
     const strength = currentDrag / TIMELINE_CONSTANTS.FULL_WARNING_OPACITY_AT_DRAG_DELTA;
-    const warningMorphPosition = (direction == 'left' ? pt(0, 0) : pt(this.width - TIMELINE_CONSTANTS.WARNING_WIDTH, 0));
+    const warningMorphPosition = (direction == 'left'
+      ? pt(0, 0)
+      : pt(this.width - TIMELINE_CONSTANTS.WARNING_WIDTH, 0));
     const warning = !newWarning
       ? this.getSubmorphNamed(`warning ${direction}`)
       : this.createWarningMorph(direction, warningMorphPosition, (direction == 'left' ? 'eastwest' : 'westeast'));
