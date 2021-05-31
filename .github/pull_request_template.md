@@ -157,7 +157,6 @@ Closes [fill in your issues here]
 - [ ] the first tab can be renamed to 'aScrollytelling', this will also rename the interactive to 'aScrollytelling'
 - [ ] the second tab can be renamed to 'sunrise', this will also rename the sequence in the global timeline to 'sunrise' and the respective timeline to 'sunrise timeline'
 - [ ] the second tab can be closed with the 'X'
-- [ ] opening two tabs and setting them to different zoom factors works as expected, even when changing between them and scrolling in both (the cursor is always at the correct position, both have independent zoom factors)
 
 ### Timeline
 
