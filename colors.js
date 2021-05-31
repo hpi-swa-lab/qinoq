@@ -8,7 +8,8 @@ export const COLOR_SCHEME = {
   BACKGROUND: Color.white,
   BACKGROUND_VARIANT: Color.rgb(230, 230, 230),
   ON_BACKGROUND: Color.rgb(100, 100, 100),
-  ON_BACKGROUND_VARIANT: Color.rgb(200, 200, 200),
+  ON_BACKGROUND_VARIANT: Color.rgb(245, 245, 245),
+  ON_BACKGROUND_DARKER_VARIANT: Color.rgb(200, 200, 200),
   //
   PROMPT_BACKGROUND: Color.rgb(236, 240, 241),
   SURFACE: Color.white,
