@@ -37,9 +37,11 @@ export class TimelineSequence extends QinoqMorph {
         set (caption) {
           if (!caption) return;
           this.setProperty('caption', caption);
-          this.label.textString = caption;
-          this.sequence.name = caption;
-          this.tooltip = caption;
+          if (!this._deserializing) {
+            this.label.textString = caption;
+            this.sequence.name = caption;
+            this.tooltip = caption;
+          }
         }
       },
       sequence: {
