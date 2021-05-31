@@ -100,7 +100,7 @@ export class Timeline extends QinoqMorph {
       {
         name: 'scrollable container',
         extent: pt(this.extent.x, this.extent.y - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
-        position: pt(0, CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
+        position: pt(0, CONSTANTS.RULER_HEIGHT),
         clipMode: 'auto'
       });
     this.addMorph(this.ui.scrollableContainer);
@@ -167,11 +167,10 @@ export class Timeline extends QinoqMorph {
   }
 
   initializeCursor () {
-    this.ui.cursor = new TimelineCursor({ displayValue: 0, timeline: this, ruler: this.ui.ruler });
+    this.ui.cursor = new TimelineCursor({ displayValue: 0, timeline: this });
     this.ui.layerContainer.addMorph(this.ui.cursor);
     this.ui.cursor.location = this.getPositionFromScroll(0);
     this.ui.cursor.height = this.ui.layerContainer.height;
-    this.initializeRuler();
   }
 
   initializeLayerContainer () {
@@ -236,6 +235,7 @@ export class Timeline extends QinoqMorph {
     this._createOverviewLayers = true;
     this.onLoadContent(content);
     this.initializeCursor();
+    this.initializeRuler();
     this.onScrollChange(this.interactive.scrollPosition);
 
     connect(content, 'name', this, 'name', { converter: newName => `${newName.toLowerCase()} timeline` }).update(content.name);
@@ -286,9 +286,9 @@ export class Timeline extends QinoqMorph {
   }
 
   onScrollChange (scrollPosition) {
-    this.ui.ruler.displayValue = this.getDisplayValueFromScroll(scrollPosition);
     this.ui.cursor.location = this.getPositionFromScroll(scrollPosition);
-    this.ui.ruler.updatePosition(this.ui.cursor.location);
+    this.ui.ruler.displayValue = this.getDisplayValueFromScroll(scrollPosition);
+    this.ui.ruler.updateHeadPosition(this.ui.cursor.location);
   }
 
   onMouseWheel (event) {
@@ -345,6 +345,8 @@ export class Timeline extends QinoqMorph {
   updateScrollerPosition () {
     const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
     this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
+    // left and right scrolling of the timeline always leads here
+    // we also have to update the ruler position because of the scroll
     if (this.ui.ruler) this.ui.ruler.updateContainerScroll(this.ui.layerContainer.scroll.x);
   }
 
