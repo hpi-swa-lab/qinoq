@@ -93,7 +93,7 @@ export class QinoqButton extends Label {
   updateStyle () {
     if (!this.enabled) {
       this.fill = COLOR_SCHEME.SURFACE_VARIANT;
-      this.fontColor = COLOR_SCHEME.ON_SURFACE_VARIANT;
+      this.fontColor = COLOR_SCHEME.ON_SURFACE;
       return;
     }
 
@@ -101,7 +101,7 @@ export class QinoqButton extends Label {
       case 'default':
         if (this.active) {
           this.fill = COLOR_SCHEME.PRIMARY;
-          this.fontColor = COLOR_SCHEME.ON_SURFACE;
+          this.fontColor = COLOR_SCHEME.ON_PRIMARY;
         } else {
           this.fill = COLOR_SCHEME.SURFACE;
           this.fontColor = COLOR_SCHEME.PRIMARY;
@@ -110,7 +110,7 @@ export class QinoqButton extends Label {
       case 'hovered':
         if (this.active) {
           this.fill = COLOR_SCHEME.PRIMARY_VARIANT;
-          this.fontColor = COLOR_SCHEME.ON_SURFACE;
+          this.fontColor = COLOR_SCHEME.ON_PRIMARY;
         } else {
           this.fill = COLOR_SCHEME.SURFACE_VARIANT;
           this.fontColor = COLOR_SCHEME.PRIMARY;
@@ -122,7 +122,7 @@ export class QinoqButton extends Label {
           this.fontColor = COLOR_SCHEME.PRIMARY;
         } else {
           this.fill = COLOR_SCHEME.PRIMARY;
-          this.fontColor = COLOR_SCHEME.ON_SURFACE;
+          this.fontColor = COLOR_SCHEME.ON_PRIMARY;
         }
     }
   }
