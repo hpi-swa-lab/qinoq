@@ -114,6 +114,8 @@ Closes [fill in your issues here]
   - [ ] keyframes will snap to other keyframes, this can be disabled with the snap toggle in the menu bar
 - [ ] it is possible to add a new morph to the interactive using the top bar
   - [ ] it is possible to add a lottie morph with the top bar
+    - [ ] newly added lottie morphs already have an animation on the property "progress"
+    - [ ] newly created lottie morphs visually show an animation
   - [ ] the newly created morph is also added to the timeline as an own layer
 - [ ] it is possible to add a new morph to the interactive by grab-and-drop
   - [ ] when a morph is grabbed onto the interactive while the global timeline is active, an error message appears and the morph returns to its original position
