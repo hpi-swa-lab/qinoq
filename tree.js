@@ -238,23 +238,8 @@ export class InteractiveGraph extends QinoqMorph {
 }
 
 class QinoqTree extends InteractiveTree {
-  update (force) {
-    if (this._deserializing) return;
-    super.update(force);
-  }
-
   onHoverOut (event) {
     // prevent onHoverOut in InteractiveTree, which triggers selection
-  }
-
-  __deserialize__ (snapshot, objRef, serializedMap, pool) {
-    this._deserializing = true;
-    super.__deserialize__(snapshot, objRef, serializedMap, pool);
-  }
-
-  __after_deserialize__ (snapshot, ref, pool) {
-    delete this._deserializing;
-    super.__after_deserialize__(snapshot, ref, pool);
   }
 }
 
@@ -267,9 +252,11 @@ class TreeItemContainer extends QinoqMorph {
   }
 
   async toggleSelected (active) {
-    this.label.fontColor = active ? COLOR_SCHEME.ON_SECONDARY : COLOR_SCHEME.ON_SURFACE;
-    if (active) {
-      await this.editor.goto(this.target);
+    if (!this._deserializing) {
+      this.label.fontColor = active ? COLOR_SCHEME.ON_SECONDARY : COLOR_SCHEME.ON_SURFACE;
+      if (active) {
+        await this.editor.goto(this.target);
+      }
     }
   }
 
