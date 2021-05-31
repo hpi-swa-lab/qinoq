@@ -126,6 +126,12 @@ export class Ruler extends QinoqMorph {
         defaultValue: 'ruler'
       },
       timeline: {},
+      extent: {
+        set (point) {
+          this.setProperty('extent', point);
+          this.ui.scaleContainer.extent = point;
+        }
+      },
       ui: {
         after: ['timeline'],
         defaultValue: {},
@@ -134,7 +140,8 @@ export class Ruler extends QinoqMorph {
           this.initializeScale();
           this.initializeHead();
         }
-      }
+      },
+      clipMode: 'hidden'
     };
   }
 
@@ -171,7 +178,13 @@ export class Ruler extends QinoqMorph {
       name: 'ruler/scale',
       extent: pt(this.timeline.ui.layerContainer.width, this.height)
     });
-    this.addMorph(this.ui.scale);
+    this.ui.scaleContainer = new QinoqMorph({
+      name: 'ruler/scale/container',
+      position: pt(CONSTANTS.LAYER_INFO_WIDTH + 2, 0),
+      clipMode: 'hidden'
+    });
+    this.ui.scaleContainer.addMorph(this.ui.scale);
+    this.addMorph(this.ui.scaleContainer);
     await this.ui.scale.whenRendered(); this.redrawScale();
   }
 
@@ -180,17 +193,23 @@ export class Ruler extends QinoqMorph {
     this.ui.headCenter.position = pt(this.timeline.ui.layerContainer.position.x + newLocation - this.ui.headCenter.width / 2, this.ui.headCenter.position.y);
   }
 
-  scrollerUpdate () {
-    // do magic here
+  scrollerUpdate (layerContainerScroll) {
+    const initialPosition = pt(0, 0);
+
+    if (layerContainerScroll <= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
+      this.ui.scale.position = initialPosition.addPt(pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET - layerContainerScroll, 0));
+    } else {
+      this.ui.scale.position = initialPosition.subPt(pt(layerContainerScroll - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0));
+    }
   }
 
   updateExtent (newWidth) {
-    this.ui.scale.width = newWidth + 4;
-    this.redrawScale();
+    this.ui.scale.width = newWidth;
+    this.redraw();
   }
 
-  redraw () {
-    this.redrawScale();
+  async redraw () {
+    await this.ui.scale.whenRendered(); this.redrawScale();
   }
 
   redrawScale (newWidth) {
