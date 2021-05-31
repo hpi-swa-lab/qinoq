@@ -331,7 +331,7 @@ export class Timeline extends QinoqMorph {
   updateScrollerPosition () {
     const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
     this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
-    this.ui.ruler.scrollerUpdate(this.ui.layerContainer.scroll.x * relative);
+    this.ui.ruler.scrollerUpdate(this.ui.layerContainer.scroll.x);
   }
 
   relayout (newWindowExtent) {
@@ -342,6 +342,8 @@ export class Timeline extends QinoqMorph {
     this.ui.layerContainer.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, this.owner.extent.y - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT);
     this.ui.scrollBar.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, this.ui.scrollBar.extent.y);
     this.ui.scrollBar.position = this.ui.layerContainer.bottomLeft;
+
+    this.ui.ruler.extent = pt(newWindowExtent.x, this.ui.ruler.extent.y);
     this.updateScrollerExtent();
   }
 
