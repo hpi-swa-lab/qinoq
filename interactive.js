@@ -733,7 +733,6 @@ export class Sequence extends DeserializationAwareMorph {
   }
 
   getNextKeyframePositionForAbsolutePosition (absolutePosition) {
-    debugger;
     return this.allKeyframes.map(keyframe => keyframe.position).find(keyframePosition => this.getAbsolutePosition(keyframePosition) > absolutePosition);
   }
 
