@@ -12,15 +12,6 @@ export class TimelineCursor extends QinoqMorph {
       isLayoutable: {
         defaultValue: false
       },
-      displayValue: {
-        after: ['ui'],
-        defaultValue: 0,
-        type: 'Number',
-        set (displayValue) {
-          this.setProperty('displayValue', displayValue);
-          if (!this._deserializing) this.redraw();
-        }
-      },
       location: {
         // location: where the cursor should point at
         // position: actual position of the morph, which is dependent on the location and the width of the cursor
@@ -89,13 +80,8 @@ export class TimelineCursor extends QinoqMorph {
     this.borderStyle = 'none';
   }
 
-  redraw () {
-    this.updatePosition();
-  }
-
   updatePosition () {
     this.position = pt(this.location - this.width / 2 + 2, this.position.y);
-    this.ruler.updatePosition(this.location, this.displayValue);
   }
 
   onOwnerChanged (newOwner) {
@@ -141,7 +127,16 @@ export class Ruler extends QinoqMorph {
           this.initializeHead();
         }
       },
-      clipMode: 'hidden'
+      clipMode: 'hidden',
+      displayValue: {
+        after: ['ui'],
+        defaultValue: 0,
+        type: 'Number',
+        set (displayValue) {
+          this.setProperty('displayValue', displayValue);
+          if (!this._deserializing) this.ui.label.textString = displayValue.toString();
+        }
+      }
     };
   }
 
@@ -188,12 +183,22 @@ export class Ruler extends QinoqMorph {
     await this.ui.scale.whenRendered(); this.redrawScale();
   }
 
-  updatePosition (newLocation, displayValue) {
-    this.ui.label.textString = displayValue.toString();
-    this.ui.headCenter.position = pt(this.timeline.ui.layerContainer.position.x + newLocation - this.ui.headCenter.width / 2, this.ui.headCenter.position.y);
+  updatePosition (newLocation) {
+    const layerContainerScroll = this.timeline.ui.layerContainer.scroll.x;
+    let diff = layerContainerScroll - newLocation;
+    if (newLocation < layerContainerScroll) {
+      // TODO: change appearance
+      diff = 0;
+    }
+    if (newLocation > this.timeline.ui.layerContainer.width + layerContainerScroll) {
+      diff = -this.timeline.ui.layerContainer.width;
+    }
+
+    this.ui.headCenter.position = pt(CONSTANTS.LAYER_INFO_WIDTH - diff - this.ui.headCenter.width / 2, this.ui.headCenter.position.y);
   }
 
-  scrollerUpdate (layerContainerScroll) {
+  updateContainerScroll (layerContainerScroll) {
+    this.updatePosition(this.timeline.ui.cursor.location);
     this.ui.scale.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET - layerContainerScroll + 2, 0);
   }
 
