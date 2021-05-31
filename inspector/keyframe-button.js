@@ -72,7 +72,7 @@ export class KeyframeButton extends QinoqMorph {
         defaultValue: 'default',
         set (styleSet) {
           this.setProperty('styleSet', styleSet);
-          this.updateStyle();
+          if (!this._deserializing) this.updateStyle();
         }
       }
     };
