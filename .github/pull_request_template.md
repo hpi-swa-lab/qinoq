@@ -92,12 +92,12 @@ Closes [fill in your issues here]
 - [ ] there are three OverviewLayers (one per Morph in the sky sequence)
 - [ ] they hold two to three keyframelines each
   - [ ] when changing the zoom, the keyframelines update accordingly
-- [ ] clicking on the triangle expands those into two new layers with two keyframes each
+- [ ] clicking on the triangle expands those into two new layers with two keyframes each (or three at the sun)
 - [ ] right-clicking a keyframe shows a context menu
   - [ ] right-clicking on the last keyframe of the sun's position animation, an option to select easing is shown
   - [ ] when clicked, a list of easings appears
   - [ ] when outBack is selected as the easing, the sun moves a little back at the end of the animation
-- [ ] when expanding both morphs the cursor is still visible over all layers
+- [ ] when expanding all three morphs the cursor is still visible over all layers
 - [ ] creating a new keyframe (with the inspector) will update the layers accordingly
 - [ ] clicking on a layer will select the corresponding morph in the inspector
 - [ ] clicking on the first tab brings you back to the global timeline
