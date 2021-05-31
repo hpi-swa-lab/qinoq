@@ -52,6 +52,11 @@ Closes [fill in your issues here]
 - [ ] scrolls when scrolling in the interactive
 - [ ] with open interactive, scroll position (and cursor position) may be changed with arrow keys
 - [ ] the number in the menubar is consistent with the cursor position
+- [ ] there is a scale beneath the cursor head
+  - [ ] the length is consistent with the active area
+  - [ ] the scale will adopt to the current zoom
+- [ ] the cursor head will always be visible
+- [ ] the cursor is only visible when in the current sequence
 
 ### Sequences
 
