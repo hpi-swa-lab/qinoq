@@ -41,7 +41,8 @@ export class TimelineLayerInfo extends QinoqMorph {
 
     this.ui.label = new Label({
       textString: this.name,
-      reactsToPointer: false
+      reactsToPointer: false,
+      fontColor: COLOR_SCHEME.ON_SURFACE
     });
     this.addMorphAt(this.ui.label, 0);
     this.updateLabel();
