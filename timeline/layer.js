@@ -58,9 +58,9 @@ export class TimelineLayer extends QinoqMorph {
     return this.getSubmorphNamed('active area');
   }
 
-  remove () {
+  remove (removeSelf = false) {
     this.owner.remove();
-    super.remove();
+    if (removeSelf) super.remove();
   }
 }
 
@@ -165,7 +165,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
     if (index > this.container.submorphs.length - 1) {
       index = this.container.submorphs.length - 1;
     }
-    this.remove();
+    this.remove(false);
     this.container.addMorphAt(this.layouter, Math.round(index));
     this.timeline.arrangeLayerInfos();
     this.timeline.updateZIndicesFromTimelineLayerPositions();
