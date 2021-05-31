@@ -129,7 +129,7 @@ export class Ruler extends QinoqMorph {
       extent: {
         set (point) {
           this.setProperty('extent', point);
-          this.ui.scaleContainer.extent = point;
+          this.ui.scaleContainer.extent = pt(this.timeline.ui.layerContainer.width, this.height);
         }
       },
       ui: {
@@ -180,7 +180,7 @@ export class Ruler extends QinoqMorph {
     });
     this.ui.scaleContainer = new QinoqMorph({
       name: 'ruler/scale/container',
-      position: pt(CONSTANTS.LAYER_INFO_WIDTH + 2, 0),
+      position: pt(CONSTANTS.LAYER_INFO_WIDTH, 0),
       clipMode: 'hidden'
     });
     this.ui.scaleContainer.addMorph(this.ui.scale);
@@ -194,13 +194,7 @@ export class Ruler extends QinoqMorph {
   }
 
   scrollerUpdate (layerContainerScroll) {
-    const initialPosition = pt(0, 0);
-
-    if (layerContainerScroll <= CONSTANTS.SEQUENCE_INITIAL_X_OFFSET) {
-      this.ui.scale.position = initialPosition.addPt(pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET - layerContainerScroll, 0));
-    } else {
-      this.ui.scale.position = initialPosition.subPt(pt(layerContainerScroll - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET, 0));
-    }
+    this.ui.scale.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET - layerContainerScroll + 2, 0);
   }
 
   updateExtent (newWidth) {
@@ -216,9 +210,9 @@ export class Ruler extends QinoqMorph {
     if (!this.ui.scale.context) return false;
     const style = { color: COLOR_SCHEME.KEYFRAME_FILL };
     this.ui.scale.clear(COLOR_SCHEME.ON_BACKGROUND_VARIANT);
-    for (let i = 0; i <= this.ui.scale.width; i += 10) {
+    for (let i = 0; i <= this.interactive.length; i += 10) {
       const y = (i / 100 == parseInt(i / 100)) ? 0 : 5;
-      this.ui.scale.line(pt((i + 2) * this.timeline.zoomFactor, y), pt((i + 2) * this.timeline.zoomFactor, 10), style);
+      this.ui.scale.line(pt(i * this.timeline.zoomFactor, y), pt(i * this.timeline.zoomFactor, 10), style);
     }
   }
 }
