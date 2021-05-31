@@ -113,7 +113,8 @@ export class TimelineSequence extends QinoqMorph {
           if (isHidden) this.fill = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
           if (!isHidden) this.fill = COLOR_SCHEME.BACKGROUND;
         }
-      }
+      },
+      label: {}
     };
   }
 
