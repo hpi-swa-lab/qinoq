@@ -1,4 +1,4 @@
-import { Morph, ProportionalLayout } from 'lively.morphic';
+import { Morph, config, ProportionalLayout } from 'lively.morphic';
 import { pt, Color } from 'lively.graphics';
 import { connect, disconnect, signal, disconnectAll } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
@@ -475,14 +475,39 @@ class InteractiveScrollHolder extends Morph {
     if (this.currentMouseTarget == this.previousMorphUnderMouse) return;
     if (this.currentMouseTarget) {
       this.currentMouseTarget.onHoverIn({ hand: $world.firstHand });
-      (this.topbar && (this.topbar.editMode == 'Text' || this.topbar.editMode == 'Shape')) ? this.nativeCursor = 'crosshair' : this.nativeCursor = this.currentMouseTarget.nativeCursor;
+      this.handleTooltips(this.currentMouseTarget);
+      (this.topbar && (this.topbar.editMode == 'Text' || this.topbar.editMode == 'Shape'))
+        ? this.nativeCursor = 'crosshair'
+        : this.nativeCursor = this.currentMouseTarget.nativeCursor;
     }
-    if (this.previousMorphUnderMouse) this.previousMorphUnderMouse.onHoverOut({ hand: $world.firstHand });
+    if (this.previousMorphUnderMouse) {
+      this.previousMorphUnderMouse.onHoverOut({ hand: $world.firstHand });
+      this.tooltipViewer.hoverOutOfMorph(this.tooltipViewer.currentMorph);
+    }
+
     this.previousMorphUnderMouse = this.currentMouseTarget;
   }
 
   onMouseUp (event) {
     this.getUnderlyingMorph(event.hand.position).onMouseUp(event);
+  }
+
+  get tooltipViewer () {
+    return $world._tooltipViewer;
+  }
+
+  handleTooltips (target) {
+    const handTooltipOffset = pt(10, 7);
+    if (target.tooltip) {
+      this.tooltipViewer.currentMorph = target;
+      this.tooltipViewer.timer = setTimeout(
+        () => {
+          const hand = $world.firstHand;
+          this.tooltipViewer.showTooltipFor(target, hand);
+          this.tooltipViewer.currentTooltip.position = hand.position.addPt(handTooltipOffset);
+        },
+        config.showTooltipsAfter * 1000);
+    }
   }
 
   onContextMenu (event) {

@@ -21,6 +21,7 @@ Closes [fill in your issues here]
 - [ ] is scrollable
 - [ ] mouseDown on the leaves makes them darker, the cursor changes to a pointer
 - [ ] mouseUp on the leaves makes them lighter again (it is expected that the color is not green anymore)
+- [ ] hovering over the leaves shows a tooltip after a while, which goes away when moving away
 - [ ] hovering over the clouds blurs them
 - [ ] moving the mouse away from the clouds removes the blur  
 - [ ] the interactive can be resized by a fixed aspect ratio
