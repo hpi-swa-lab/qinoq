@@ -67,6 +67,8 @@ export class InteractiveGraph extends QinoqMorph {
       extent: pt(this.width, Math.max(CONSTANTS.DEFAULT_HEIGHT, this.height - CONSTANTS.SEARCH_FIELD_HEIGHT)),
       borderWidth: this.borderWidth,
       borderColor: this.borderColor,
+      selectionFontColor: COLOR_SCHEME.ON_SURFACE,
+      nonSelectionFontColor: COLOR_SCHEME.ON_BACKGROUND
       halosEnabled: this.editor.debug
     });
 
@@ -255,7 +257,6 @@ export class InteractiveGraph extends QinoqMorph {
       tree: this,
       fill: COLOR_SCHEME.TRANSPARENT,
       target: item,
-      fontColor: COLOR_SCHEME.ON_SURFACE_VARIANT,
       _editor: this.editor
     });
     container.refresh();
@@ -332,9 +333,14 @@ class TreeItemContainer extends QinoqMorph {
   }
 
   async toggleSelected (active) {
-    this.label.fontColor = active
-      ? COLOR_SCHEME.ON_SURFACE
-      : COLOR_SCHEME.ON_SURFACE_VARIANT;
+    if (!this.tree || !this.tree.tree) return;
+    const { selectionFontColor, nonSelectionFontColor } = this.tree.tree;
+    this.submorphs
+      .filter(m => !m._isControlElement && m.styleClasses.includes('Label'))
+      .forEach(m => {
+        m.fontColor = active ? selectionFontColor : nonSelectionFontColor;
+      });
+
     if (active) {
       await this.editor.goto(this.target);
     }
@@ -357,9 +363,10 @@ class TreeItemContainer extends QinoqMorph {
       type: 'label',
       name: 'name label',
       reactsToPointer: false,
-      padding: rect(0, 0, 0, 0),
+      padding: rect(0, 2, 0, 0),
       acceptsDrops: false,
-      fontSize: this.tree.fontSize
+      fontSize: this.tree.fontSize,
+      fontColor: COLOR_SCHEME.ON_BACKGROUND
     });
 
     label.value = this.target.name;

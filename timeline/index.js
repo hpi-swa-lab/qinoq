@@ -124,9 +124,9 @@ export class Timeline extends QinoqMorph {
       name: 'scrollbar',
       position: pt(TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, this.height - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
       extent: pt(this.width - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH - this.scrollbarOffset.x, TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
-      fill: COLOR_SCHEME.TRANSPARENT,
+      fill: COLOR_SCHEME.BACKGROUND_VARIANT,
       borderColor: COLOR_SCHEME.BACKGROUND_VARIANT,
-      borderWidth: 1,
+      borderWidth: 0,
       borderRadius: 10
     });
     this.initializeScrollbarScroller();
@@ -137,7 +137,7 @@ export class Timeline extends QinoqMorph {
   initializeScrollbarScroller () {
     this.ui.scroller = this.ui.scrollBar.addMorph(new QinoqMorph({
       name: 'scroller',
-      fill: COLOR_SCHEME.BACKGROUND_VARIANT,
+      fill: COLOR_SCHEME.ON_BACKGROUND_DARKER_VARIANT,
       position: pt(TIMELINE_CONSTANTS.SCROLLBAR_MARGIN, TIMELINE_CONSTANTS.SCROLLBAR_MARGIN),
       extent: pt(0, TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - (2 * TIMELINE_CONSTANTS.SCROLLBAR_MARGIN)),
       borderRadius: 10,

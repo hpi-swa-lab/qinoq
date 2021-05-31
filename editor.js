@@ -1319,9 +1319,9 @@ class MenuBar extends QinoqMorph {
       dropShadow: false,
       borderWidth: 2,
       unit: '%',
-      borderColor: COLOR_SCHEME.SECONDARY
+      borderColor: COLOR_SCHEME.PRIMARY
     });
-    this.ui.zoomInput.getSubmorphNamed('value').fontColor = COLOR_SCHEME.ON_SURFACE;
+    this.ui.zoomInput.getSubmorphNamed('value').fontColor = COLOR_SCHEME.ON_BACKGROUND;
     connect(this.ui.zoomInput, 'number', this.editor, 'onZoomChange', { converter: '(percent) => percent/100' });
     this.ui.rightContainer.addMorph(this.ui.zoomInput);
   }
@@ -1336,9 +1336,9 @@ class MenuBar extends QinoqMorph {
       tooltip: 'Set scroll position',
       dropShadow: false,
       borderWidth: 2,
-      borderColor: COLOR_SCHEME.SECONDARY
+      borderColor: COLOR_SCHEME.PRIMARY
     });
-    this.ui.scrollPositionInput.getSubmorphNamed('value').fontColor = COLOR_SCHEME.ON_SURFACE;
+    this.ui.scrollPositionInput.getSubmorphNamed('value').fontColor = COLOR_SCHEME.ON_SURFACE_VARIANT;
     connect(this.ui.scrollPositionInput, 'number', this.editor, 'onInternalScrollChange');
     this.ui.scrollPositionToolbar.addMorph(this.ui.scrollPositionInput);
   }
@@ -1377,8 +1377,8 @@ class MenuBar extends QinoqMorph {
       const morph = value;
       if (morph.isQinoqButton) morph.disable();
     });
-    this.ui.zoomInput.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
-    this.ui.scrollPositionInput.borderColor = COLOR_SCHEME.BACKGROUND_VARIANT;
+    this.ui.zoomInput.borderColor = COLOR_SCHEME.ON_BACKGROUND_DARKER_VARIANT;
+    this.ui.scrollPositionInput.borderColor = COLOR_SCHEME.ON_BACKGROUND_DARKER_VARIANT;
   }
 
   enableUIElements () {
@@ -1386,7 +1386,7 @@ class MenuBar extends QinoqMorph {
       const morph = value;
       if (morph.isQinoqButton) morph.enable();
     });
-    this.ui.zoomInput.borderColor = COLOR_SCHEME.SECONDARY;
-    this.ui.scrollPositionInput.borderColor = COLOR_SCHEME.SECONDARY;
+    this.ui.zoomInput.borderColor = COLOR_SCHEME.PRIMARY;
+    this.ui.scrollPositionInput.borderColor = COLOR_SCHEME.PRIMARY;
   }
 }
