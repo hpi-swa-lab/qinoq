@@ -369,6 +369,18 @@ describe('Editor', () => {
       editor.interactive = interactive;
       expect(interactive.height).to.be.equal(previewHeight);
     });
+
+    it('allows to zoom in the interactive', () => {
+      const originalExtent = interactive.extent;
+      const event = {
+        domEvt: {
+          deltaY: 10,
+          ctrlKey: true
+        }
+      };
+      interactive.scrollOverlay.onMouseWheel(event);
+      expect(interactive.extent).to.not.equal(originalExtent);
+    });
   });
 
   it('scrollholder is submorph of preview', () => {

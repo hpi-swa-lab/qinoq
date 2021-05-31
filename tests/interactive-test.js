@@ -32,6 +32,19 @@ describe('Interactive', () => {
     interactive.addSequence(sequenceTwo);
   });
 
+  it('cannot be zoomed', () => {
+    interactive.openInWorld();
+    const originalExtent = interactive.extent;
+    const event = {
+      domEvt: {
+        deltaY: 10,
+        ctrlKey: true
+      }
+    };
+    interactive.scrollOverlay.onMouseWheel(event);
+    expect(interactive.extent).to.be.equal(originalExtent);
+  });
+
   it('is an interactive', () => {
     expect(interactive.isInteractive).to.be.true;
   });
