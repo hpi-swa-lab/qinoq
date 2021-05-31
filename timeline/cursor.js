@@ -140,22 +140,16 @@ export class Ruler extends QinoqMorph {
     this.redraw();
   }
 
-  updatePosition (newLocation) {
+  updateHeadPosition (newLocation) {
     const layerContainerScroll = this.timeline.ui.layerContainer.scroll.x;
     let diff = layerContainerScroll - newLocation;
-    if (newLocation < layerContainerScroll) {
-      // TODO: change appearance
-      diff = 0;
-    }
-    if (newLocation > this.timeline.ui.layerContainer.width + layerContainerScroll) {
-      diff = -this.timeline.ui.layerContainer.width;
-    }
-
+    if (newLocation < layerContainerScroll) diff = 0;
+    if (newLocation > this.timeline.ui.layerContainer.width + layerContainerScroll) diff = -this.timeline.ui.layerContainer.width;
     this.ui.head.position = pt(CONSTANTS.LAYER_INFO_WIDTH - diff - this.ui.head.width / 2, this.ui.head.position.y);
   }
 
   updateContainerScroll (layerContainerScroll) {
-    this.updatePosition(this.timeline.ui.cursor.location);
+    this.updateHeadPosition(this.timeline.ui.cursor.location);
     this.ui.scale.position = pt(CONSTANTS.SEQUENCE_INITIAL_X_OFFSET - layerContainerScroll + 2, 0);
   }
 
@@ -168,7 +162,7 @@ export class Ruler extends QinoqMorph {
     this.ui.scale.whenRendered().then(() => this.redrawScale());
   }
 
-  redrawScale (newWidth) {
+  redrawScale () {
     if (!this.ui.scale.context) return false;
     const style = { color: COLOR_SCHEME.KEYFRAME_FILL, width: 1 };
     this.ui.scale.clear(COLOR_SCHEME.BACKGROUND);
