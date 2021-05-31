@@ -333,6 +333,8 @@ export class InteractivesEditor extends QinoqMorph {
 
     this.ui.preview.showEmptyPreviewPlaceholder();
     this.ui.menuBar.disableUIElements();
+    this.updateZoomInputNumber(1);
+    this.internalScrollChangeWithGUIUpdate(0);
   }
 
   reset () {
