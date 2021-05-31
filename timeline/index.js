@@ -99,8 +99,8 @@ export class Timeline extends QinoqMorph {
     this.ui.scrollableContainer = new QinoqMorph(
       {
         name: 'scrollable container',
-        extent: pt(this.width, this.height - CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
-        position: pt(0, CONSTANTS.RULER_HEIGHT),
+        extent: pt(this.width, this.height - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
+        position: pt(0, TIMELINE_CONSTANTS.RULER_HEIGHT),
         clipMode: 'auto'
       });
     this.addMorph(this.ui.scrollableContainer);
@@ -338,8 +338,8 @@ export class Timeline extends QinoqMorph {
   }
 
   updateScrollerPosition () {
-    const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
-    this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
+    const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * TIMELINE_CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
+    this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + TIMELINE_CONSTANTS.SCROLLBAR_MARGIN, TIMELINE_CONSTANTS.SCROLLBAR_MARGIN);
     // left and right scrolling of the timeline always leads here
     // we also have to update the ruler position because of the scroll
     if (this.ui.ruler) this.ui.ruler.updateContainerScroll(this.ui.layerContainer.scroll.x);
@@ -354,7 +354,7 @@ export class Timeline extends QinoqMorph {
     this.ui.scrollBar.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, this.ui.scrollBar.extent.y);
     this.ui.scrollBar.position = this.ui.layerContainer.bottomLeft;
 
-    if (this.ui.ruler) this.ui.ruler.extent = pt(newWindowExtent.x, this.ui.ruler.extent.y);
+    if (this.ui.ruler) this.ui.ruler.extent = pt(newWindowExtent.x, TIMELINE_CONSTANTS.RULER_HEIGHT);
     this.updateScrollerExtent();
   }
 
@@ -424,6 +424,7 @@ export class GlobalTimeline extends Timeline {
   }
 
   get end () {
+    if (!this.interactive) return 0;
     return this.interactive.length;
   }
 
@@ -964,7 +965,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   redraw () {
-    this._activeAreaWidth = CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor;
+    this._activeAreaWidth = TIMELINE_CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor;
     this.timelineLayers.forEach(timelineLayer => timelineLayer.redraw());
   }
 
