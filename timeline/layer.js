@@ -191,7 +191,9 @@ export class GlobalTimelineLayer extends TimelineLayer {
 
   toggleHiddenStyle () {
     this.timelineSequences.forEach(timelineSequence => timelineSequence.updateAppearance());
-    this.activeArea.fill = this.layer.hidden ? COLOR_SCHEME.BACKGROUND_VARIANT : COLOR_SCHEME.SURFACE_VARIANT;
+    this.activeArea.fill = this.layer.hidden
+      ? COLOR_SCHEME.BACKGROUND_VARIANT
+      : COLOR_SCHEME.ON_BACKGROUND_VARIANT;
   }
 
   tryPasteSequence (position) {

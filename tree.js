@@ -67,6 +67,8 @@ export class InteractiveGraph extends QinoqMorph {
       extent: pt(this.width, Math.max(CONSTANTS.DEFAULT_HEIGHT, this.height - CONSTANTS.SEARCH_FIELD_HEIGHT)),
       borderWidth: this.borderWidth,
       borderColor: this.borderColor,
+      selectionFontColor: COLOR_SCHEME.ON_SURFACE,
+      nonSelectionFontColor: COLOR_SCHEME.ON_BACKGROUND
       halosEnabled: this.editor.debug
     });
 
@@ -255,7 +257,6 @@ export class InteractiveGraph extends QinoqMorph {
       graph: this,
       fill: COLOR_SCHEME.TRANSPARENT,
       target: item,
-      fontColor: COLOR_SCHEME.ON_SURFACE_VARIANT,
       _editor: this.editor
     });
     container.refresh();
@@ -363,9 +364,10 @@ class TreeItemContainer extends QinoqMorph {
       type: 'label',
       name: 'name label',
       reactsToPointer: false,
-      padding: rect(0, 0, 0, 0),
+      padding: rect(0, 2, 0, 0),
       acceptsDrops: false,
-      fontSize: this.graph.fontSize
+      fontSize: this.graph.fontSize,
+      fontColor: COLOR_SCHEME.ON_BACKGROUND
     });
 
     label.value = this.target.name;
