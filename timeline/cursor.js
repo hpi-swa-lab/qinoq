@@ -23,7 +23,9 @@ export class TimelineCursor extends QinoqMorph {
           if (!this._deserializing) this.updatePosition();
         }
       },
-      ruler: {},
+      extent: {
+        defaultValue: pt(CONSTANTS.CURSOR_WIDTH, 0)
+      },
       fill: {
         defaultValue: COLOR_SCHEME.SECONDARY
       },
@@ -33,46 +35,8 @@ export class TimelineCursor extends QinoqMorph {
       name: {
         defaultValue: 'cursor'
       },
-      ui: {
-        initialize () {
-          if (this._deserializing) return;
-          this.initializeAppearance();
-        }
-      },
       timeline: {}
     };
-  }
-
-  initializeSubmorphs () {
-    this.ui = {};
-    this.ui.label = new Label({
-      name: 'cursor/head/text',
-      fontSize: CONSTANTS.CURSOR_FONT_SIZE,
-      halosEnabled: false,
-      reactsToPointer: false
-    });
-    this.ui.head = new QinoqMorph({
-      name: 'cursor/head',
-      layout: new HorizontalLayout({
-        spacing: 3,
-        autoResize: true
-      }),
-      halosEnabled: false,
-      borderRadius: 4,
-      submorphs: [this.ui.label]
-    });
-    this.ui.headCenter = new QinoqMorph({
-      extent: pt(20, 1),
-      halosEnabled: false,
-      reactsToPointer: false,
-      fill: COLOR_SCHEME.TRANSPARENT,
-      layout: new HorizontalLayout({
-        direction: 'centered',
-        autoResize: false
-      }),
-      submorphs: [this.ui.head]
-    });
-    this.addMorph(this.ui.headCenter);
   }
 
   initializeAppearance () {
@@ -214,7 +178,7 @@ export class Ruler extends QinoqMorph {
   redrawScale (newWidth) {
     if (!this.ui.scale.context) return false;
     const style = { color: COLOR_SCHEME.KEYFRAME_FILL, width: 1 };
-    this.ui.scale.clear(COLOR_SCHEME.TRANSPARENT);
+    this.ui.scale.clear(COLOR_SCHEME.BACKGROUND);
     for (let i = this.timeline.start; i <= this.timeline.end; i += 25) {
       const y = (i / 100 == parseInt(i / 100)) ? 0 : 5;
       let x = this.timeline.getPositionFromScroll(i) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
