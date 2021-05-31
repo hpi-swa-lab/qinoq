@@ -85,7 +85,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
 
     this.ui.tabContainer = await resource('part://tabs/tabs').read();
     Object.assign(this.ui.tabContainer, {
-      position: pt(0, 38),
+      position: pt(1, 38),
       extent: pt(this.width, this.height - this.ui.headlinePane.height - CONSTANTS.TAB_HEADER_HEIGHT),
       showNewTabButton: false,
       tabHeight: 25

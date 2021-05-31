@@ -26,7 +26,7 @@ const CONSTANTS = {
   EDITOR_HEIGHT: 569,
   PREVIEW_WIDTH: 533,
   SUBWINDOW_HEIGHT: 300,
-  BORDER_WIDTH: 3,
+  BORDER_WIDTH: 1,
   MENU_BAR_HEIGHT: 38,
   NEW_SEQUENCE_LENGTH: 125,
   SPACING: 3,
@@ -120,8 +120,14 @@ export class InteractivesEditor extends QinoqMorph {
     this.ui.interactiveGraph = this.addMorph(new InteractiveGraph({
       position: pt(0, 0),
       extent: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT),
-      borderWidth: CONSTANTS.BORDER_WIDTH,
-      _editor: this
+      _editor: this,
+      borderWidth: {
+        bottom: 0,
+        left: 0,
+        right: CONSTANTS.BORDER_WIDTH,
+        top: 0,
+        valueOf: (v) => v.left
+      }
     }));
 
     this.ui.preview = this.addMorph(new Preview({ _editor: this }));
@@ -129,12 +135,28 @@ export class InteractivesEditor extends QinoqMorph {
     this.ui.inspector = new InteractiveMorphInspector({
       position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0),
       extent: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT),
-      borderWidth: CONSTANTS.BORDER_WIDTH,
-      _editor: this
+      _editor: this,
+      borderWidth: {
+        bottom: 0,
+        left: CONSTANTS.BORDER_WIDTH,
+        right: 0,
+        top: 0,
+        valueOf: (v) => v.left
+      }
     });
     this.addMorph(this.ui.inspector);
 
-    this.ui.menuBar = new MenuBar({ position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT), _editor: this });
+    this.ui.menuBar = new MenuBar({
+      position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT),
+      _editor: this,
+      borderWidth: {
+        bottom: CONSTANTS.BORDER_WIDTH,
+        left: 0,
+        right: 0,
+        top: CONSTANTS.BORDER_WIDTH,
+        valueOf: (v) => v.left
+      }
+    });
     this.ui.menuBar.disableUIElements();
     this.addMorph(this.ui.menuBar);
     connect(this, 'onDisplayedTimelineChange', this.ui.menuBar, 'onGlobalTimelineTab', {
@@ -949,10 +971,7 @@ class Preview extends QinoqMorph {
         defaultValue: pt(CONSTANTS.PREVIEW_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT)
       },
       borderColor: {
-        defaultValue: COLOR_SCHEME.BACKGROUND_VARIANT
-      },
-      borderWidth: {
-        defaultValue: CONSTANTS.BORDER_WIDTH
+        defaultValue: COLOR_SCHEME.ON_BACKGROUND_DARKER_VARIANT
       },
       position: {
         defaultValue: pt(CONSTANTS.SIDEBAR_WIDTH, 0)
@@ -1015,7 +1034,7 @@ class Preview extends QinoqMorph {
   showEmptyPreviewPlaceholder () {
     this.submorphs = [];
 
-    const placeholderColor = COLOR_SCHEME.ON_BACKGROUND_VARIANT;
+    const placeholderColor = COLOR_SCHEME.ON_BACKGROUND_MIDDLE_VARIANT;
 
     const icon = new Label({
       fontSize: 120,
@@ -1355,8 +1374,7 @@ class MenuBar extends QinoqMorph {
   }
 
   onGlobalTimelineTab () {
-    this.ui.addSequenceButton.enable();
-    this.ui.addLayerButton.enable();
+    if (!this.interactive) return;
     this.ui.gotoStartButton.tooltip = 'Go to start';
     this.ui.gotoEndButton.tooltip = 'Go to end';
     this.ui.gotoNextButton.tooltip = 'Go to next sequence';
@@ -1373,18 +1391,16 @@ class MenuBar extends QinoqMorph {
   }
 
   disableUIElements () {
-    Object.values(this.ui).forEach(value => {
-      const morph = value;
-      if (morph.isQinoqButton) morph.disable();
+    Object.values(this.ui).forEach(morph => {
+      if (morph.isQinoqButton) morph.enabled = false;
     });
     this.ui.zoomInput.borderColor = COLOR_SCHEME.ON_BACKGROUND_DARKER_VARIANT;
     this.ui.scrollPositionInput.borderColor = COLOR_SCHEME.ON_BACKGROUND_DARKER_VARIANT;
   }
 
   enableUIElements () {
-    Object.values(this.ui).forEach(value => {
-      const morph = value;
-      if (morph.isQinoqButton) morph.enable();
+    Object.values(this.ui).forEach(morph => {
+      if (morph.isQinoqButton) morph.enabled = true;
     });
     this.ui.zoomInput.borderColor = COLOR_SCHEME.PRIMARY;
     this.ui.scrollPositionInput.borderColor = COLOR_SCHEME.PRIMARY;
