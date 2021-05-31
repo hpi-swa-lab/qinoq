@@ -674,8 +674,8 @@ export class TimelineSequence extends QinoqMorph {
       fill: new LinearGradient({
         vector: gradientVector,
         stops: [
-          { offset: 0, color: COLOR_SCHEME.SECONDARY.withA(1) },
-          { offset: 1, color: COLOR_SCHEME.SECONDARY.withA(0) }
+          { offset: 0, color: COLOR_SCHEME.ERROR.withA(1) },
+          { offset: 1, color: COLOR_SCHEME.ERROR.withA(0) }
         ]
       })
     });
@@ -706,7 +706,7 @@ export class TimelineSequence extends QinoqMorph {
 
   setOverlappingAppearance () {
     this.fill = COLOR_SCHEME.ERROR;
-    this.label.fontColor = COLOR_SCHEME.ON_SECONDARY;
+    this.label.fontColor = COLOR_SCHEME.ON_ERROR;
   }
 
   setOutsideEditorAppearance () {
