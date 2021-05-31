@@ -715,7 +715,7 @@ export class TimelineSequence extends QinoqMorph {
 
   setDefaultAppearance () {
     this.fill = COLOR_SCHEME.SURFACE;
-    this.label.fontColor = COLOR_SCHEME.ON_SURFACE;
+    this.label.fontColor = COLOR_SCHEME.ON_SURFACE_VARIANT;
   }
 
   setHiddenAppearance () {
