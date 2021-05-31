@@ -1402,7 +1402,7 @@ class MenuBar extends QinoqMorph {
       borderWidth: 2,
       borderColor: COLOR_SCHEME.PRIMARY
     });
-    this.ui.scrollPositionInput.getSubmorphNamed('value').fontColor = COLOR_SCHEME.ON_SURFACE_VARIANT;
+    this.ui.scrollPositionInput.getSubmorphNamed('value').fontColor = COLOR_SCHEME.ON_SURFACE;
     connect(this.ui.scrollPositionInput, 'number', this.editor, 'onInternalScrollChange');
     this.ui.scrollPositionToolbar.addMorph(this.ui.scrollPositionInput);
   }
