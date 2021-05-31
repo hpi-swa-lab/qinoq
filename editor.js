@@ -1081,9 +1081,10 @@ class Preview extends QinoqMorph {
       textString: 'Create a new interactive',
       padding: rect(8, 5, 0, -2),
       target: this.editor,
-      filled: true,
       fontSize: 20,
-      action: 'createInteractiveWithNamePrompt'
+      action: 'createInteractiveWithNamePrompt',
+      active: true,
+      fontWeight: 'bolder'
     });
 
     const container = new QinoqMorph({
@@ -1407,13 +1408,13 @@ class MenuBar extends QinoqMorph {
   }
 
   buildIconButton (options = {}) {
-    const { name, morphName = 'aButton', filled, container } = options;
+    const { name, morphName = 'aButton', active, container } = options;
     this.ui[name] = new QinoqButton({
       fontSize: 20,
       ...options,
       name: morphName
     });
-    if (filled) this.ui[name].filled = true;
+    if (active) this.ui[name].active = true;
     this.ui[container].addMorph(this.ui[name]);
   }
 
@@ -1426,6 +1427,7 @@ class MenuBar extends QinoqMorph {
   }
 
   onSequenceView () {
+    if (!this.interactive) return;
     this.ui.addSequenceButton.disable();
     this.ui.addLayerButton.disable();
     this.ui.gotoStartButton.tooltip = 'Go to start\nDouble click to open previous Sequence';
