@@ -114,8 +114,8 @@ export class Ruler extends QinoqMorph {
       timeline: {},
       extent: {
         set (point) {
-          this.setProperty('extent', point);
-          this.ui.scaleContainer.extent = pt(this.timeline.ui.layerContainer.width, this.height);
+          this.setProperty('extent', pt(point.x, 19));
+          this.ui.scaleContainer.extent = pt(this.timeline.ui.layerContainer.width, 19);
         }
       },
       ui: {
@@ -170,11 +170,12 @@ export class Ruler extends QinoqMorph {
   async initializeScale () {
     this.ui.scale = new Canvas({
       name: 'ruler scale',
-      extent: pt(0, this.height)
+      extent: pt(0, 19)
     });
     this.ui.scaleContainer = new QinoqMorph({
       name: 'ruler scale container',
       position: pt(CONSTANTS.LAYER_INFO_WIDTH, 0),
+      extent: pt(0, 19),
       clipMode: 'hidden'
     });
     this.ui.scaleContainer.addMorph(this.ui.scale);
@@ -212,11 +213,13 @@ export class Ruler extends QinoqMorph {
 
   redrawScale (newWidth) {
     if (!this.ui.scale.context) return false;
-    const style = { color: COLOR_SCHEME.KEYFRAME_FILL };
-    this.ui.scale.clear(COLOR_SCHEME.ON_BACKGROUND_VARIANT);
+    const style = { color: COLOR_SCHEME.KEYFRAME_FILL, width: 1 };
+    this.ui.scale.clear(COLOR_SCHEME.TRANSPARENT);
     for (let i = this.timeline.start; i <= this.timeline.end; i += 25) {
       const y = (i / 100 == parseInt(i / 100)) ? 0 : 5;
-      const x = this.timeline.getPositionFromScroll(i) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+      let x = this.timeline.getPositionFromScroll(i) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+      if (i == 0) x = x + 1;
+      if (i == this.timeline.end) x = x - 1;
       this.ui.scale.line(pt(x, y), pt(x, 10), style);
     }
   }
