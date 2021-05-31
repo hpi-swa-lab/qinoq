@@ -101,7 +101,6 @@ export class Timeline extends QinoqMorph {
     this.initializeLayerContainer();
     connect(this.ui.layerContainer, 'extent', this.ui.scrollableContainer, 'height', { converter: ' (extent) => extent.y > timeline.height - scrollbarHeight ? timeline.height - scrollbarHeight : extent.y', varMapping: { timeline: this, scrollbarHeight: TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT } }).update(this.ui.layerContainer.extent);
     this.initializeScrollBar();
-    this.initializeRuler();
   }
 
   initializeRuler () {
@@ -164,6 +163,7 @@ export class Timeline extends QinoqMorph {
     this.ui.layerContainer.addMorph(this.ui.cursor);
     this.ui.cursor.location = this.getPositionFromScroll(0);
     this.ui.cursor.height = this.ui.layerContainer.height;
+    this.initializeRuler();
   }
 
   initializeLayerContainer () {
@@ -273,13 +273,14 @@ export class Timeline extends QinoqMorph {
       const newLayerWidth = this._activeAreaWidth + TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + TIMELINE_CONSTANTS.INACTIVE_AREA_WIDTH;
       timelineLayer.width = newLayerWidth < this.owner.width ? this.owner.width : newLayerWidth;
     });
-    this.ui.ruler.updateExtent(this._activeAreaWidth);
+    if (this.ui.ruler) this.ui.ruler.updateExtent(this._activeAreaWidth);
     this.updateScrollerExtent();
   }
 
   onScrollChange (scrollPosition) {
-    this.ui.cursor.displayValue = this.getDisplayValueFromScroll(scrollPosition);
+    this.ui.ruler.displayValue = this.getDisplayValueFromScroll(scrollPosition);
     this.ui.cursor.location = this.getPositionFromScroll(scrollPosition);
+    this.ui.ruler.updatePosition(this.ui.cursor.location);
   }
 
   onMouseWheel (event) {
@@ -331,7 +332,7 @@ export class Timeline extends QinoqMorph {
   updateScrollerPosition () {
     const relative = (this.ui.scrollBar.extent.x - this.ui.scroller.extent.x - (2 * CONSTANTS.SCROLLBAR_MARGIN)) / (this.ui.layerContainer.scrollExtent.x - this.ui.layerContainer.extent.x - this.ui.layerContainer.scrollbarOffset.x);
     this.ui.scroller.position = pt(this.ui.layerContainer.scroll.x * relative + CONSTANTS.SCROLLBAR_MARGIN, CONSTANTS.SCROLLBAR_MARGIN);
-    this.ui.ruler.scrollerUpdate(this.ui.layerContainer.scroll.x);
+    if (this.ui.ruler) this.ui.ruler.updateContainerScroll(this.ui.layerContainer.scroll.x);
   }
 
   relayout (newWindowExtent) {
@@ -343,7 +344,7 @@ export class Timeline extends QinoqMorph {
     this.ui.scrollBar.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, this.ui.scrollBar.extent.y);
     this.ui.scrollBar.position = this.ui.layerContainer.bottomLeft;
 
-    this.ui.ruler.extent = pt(newWindowExtent.x, this.ui.ruler.extent.y);
+    if (this.ui.ruler) this.ui.ruler.extent = pt(newWindowExtent.x, this.ui.ruler.extent.y);
     this.updateScrollerExtent();
   }
 
