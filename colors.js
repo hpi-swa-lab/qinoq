@@ -19,6 +19,7 @@ export const COLOR_SCHEME = {
   ON_SURFACE: Color.white,
   ON_SURFACE_VARIANT: Color.rgb(100, 100, 100),
   ERROR: Color.rgb(255, 0, 14),
+  ON_ERROR: Color.white,
   TRANSPARENT: Color.transparent,
   //
   KEYFRAME_FILL: Color.rgb(134, 134, 134),
