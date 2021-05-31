@@ -133,7 +133,7 @@ export class SocialMediaButton extends Label {
       .filter(token => typeof token === 'object') // skip values from keys like _rev
       .forEach(token => token.active = false);
 
-    // matches all words with whitespace in it sourrounded by {}
+    // matches all words with whitespace in it surrounded by {}
     // like {text}, {share link}, ...
     // eslint-disable-next-line no-useless-escape
     const tokenNames = (this.preset.href || '').match(new RegExp('(?<={)[\w\s]+', 'g')) || [];
