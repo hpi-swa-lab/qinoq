@@ -135,6 +135,7 @@ export class SocialMediaButton extends Label {
 
     // matches all words with whitespace in it sourrounded by {}
     // like {text}, {share link}, ...
+    // eslint-disable-next-line no-useless-escape
     const tokenNames = (this.preset.href || '').match(new RegExp('(?<={)[\w\s]+', 'g')) || [];
 
     const newTokens = tokenNames.map(tokenName => {
