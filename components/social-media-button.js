@@ -133,9 +133,9 @@ export class SocialMediaButton extends Label {
       .filter(token => typeof token === 'object') // skip values from keys like _rev
       .forEach(token => token.active = false);
 
-    // matchs all words with whitespace in it sourrounded by {}
+    // matches all words with whitespace in it sourrounded by {}
     // like {text}, {share link}, ...
-    const tokenNames = (this.preset.href || '').match(new RegExp('"?<={)[\w\s]+","g')) || [];
+    const tokenNames = (this.preset.href || '').match(new RegExp('(?<={)[\w\s]+', 'g')) || [];
 
     const newTokens = tokenNames.map(tokenName => {
       return {
