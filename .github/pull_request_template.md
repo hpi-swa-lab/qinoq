@@ -27,6 +27,7 @@ Closes [fill in your issues here]
 - [ ] the interactive can be resized by a fixed aspect ratio
 - [ ] after resizing to have a bigger interactive the sun is bigger and still moves to about half of the interactive width
 - [ ] can be saved
+- [ ] can be bundled
 
 ### Interactive and editor
 
@@ -81,7 +82,7 @@ Closes [fill in your issues here]
 - [ ] right clicking on a sequence brings up a context menu
 - [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the interactive/beginning of the next/previous sequence
 - [ ] moving a sequence to the right will make the active area (light grey) larger
-- [ ] when making the zoom factor higher/lower with the input field, the length of the sequences adapt accordingly, the cursor updates its position and the whole scrollytelling can still be scrolled through
+- [ ] when changing the zoom factor with the input field, the length of the sequences adapt accordingly, the cursor updates its position and the whole scrollytelling can still be scrolled through
 - [ ] a sequence may be copied, and pasted at another spot in the timeline
   - [ ] pasting fails if there would not be enough space
   - [ ] otherwise pasting succeeds, the new sequence has copies of the old sequences morphs and animations, while the old sequence is untouched
