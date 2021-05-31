@@ -103,6 +103,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
     this.initializeStyleInspector();
     this.ui.animationsInspectorTab.selected = true;
     this.addMorph(this.ui.tabContainer);
+    this.ui.tabContainer.getSubmorphNamed('tab content container').acceptsDrops = false;
   }
 
   initializeStyleInspector () {
