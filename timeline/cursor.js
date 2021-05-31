@@ -119,10 +119,9 @@ export class Ruler extends QinoqMorph {
         }
       },
       ui: {
-        after: ['timeline'],
-        defaultValue: {},
         initialize () {
           if (this._deserializing) return;
+          this.ui = {};
           this.initializeScale();
           this.initializeHead();
         }
@@ -142,12 +141,12 @@ export class Ruler extends QinoqMorph {
 
   initializeHead () {
     this.ui.label = new Label({
-      name: 'ruler/head/text',
+      name: 'ruler head text',
       fontSize: CONSTANTS.CURSOR_FONT_SIZE,
       fontColor: COLOR_SCHEME.ON_SECONDARY
     });
     this.ui.head = new QinoqMorph({
-      name: 'ruler/head',
+      name: 'ruler head',
       layout: new HorizontalLayout({
         spacing: 3,
         autoResize: true
@@ -158,7 +157,7 @@ export class Ruler extends QinoqMorph {
     });
     this.ui.headCenter = new QinoqMorph({
       extent: pt(20, 40),
-      name: 'ruler/head/center',
+      name: 'ruler head center',
       fill: COLOR_SCHEME.TRANSPARENT,
       layout: new HorizontalLayout({
         direction: 'centered'
@@ -170,17 +169,17 @@ export class Ruler extends QinoqMorph {
 
   async initializeScale () {
     this.ui.scale = new Canvas({
-      name: 'ruler/scale',
-      extent: pt(this.timeline.ui.layerContainer.width, this.height)
+      name: 'ruler scale',
+      extent: pt(0, this.height)
     });
     this.ui.scaleContainer = new QinoqMorph({
-      name: 'ruler/scale/container',
+      name: 'ruler scale container',
       position: pt(CONSTANTS.LAYER_INFO_WIDTH, 0),
       clipMode: 'hidden'
     });
     this.ui.scaleContainer.addMorph(this.ui.scale);
     this.addMorph(this.ui.scaleContainer);
-    await this.ui.scale.whenRendered(); this.redrawScale();
+    this.redraw();
   }
 
   updatePosition (newLocation) {
@@ -207,17 +206,18 @@ export class Ruler extends QinoqMorph {
     this.redraw();
   }
 
-  async redraw () {
-    await this.ui.scale.whenRendered(); this.redrawScale();
+  redraw () {
+    this.ui.scale.whenRendered().then(() => this.redrawScale());
   }
 
   redrawScale (newWidth) {
     if (!this.ui.scale.context) return false;
     const style = { color: COLOR_SCHEME.KEYFRAME_FILL };
     this.ui.scale.clear(COLOR_SCHEME.ON_BACKGROUND_VARIANT);
-    for (let i = 0; i <= this.interactive.length; i += 10) {
+    for (let i = this.timeline.start; i <= this.timeline.end; i += 25) {
       const y = (i / 100 == parseInt(i / 100)) ? 0 : 5;
-      this.ui.scale.line(pt(i * this.timeline.zoomFactor, y), pt(i * this.timeline.zoomFactor, 10), style);
+      const x = this.timeline.getPositionFromScroll(i) - CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
+      this.ui.scale.line(pt(x, y), pt(x, 10), style);
     }
   }
 }
