@@ -78,8 +78,8 @@ export class Ruler extends QinoqMorph {
       timeline: {},
       extent: {
         set (point) {
-          this.setProperty('extent', pt(point.x, 19));
-          this.ui.scaleContainer.extent = pt(this.timeline.ui.layerContainer.width, 19);
+          this.setProperty('extent', pt(point.x, CONSTANTS.RULER_HEIGHT));
+          this.ui.scaleContainer.extent = pt(this.timeline.ui.layerContainer.width, CONSTANTS.RULER_HEIGHT);
         }
       },
       ui: {
@@ -110,36 +110,29 @@ export class Ruler extends QinoqMorph {
       fontColor: COLOR_SCHEME.ON_SECONDARY
     });
     this.ui.head = new QinoqMorph({
+      extent: pt(20, 40),
       name: 'ruler head',
       layout: new HorizontalLayout({
         spacing: 3,
-        autoResize: true
+        autoResize: true,
+        direction: 'centered'
       }),
       borderRadius: 4,
       fill: COLOR_SCHEME.SECONDARY,
       submorphs: [this.ui.label]
     });
-    this.ui.headCenter = new QinoqMorph({
-      extent: pt(20, 40),
-      name: 'ruler head center',
-      fill: COLOR_SCHEME.TRANSPARENT,
-      layout: new HorizontalLayout({
-        direction: 'centered'
-      }),
-      submorphs: [this.ui.head]
-    });
-    this.addMorph(this.ui.headCenter);
+    this.addMorph(this.ui.head);
   }
 
   async initializeScale () {
     this.ui.scale = new Canvas({
       name: 'ruler scale',
-      extent: pt(0, 19)
+      extent: pt(0, CONSTANTS.RULER_HEIGHT)
     });
     this.ui.scaleContainer = new QinoqMorph({
       name: 'ruler scale container',
       position: pt(CONSTANTS.LAYER_INFO_WIDTH, 0),
-      extent: pt(0, 19),
+      extent: pt(0, CONSTANTS.RULER_HEIGHT),
       clipMode: 'hidden'
     });
     this.ui.scaleContainer.addMorph(this.ui.scale);
@@ -158,7 +151,7 @@ export class Ruler extends QinoqMorph {
       diff = -this.timeline.ui.layerContainer.width;
     }
 
-    this.ui.headCenter.position = pt(CONSTANTS.LAYER_INFO_WIDTH - diff - this.ui.headCenter.width / 2, this.ui.headCenter.position.y);
+    this.ui.head.position = pt(CONSTANTS.LAYER_INFO_WIDTH - diff - this.ui.head.width / 2, this.ui.head.position.y);
   }
 
   updateContainerScroll (layerContainerScroll) {
