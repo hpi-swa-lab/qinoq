@@ -105,10 +105,10 @@ describe('Sequence object', () => {
       grayscaleAnimation.addKeyframes([new Keyframe(0.1, 1), new Keyframe(0.7, 0.3)]);
       sequence.addAnimation(grayscaleAnimation);
 
-      expect(sequence.getNextKeyframePosition(1.5)).to.be.undefined;
-      expect(sequence.getNextKeyframePosition(0.75)).to.equal(0.8);
-      expect(sequence.getNextKeyframePosition(0.5)).to.be.equal(0.7);
-      expect(sequence.getPrevKeyframePosition(0.5)).to.be.equal(0.1);
+      expect(sequence.getNextKeyframePositionForAbsolutePosition(15)).to.be.undefined;
+      expect(sequence.getNextKeyframePositionForAbsolutePosition(7.5)).to.be.equal(0.8);
+      expect(sequence.getNextKeyframePositionForAbsolutePosition(5)).to.be.equal(0.7);
+      expect(sequence.getNextKeyframePositionForAbsolutePosition(0.5)).to.be.equal(0.1);
     });
   });
 
