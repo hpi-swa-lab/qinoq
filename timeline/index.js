@@ -86,6 +86,14 @@ export class Timeline extends QinoqMorph {
     return this.withAllSubmorphsSelect(submorph => submorph.isTimelineLayer);
   }
 
+  get end () {
+    throw new Error('Subclass responsibility');
+  }
+
+  get start () {
+    throw new Error('Subclass responsibility');
+  }
+
   // Is automatically called by editor setter
   initialize () {
     this.ui.scrollableContainer = new QinoqMorph(
@@ -361,10 +369,6 @@ export class Timeline extends QinoqMorph {
     this.updateScrollerPosition();
   }
 
-  redraw () {
-    this.ui.cursor.location = this.getPositionFromScroll(this.interactive.scrollPosition);
-  }
-
   abandonTimelineLayer (timelineLayer) {
     timelineLayer.layerInfo.abandon();
     timelineLayer.abandon();
@@ -420,6 +424,14 @@ export class GlobalTimeline extends Timeline {
 
   getDurationFromWidth (width) {
     return width / this.zoomFactor;
+  }
+
+  get end () {
+    return this.interactive.length;
+  }
+
+  get start () {
+    return 0;
   }
 
   createTimelineSequence (sequence) {
@@ -632,7 +644,6 @@ export class GlobalTimeline extends Timeline {
   }
 
   redraw () {
-    super.redraw();
     this.timelineSequences.forEach(timelineSequence => {
       timelineSequence._lockModelUpdate = true;
       timelineSequence.setWidthAndUpdateResizers(this.getWidthFromDuration(timelineSequence.sequence.duration));
@@ -693,6 +704,14 @@ export class SequenceTimeline extends Timeline {
 
   get keyframes () {
     return this.timelineLayers.flatMap(timelineLayer => timelineLayer.keyframes).filter(Boolean);
+  }
+
+  get end () {
+    return this.sequence.end;
+  }
+
+  get start () {
+    return this.sequence.start;
   }
 
   getTimelineKeyframe (keyframe) {
@@ -950,8 +969,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   redraw () {
-    super.redraw();
-    this._activeAreaWidth = TIMELINE_CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor;
+    this._activeAreaWidth = CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor;
     this.timelineLayers.forEach(timelineLayer => timelineLayer.redraw());
   }
 
