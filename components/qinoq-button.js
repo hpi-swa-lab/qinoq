@@ -42,7 +42,8 @@ export class QinoqButton extends Label {
         defaultValue: true,
         set (enabled) {
           this.setProperty('enabled', enabled);
-          if (enabled) this.enable(); else this.disable();
+          this.updateStyle();
+          this.reactsToPointer = enabled;
         }
       },
       active: {
@@ -123,12 +124,10 @@ export class QinoqButton extends Label {
   }
 
   enable () {
-    this.updateStyle();
-    this.reactsToPointer = true;
+    this.enabled = true;
   }
 
   disable () {
-    this.updateStyle();
-    this.reactsToPointer = false;
+    this.enabled = false;
   }
 }
