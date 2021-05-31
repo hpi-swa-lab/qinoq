@@ -99,6 +99,7 @@ export class GlobalTimelineLayerInfo extends TimelineLayerInfo {
   restyleAfterHideToggle () {
     if (!this.layer) return;
     this.ui.hideButton.icon = this.layer.hidden ? 'eye-slash' : 'eye';
+    this.ui.hideButton.active = this.layer.hidden;
     this.ui.hideButton.tooltip = this.layer.hidden ? 'Show layer in interactive' : 'Hide layer in interactive';
     this.interactive.redraw();
     this.timelineLayer.toggleHiddenStyle();
