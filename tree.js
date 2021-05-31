@@ -238,8 +238,23 @@ export class InteractiveGraph extends QinoqMorph {
 }
 
 class QinoqTree extends InteractiveTree {
+  update (force) {
+    if (this._deserializing) return;
+    super.update(force);
+  }
+
   onHoverOut (event) {
     // prevent onHoverOut in InteractiveTree, which triggers selection
+  }
+
+  __deserialize__ (snapshot, objRef, serializedMap, pool) {
+    this._deserializing = true;
+    super.__deserialize__(snapshot, objRef, serializedMap, pool);
+  }
+
+  __after_deserialize__ (snapshot, ref, pool) {
+    delete this._deserializing;
+    super.__after_deserialize__(snapshot, ref, pool);
   }
 }
 
