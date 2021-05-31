@@ -1034,7 +1034,7 @@ class Preview extends QinoqMorph {
   showEmptyPreviewPlaceholder () {
     this.submorphs = [];
 
-    const placeholderColor = COLOR_SCHEME.ON_BACKGROUND_MIDDLE_VARIANT;
+    const placeholderColor = COLOR_SCHEME.ON_SURFACE_VARIANT;
 
     const icon = new Label({
       fontSize: 120,
@@ -1053,7 +1053,7 @@ class Preview extends QinoqMorph {
       textString: 'Create a new interactive',
       padding: rect(8, 5, 0, -2),
       target: this.editor,
-      fontSize: 20,
+      fontSize: 15,
       action: 'createInteractiveWithNamePrompt',
       active: true,
       fontWeight: 'bolder'
