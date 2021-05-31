@@ -732,12 +732,13 @@ export class Sequence extends DeserializationAwareMorph {
     return this.animations.map(animation => animation.keyframes).flat().sort((a, b) => a.position - b.position);
   }
 
-  getNextKeyframePosition (position) {
-    return this.allKeyframes.map(keyframe => keyframe.position).find(keyframePosition => keyframePosition > position);
+  getNextKeyframePositionForAbsolutePosition (absolutePosition) {
+    debugger;
+    return this.allKeyframes.map(keyframe => keyframe.position).find(keyframePosition => this.getAbsolutePosition(keyframePosition) > absolutePosition);
   }
 
-  getPrevKeyframePosition (position) {
-    return this.allKeyframes.map(keyframe => keyframe.position).reverse().find(keyframePosition => keyframePosition < position);
+  getPrevKeyframePositionForAbsolutePosition (absolutePosition) {
+    return this.allKeyframes.reverse().map(keyframe => keyframe.position).find(keyframePosition => this.getAbsolutePosition(keyframePosition) < absolutePosition);
   }
 
   getAbsolutePositionFor (keyframe) {

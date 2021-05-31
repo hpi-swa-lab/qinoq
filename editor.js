@@ -649,7 +649,7 @@ export class InteractivesEditor extends QinoqMorph {
         doc: 'Scroll to previous sequence or keyframe',
         exec: () => {
           const sequence = this.currentSequence;
-          const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getPrevKeyframePosition(sequence.progress)) : this.interactive.getPrevSequenceStart(this.interactiveScrollPosition);
+          const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getPrevKeyframePositionForAbsolutePosition(this.interactive.scrollPosition)) : this.interactive.getPrevSequenceStart();
           if (nextPosition == undefined || isNaN(nextPosition)) return;
           this.internalScrollChangeWithGUIUpdate(nextPosition);
         }
@@ -659,7 +659,7 @@ export class InteractivesEditor extends QinoqMorph {
         doc: 'Scroll to next sequence or keyframe',
         exec: () => {
           const sequence = this.currentSequence;
-          const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getNextKeyframePosition(sequence.progress)) : this.interactive.getNextSequenceStart(this.interactiveScrollPosition);
+          const nextPosition = sequence ? sequence.getAbsolutePosition(sequence.getNextKeyframePositionForAbsolutePosition(this.interactive.scrollPosition)) : this.interactive.getNextSequenceStart();
           if (nextPosition == undefined || isNaN(nextPosition)) return;
           this.internalScrollChangeWithGUIUpdate(nextPosition);
         }
