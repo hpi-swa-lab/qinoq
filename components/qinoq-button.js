@@ -6,7 +6,11 @@ export class QinoqButton extends Label {
   static get properties () {
     return {
       styleSet: {
-        defaultValue: 'default',
+        // cannot use defaultValue, otherwise this.updateStyle won't be triggered initially
+        initialize () {
+          if (this._deserializing) return;
+          this.styleSet = 'default';
+        },
         set (styleSet) {
           this.setProperty('styleSet', styleSet);
           this.updateStyle();
@@ -114,7 +118,7 @@ export class QinoqButton extends Label {
         break;
       case 'pressed':
         if (this.active) {
-          this.fill = COLOR_SCHEME.ON_SURFACE_VARIANT;
+          this.fill = COLOR_SCHEME.SURFACE_VARIANT;
           this.fontColor = COLOR_SCHEME.PRIMARY;
         } else {
           this.fill = COLOR_SCHEME.PRIMARY;
