@@ -135,7 +135,7 @@ export class SocialMediaButton extends Label {
 
     // matchs all words with whitespace in it sourrounded by {}
     // like {text}, {share link}, ...
-    const tokenNames = (this.preset.href || '').match(/(?<={)[\w\s]+/g) || [];
+    const tokenNames = (this.preset.href || '').match(new RegExp('"?<={)[\w\s]+","g')) || [];
 
     const newTokens = tokenNames.map(tokenName => {
       return {
