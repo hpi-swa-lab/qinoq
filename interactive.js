@@ -5,6 +5,7 @@ import { newUUID } from 'lively.lang/string.js';
 
 import { arr } from 'lively.lang';
 import { DeserializationAwareMorph } from './utilities/deserialization-morph.js';
+import { error } from './utilities/messages.js';
 
 export class Interactive extends DeserializationAwareMorph {
   static async base (props = {}) {
@@ -444,7 +445,7 @@ class InteractiveScrollHolder extends Morph {
         morph.position = properties.prevPosition;
         Object.assign(morph, properties.pointerAndShadow);
       });
-      $world.setStatusMessage('Only add in sequence view');
+      error('Only add in sequence view');
     }
     event.hand.grabbedMorphs.forEach(grabbedMorph => {
       const { pointerAndShadow } = event.hand._grabbedMorphProperties.get(grabbedMorph) || {};
