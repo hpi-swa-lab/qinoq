@@ -174,7 +174,6 @@ export class Timeline extends QinoqMorph {
   }
 
   updateLayerExtent (layerContainerExtent) {
-    console.log(layerContainerExtent.x);
     this.timelineLayers.forEach(timelineLayer => {
       if (timelineLayer.width < layerContainerExtent.x) timelineLayer.width = layerContainerExtent.x;
     });
