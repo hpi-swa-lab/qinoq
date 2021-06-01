@@ -280,7 +280,7 @@ export class Timeline extends QinoqMorph {
     this.timelineLayers.forEach(timelineLayer => {
       timelineLayer.activeArea.width = this._activeAreaWidth;
       const newLayerWidth = this._activeAreaWidth + TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + TIMELINE_CONSTANTS.INACTIVE_AREA_WIDTH;
-      timelineLayer.width = newLayerWidth < this.owner.width ? this.owner.width : newLayerWidth;
+      timelineLayer.width = newLayerWidth < timelineLayer.owner.width ? timelineLayer.owner.width : newLayerWidth;
     });
     if (this.ui.ruler) this.ui.ruler.updateExtent(this._activeAreaWidth);
     this.updateScrollerExtent();
