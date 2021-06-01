@@ -418,8 +418,8 @@ class InteractiveScrollHolder extends Morph {
   onHoverIn (event) {
     if (this.passThroughMorph && this.topbar) {
       // upon attaching a new target to the topbar it switches to halo mode
-      // since we attach on HoverIn, we need to restore the prvious mode
-      // otherwise no mode expect for halo mode would be possible
+      // since we attach on HoverIn, we need to restore the previous mode
+      // otherwise no mode except for halo mode would be possible
       const topbarMode = this.topbar.editMode;
       this.topbar.attachToTarget(this);
       this.topbar.setEditMode(topbarMode);
