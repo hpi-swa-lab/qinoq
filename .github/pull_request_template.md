@@ -53,7 +53,7 @@ Closes [fill in your issues here]
   - [ ] the length is consistent with the active area
   - [ ] the scale will adapt to the current zoom
 - [ ] the cursor head will always be visible
-- [ ] the cursor is only visible when in the current sequence
+- [ ] the cursor is only visible when the scroll position is in the displayed scroll interval
 
 ### Sequences
 
