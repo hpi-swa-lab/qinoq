@@ -157,7 +157,7 @@ export function createAnimationForPropertyType (propertyType, targetMorph, prope
 export class Keyframe {
   constructor (position, value, spec = {}) {
     const { name = 'aKeyframe', easing = 'inOutSine' } = spec;
-    this.id = newUUID();
+    this.uuid = newUUID();
     this.position = position;
     this.value = value;
     this.name = name;
@@ -182,7 +182,7 @@ export class Keyframe {
   }
 
   equals (keyframe) {
-    return this.id === keyframe.id;
+    return this.uuid === keyframe.uuid;
   }
 
   copy () {

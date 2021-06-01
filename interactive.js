@@ -565,11 +565,11 @@ export class Layer {
     this.name = name;
     this.hidden = hidden;
     this._zIndex = zIndex;
-    this.id = newUUID();
+    this.uuid = newUUID();
   }
 
   equals (layer) {
-    return this.id === layer.id;
+    return this.uuid === layer.uuid;
   }
 }
 
