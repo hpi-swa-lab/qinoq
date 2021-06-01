@@ -86,13 +86,12 @@ export class InteractiveMorphInspector extends QinoqMorph {
     this.ui.headlinePane.layout = new HorizontalLayout({ spacing: 5, align: 'center' });
     this.ui.headlinePane.addMorph(this.ui.targetPicker);
     this.ui.headlinePane.addMorph(this.ui.headline);
-
     this.addMorph(this.ui.headlinePane);
 
     this.ui.tabContainer = await resource('part://tabs/tabs').read();
     Object.assign(this.ui.tabContainer, {
-      position: pt(1, 38),
-      extent: pt(this.width, this.height - this.ui.headlinePane.height - CONSTANTS.TAB_HEADER_HEIGHT),
+      position: pt(0, 38),
+      extent: pt(this.width, this.height - this.ui.headlinePane.height),
       showNewTabButton: false,
       tabHeight: 25
     });
@@ -107,6 +106,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
 
     this.initializeAnimationsInspector();
     this.initializeStyleInspector();
+
     this.ui.animationsInspectorTab.selected = true;
     this.addMorph(this.ui.tabContainer);
     this.ui.tabContainer.getSubmorphNamed('tab content container').acceptsDrops = false;
