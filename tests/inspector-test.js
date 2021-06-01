@@ -291,7 +291,7 @@ describe('Inspector', () => {
             'I announce: I like trains!');
         });
 
-        it('shows share panel with drop down menu which changes the preset and updates the panel', () => {
+        it('shows the share panel with drop down menu which changes the preset and updates the panel', () => {
           const dropDownMenu = sharePanel.submorphs[1];
           const widgetContainer = sharePanel.submorphs[2];
 
@@ -302,7 +302,7 @@ describe('Inspector', () => {
           expect(widgetContainer.submorphs[1].textString).to.be.equal('');
         });
 
-        it('shows share panel with text fields which change the share button tokens on input', () => {
+        it('shows the share panel with text fields which change the share button tokens on input', () => {
           const widgetContainer = sharePanel.submorphs[2];
 
           expect(shareButton.tokens.url.value).to.be.equal('');
