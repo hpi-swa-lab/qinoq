@@ -35,10 +35,12 @@ class Animation {
     if (!doNotSort) {
       this._sortKeyframes();
     }
+    if (this.sequence) this.sequence.onKeyframeAddedInAnimation({ keyframe, animation: this });
   }
 
   removeKeyframe (keyframe) {
     arr.remove(this.keyframes, keyframe);
+    if (this.sequence) this.sequence.onKeyframeRemovedInAnimation({ keyframe, animation: this });
     if (this.keyframes.length === 0) Sequence.getSequenceOfMorph(this.target).removeAnimation(this);
   }
 

@@ -145,6 +145,8 @@ export class InteractiveGraph extends QinoqMorph {
     connect(sequence, 'onMorphRemoval', this, 'onInteractiveStructureUpdate', { converter: '(morph) => {return {removedNode : morph, parent: source.id}}' });
     connect(sequence, 'onAnimationAddition', this, 'onInteractiveStructureUpdate', { converter: '(animation) => {return {addedNode : animation, parent: animation.target.id}}' });
     connect(sequence, 'onAnimationRemoval', this, 'onInteractiveStructureUpdate', { converter: '(animation) => {return {removedNode : animation, parent: animation.target.id}}' });
+    connect(sequence, 'onKeyframeAddedInAnimation', this, 'onInteractiveStructureUpdate', { converter: '(change) => {return {addedNode : change.keyframe, parent: change.animation.name}}' });
+    connect(sequence, 'onKeyframeRemovedInAnimation', this, 'onInteractiveStructureUpdate', { converter: '(change) => {return {removedNode : change.keyframe, parent: change.animation.name}}' });
     connect(sequence, 'name', this, 'onNameChange', { converter: '() => source' });
     return {
       name: sequence.id,

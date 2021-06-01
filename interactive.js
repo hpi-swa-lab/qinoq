@@ -749,6 +749,14 @@ export class Sequence extends DeserializationAwareMorph {
     return newAnimation;
   }
 
+  onKeyframeAddedInAnimation (change = { keyframe: null, animation: null }) {
+    // used for connections
+  }
+
+  onKeyframeRemovedInAnimation (change = { keyframe: null, animation: null }) {
+    // used for connections
+  }
+
   getAnimationsForMorph (morph) {
     return this.animations.filter(animation => animation.target === morph);
   }
