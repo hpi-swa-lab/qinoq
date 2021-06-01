@@ -190,9 +190,10 @@ export class Timeline extends QinoqMorph {
     this.ui.scrollableContainer.addMorph(this.ui.layerContainer);
   }
 
-  updateLayerExtent (scrollContainerExtent) {
+  updateLayerExtent (layerContainerExtent) {
+    console.log(layerContainerExtent.x);
     this.timelineLayers.forEach(timelineLayer => {
-      if (timelineLayer.width < scrollContainerExtent.x) timelineLayer.width = scrollContainerExtent.x;
+      if (timelineLayer.width < layerContainerExtent.x) timelineLayer.width = layerContainerExtent.x;
     });
   }
 
