@@ -816,7 +816,7 @@ export class SequenceTimeline extends Timeline {
     const scrollToX = timelineKeyframe.position.x - this.ui.layerContainer.extent.x / 2;
     this.scrollHorizontallyTo(scrollToX);
 
-    const scrollToY = timelineKeyframe.layer.position.y;
+    const scrollToY = timelineKeyframe.layer.owner.position.y;
     this.scrollVerticallyTo(scrollToY);
   }
 
