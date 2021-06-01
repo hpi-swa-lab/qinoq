@@ -433,21 +433,21 @@ class InteractiveScrollHolder extends Morph {
 
   onHoverIn (event) {
     if (this.passThroughMorph && this.topbar) {
+      // upon attaching a new target to the topbar it switches to halo mode
+      // since we attach on HoverIn, we need to restore the prvious mode
+      // otherwise no mode expect for halo mode would be possible
+      const topbarMode = this.topbar.editMode;
       this.topbar.attachToTarget(this);
+      this.topbar.setEditMode(topbarMode);
       // used for creation of morph that get created via single click (e.g. label)
       connect(this.topbar, 'handleShapeCreation', this, 'setNewMorph');
-      // should not be necessary, this is a bug in upstream lively
-      this.topbar.setEditMode(this.topbar.editMode);
     }
   }
 
   onHoverOut (event) {
     if (this.passThroughMorph && this.topbar) {
       this.topbar.attachToTarget($world);
-
       disconnect(this.topbar, 'handleShapeCreation', this, 'setNewMorph');
-      // should not be necessary, this is a bug in upstream lively
-      this.topbar.setEditMode(this.topbar.editMode);
     }
   }
 
