@@ -110,92 +110,11 @@ export class AnimationsInspector extends QinoqMorph {
   }
 
   buildPropertyControl (property, propertyType) {
-    this.propertyControls[property] = {};
-    this.propertyControls[property].label = new Label({
-      name: `${property} label`,
-      textString: property,
-      position: pt(CONSTANTS.LABEL_X, 0)
-    });
-    switch (propertyType) {
-      case 'point':
-        // extent and autofit are necessary for the correct layouting to be applied
-        this.propertyControls[property].x = new NumberWidget({
-          position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
-          extent: CONSTANTS.WIDGET_EXTENT,
-          autofit: false,
-          floatingPoint: false
-        });
-        this.propertyControls[property].y = new NumberWidget({
-          position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_TWO_Y),
-          extent: CONSTANTS.WIDGET_EXTENT,
-          autofit: false,
-          floatingPoint: false
-        });
-        break;
-      case 'color':
-        this.propertyControls[property].color = new ColorPickerField({
-          position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
-          colorValue: this.targetMorph[property],
-          dropShadow: new ShadowObject(true)
-        });
-        break;
-      case 'number':
-        this.buildNumberPropertyControl(property);
-        break;
-      case 'string':
-        this.buildStringPropertyControl(property);
-    }
-    this.propertyControls[property].keyframe = new KeyframeButton({
-      position: pt(CONSTANTS.KEYFRAME_BUTTON_X, CONSTANTS.WIDGET_ONE_Y),
-      animationsInspector: this,
-      property,
-      propertyType,
-      sequence: this.sequence,
-      _editor: this.editor
-    });
+    this.propertyControls[property] = new PropertyControl(property, propertyType, this.targetMorph, this.sequence, this.editor);
+
     this.ui[property] = new QinoqMorph();
-    Object.values(this.propertyControls[property]).forEach(morph => this.ui[property].addMorph(morph));
+    this.propertyControls[property].morphsToAdd().forEach(object => object.isMorph && this.ui[property].addMorph(object));
     this.ui.propertyPane.addMorph(this.ui[property]);
-  }
-
-  buildNumberPropertyControl (property) {
-    const spec = this.targetMorph.propertiesAndPropertySettings().properties[property];
-    let floatingPoint = spec.isFloat;
-    let unit = '';
-    let min = -Infinity;
-    let max = Infinity;
-    if (spec.isFloat && spec.max === 1) {
-      // Use a percentage value instead of just numbers
-      unit = '%';
-      floatingPoint = false; // Numbers have too many digits with floating point
-      min = 0;
-      max = 100;
-    }
-
-    this.propertyControls[property].number = new NumberWidget({
-      position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
-      floatingPoint,
-      unit,
-      min,
-      max,
-      // these two are necessary for the correct layouting to be applied
-      extent: CONSTANTS.WIDGET_EXTENT,
-      autofit: false
-    });
-  }
-
-  buildStringPropertyControl (property) {
-    this.propertyControls[property].string = new StringWidget({
-      position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
-      fixedWidth: true,
-      fixedHeight: true,
-      extent: CONSTANTS.WIDGET_EXTENT,
-      fontFamilty: 'Sans-Serif',
-      fontSize: 16,
-      fill: COLOR_SCHEME.SURFACE,
-      dropShadow: new ShadowObject(true)
-    })
-    ;
   }
 
   disbandConnections () {
@@ -382,5 +301,107 @@ export class AnimationsInspector extends QinoqMorph {
     this.withAllSubmorphsDo(submorph => {
       if (submorph.isKeyframeButton && submorph.animation == animation) submorph.setMode();
     });
+  }
+}
+
+class PropertyControl {
+  constructor (property, propertyType, targetMorph, sequence, editor) {
+    this.targetMorph = targetMorph;
+    this.property = property;
+    this.propertyType = propertyType;
+    this.initializeLabel();
+    this.buildWidget(sequence, editor);
+  }
+
+  initializeLabel () {
+    this.label = new Label({
+      name: `${this.property} label`,
+      textString: this.property,
+      position: pt(CONSTANTS.LABEL_X, 0)
+    });
+  }
+
+  buildWidget (sequence, editor) {
+    switch (this.propertyType) {
+      case 'point':
+        // extent and autofit are necessary for the correct layouting to be applied
+        this.x = new NumberWidget({
+          position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
+          extent: CONSTANTS.WIDGET_EXTENT,
+          autofit: false,
+          floatingPoint: false
+        });
+        this.y = new NumberWidget({
+          position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_TWO_Y),
+          extent: CONSTANTS.WIDGET_EXTENT,
+          autofit: false,
+          floatingPoint: false
+        });
+        break;
+      case 'color':
+        this.color = new ColorPickerField({
+          position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
+          colorValue: this.targetMorph[this.property],
+          dropShadow: new ShadowObject(true)
+        });
+        break;
+      case 'number':
+        this.buildNumberPropertyControl(this.property);
+        break;
+      case 'string':
+        this.buildStringPropertyControl(this.property);
+    }
+    this.keyframe = new KeyframeButton({
+      position: pt(CONSTANTS.KEYFRAME_BUTTON_X, CONSTANTS.WIDGET_ONE_Y),
+      animationsInspector: this,
+      property: this.property,
+      propertyType: this.propertyType,
+      sequence: sequence,
+      _editor: editor
+    });
+  }
+
+  buildStringPropertyControl (property) {
+    this.string = new StringWidget({
+      position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
+      fixedWidth: true,
+      fixedHeight: true,
+      extent: CONSTANTS.WIDGET_EXTENT,
+      fontFamilty: 'Sans-Serif',
+      fontSize: 16,
+      fill: COLOR_SCHEME.SURFACE,
+      dropShadow: new ShadowObject(true)
+    })
+    ;
+  }
+
+  buildNumberPropertyControl (property) {
+    const spec = this.targetMorph.propertiesAndPropertySettings().properties[property];
+    let floatingPoint = spec.isFloat;
+    let unit = '';
+    let min = -Infinity;
+    let max = Infinity;
+    if (spec.isFloat && spec.max === 1) {
+      // Use a percentage value instead of just numbers
+      unit = '%';
+      floatingPoint = false; // Numbers have too many digits with floating point
+      min = 0;
+      max = 100;
+    }
+
+    this.number = new NumberWidget({
+      position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
+      floatingPoint,
+      unit,
+      min,
+      max,
+      // these two are necessary for the correct layouting to be applied
+      extent: CONSTANTS.WIDGET_EXTENT,
+      autofit: false
+    });
+  }
+
+  morphsToAdd () {
+    return Object.values(this).filter(object => object.isMorph && object !== this.targetMorph);
   }
 }
