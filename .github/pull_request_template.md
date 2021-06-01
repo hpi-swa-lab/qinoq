@@ -93,7 +93,7 @@ Closes [fill in your issues here]
 - [ ] there are three OverviewLayers (one per Morph in the sky sequence)
 - [ ] they hold two to three keyframelines each
   - [ ] when changing the zoom, the keyframelines update accordingly
-- [ ] clicking on the triangle expands those into two new layers with two keyframes each (or three at the sun)
+- [ ] clicking on the triangle expands those into two new layers with keyframes
 - [ ] right-clicking a keyframe shows a context menu
   - [ ] right-clicking on the last keyframe of the sun's position animation, an option to select easing is shown
   - [ ] when clicked, a list of easings appears
