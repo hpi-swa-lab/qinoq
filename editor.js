@@ -98,13 +98,13 @@ export class InteractivesEditor extends QinoqMorph {
   async initialize () {
     if ($world.get('lively top bar')) this.customizeTopBar();
     connect($world, 'onTopBarLoaded', this, 'customizeTopBar');
-    this.initializeLayout();
     this.ui.window = this.openInWindow({
       title: 'Interactives Editor',
       name: 'window for interactives editor',
       acceptsDrops: false
     });
     await this.initializePanels();
+    this.initializeLayout();
     connect(this.ui.window, 'close', this, 'abandon');
     connect(this.ui.window, 'position', this, 'positionChanged');
     connect(this.ui.window, 'minimized', this, 'onWindowMinimizedChange');
