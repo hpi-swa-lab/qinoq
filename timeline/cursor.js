@@ -169,8 +169,8 @@ export class Ruler extends QinoqMorph {
     for (let i = this.timeline.start; i <= this.timeline.end; i += 25) {
       const y = i % 100 == 0 ? 0 : 5;
       let x = this.timeline.getPositionFromScroll(i) - TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
-      if (i == 0) x = x + 1;
-      if (i == this.timeline.end) x = x - 1;
+      if (i == 0) x++;
+      if (i == this.timeline.end) x--;
       this.ui.scale.line(pt(x, y), pt(x, 10), style);
     }
   }
