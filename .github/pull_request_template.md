@@ -158,6 +158,7 @@ Closes [fill in your issues here]
 - [ ] the first tab can be renamed to 'aScrollytelling', this will also rename the interactive to 'aScrollytelling'
 - [ ] the second tab can be renamed to 'sunrise', this will also rename the sequence in the global timeline to 'sunrise' and the respective timeline to 'sunrise timeline'
 - [ ] the second tab can be closed with the 'X'
+- [ ] timelines in different tabs can have different zoom factors that are reapplied when changing the tab
 
 ### Timeline
 
