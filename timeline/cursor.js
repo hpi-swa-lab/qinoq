@@ -40,7 +40,7 @@ export class TimelineCursor extends QinoqMorph {
   }
 
   updatePosition () {
-    this.position = pt(this.location - this.width / 2 + 2, this.position.y);
+    this.position = pt(this.location - this.width / 2 + TIMELINE_CONSTANTS.ACTIVE_AREA_OFFSET, this.position.y);
   }
 
   onOwnerChanged (newOwner) {
@@ -85,7 +85,9 @@ export class Ruler extends QinoqMorph {
           this.initializeHead();
         }
       },
-      clipMode: 'hidden',
+      clipMode: {
+        defaultValue: 'hidden'
+      },
       displayValue: {
         after: ['ui'],
         defaultValue: 0,
@@ -102,7 +104,9 @@ export class Ruler extends QinoqMorph {
     this.ui.label = new Label({
       name: 'ruler head text',
       fontSize: TIMELINE_CONSTANTS.CURSOR_FONT_SIZE,
-      fontColor: COLOR_SCHEME.ON_SECONDARY
+      fontColor: COLOR_SCHEME.ON_SECONDARY,
+      halosEnabled: false,
+      reactsToPointer: false
     });
     this.ui.head = new QinoqMorph({
       extent: pt(20, 40),
@@ -137,15 +141,16 @@ export class Ruler extends QinoqMorph {
 
   updateHeadPosition (newLocation) {
     const layerContainerScroll = this.timeline.ui.layerContainer.scroll.x;
+    const layerContainerWidth = this.timeline.ui.layerContainer.width;
     let diff = layerContainerScroll - newLocation;
     if (newLocation < layerContainerScroll) diff = 0;
-    if (newLocation > this.timeline.ui.layerContainer.width + layerContainerScroll) diff = -this.timeline.ui.layerContainer.width;
-    this.ui.head.position = pt(TIMELINE_CONSTANTS.LAYER_INFO_WIDTH - diff - this.ui.head.width / 2, this.ui.head.position.y);
+    if (newLocation > layerContainerWidth + layerContainerScroll) diff = -layerContainerWidth;
+    this.ui.head.position = pt(TIMELINE_CONSTANTS.LAYER_INFO_WIDTH - diff - this.ui.head.width / 2 + TIMELINE_CONSTANTS.ACTIVE_AREA_OFFSET, this.ui.head.position.y);
   }
 
   updateContainerScroll (layerContainerScroll) {
     this.updateHeadPosition(this.timeline.ui.cursor.location);
-    this.ui.scale.position = pt(TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET - layerContainerScroll + 2, 0);
+    this.ui.scale.position = pt(TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET - layerContainerScroll + TIMELINE_CONSTANTS.ACTIVE_AREA_OFFSET, 0);
   }
 
   updateExtent (newWidth) {
@@ -162,7 +167,7 @@ export class Ruler extends QinoqMorph {
     const style = { color: COLOR_SCHEME.KEYFRAME_FILL, width: 1 };
     this.ui.scale.clear(COLOR_SCHEME.BACKGROUND);
     for (let i = this.timeline.start; i <= this.timeline.end; i += 25) {
-      const y = (i / 100 == parseInt(i / 100)) ? 0 : 5;
+      const y = i % 100 == 0 ? 0 : 5;
       let x = this.timeline.getPositionFromScroll(i) - TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET;
       if (i == 0) x = x + 1;
       if (i == this.timeline.end) x = x - 1;
