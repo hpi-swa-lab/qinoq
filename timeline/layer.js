@@ -113,6 +113,8 @@ export class GlobalTimelineLayer extends TimelineLayer {
       const timelineLayerIndices = event.hand.timelineSequenceStates.map(timelineSequenceState => timelineSequenceState.timelineSequence.timelineLayer.index);
       const minLayerIndex = Math.min(...timelineLayerIndices);
       const maxLayerIndex = Math.max(...timelineLayerIndices);
+      if (this.index == event.hand.draggedSequence.timelineLayer.index) return;
+
       let moveUp = false;
       if (this.index < event.hand.draggedSequence.timelineLayer.index) {
         moveUp = true;
@@ -120,6 +122,7 @@ export class GlobalTimelineLayer extends TimelineLayer {
       } else {
         if (maxLayerIndex == this.highestIndex) return;
       }
+
       event.hand.timelineSequenceStates.forEach(timelineSequenceState => {
         if (timelineSequenceState.isMove) {
           timelineSequenceState.timelineSequence.timelineLayer = this.container.submorphs[timelineSequenceState.timelineSequence.timelineLayer.index + (moveUp ? -1 : 1)].submorphs[0];
