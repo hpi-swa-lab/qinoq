@@ -491,7 +491,7 @@ class InteractiveScrollHolder extends Morph {
         : this.nativeCursor = this.currentMouseTarget.nativeCursor;
     }
     if (this.previousMorphUnderMouse) {
-      this.previousMorphUnderMouse.onHoverOut({ hand: $world.firstHand });
+      this.previousMorphUnderMouse.onHoverOut({ hand: $world.firstHand, state: {} });
       this.tooltipViewer.hoverOutOfMorph(this.tooltipViewer.currentMorph);
     }
 
