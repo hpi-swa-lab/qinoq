@@ -349,8 +349,9 @@ export class AnimationsInspector extends QinoqMorph {
     const changedValue = changedPropertyAndValue.value;
     if (this._unsavedChanges.includes(changedProperty)) return;
     this._unsavedChanges.push(changedProperty);
+
     const animationOnProperty = this.sequence.getAnimationForMorphProperty(this.targetMorph, changedProperty);
-    if (animationOnProperty && (!animationOnProperty.getKeyframeAt(this.sequence.progress) || animationOnProperty.getKeyframeAt(this.sequence.progress).value !== changedValue)) {
+    if (animationOnProperty && (!animationOnProperty.getKeyframeAt(this.sequence.progress) || animationOnProperty.getKeyframeAt(this.sequence.progress).value !== changedValue || animationOnProperty.getValueForProgress(this.sequence.progress !== changedValue))) {
       this.propertyControls[changedProperty].highlight = new Label({
         position: pt(this.propertyControls[changedProperty].keyframe.topRight.x + 5, 5),
         fontColor: COLOR_SCHEME.ERROR,
