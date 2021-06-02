@@ -3,6 +3,7 @@ import { expect } from 'mocha-es6';
 import { Sequence, Interactive, Layer } from '../index.js';
 import { Morph } from 'lively.morphic';
 import { Keyframe, NumberAnimation } from '../animations.js';
+import { pt } from 'lively.graphics';
 
 describe('Sequence object', () => {
   // TODO: test focusedEffect and its setting logic
@@ -46,7 +47,7 @@ describe('Sequence object', () => {
     expect(sequence.isDisplayed()).to.be.false;
   });
 
-  describe('Animations', () => {
+  describe('with animations', () => {
     let morph, opacityAnimation, keyframe;
 
     beforeEach(() => {
@@ -76,18 +77,48 @@ describe('Sequence object', () => {
       expect(sequence.getAnimationForMorphProperty(morph, 'opacity')).to.deep.equal(opacityAnimation);
     });
 
-    it('adds a new keyframe to an existing animation', async () => {
-      sequence.addAnimation(opacityAnimation);
-      const newKeyframe = new Keyframe(0.8, 0.8);
-      await sequence.addKeyframeForMorph(newKeyframe, morph, 'opacity', 'number');
-      expect(sequence.getAnimationsForMorph(morph)).to.have.length(1);
-    });
+    describe('the addKeyframeForMorph method', () => {
+      it('adds a new keyframe to a new animation', async () => {
+        sequence.addAnimation(opacityAnimation);
+        const newKeyframe = new Keyframe(0.8, 0.8);
+        await sequence.addKeyframeForMorph(newKeyframe, morph, 'rotation', 'number');
+        expect(sequence.getAnimationsForMorph(morph)).to.have.length(2);
+      });
 
-    it('adds a new keyframe to a new animation', async () => {
-      sequence.addAnimation(opacityAnimation);
-      const newKeyframe = new Keyframe(0.8, 0.8);
-      await sequence.addKeyframeForMorph(newKeyframe, morph, 'rotation', 'number');
-      expect(sequence.getAnimationsForMorph(morph)).to.have.length(2);
+      it('adds a new keyframe to an existing animation', async () => {
+        sequence.addAnimation(opacityAnimation);
+        const newKeyframe = new Keyframe(0.8, 0.8);
+        await sequence.addKeyframeForMorph(newKeyframe, morph, 'opacity', 'number');
+        expect(sequence.getAnimationsForMorph(morph)).to.have.length(1);
+      });
+
+      it('overwrites a keyframe', async () => {
+        sequence.addAnimation(opacityAnimation);
+        const newKeyframe = new Keyframe(0, 0.8);
+        await sequence.addKeyframeForMorph(newKeyframe, morph, 'opacity', 'number');
+        expect(sequence.animations[0].keyframes).to.have.length(1);
+        expect(sequence.animations[0].keyframes[0]).to.be.equal(keyframe);
+      });
+
+      it('does not transform a keyframe if not specified', async () => {
+        const newKeyframe = new Keyframe(0, pt(100, 100));
+        await sequence.addKeyframeForMorph(newKeyframe, morph, 'position', 'point');
+        expect(newKeyframe.value).to.be.equal(pt(100, 100));
+      });
+
+      it('transforms a keyframe if parameter is set', async () => {
+        const newKeyframe = new Keyframe(0, pt(100, 100));
+        await sequence.addKeyframeForMorph(newKeyframe, morph, 'position', 'point', true);
+        expect(newKeyframe.value).to.be.equal(pt(100 / sequence.width, 100 / sequence.height));
+      });
+
+      it('transforms a keyframe while overwriting if parameter is set', async () => {
+        const newKeyframe = new Keyframe(0, pt(100, 100));
+        await sequence.addKeyframeForMorph(newKeyframe, morph, 'position', 'point', true);
+        const anotherKeyframe = new Keyframe(0, pt(200, 200));
+        await sequence.addKeyframeForMorph(anotherKeyframe, morph, 'position', 'point', true);
+        expect(newKeyframe.value).to.not.be.equal(pt(200 / sequence.width, 200 / sequence.height));
+      });
     });
 
     it('removes an animation when the last keyframe is deleted', () => {
