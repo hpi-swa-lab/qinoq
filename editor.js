@@ -944,7 +944,7 @@ class Preview extends QinoqMorph {
         defaultValue: 'Open an Interactive by grab-and-dropping it here, or...'
       },
       clipMode: {
-        defautValue: 'auto'
+        defautValue: 'hidden'
       },
       _editor: {
         set (editor) {
