@@ -346,13 +346,13 @@ export class AnimationsInspector extends QinoqMorph {
 
   highlightUnsavedChanges (changedPropertyAndValue) {
     const changedProperty = changedPropertyAndValue.property;
-    let changedValue = changedPropertyAndValue.value;
+    const changedValue = changedPropertyAndValue.value;
     if (this._unsavedChanges.includes(changedProperty)) return;
     this._unsavedChanges.push(changedProperty);
 
     const animationOnProperty = this.sequence.getAnimationForMorphProperty(this.targetMorph, changedProperty);
-    changedValue = animationOnProperty && animationOnProperty.type == 'point' ? animationOnProperty.transformRelativeValue(changedValue) : changedValue;
-    if (animationOnProperty && (!animationOnProperty.getKeyframeAt(this.sequence.progress) || animationOnProperty.getKeyframeAt(this.sequence.progress).value !== changedValue || animationOnProperty.getValueForProgress(this.sequence.progress !== changedValue))) {
+
+    if (animationOnProperty && !this.checkForPropertyEquality(animationOnProperty.getValueForProgress(this.sequence.progress), changedValue)) {
       this.propertyControls[changedProperty].highlight = new Label({
         position: pt(this.propertyControls[changedProperty].keyframe.topRight.x + 5, 5),
         fontColor: COLOR_SCHEME.ERROR,
@@ -361,6 +361,15 @@ export class AnimationsInspector extends QinoqMorph {
       });
       Icon.setIcon(this.propertyControls[changedProperty].highlight, 'exclamation-triangle'),
       this.propertyControls[changedProperty].keyframe.owner.addMorph(this.propertyControls[changedProperty].highlight);
+    }
+  }
+
+  checkForPropertyEquality (propertyOne, propertyTwo) {
+    // types available are number, string and object (color and point)
+    if (typeof propertyOne === 'number' || typeof propertyOne === 'string') {
+      return propertyOne == propertyTwo;
+    } else {
+      return propertyOne.equals(propertyTwo);
     }
   }
 
