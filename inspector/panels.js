@@ -52,7 +52,7 @@ class InspectorPanel extends QinoqMorph {
       enabled: {
         defaultValue: true,
         set (enabled) {
-          this.onEnabledChange(enabled);
+          if (!this._deserializing) this.onEnabledChange(enabled);
           this.setProperty('enabled', enabled);
         }
       },
