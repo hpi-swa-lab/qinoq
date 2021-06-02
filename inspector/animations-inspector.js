@@ -110,36 +110,18 @@ export class AnimationsInspector extends QinoqMorph {
   }
 
   buildPropertyControl (property, propertyType) {
-    this.propertyControls[property] = new PropertyControl(property, propertyType, this.targetMorph, this.sequence, this.editor);
+    this.propertyControls[property] = new PropertyControl(property, propertyType, this);
 
     this.ui[property] = new QinoqMorph();
-    this.propertyControls[property].morphsToAdd().forEach(object => object.isMorph && this.ui[property].addMorph(object));
+    this.propertyControls[property].morphsToAdd().forEach(morph => this.ui[property].addMorph(morph));
     this.ui.propertyPane.addMorph(this.ui[property]);
   }
 
   disbandConnections () {
     if (this.targetMorph) {
       disconnect(this.targetMorph, 'name', this.inspector.ui.headline, 'textString');
-      const sequenceOfTarget = this.sequence;
       this.displayedProperties.forEach(inspectedProperty => {
-        this.propertyControls[inspectedProperty].keyframe.remove();
-        const propertyType = this.propertiesToDisplay[inspectedProperty];
-        disconnect(this.targetMorph, inspectedProperty, this, 'updateInInspector');
-        switch (propertyType) {
-          case 'point':
-            disconnect(this.propertyControls[inspectedProperty].x, 'number', this, 'updateInMorph');
-            disconnect(this.propertyControls[inspectedProperty].y, 'number', this, 'updateInMorph');
-            break;
-          case 'color':
-            disconnect(this.propertyControls[inspectedProperty].color, 'colorValue', this, 'updateInMorph');
-            break;
-          case 'number':
-            disconnect(this.propertyControls[inspectedProperty].number, 'number', this, 'updateInMorph');
-            break;
-          case 'string':
-            disconnect(this.propertyControls[inspectedProperty].string, 'inputAccepted', this, 'updateInMorph');
-            break;
-        }
+        this.propertyControls[inspectedProperty].disbandConnection(this);
         delete this.propertyControls[inspectedProperty];
       });
     }
@@ -149,48 +131,14 @@ export class AnimationsInspector extends QinoqMorph {
   createConnections () {
     connect(this.targetMorph, 'name', this.inspector.ui.headline, 'textString', { converter: '() => {return `Inspecting ${targetMorph.toString()}`}', varMapping: { targetMorph: this.targetMorph } });
     this.displayedProperties.forEach(inspectedProperty => {
-      const propertyType = this.propertiesToDisplay[inspectedProperty];
-      connect(this.targetMorph, inspectedProperty, this, 'updateInInspector', { converter: '() => {return {property, propertyType}}', varMapping: { property: inspectedProperty, propertyType } });
-      switch (propertyType) {
-        case 'point':
-          connect(this.propertyControls[inspectedProperty].x, 'number', this, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: inspectedProperty, value: this.propertyControls[inspectedProperty].x.number } });
-          connect(this.propertyControls[inspectedProperty].y, 'number', this, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: inspectedProperty, value: this.propertyControls[inspectedProperty].y.number } });
-          break;
-        case 'color':
-          connect(this.propertyControls[inspectedProperty].color, 'colorValue', this, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: inspectedProperty, value: this.propertyControls[inspectedProperty].color } });
-          break;
-        case 'number':
-          connect(this.propertyControls[inspectedProperty].number, 'number', this, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: inspectedProperty, value: this.propertyControls[inspectedProperty].number } });
-          break;
-        case 'string':
-          connect(this.propertyControls[inspectedProperty].string, 'inputAccepted', this, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: inspectedProperty, value: this.propertyControls[inspectedProperty].string } });
-          break;
-      }
+      this.propertyControls[inspectedProperty].createConnection(this);
     });
     connect(this.editor, 'onScrollChange', this, 'resetHighlightingForAllUnsavedChanges');
   }
 
-  updatePropertyInInspector (property, propertyType) {
+  updatePropertyInInspector (property) {
     this._updatingInspector = true;
-    switch (propertyType) {
-      case 'point':
-        this.propertyControls[property].x.number = this.targetMorph[property].x;
-        this.propertyControls[property].y.number = this.targetMorph[property].y;
-        break;
-      case 'color':
-        this.propertyControls[property].color.update(this.targetMorph[property]);
-        break;
-      case 'number':
-        if (this.propertyControls[property].number.unit == '%') {
-          this.propertyControls[property].number.number = this.targetMorph[property] * 100;
-        } else {
-          this.propertyControls[property].number.number = this.targetMorph[property];
-        }
-        break;
-      case 'string':
-        if (this.propertyControls[property].string.stringValue != this.targetMorph[property]) { this.propertyControls[property].string.stringValue = this.targetMorph[property]; }
-        break;
-    }
+    this.propertyControls[property].updateValue();
     this._updatingInspector = false;
 
     const updatingSpec = { property: property, value: this.targetMorph[property] };
@@ -205,7 +153,7 @@ export class AnimationsInspector extends QinoqMorph {
       return;
     }
     const { property, propertyType } = spec;
-    this.updatePropertyInInspector(property, propertyType);
+    this.updatePropertyInInspector(property);
   }
 
   refreshAllPropertiesInInspector () {
@@ -214,8 +162,7 @@ export class AnimationsInspector extends QinoqMorph {
     }
     this._updatingInspector = true;
     this.displayedProperties.forEach(property => {
-      const propertyType = this.propertiesToDisplay[property];
-      this.updatePropertyInInspector(property, propertyType);
+      this.updatePropertyInInspector(property);
     });
     this._updatingInspector = false;
   }
@@ -227,25 +174,7 @@ export class AnimationsInspector extends QinoqMorph {
     }
     this._updatingMorph = true;
 
-    const propertyType = this.propertiesToDisplay[property];
-    switch (propertyType) {
-      case 'point':
-        this.targetMorph[property] = pt(this.propertyControls[property].x.number, this.propertyControls[property].y.number);
-        break;
-      case 'color':
-        this.targetMorph[property] = this.propertyControls[property].color.colorValue;
-        break;
-      case 'number':
-        if (this.propertyControls[property].number.unit == '%') {
-          this.targetMorph[property] = this.propertyControls[property].number.number / 100;
-        } else {
-          this.targetMorph[property] = this.propertyControls[property].number.number;
-        }
-        break;
-      case 'string':
-        this.targetMorph[property] = this.propertyControls[property].string.stringValue;
-        break;
-    }
+    this.propertyControls[property].updateMorph();
 
     this._updatingMorph = false;
 
@@ -305,12 +234,13 @@ export class AnimationsInspector extends QinoqMorph {
 }
 
 class PropertyControl {
-  constructor (property, propertyType, targetMorph, sequence, editor) {
-    this.targetMorph = targetMorph;
+  constructor (property, propertyType, inspector) {
+    this.targetMorph = inspector.targetMorph;
     this.property = property;
     this.propertyType = propertyType;
+    this.inspector = inspector;
     this.initializeLabel();
-    this.buildWidget(sequence, editor);
+    this.buildWidget();
   }
 
   initializeLabel () {
@@ -321,7 +251,7 @@ class PropertyControl {
     });
   }
 
-  buildWidget (sequence, editor) {
+  buildWidget () {
     switch (this.propertyType) {
       case 'point':
         // extent and autofit are necessary for the correct layouting to be applied
@@ -346,22 +276,22 @@ class PropertyControl {
         });
         break;
       case 'number':
-        this.buildNumberPropertyControl(this.property);
+        this.buildNumberPropertyControl();
         break;
       case 'string':
-        this.buildStringPropertyControl(this.property);
+        this.buildStringPropertyControl();
     }
     this.keyframe = new KeyframeButton({
       position: pt(CONSTANTS.KEYFRAME_BUTTON_X, CONSTANTS.WIDGET_ONE_Y),
-      animationsInspector: this,
+      animationsInspector: this.inspector,
       property: this.property,
       propertyType: this.propertyType,
-      sequence: sequence,
-      _editor: editor
+      sequence: this.inspector.sequence,
+      _editor: this.inspector.editor
     });
   }
 
-  buildStringPropertyControl (property) {
+  buildStringPropertyControl () {
     this.string = new StringWidget({
       position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
       fixedWidth: true,
@@ -375,8 +305,8 @@ class PropertyControl {
     ;
   }
 
-  buildNumberPropertyControl (property) {
-    const spec = this.targetMorph.propertiesAndPropertySettings().properties[property];
+  buildNumberPropertyControl () {
+    const spec = this.targetMorph.propertiesAndPropertySettings().properties[this.property];
     let floatingPoint = spec.isFloat;
     let unit = '';
     let min = -Infinity;
@@ -402,6 +332,89 @@ class PropertyControl {
   }
 
   morphsToAdd () {
-    return Object.values(this).filter(object => object.isMorph && object !== this.targetMorph);
+    return Object.values(this).filter(object => object.isMorph && object !== this.targetMorph && object !== this.inspector);
+  }
+
+  updateValue () {
+    switch (this.propertyType) {
+      case 'point':
+        this.x.number = this.targetMorph[this.property].x;
+        this.y.number = this.targetMorph[this.property].y;
+        break;
+      case 'color':
+        this.color.update(this.targetMorph[this.property]);
+        break;
+      case 'number':
+        if (this.number.unit == '%') {
+          this.number.number = this.targetMorph[this.property] * 100;
+        } else {
+          this.number.number = this.targetMorph[this.property];
+        }
+        break;
+      case 'string':
+        if (this.string.stringValue != this.targetMorph[this.property]) { this.propertyControls[this.property].string.stringValue = this.targetMorph[this.property]; }
+        break;
+    }
+  }
+
+  updateMorph () {
+    switch (this.propertyType) {
+      case 'point':
+        this.targetMorph[this.property] = pt(this.x.number, this.y.number);
+        break;
+      case 'color':
+        this.targetMorph[this.property] = this.color.colorValue;
+        break;
+      case 'number':
+        if (this.number.unit == '%') {
+          this.targetMorph[this.property] = this.number.number / 100;
+        } else {
+          this.targetMorph[this.property] = this.number.number;
+        }
+        break;
+      case 'string':
+        this.targetMorph[this.property] = this.string.stringValue;
+        break;
+    }
+  }
+
+  createConnection () {
+    connect(this.targetMorph, this.property, this.inspector, 'updateInInspector', { converter: '() => {return {property, propertyType}}', varMapping: { property: this.property, propertyType: this.propertyType } });
+    switch (this.propertyType) {
+      case 'point':
+        connect(this.x, 'number', this.inspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.x.number } });
+        connect(this.y, 'number', this.inspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.y.number } });
+        break;
+      case 'color':
+        connect(this.color, 'colorValue', this.inspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.color } });
+        break;
+      case 'number':
+        connect(this.number, 'number', this.inspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.number } });
+        break;
+      case 'string':
+        connect(this.string, 'inputAccepted', this.inspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.string } });
+        break;
+    }
+  }
+
+  disbandConnection () {
+    this.keyframe.remove();
+    this.label.remove();
+    disconnect(this.targetMorph, this.property, this.inspector, 'updateInInspector');
+    switch (this.propertyType) {
+      case 'point':
+        disconnect(this.x, 'number', this.inspector, 'updateInMorph');
+        disconnect(this.y, 'number', this.inspector, 'updateInMorph');
+        break;
+      case 'color':
+        disconnect(this.color, 'colorValue', this.inspector, 'updateInMorph');
+        break;
+      case 'number':
+        disconnect(this.number, 'number', this.inspector, 'updateInMorph');
+        break;
+      case 'string':
+        disconnect(this.string, 'inputAccepted', this.inspector, 'updateInMorph');
+        break;
+    }
   }
 }
