@@ -81,7 +81,7 @@ export class AnimationsInspector extends QinoqMorph {
     this.buildPropertyControls();
     this.refreshAllPropertiesInInspector();
     this.displayedProperties.forEach(property => {
-      this.propertyControls[property].keyframe.updateStyle();
+      this.propertyControls[property].updateButtonStyle();
     });
     this.createConnections();
   }
@@ -110,11 +110,13 @@ export class AnimationsInspector extends QinoqMorph {
   }
 
   buildPropertyControl (property, propertyType) {
-    this.propertyControls[property] = new PropertyControl(property, propertyType, this);
+    this.propertyControls[property] = new PropertyControl({
+      property: property,
+      propertyType: propertyType,
+      inspector: this
+    });
 
-    this.ui[property] = new QinoqMorph();
-    this.propertyControls[property].morphsToAdd().forEach(morph => this.ui[property].addMorph(morph));
-    this.ui.propertyPane.addMorph(this.ui[property]);
+    this.ui.propertyPane.addMorph(this.propertyControls[property]);
   }
 
   disbandConnections () {
@@ -122,7 +124,7 @@ export class AnimationsInspector extends QinoqMorph {
       disconnect(this.targetMorph, 'name', this.inspector.ui.headline, 'textString');
       this.displayedProperties.forEach(inspectedProperty => {
         this.propertyControls[inspectedProperty].disbandConnection(this);
-        delete this.propertyControls[inspectedProperty];
+        this.propertyControls[inspectedProperty].remove();
       });
     }
     disconnect(this.editor, 'onScrollChange', this, 'resetHighlightingForAllUnsavedChanges');
@@ -202,13 +204,13 @@ export class AnimationsInspector extends QinoqMorph {
 
     if (animationOnProperty && !this.checkForPropertyEquality(animationOnProperty.getValueForProgress(this.sequence.progress), changedValue)) {
       this.propertyControls[changedProperty].highlight = new Label({
-        position: pt(this.propertyControls[changedProperty].keyframe.topRight.x + 5, 5),
+        position: pt(this.propertyControls[changedProperty].ui.keyframeButton.topRight.x + 5, 5),
         fontColor: COLOR_SCHEME.ERROR,
         halosEnabled: false,
         tooltip: 'Unsaved changes will be removed when scrolling \ninstead add a keyframe to persist them'
       });
       Icon.setIcon(this.propertyControls[changedProperty].highlight, 'exclamation-triangle'),
-      this.propertyControls[changedProperty].keyframe.owner.addMorph(this.propertyControls[changedProperty].highlight);
+      this.propertyControls[changedProperty].addMorph(this.propertyControls[changedProperty].highlight);
     }
   }
 
@@ -222,7 +224,7 @@ export class AnimationsInspector extends QinoqMorph {
   }
 
   updateRespectiveAnimations () {
-    this.displayedProperties.forEach(property => this.propertyControls[property].keyframe.updateAnimation());
+    this.displayedProperties.forEach(property => this.propertyControls[property].ui.keyframeButton.updateAnimation());
   }
 
   updateKeyframeButtonStyle (animation) {
@@ -233,47 +235,63 @@ export class AnimationsInspector extends QinoqMorph {
   }
 }
 
-class PropertyControl {
-  constructor (property, propertyType, inspector) {
-    this.targetMorph = inspector.targetMorph;
-    this.property = property;
-    this.propertyType = propertyType;
-    this.inspector = inspector;
-    this.initializeLabel();
-    this.buildWidget();
+class PropertyControl extends QinoqMorph {
+  static get properties () {
+    return {
+      targetMorph: {},
+      property: {},
+      propertyType: {},
+      inspector: {
+        set (inspector) {
+          this.setProperty('inspector', inspector);
+          if (this._deserializing) return;
+          this.targetMorph = this.inspector.targetMorph;
+        }
+      },
+      ui: {
+        after: ['property', 'propertyType', 'inspector'],
+        initialize () {
+          if (!this._deserializing) {
+            this.ui = {};
+            this.initializeLabel();
+            this.buildWidget();
+          }
+        }
+      }
+    };
   }
 
   initializeLabel () {
-    this.label = new Label({
+    this.ui.label = this.addMorph(new Label({
       name: `${this.property} label`,
       textString: this.property,
       position: pt(CONSTANTS.LABEL_X, 0)
-    });
+    }));
   }
 
   buildWidget () {
     switch (this.propertyType) {
       case 'point':
         // extent and autofit are necessary for the correct layouting to be applied
-        this.x = new NumberWidget({
+        this.ui.x = this.addMorph(new NumberWidget({
           position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
           extent: CONSTANTS.WIDGET_EXTENT,
           autofit: false,
           floatingPoint: false
-        });
-        this.y = new NumberWidget({
+        }));
+        this.ui.y = this.addMorph(new NumberWidget({
           position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_TWO_Y),
           extent: CONSTANTS.WIDGET_EXTENT,
           autofit: false,
           floatingPoint: false
-        });
+        }));
         break;
       case 'color':
-        this.color = new ColorPickerField({
+        this.ui.color = this.addMorph(new ColorPickerField({
           position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
           colorValue: this.targetMorph[this.property],
           dropShadow: new ShadowObject(true)
-        });
+        }));
         break;
       case 'number':
         this.buildNumberPropertyControl();
@@ -281,18 +299,18 @@ class PropertyControl {
       case 'string':
         this.buildStringPropertyControl();
     }
-    this.keyframe = new KeyframeButton({
+    this.ui.keyframeButton = this.addMorph(new KeyframeButton({
       position: pt(CONSTANTS.KEYFRAME_BUTTON_X, CONSTANTS.WIDGET_ONE_Y),
       animationsInspector: this.inspector,
       property: this.property,
       propertyType: this.propertyType,
       sequence: this.inspector.sequence,
       _editor: this.inspector.editor
-    });
+    }));
   }
 
   buildStringPropertyControl () {
-    this.string = new StringWidget({
+    this.ui.string = this.addMorph(new StringWidget({
       position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
       fixedWidth: true,
       fixedHeight: true,
@@ -301,7 +319,7 @@ class PropertyControl {
       fontSize: 16,
       fill: COLOR_SCHEME.SURFACE,
       dropShadow: new ShadowObject(true)
-    })
+    }))
     ;
   }
 
@@ -319,7 +337,7 @@ class PropertyControl {
       max = 100;
     }
 
-    this.number = new NumberWidget({
+    this.ui.number = this.addMorph(new NumberWidget({
       position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
       floatingPoint,
       unit,
@@ -328,31 +346,27 @@ class PropertyControl {
       // these two are necessary for the correct layouting to be applied
       extent: CONSTANTS.WIDGET_EXTENT,
       autofit: false
-    });
-  }
-
-  morphsToAdd () {
-    return Object.values(this).filter(object => object.isMorph && object !== this.targetMorph && object !== this.inspector);
+    }));
   }
 
   updateValue () {
     switch (this.propertyType) {
       case 'point':
-        this.x.number = this.targetMorph[this.property].x;
-        this.y.number = this.targetMorph[this.property].y;
+        this.ui.x.number = this.targetMorph[this.property].x;
+        this.ui.y.number = this.targetMorph[this.property].y;
         break;
       case 'color':
-        this.color.update(this.targetMorph[this.property]);
+        this.ui.color.update(this.targetMorph[this.property]);
         break;
       case 'number':
-        if (this.number.unit == '%') {
-          this.number.number = this.targetMorph[this.property] * 100;
+        if (this.ui.number.unit == '%') {
+          this.ui.number.number = this.targetMorph[this.property] * 100;
         } else {
-          this.number.number = this.targetMorph[this.property];
+          this.ui.number.number = this.targetMorph[this.property];
         }
         break;
       case 'string':
-        if (this.string.stringValue != this.targetMorph[this.property]) { this.propertyControls[this.property].string.stringValue = this.targetMorph[this.property]; }
+        if (this.ui.string.stringValue != this.targetMorph[this.property]) { this.ui.string.stringValue = this.targetMorph[this.property]; }
         break;
     }
   }
@@ -360,60 +374,64 @@ class PropertyControl {
   updateMorph () {
     switch (this.propertyType) {
       case 'point':
-        this.targetMorph[this.property] = pt(this.x.number, this.y.number);
+        this.targetMorph[this.property] = pt(this.ui.x.number, this.ui.y.number);
         break;
       case 'color':
-        this.targetMorph[this.property] = this.color.colorValue;
+        this.targetMorph[this.property] = this.ui.color.colorValue;
         break;
       case 'number':
-        if (this.number.unit == '%') {
-          this.targetMorph[this.property] = this.number.number / 100;
+        if (this.ui.number.unit == '%') {
+          this.targetMorph[this.property] = this.ui.number.number / 100;
         } else {
-          this.targetMorph[this.property] = this.number.number;
+          this.targetMorph[this.property] = this.ui.number.number;
         }
         break;
       case 'string':
-        this.targetMorph[this.property] = this.string.stringValue;
+        this.targetMorph[this.property] = this.ui.string.stringValue;
         break;
     }
+  }
+
+  updateButtonStyle () {
+    this.ui.keyframeButton.updateStyle();
   }
 
   createConnection () {
     connect(this.targetMorph, this.property, this.inspector, 'updateInInspector', { converter: '() => {return {property, propertyType}}', varMapping: { property: this.property, propertyType: this.propertyType } });
     switch (this.propertyType) {
       case 'point':
-        connect(this.x, 'number', this.inspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.x.number } });
-        connect(this.y, 'number', this.inspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.y.number } });
+        connect(this.ui.x, 'number', this.inspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.ui.x.number } });
+        connect(this.ui.y, 'number', this.inspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.ui.y.number } });
         break;
       case 'color':
-        connect(this.color, 'colorValue', this.inspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.color } });
+        connect(this.ui.color, 'colorValue', this.inspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.ui.color } });
         break;
       case 'number':
-        connect(this.number, 'number', this.inspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.number } });
+        connect(this.ui.number, 'number', this.inspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.ui.number } });
         break;
       case 'string':
-        connect(this.string, 'inputAccepted', this.inspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.string } });
+        connect(this.ui.string, 'inputAccepted', this.inspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.ui.string } });
         break;
     }
   }
 
   disbandConnection () {
-    this.keyframe.remove();
-    this.label.remove();
+    this.ui.keyframeButton.remove();
+    this.ui.label.remove();
     disconnect(this.targetMorph, this.property, this.inspector, 'updateInInspector');
     switch (this.propertyType) {
       case 'point':
-        disconnect(this.x, 'number', this.inspector, 'updateInMorph');
-        disconnect(this.y, 'number', this.inspector, 'updateInMorph');
+        disconnect(this.ui.x, 'number', this.inspector, 'updateInMorph');
+        disconnect(this.ui.y, 'number', this.inspector, 'updateInMorph');
         break;
       case 'color':
-        disconnect(this.color, 'colorValue', this.inspector, 'updateInMorph');
+        disconnect(this.ui.color, 'colorValue', this.inspector, 'updateInMorph');
         break;
       case 'number':
-        disconnect(this.number, 'number', this.inspector, 'updateInMorph');
+        disconnect(this.ui.number, 'number', this.inspector, 'updateInMorph');
         break;
       case 'string':
-        disconnect(this.string, 'inputAccepted', this.inspector, 'updateInMorph');
+        disconnect(this.ui.string, 'inputAccepted', this.inspector, 'updateInMorph');
         break;
     }
   }
