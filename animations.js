@@ -228,8 +228,8 @@ export class PointAnimation extends Animation {
       start.value.y + (end.value.y - start.value.y) * factor);
   }
 
-  transformRelativeValue (value) {
-    return pt(value.x * this.sequence.width, value.y * this.sequence.height);
+  transformRelativeValue (relativeValue) {
+    return pt(relativeValue.x * this.sequence.width, relativeValue.y * this.sequence.height);
   }
 
   getMax (attribute = 'x') {
