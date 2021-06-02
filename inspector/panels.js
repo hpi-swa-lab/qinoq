@@ -221,9 +221,9 @@ class KeyValuePanel extends InspectorPanel {
       fontColor: COLOR_SCHEME.ON_SURFACE,
       borderStyle: 'solid'
     }));
-    connect(field, 'inputChanged', this, 'changeTokenValue', {
+    connect(field, 'inputAccepted', this, 'changeTokenValue', {
       converter: `(change) => {
-          return { symbol: '${title}', value: source.textString }
+          return { symbol: '${title}', value: source.string }
         }`
     });
     return field;
@@ -269,7 +269,7 @@ class KeyValuePanel extends InspectorPanel {
     const { symbol, value } = change;
     const token = Object.values(this.targetMorph.tokens)
       .find(token => token.symbol === symbol);
-    token.value = value;
+    if (token) token.value = value;
   }
 }
 
