@@ -110,7 +110,7 @@ describe('Inspector', () => {
       // sets the scrollPosition to the beginning of the day background
       await dayBackgroundTimelineSequence.openSequenceView();
       inspector.targetMorph = dayBackgroundTimelineSequence.sequence.submorphs[0];
-      const keyFramebuttonForFill = animationsInspector.propertyControls.fill.keyframe;
+      const keyFramebuttonForFill = animationsInspector.propertyControls.fill.ui.keyframeButton;
       expect(keyFramebuttonForFill.fill).to.not.be.deep.equal(COLOR_SCHEME.KEYFRAME_FILL);
     });
 
@@ -123,7 +123,7 @@ describe('Inspector', () => {
       await dayBackgroundTimelineSequence.openSequenceView();
       inspector.targetMorph = dayBackgroundSequence.submorphs[0];
       editor.internalScrollChangeWithGUIUpdate(333);
-      const keyFramebuttonForFill = animationsInspector.propertyControls.fill.keyframe;
+      const keyFramebuttonForFill = animationsInspector.propertyControls.fill.ui.keyframeButton;
       expect(keyFramebuttonForFill.fill).to.not.be.deep.equal(COLOR_SCHEME.KEYFRAME_FILL);
     });
 
@@ -256,7 +256,6 @@ describe('Inspector', () => {
 
         it('shows the share panel with text fields for all changeable tokens', () => {
           const widgetContainer = sharePanel.submorphs[2];
-
           expect(widgetContainer.submorphs[0].textString).to.be.equal('Text');
           expect(widgetContainer.submorphs[1].name).to.be.equal('aStringWidget');
           expect(widgetContainer.submorphs[2].textString).to.be.equal('Url');
