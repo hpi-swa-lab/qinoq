@@ -24,18 +24,18 @@ class Animation {
   addKeyframe (keyframe, doNotSort = false) {
     const existingKeyframe = this.getKeyframeAt(keyframe.position);
     if (existingKeyframe) {
-      arr.remove(this.keyframes, existingKeyframe);
-    }
-    this.keyframes.push(keyframe);
+      existingKeyframe.overwriteWithKeyframe(keyframe);
+    } else {
+      this.keyframes.push(keyframe);
 
-    if (keyframe.hasDefaultName() && this.interactive) {
-      keyframe.name = `Keyframe ${this.interactive.nextKeyframeNumber++}`;
+      if (keyframe.hasDefaultName() && this.interactive) {
+        keyframe.name = `Keyframe ${this.interactive.nextKeyframeNumber++}`;
+      }
+      if (this.sequence) this.sequence.onKeyframeAddedInAnimation({ keyframe, animation: this });
     }
-
     if (!doNotSort) {
       this._sortKeyframes();
     }
-    if (this.sequence) this.sequence.onKeyframeAddedInAnimation({ keyframe, animation: this });
   }
 
   removeKeyframe (keyframe) {
@@ -185,6 +185,13 @@ export class Keyframe {
 
   equals (keyframe) {
     return this.uuid === keyframe.uuid;
+  }
+
+  overwriteWithKeyframe (keyframe) {
+    if (!keyframe.hasDefaultName()) this.name = keyframe.name;
+    this.position = keyframe.position;
+    this.value = keyframe.value;
+    this.setEasing(keyframe.easingName);
   }
 
   copy () {

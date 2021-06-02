@@ -757,12 +757,20 @@ export class Sequence extends DeserializationAwareMorph {
   async addKeyframeForMorph (keyframe, morph, property, propertyType = 'point') {
     const existingAnimation = this.getAnimationForMorphProperty(morph, property);
 
+    const transformKeyframeValue = (animation) => {
+      if (animation.useRelativeValues && propertyType == 'point') {
+        keyframe.value = pt(keyframe.value.x / this.width, keyframe.value.y / this.height);
+      }
+    };
+
     if (existingAnimation) {
+      transformKeyframeValue(existingAnimation);
       existingAnimation.addKeyframe(keyframe);
       return existingAnimation;
     }
     const { createAnimationForPropertyType } = await System.import('qinoq/animations.js');
     const newAnimation = createAnimationForPropertyType(propertyType, morph, property);
+    transformKeyframeValue(newAnimation);
     newAnimation.addKeyframe(keyframe);
     this.addAnimation(newAnimation);
     return newAnimation;

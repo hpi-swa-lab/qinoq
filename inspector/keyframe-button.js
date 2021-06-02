@@ -99,9 +99,6 @@ export class KeyframeButton extends QinoqMorph {
   async addOrOverwriteKeyframe (relativePosition = this.sequence.progress) {
     const newKeyframe = new Keyframe(relativePosition, this.currentValue);
     this.animation = await this.sequence.addKeyframeForMorph(newKeyframe, this.target, this.property, this.propertyType);
-    if (this.animation.useRelativeValues && this.propertyType == 'point') {
-      newKeyframe.value = pt(this.currentValue.x / this.sequence.width, this.currentValue.y / this.sequence.height);
-    }
     const timeline = this.editor.getTimelineForSequence(this.sequence);
     if (timeline) timeline.updateAnimationLayer(this.animation);
     this.animationsInspector.resetHighlightingForProperty(this.property);
