@@ -230,6 +230,7 @@ export class InteractivesEditor extends QinoqMorph {
     connect(this.interactive, 'interactiveZoomed', this, 'onInteractiveZoomed');
 
     connect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
+    connect(this.interactive.scrollOverlay, 'rejectDrop', this, 'rejectDropOnInteractive');
 
     // trigger update of timeline dependents
     this.onDisplayedTimelineChange(this.ui.globalTimeline);
@@ -314,6 +315,7 @@ export class InteractivesEditor extends QinoqMorph {
     disconnect(this.interactive, '_length', this.ui.menuBar.ui.scrollPositionInput, 'max');
 
     disconnect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
+    disconnect(this.interactive.scrollOverlay, 'rejectDrop', this, 'rejectDropOnInteractive');
 
     const morphsToClear = [this.ui.tabContainer, this.ui.menuBar, this.ui.inspector, this.ui.interactiveGraph];
     morphsToClear.forEach(morph =>
@@ -455,6 +457,16 @@ export class InteractivesEditor extends QinoqMorph {
     newSequence.name = `copy of ${newSequence.name}`;
     this.interactive.addSequence(newSequence);
     const timelineSequence = this.ui.globalTimeline.createTimelineSequence(newSequence);
+  }
+
+  rejectDropOnInteractive (event) {
+    event.hand.grabbedMorphs.forEach(morph => {
+      const properties = event.hand._grabbedMorphProperties.get(morph);
+      properties.prevOwner.addMorph(morph);
+      morph.position = properties.prevPosition;
+      Object.assign(morph, properties.pointerAndShadow);
+    });
+    error('Only add in sequence view');
   }
 
   addMorphToInteractive (morph) {
