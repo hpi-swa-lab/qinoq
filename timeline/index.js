@@ -338,9 +338,8 @@ export class Timeline extends QinoqMorph {
   }
 
   scrollContainerToStart () {
-    this.editor.internalScrollChangeWithGUIUpdate(0);
     const layerContainerNode = this.ui.layerContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
-    this.ui.layerContainer.setProperty('scroll', pt(0, layerContainerNode.scrollTop));
+    if (layerContainerNode) this.ui.layerContainer.setProperty('scroll', pt(0, layerContainerNode.scrollTop));
   }
 
   updateScrollerPosition () {
@@ -563,6 +562,11 @@ export class GlobalTimeline extends Timeline {
         timelineSequence.hideWarning('right');
       }
     });
+  }
+
+  scrollContainerToStart () {
+    this.editor.internalScrollChangeWithGUIUpdate(0);
+    super.scrollContainerToStart();
   }
 
   zoomToFit () {
@@ -878,6 +882,11 @@ export class SequenceTimeline extends Timeline {
     // therefore, we needed to adapt both values
     // however setting both in this case stopped the scrolling from happening at all
     this.ui.scrollableContainer.setProperty('scroll', pt(0, scrollTop));
+  }
+
+  scrollContainerToStart () {
+    this.editor.internalScrollChangeWithGUIUpdate(this.sequence.start);
+    super.scrollContainerToStart();
   }
 
   zoomToFit () {
