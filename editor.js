@@ -155,6 +155,9 @@ export class InteractivesEditor extends QinoqMorph {
     connect(this.ui.subWindow, 'onResize', this, 'relayout', {
       converter: '() => target.extent'
     });
+    connect(this.ui.subWindow, 'onResizeEnd', this, 'relayout', {
+      converter: '() => target.extent'
+    });
 
     this.ui.menuBar = new MenuBar({
       extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.MENU_BAR_HEIGHT)
