@@ -871,7 +871,11 @@ export class SequenceTimeline extends Timeline {
 
     const scrollableContainerNode = this.ui.scrollableContainer.env.renderer.getNodeForMorph(this.ui.scrollableContainer);
     if (!scrollableContainerNode) return;
-    scrollableContainerNode.scrollTop = scrollTop;
+
+    // for unclear reasons it is important that we do not set the scrollTop value of the node here directly
+    // normally, there were jumps when lively and the dom fight about whos knows the correct scroll
+    // therefore, one needed to adapt both values
+    // however setting both in this concrete case stopped the scrolling from happening at all
     this.ui.scrollableContainer.setProperty('scroll', pt(0, scrollTop));
   }
 
