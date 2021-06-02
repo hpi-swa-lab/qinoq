@@ -515,7 +515,7 @@ class InteractiveScrollHolder extends Morph {
         () => {
           const hand = $world.firstHand;
           this.tooltipViewer.showTooltipFor(target, hand);
-          this.tooltipViewer.currentTooltip.position = hand.position.addPt(handTooltipOffset);
+          if (this.tooltipViewer.currentTooltip) this.tooltipViewer.currentTooltip.position = hand.position.addPt(handTooltipOffset);
         },
         config.showTooltipsAfter * 1000);
     }
