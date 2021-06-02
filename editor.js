@@ -1,4 +1,5 @@
 import { ProportionalLayout, InputLine, config, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
+import { ResizeablePanel } from 'lively.components';
 import { connect, disconnectAll, disconnect } from 'lively.bindings';
 import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
@@ -147,8 +148,16 @@ export class InteractivesEditor extends QinoqMorph {
     });
     this.addMorph(this.ui.inspector);
 
+    this.ui.subWindow = new SubWindow({
+      extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT),
+      resizers: { north: true }
+    });
+    connect(this.ui.subWindow, 'onResize', this, 'relayout', {
+      converter: '() => target.extent'
+    });
+
     this.ui.menuBar = new MenuBar({
-      position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT),
+      extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.MENU_BAR_HEIGHT)
       _editor: this,
       borderWidth: {
         bottom: CONSTANTS.BORDER_WIDTH,
@@ -159,7 +168,7 @@ export class InteractivesEditor extends QinoqMorph {
       }
     });
     this.ui.menuBar.disableUIElements();
-    this.addMorph(this.ui.menuBar);
+    this.ui.subWindow.addMorph(this.ui.menuBar);
     connect(this, 'onDisplayedTimelineChange', this.ui.menuBar, 'onGlobalTimelineTab', {
       updater: `($update, displayedTimeline) => { 
         if (displayedTimeline == source.ui.globalTimeline) $update();
@@ -179,8 +188,6 @@ export class InteractivesEditor extends QinoqMorph {
 
     this.ui.tabContainer = await resource('part://tabs/tabs').read();
     Object.assign(this.ui.tabContainer, {
-      position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT + CONSTANTS.MENU_BAR_HEIGHT),
-      extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.TIMELINE_HEIGHT),
       showNewTabButton: false,
       tabHeight: 28,
       visible: false
@@ -199,7 +206,8 @@ export class InteractivesEditor extends QinoqMorph {
     this.ui.globalTab.closeable = false;
     this.ui.globalTab.borderColor = COLOR_SCHEME.PRIMARY;
 
-    this.addMorph(this.ui.tabContainer);
+    this.ui.subWindow.addMorph(this.ui.tabContainer);
+    this.addMorph(this.ui.subWindow);
   }
 
   initializeLayout () {
@@ -208,20 +216,23 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   relayout (extent) {
+    if (!this.ui.subWindow.isResizing) {
+      this.ui.subWindow.position = pt(0, extent.y - this.ui.subWindow.height);
+      this.ui.subWindow.extent = pt(extent.x, this.ui.subWindow.height);
+    }
+
+    const topWindowHeight = this.ui.subWindow.top;
+
+    this.ui.interactiveGraph.extent = pt(this.ui.interactiveGraph.width,
+      topWindowHeight);
+
     this.ui.inspector.position = pt(extent.x - this.ui.inspector.width, 0);
-
-    this.ui.menuBar.position =
-      pt(this.ui.interactiveGraph.left, this.ui.interactiveGraph.bottom);
-    this.ui.menuBar.extent = pt(extent.x, this.ui.menuBar.height);
-
-    this.ui.tabContainer.position = pt(this.ui.menuBar.left, this.ui.menuBar.bottom);
-    this.ui.tabContainer.extent =
-      pt(extent.x, extent.y - this.ui.interactiveGraph.height -
-      this.ui.menuBar.height);
+    this.ui.inspector.extent = pt(this.ui.inspector.width,
+      topWindowHeight);
 
     this.ui.preview.extent =
       pt(extent.x - this.ui.interactiveGraph.width - this.ui.inspector.width,
-        this.ui.preview.height);
+        topWindowHeight);
     this.ui.preview.position =
       pt(this.ui.interactiveGraph.right +
         (this.ui.inspector.left -
@@ -1474,6 +1485,22 @@ class MenuBar extends QinoqMorph {
     });
     this.ui.zoomInput.borderColor = COLOR_SCHEME.PRIMARY;
     this.ui.scrollPositionInput.borderColor = COLOR_SCHEME.PRIMARY;
+  }
+}
+
+class SubWindow extends ResizeablePanel {
+  relayout () {
+    super.relayout();
+
+    const menuBar = this.get('menu bar');
+    const tabs = this.get('aTabs');
+
+    if (!menuBar || !tabs) return;
+
+    menuBar.position = pt(0, 0);
+    menuBar.extent = pt(this.width, menuBar.height);
+    tabs.position = pt(0, menuBar.height);
+    tabs.extent = pt(this.width, this.height - menuBar.height);
   }
 }
 
