@@ -32,6 +32,6 @@ describe('Layer object', () => {
   it('can be serialized', () => {
     const serializedLayer = serialize(layer);
     const deserializedLayer = deserialize(serializedLayer);
-    expect(deserializedLayer.equals(serializedLayer)).to.be.true;
+    expect(deserializedLayer.equals(layer)).to.be.true;
   });
 });
