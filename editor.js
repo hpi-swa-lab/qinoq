@@ -843,8 +843,7 @@ export class InteractivesEditor extends QinoqMorph {
       const findResult = this.interactive.findKeyframe(keyframe);
       if (!findResult) return;
       const { animation, sequence } = findResult;
-      const tab = this.getTabFor(sequence) || await this.initializeSequenceView(sequence);
-      tab.selected = true;
+      const tab = await this.goto(sequence);
       this.internalScrollChangeWithGUIUpdate(this.currentSequence.getAbsolutePositionFor(keyframe));
 
       // Needed for scrolling to the correct position when opening existing tab
@@ -857,7 +856,7 @@ export class InteractivesEditor extends QinoqMorph {
       const sequence = item;
       const tab = this.getTabFor(sequence) || await this.initializeSequenceView(sequence);
       tab.selected = true;
-      return;
+      return tab;
     }
     if (item.isMorph && Interactive.isMorphInInteractive(item)) {
       const sequence = Sequence.getSequenceOfMorph(item);
