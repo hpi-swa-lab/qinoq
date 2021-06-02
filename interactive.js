@@ -754,11 +754,11 @@ export class Sequence extends DeserializationAwareMorph {
   }
 
   // Generic interface to add a keyframe to a sequence
-  async addKeyframeForMorph (keyframe, morph, property, propertyType = 'point') {
+  async addKeyframeForMorph (keyframe, morph, property, propertyType = 'point', transformKeyframe = false) {
     const existingAnimation = this.getAnimationForMorphProperty(morph, property);
 
     const transformKeyframeValue = (animation) => {
-      if (animation.useRelativeValues && propertyType == 'point') {
+      if (transformKeyframe && animation.useRelativeValues && propertyType == 'point') {
         keyframe.value = pt(keyframe.value.x / this.width, keyframe.value.y / this.height);
       }
     };
