@@ -346,11 +346,12 @@ export class AnimationsInspector extends QinoqMorph {
 
   highlightUnsavedChanges (changedPropertyAndValue) {
     const changedProperty = changedPropertyAndValue.property;
-    const changedValue = changedPropertyAndValue.value;
+    let changedValue = changedPropertyAndValue.value;
     if (this._unsavedChanges.includes(changedProperty)) return;
     this._unsavedChanges.push(changedProperty);
 
     const animationOnProperty = this.sequence.getAnimationForMorphProperty(this.targetMorph, changedProperty);
+    changedValue = animationOnProperty && animationOnProperty.type == 'point' ? animationOnProperty.transformRelativeValue(changedValue) : changedValue;
     if (animationOnProperty && (!animationOnProperty.getKeyframeAt(this.sequence.progress) || animationOnProperty.getKeyframeAt(this.sequence.progress).value !== changedValue || animationOnProperty.getValueForProgress(this.sequence.progress !== changedValue))) {
       this.propertyControls[changedProperty].highlight = new Label({
         position: pt(this.propertyControls[changedProperty].keyframe.topRight.x + 5, 5),
