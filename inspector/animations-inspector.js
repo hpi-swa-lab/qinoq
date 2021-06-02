@@ -273,6 +273,9 @@ export class AnimationsInspector extends QinoqMorph {
         break;
     }
     this._updatingInspector = false;
+
+    const updatingSpec = { property: property, value: this.targetMorph[property] };
+    this.highlightUnsavedChanges(updatingSpec);
   }
 
   updateInInspector (spec) {
