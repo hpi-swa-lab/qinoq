@@ -2,7 +2,6 @@ import { Morph, config, ProportionalLayout } from 'lively.morphic';
 import { pt, Color } from 'lively.graphics';
 import { connect, disconnect, signal, disconnectAll } from 'lively.bindings';
 import { newUUID } from 'lively.lang/string.js';
-
 import { arr } from 'lively.lang';
 import { DeserializationAwareMorph } from './utilities/deserialization-morph.js';
 import { zoomKeyPressed } from './keys.js';
