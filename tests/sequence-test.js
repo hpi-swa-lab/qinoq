@@ -92,12 +92,13 @@ describe('Sequence object', () => {
         expect(sequence.getAnimationsForMorph(morph)).to.have.length(1);
       });
 
-      it('overwrites a keyframe', async () => {
+      it('overwrites a keyframe with new data', async () => {
         sequence.addAnimation(opacityAnimation);
         const newKeyframe = new Keyframe(0, 0.8);
         await sequence.addKeyframeForMorph(newKeyframe, morph, 'opacity', 'number');
         expect(sequence.animations[0].keyframes).to.have.length(1);
         expect(sequence.animations[0].keyframes[0]).to.be.equal(keyframe);
+        expect(keyframe.value).to.be.equal(newKeyframe.value);
       });
 
       it('does not transform a keyframe if not specified', async () => {
