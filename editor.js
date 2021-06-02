@@ -857,6 +857,7 @@ export class InteractivesEditor extends QinoqMorph {
       const { animation, sequence } = findResult;
       const tab = this.getTabFor(sequence) || await this.initializeSequenceView(sequence);
       tab.selected = true;
+      this.internalScrollChangeWithGUIUpdate(this.currentSequence.getAbsolutePositionFor(keyframe));
 
       // Needed for scrolling to the correct position when opening existing tab
       await new Promise(r => setTimeout(r, 30));
