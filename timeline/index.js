@@ -338,6 +338,7 @@ export class Timeline extends QinoqMorph {
   }
 
   scrollContainerToStart () {
+    this.editor.internalScrollChangeWithGUIUpdate(0);
     const layerContainerNode = this.ui.layerContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
     this.ui.layerContainer.setProperty('scroll', pt(TIMELINE_CONSTANTS.SCROLLBAR_MARGIN, layerContainerNode.scrollTop));
   }
