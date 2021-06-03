@@ -3,14 +3,7 @@ import { expect } from 'mocha-es6';
 import { serialize, deserialize } from 'lively.serializer2';
 import { SocialMediaButton, PRESETS } from '../components/social-media-button.js';
 import { Label, Icon } from 'lively.morphic';
-
-export const TEST_PRESETS = {
-  CUSTOM: {
-    name: 'Custom',
-    icon: 'question',
-    href: 'https://www.mycustomnetwork.com/share?u={url};t={text input}'
-  }
-};
+import { TEST_PRESETS } from './social-media-button-test-utils.js';
 
 describe('Social Media Button', () => {
   let button;
