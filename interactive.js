@@ -476,6 +476,15 @@ class InteractiveScrollHolder extends Morph {
     if (this.getUnderlyingMorph(event.hand.position) == this.currentMouseTarget) this.currentMouseTarget.onDoubleMouseDown(event);
   }
 
+  createMockEvent (target) {
+    return {
+      hand: $world.firstHand,
+      isClickTarget: () => false,
+      targetMorph: target,
+      state: {}
+    };
+  }
+
   onMouseMove (event) {
     // for not absolutely clear reasons it is important that this comes before the hover handling
     this.currentMouseTarget = this.getUnderlyingMorph(event.hand.position);
@@ -484,14 +493,14 @@ class InteractiveScrollHolder extends Morph {
 
     if (this.currentMouseTarget == this.previousMorphUnderMouse) return;
     if (this.currentMouseTarget) {
-      this.currentMouseTarget.onHoverIn({ hand: $world.firstHand });
+      this.currentMouseTarget.onHoverIn(this.createMockEvent(this.currentMouseTarget));
       this.handleTooltips(this.currentMouseTarget);
       (this.topbar && (this.topbar.editMode == 'Text' || this.topbar.editMode == 'Shape'))
         ? this.nativeCursor = 'crosshair'
         : this.nativeCursor = this.currentMouseTarget.nativeCursor;
     }
     if (this.previousMorphUnderMouse) {
-      this.previousMorphUnderMouse.onHoverOut({ hand: $world.firstHand, state: {} });
+      this.previousMorphUnderMouse.onHoverOut(this.createMockEvent(this.currentMouseTarget));
       this.tooltipViewer.hoverOutOfMorph(this.tooltipViewer.currentMorph);
     }
 
