@@ -218,9 +218,6 @@ export class InteractivesEditor extends QinoqMorph {
 
   initializeLayout () {
     connect(this, 'extent', this, 'relayout');
-    /* this.layout = new ProportionalLayout({
-      lastExtent: this.extent
-    }); */
     this.extent = pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT);
   }
 
