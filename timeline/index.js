@@ -354,12 +354,13 @@ export class Timeline extends QinoqMorph {
     // Ensure UI has been created
     if (!this.ui.scrollableContainer || !this.ui.scrollBar || !this.ui.layerContainer || !this.owner) return;
 
-    this.ui.scrollableContainer.extent = pt(newWindowExtent.x, this.owner.extent.y - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT);
-    this.ui.layerContainer.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, this.owner.extent.y - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT);
-    this.ui.scrollBar.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, this.ui.scrollBar.extent.y);
-    this.ui.scrollBar.position = this.ui.layerContainer.bottomLeft;
+    this.ui.layerContainer.width = newWindowExtent.x - this.scrollbarOffset.x - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH;
+    this.ui.scrollableContainer.extent = pt(newWindowExtent.x, this.owner.height - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - TIMELINE_CONSTANTS.RULER_HEIGHT);
+    this.ui.scrollBar.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, this.ui.scrollBar.height);
+    this.ui.scrollBar.position = this.ui.scrollableContainer.bottomLeft.addPt(pt(TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, 0));
 
     if (this.ui.ruler) this.ui.ruler.extent = pt(newWindowExtent.x, TIMELINE_CONSTANTS.RULER_HEIGHT);
+
     this.updateScrollerExtent();
   }
 
