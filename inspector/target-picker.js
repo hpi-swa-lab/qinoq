@@ -37,8 +37,7 @@ export class TargetPicker extends Button {
     this.opacity = 1;
   }
 
-  async onMouseDown (event) {
-    super.onMouseDown(event);
+  async onMouseUp (event) {
     this.inspector.targetMorph = await InteractiveMorphSelector.selectMorph($world, null, morph => Sequence.getSequenceOfMorph(morph) && Sequence.getSequenceOfMorph(morph).focused);
   }
 }
