@@ -3,7 +3,7 @@ import { expect } from 'mocha-es6';
 import { serialize, deserialize } from 'lively.serializer2';
 import { SocialMediaButton, PRESETS } from '../components/social-media-button.js';
 import { Label, Icon } from 'lively.morphic';
-import { TEST_PRESETS } from './social-media-button-test-utils.js';
+import { TEST_PRESETS } from './utils/social-media-button-test-utils.js';
 
 describe('Social Media Button', () => {
   let button;
