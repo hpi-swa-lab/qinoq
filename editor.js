@@ -1102,6 +1102,7 @@ class PositionAnimationPreview extends Canvas {
 
   drawCurve () {
     if (this.animation.keyframes.length < 2) return;
+    if (!this.world()) return;
     this.clear();
 
     const values = Object.entries(this.animation.getValues(0.001, true));
