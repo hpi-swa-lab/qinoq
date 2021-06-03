@@ -305,8 +305,7 @@ export class TimelineKeyframe extends QinoqMorph {
 
     this.timeline.overviewLayers
       .flatMap(overviewLayer => overviewLayer.keyframeLines)
-      .flatMap(keyframeLine => keyframeLine.submorphs)
-      .filter(submorph => submorph.position.x + TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET == this.position.x)
+      .flatMap(keyframeLine => keyframeLine.keyframes.filter(keyframe => keyframe.position.x + keyframeLine.position.x == this.position.x))
       .forEach(keyframe => {
         keyframe.fill = COLOR_SCHEME.PRIMARY;
         this._snapLinesIndicators.push(keyframe);
@@ -377,6 +376,10 @@ export class KeyframeLine extends QinoqMorph {
     return true;
   }
 
+  get keyframes () {
+    return this.submorphs;
+  }
+
   setTooltip () {
     this.tooltip = `Property: ${this.animation.property}`;
   }
@@ -401,7 +404,7 @@ export class KeyframeLine extends QinoqMorph {
     const end = Math.max(...this.animation.keyframes.map(keyframe => this.timeline.getPositionFromKeyframe(keyframe)));
     this.width = end - start;
     this.position = pt(start, this.yPosition);
-    this.submorphs.forEach(keyframe => keyframe.abandon());
+    this.keyframes.forEach(keyframe => keyframe.abandon());
     this.addKeyframes();
   }
 }
