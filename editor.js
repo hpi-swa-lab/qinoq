@@ -92,6 +92,9 @@ export class InteractivesEditor extends QinoqMorph {
           if (!this._deserializing) this.ui = {};
         }
       },
+      _latestSubWindowRatio: {
+        defaultValue: CONSTANTS.SUBWINDOW_HEIGHT / CONSTANTS.EDITOR_HEIGHT
+      },
       _snappingDisabled: {}
     };
   }
@@ -215,13 +218,20 @@ export class InteractivesEditor extends QinoqMorph {
 
   initializeLayout () {
     connect(this, 'extent', this, 'relayout');
+    /* this.layout = new ProportionalLayout({
+      lastExtent: this.extent
+    }); */
     this.extent = pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT);
   }
 
   relayout (extent) {
     if (!this.ui.subWindow.isResizing) {
+      this.ui.subWindow.extent = pt(extent.x, this.height * this._latestSubWindowRatio);
       this.ui.subWindow.position = pt(0, extent.y - this.ui.subWindow.height);
-      this.ui.subWindow.extent = pt(extent.x, this.ui.subWindow.height);
+    } else {
+      // remember the ratio between top and sub window
+      // so we can keep that ratio when resizing the window
+      this._latestSubWindowRatio = this.ui.subWindow.height / this.height;
     }
 
     const topWindowHeight = this.ui.subWindow.top;
