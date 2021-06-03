@@ -56,7 +56,10 @@ export class InteractiveMorphInspector extends QinoqMorph {
       extent: {
         set (extent) {
           this.setProperty('extent', extent);
-          if (!this._deserializing && this.ui && this.ui.tabContainer) this.ui.tabContainer.extent = pt(this.width, this.height - this.ui.headlinePane.height);
+          if (this.ui && this.ui.tabContainer && this.ui.headlinePane) {
+            this.ui.tabContainer.extent =
+              pt(this.ui.tabContainer.width, this.height - this.ui.headlinePane.height);
+          }
         }
       }
     };
@@ -132,7 +135,8 @@ export class InteractiveMorphInspector extends QinoqMorph {
 
   selectMorphThroughHalo (morph) {
     if (Array.isArray(morph)) morph = morph[0]; // Multi select through halo
-    if (this.interactive && this.interactive.sequences.includes(Sequence.getSequenceOfMorph(morph))) {
+    if (this.interactive &&
+        this.interactive.sequences.includes(Sequence.getSequenceOfMorph(morph))) {
       this.targetMorph = morph;
     }
   }
