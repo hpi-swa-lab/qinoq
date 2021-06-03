@@ -107,7 +107,7 @@ export class Timeline extends QinoqMorph {
     this.initializeLayerInfoContainer();
 
     this.initializeLayerContainer();
-    connect(this.ui.layerContainer, 'extent', this.ui.scrollableContainer, 'height', { converter: ' (extent) => extent.y > timeline.height - scrollbarHeight ? timeline.height - scrollbarHeight : extent.y', varMapping: { timeline: this, scrollbarHeight: TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT } }).update(this.ui.layerContainer.extent);
+    connect(this.ui.layerContainer, 'extent', this.ui.scrollableContainer, 'height', { converter: ' (extent) => extent.y > timeline.height - scrollbarHeight ? timeline.height - scrollbarHeight - rulerHeight: extent.y', varMapping: { timeline: this, scrollbarHeight: TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT, rulerHeight: TIMELINE_CONSTANTS.RULER_HEIGHT } }).update(this.ui.layerContainer.extent);
     this.initializeScrollBar();
   }
 
