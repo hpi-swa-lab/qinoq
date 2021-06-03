@@ -29,6 +29,12 @@ export class InteractiveGraph extends QinoqMorph {
           this.build();
         }
       },
+      extent: {
+        set (extent) {
+          this.setProperty('extent', extent);
+          if (this.tree) this.tree.extent = extent;
+        }
+      },
       searchField: { }
     };
   }
