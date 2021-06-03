@@ -4,7 +4,7 @@ import { Morph, Text, Icon, Label } from 'lively.morphic';
 import { exampleInteractive, InteractivesEditor } from 'qinoq';
 import { COLOR_SCHEME } from '../colors.js';
 import { SocialMediaButton, PRESETS } from '../components/social-media-button.js';
-import { TEST_PRESETS } from './social-media-button-test.js';
+import { TEST_PRESETS } from './social-media-button-test-utils.js';
 
 class InspectorTestMorph extends Morph {
   static get properties () {
