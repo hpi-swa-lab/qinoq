@@ -79,7 +79,10 @@ export class TimelineSequence extends QinoqMorph {
           this.setProperty('extent', extent);
           if (extent.x < TIMELINE_CONSTANTS.MINIMAL_SEQUENCE_WIDTH && this.hasResizers) this.removeResizers();
           else if (extent.x >= TIMELINE_CONSTANTS.MINIMAL_SEQUENCE_WIDTH && !this.hasResizers) this.restoreResizers();
-          if (!this._lockModelUpdate && !this._deserializing) { this.updateSequenceAfterArrangement(); }
+          if (!this._lockModelUpdate && !this._deserializing) {
+            this.updateSequenceAfterArrangement();
+            this.updateResizers();
+          }
         }
       },
       position: {
@@ -638,6 +641,10 @@ export class TimelineSequence extends QinoqMorph {
 
   setWidthAndUpdateResizers (width) {
     this.width = width;
+    this.updateResizers();
+  }
+
+  updateResizers () {
     this.ui.rightResizer.position = pt(this.width - this.ui.rightResizer.width, 0);
   }
 
