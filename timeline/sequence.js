@@ -521,6 +521,7 @@ export class TimelineSequence extends QinoqMorph {
     this.hideWarning('left');
     this.handleOverlappingOtherSequence(event.hand.timelineSequenceStates);
     event.hand.timelineSequenceStates.forEach(timelineSequenceState => timelineSequenceState.timelineSequence.removeSnapIndicators());
+    this.ui.rightResizer.position = pt(this.width - this.ui.rightResizer.width, 0);
     this.clearSnappingData();
 
     delete event.hand.timelineSequenceStates;
