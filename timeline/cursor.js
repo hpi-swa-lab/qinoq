@@ -142,9 +142,16 @@ export class Ruler extends QinoqMorph {
   updateHeadPosition (newLocation) {
     const layerContainerScroll = this.timeline.ui.layerContainer.scroll.x;
     const layerContainerWidth = this.timeline.ui.layerContainer.width;
+    this.ui.head.fill = COLOR_SCHEME.SECONDARY;
     let diff = layerContainerScroll - newLocation;
-    if (newLocation < layerContainerScroll) diff = 0;
-    if (newLocation > layerContainerWidth + layerContainerScroll) diff = -layerContainerWidth;
+    if (newLocation < layerContainerScroll) {
+      diff = 0;
+      this.ui.head.fill = COLOR_SCHEME.INACTIVE_SURFACE;
+    }
+    if (newLocation > layerContainerWidth + layerContainerScroll) {
+      diff = -layerContainerWidth;
+      this.ui.head.fill = COLOR_SCHEME.INACTIVE_SURFACE;
+    }
     // The text rendering for the updated position that should already been finished takes too long.
     // Waiting on it results in a degraded UX. Therefore, we calculate how large the cursor will be from hand here.
     const digitCount = this.ui.head.submorphs[0].textString.length;
