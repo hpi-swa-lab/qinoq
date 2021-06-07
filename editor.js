@@ -1268,15 +1268,6 @@ class MenuBar extends QinoqMorph {
     });
 
     this.buildIconButton({
-      tooltip: 'Show Keybindings',
-      target: this.editor,
-      command: 'show keybindings',
-      icon: 'keyboard',
-      name: 'showKeybindingList',
-      container: 'rightContainer'
-    });
-
-    this.buildIconButton({
       tooltip: 'Toggle snapping',
       target: this.editor,
       command: 'toggle snapping',
@@ -1305,6 +1296,31 @@ class MenuBar extends QinoqMorph {
     });
 
     this.buildZoomInput();
+
+    this.ui.rightContainer.addMorph(new QinoqMorph({
+      name: 'divider',
+      fill: COLOR_SCHEME.BACKGROUND_VARIANT,
+      extent: pt(CONSTANTS.BORDER_WIDTH, CONSTANTS.MENU_BAR_HEIGHT - 10),
+      borderRadius: 5
+    }));
+
+    this.buildIconButton({
+      tooltip: 'Show Keybindings',
+      target: this.editor,
+      command: 'show keybindings',
+      icon: 'keyboard',
+      name: 'showKeybindingList',
+      container: 'rightContainer'
+    });
+
+    this.buildIconButton({
+      tooltip: 'Open Settings for Interactive',
+      target: this.editor,
+      command: 'open interactive settings',
+      icon: 'cog',
+      name: 'settingsButton',
+      container: 'rightContainer'
+    });
   }
 
   buildZoomInput () {
