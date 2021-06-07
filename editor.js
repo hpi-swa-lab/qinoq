@@ -1,4 +1,4 @@
-import { ProportionalLayout, config, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
+import { ProportionalLayout, Morph, config, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
 import { connect, disconnectAll, disconnect } from 'lively.bindings';
 import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
@@ -19,6 +19,7 @@ import { InteractiveGraph } from './tree.js';
 import { SocialMediaButton } from './components/social-media-button.js';
 import { error } from './utilities/messages.js';
 import { Canvas } from 'lively.components/canvas.js';
+import { LabeledCheckBox } from 'lively.components/widgets.js';
 import { TIMELINE_CONSTANTS } from './timeline/constants.js';
 
 const CONSTANTS = {
@@ -345,6 +346,16 @@ export class InteractivesEditor extends QinoqMorph {
     this.ui.menuBar.disableUIElements();
     this.updateZoomInputNumber(1);
     this.internalScrollChangeWithGUIUpdate(0);
+  }
+
+  unloadInteractive () {
+    if (!this.interactive) return;
+
+    const interactive = $world.addMorph(this.interactive);
+    interactive.position = pt(100, 100);
+    this.clearInteractive();
+    this.settings.close();
+    this.settings = null;
   }
 
   reset () {
@@ -844,6 +855,15 @@ export class InteractivesEditor extends QinoqMorph {
             fontSize: CONSTANTS.FONT_SIZE_TEXT - 2
           }));
         }
+      },
+      {
+        name: 'open interactive settings',
+        exec: () => {
+          this.settings = new Settings({
+            editor: this,
+            interactive: this.interactive
+          }).openInWindow();
+        }
       }];
   }
 
@@ -933,6 +953,14 @@ export class InteractivesEditor extends QinoqMorph {
     layer.addTimelineKeyframes();
     this.ui.inspector.animationsInspector.updateRespectiveAnimations();
     return copiedMorph;
+  }
+
+  renameInteractiveWithPrompt () {
+    debugger;
+    const name = this.interactive.name;
+    $world.prompt('Enter new Name for the Interactive', { input: name }).then((newName) => {
+      if (newName) this.interactive.name = newName;
+    });
   }
 }
 
@@ -1404,5 +1432,71 @@ class MenuBar extends QinoqMorph {
     });
     this.ui.zoomInput.borderColor = COLOR_SCHEME.SECONDARY;
     this.ui.scrollPositionInput.borderColor = COLOR_SCHEME.SECONDARY;
+  }
+}
+
+class Settings extends QinoqMorph {
+  static get properties () {
+    return {
+      extent: {
+        defaultValue: pt(200, 200)
+      },
+      editor: {
+        after: ['interactive'],
+        set (editor) {
+          this.setProperty('editor', editor);
+          this.initialize();
+        }
+      }
+    };
+  }
+
+  initialize () {
+    this.layout = new VerticalLayout();
+    this.ui = {};
+    this.buildInteractiveSettings();
+  }
+
+  buildInteractiveSettings () {
+    this.ui.interactiveSettings = new QinoqMorph({ name: 'interactive settings' });
+    this.buildRemoveInteractiveButton();
+    this.buildScrollBarCheckbox();
+    this.buildRemoveInteractiveButton();
+    this.addMorph(this.ui.interactiveSettings);
+    this.ui.interactiveSettings.layout = new VerticalLayout();
+  }
+
+  buildRemoveInteractiveButton () {
+    const button = new QinoqButton({
+      textString: 'Unload Interactive',
+      tooltip: 'Places the interactive in the world outside of the editor',
+      padding: rect(8, 5, 0, -2),
+      target: this.editor,
+      filled: true,
+      fontSize: 20,
+      action: 'unloadInteractive'
+    });
+    this.ui.interactiveSettings.addMorph(button);
+  }
+
+  buildScrollBarCheckbox () {
+    const checkbox = new LabeledCheckBox({ label: 'scrollbars enabled on the interactive' });
+    debugger;
+    checkbox.checked = this.interactive.isScrollBarVisible;
+    this.ui.interactiveSettings.addMorph(checkbox);
+
+    connect(checkbox, 'checked', this.interactive, 'setScrollBarVisibility');
+  }
+
+  buildRemoveInteractiveButton () {
+    const button = new QinoqButton({
+      textString: 'Rename Interactive',
+      padding: rect(8, 5, 0, -2),
+      target: this.editor,
+      filled: true,
+      fontSize: 20,
+      action: 'renameInteractiveWithPrompt'
+    });
+    this.ui.interactiveSettings.addMorph(button);
   }
 }
