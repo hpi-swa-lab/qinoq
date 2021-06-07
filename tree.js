@@ -3,7 +3,7 @@ import { COLOR_SCHEME } from './colors.js';
 import { rect, pt } from 'lively.graphics';
 import { connect } from 'lively.bindings';
 import { filter, find, prewalk } from 'lively.lang/tree.js';
-import { morph, Morph, VerticalLayout } from 'lively.morphic';
+import { morph, VerticalLayout } from 'lively.morphic';
 import { InteractiveTree, InteractiveTreeData } from './components/foreign/interactive-tree.js';
 import { SearchField } from 'lively.components/widgets.js';
 
@@ -257,7 +257,6 @@ export class InteractiveGraph extends QinoqMorph {
   }
 
   onFilterChange () {
-    // this.searchField.matches(treeItem....)
     const searchTerm = this.searchField.textString;
 
     if (searchTerm) {
