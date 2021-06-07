@@ -8,7 +8,8 @@ import { InteractiveTree, InteractiveTreeData } from './components/foreign/inter
 import { SearchField } from 'lively.components/widgets.js';
 
 const CONSTANTS = {
-  SEARCH_BAR_HEIGHT: 26
+  SEARCH_FIELD_HEIGHT: 26,
+  SEARCH_FIELD_BORDER_RADIUS: 3
 };
 
 export class InteractiveGraph extends QinoqMorph {
@@ -48,8 +49,10 @@ export class InteractiveGraph extends QinoqMorph {
     this.searchField = new SearchField(
       {
         fontColor: COLOR_SCHEME.ON_BACKGROUND,
-        height: CONSTANTS.SEARCH_BAR_HEIGHT
+        height: CONSTANTS.SEARCH_FIELD_HEIGHT,
+        borderRadius: CONSTANTS.SEARCH_FIELD_BORDER_RADIUS
       });
+    connect(this.searchField, 'searchInput', this, 'onFilterChange');
     this.addMorph(this.searchField);
   }
 
@@ -58,7 +61,7 @@ export class InteractiveGraph extends QinoqMorph {
     this.removeTree();
     this.tree = new QinoqTree({
       treeData: treeData,
-      extent: pt(this.width, this.height - CONSTANTS.SEARCH_BAR_HEIGHT),
+      extent: pt(this.width, this.height - CONSTANTS.SEARCH_FIELD_HEIGHT),
       borderWidth: this.borderWidth,
       borderColor: this.borderColor
     });
@@ -206,7 +209,7 @@ export class InteractiveGraph extends QinoqMorph {
 
   keyframeToNode (keyframe) {
     return {
-      name: keyframe.id,
+      name: keyframe.uuid,
       target: keyframe,
       isCollapsed: false,
       visible: true,
@@ -251,6 +254,45 @@ export class InteractiveGraph extends QinoqMorph {
     if (!this.interactive) return null;
     this.removeConnections();
     return new InteractiveTreeData(this.interactiveToNode(this.interactive));
+  }
+
+  onFilterChange () {
+    // this.searchField.matches(treeItem....)
+    const searchTerm = this.searchField.textString;
+
+    if (searchTerm) {
+      this.applyFilter();
+    } else {
+      this.resetFilter();
+    }
+  }
+
+  async applyFilter () {
+    if (!this._collapseState) this._collapseState = new WeakMap(this.tree.treeData.asList().map(n => [n, n.isCollapsed]));
+    this.tree.treeData.asList().forEach(node =>
+      node.isCollapsed = this._collapseState.has(node) ? this._collapseState.get(node) : true);
+    this.unHighlightAll();
+    let matchingNodes = filter(this.tree.treeData.root, (node) => this.searchField.matches(node.container.label.textString), this.childGetter);
+    matchingNodes.forEach(node => node.container.highlight());
+
+    /* let nodesToUncollapse = [...matchingNodes];
+    while (nodesToUncollapse.length > 0) {
+      let uncollapseNode = nodesToUncollapse.shift();
+      await this.tree.collapse(uncollapseNode);
+      nodesToUncollapse.push(this.tree.treeData.parentNode(uncollapseNode));
+    } */
+  }
+
+  unHighlightAll () {
+    prewalk(this.tree.treeData.root, (node) => node.container.unHighlight(), this.childGetter);
+  }
+
+  resetFilter () {
+    if (!this._collapseState) return;
+    this.unHighlightAll();
+    this.tree.treeData.asList().forEach(node =>
+      node.isCollapsed = this._collapseState.has(node) ? this._collapseState.get(node) : true);
+    delete this._collapseState;
   }
 
   get childGetter () {
@@ -305,5 +347,13 @@ class TreeItemContainer extends QinoqMorph {
 
     label.value = this.target.name;
     return label;
+  }
+
+  highlight () {
+    this.label.fontWeight = 'bold';
+  }
+
+  unHighlight () {
+    this.label.fontWeight = 'normal';
   }
 }
