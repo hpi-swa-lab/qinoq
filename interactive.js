@@ -6,6 +6,8 @@ import { arr } from 'lively.lang';
 import { DeserializationAwareMorph } from './utilities/deserialization-morph.js';
 import { zoomKeyPressed } from './keys.js';
 
+const DEFAULT_SCROLLOVERLAY_OPACITY = 0.001;
+
 export class Interactive extends DeserializationAwareMorph {
   static async base (props = {}) {
     const interactive = new Interactive(props);
@@ -329,6 +331,14 @@ export class Interactive extends DeserializationAwareMorph {
     this.sequences.forEach(sequence => sequence.withAllSubmorphsDo(morph => result.push(morph)));
     return result;
   }
+
+  get isScrollBarVisible () {
+    return this.scrollOverlay.opacity != DEFAULT_SCROLLOVERLAY_OPACITY;
+  }
+
+  setScrollBarVisibility (visible) {
+    this.scrollOverlay.opacity = visible ? 1 : DEFAULT_SCROLLOVERLAY_OPACITY;
+  }
 }
 
 class InteractiveScrollHolder extends Morph {
@@ -350,7 +360,7 @@ class InteractiveScrollHolder extends Morph {
       },
       // opacity of zero leads to removal of object from DOM in firefox
       opacity: {
-        defaultValue: 0.001
+        defaultValue: DEFAULT_SCROLLOVERLAY_OPACITY
       },
       fill: {
         defaultValue: Color.transparent
@@ -426,7 +436,7 @@ class InteractiveScrollHolder extends Morph {
       this.env.undoManager.undoStop();
       this.delegatedTarget.onDragEnd(event);
     }
-    this.opacity = 0.001;
+    this.opacity = DEFAULT_SCROLLOVERLAY_OPACITY;
     this.clipMode = 'auto';
   }
 
