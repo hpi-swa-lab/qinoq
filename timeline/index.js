@@ -338,8 +338,11 @@ export class Timeline extends QinoqMorph {
   }
 
   scrollContainerToStart () {
-    const layerContainerNode = this.ui.layerContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
-    if (layerContainerNode) this.ui.layerContainer.setProperty('scroll', pt(0, layerContainerNode.scrollTop));
+    setTimeout(() => {
+      const layerContainerNode = this.ui.layerContainer.env.renderer.getNodeForMorph(this.ui.layerContainer);
+      if (layerContainerNode) this.ui.layerContainer.setProperty('scroll', pt(0, layerContainerNode.scrollTop));
+      this.updateScrollerPosition();
+    }, 5);
   }
 
   updateScrollerPosition () {
