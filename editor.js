@@ -470,6 +470,7 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   addMorphToInteractive (morph) {
+    if (!morph) return;
     this.displayedTimeline.removePlaceholder();
     this.currentSequence.addMorph(morph);
     this.onMorphAddition(morph); // Additional actions that are morph specific
@@ -481,6 +482,7 @@ export class InteractivesEditor extends QinoqMorph {
     connect(morph, 'onRemove', this, 'moveMorphOutOfInteractive', { converter: '() => source' });
     connect(morph, 'onAbandon', this, 'removeMorphFromInteractive', { converter: '() => source' });
     newLayer.redraw();
+    this.interactive.scrollOverlay.newMorph = null;
   }
 
   onMorphAddition (morph) {
