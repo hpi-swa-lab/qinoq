@@ -1521,7 +1521,7 @@ class Settings extends QinoqMorph {
   }
 
   buildScrollBarCheckbox () {
-    const checkbox = new LabeledCheckBox({ label: 'scrollbars enabled on the interactive' });
+    const checkbox = new LabeledCheckBox({ label: 'Scrollbars enabled on the interactive' });
     checkbox.layout.spacing = 2;
     checkbox.checked = this.interactive.isScrollBarVisible;
     this.ui.interactiveSettings.addMorph(checkbox);
