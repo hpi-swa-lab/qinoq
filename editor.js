@@ -1,4 +1,4 @@
-import { ProportionalLayout, Morph, config, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
+import { ProportionalLayout, config, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
 import { connect, disconnectAll, disconnect } from 'lively.bindings';
 import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
@@ -21,6 +21,9 @@ import { error } from './utilities/messages.js';
 import { Canvas } from 'lively.components/canvas.js';
 import { LabeledCheckBox } from 'lively.components/widgets.js';
 import { TIMELINE_CONSTANTS } from './timeline/constants.js';
+
+import { LabeledCheckBox, DropDownSelector } from 'lively.components/widgets.js';
+import InputLine from 'lively.morphic/text/input-line.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -91,6 +94,7 @@ export class InteractivesEditor extends QinoqMorph {
           if (!this._deserializing) this.ui = {};
         }
       },
+      settings: {},
       _snappingDisabled: {}
     };
   }
@@ -868,6 +872,8 @@ export class InteractivesEditor extends QinoqMorph {
             editor: this,
             interactive: this.interactive
           }).openInWindow();
+
+          connect(this.settings, 'close', this, 'settings', { converter: () => null });
         }
       }];
   }
@@ -1465,7 +1471,8 @@ class Settings extends QinoqMorph {
     this.ui.interactiveSettings = new QinoqMorph({ name: 'interactive settings' });
     this.buildRemoveInteractiveButton();
     this.buildScrollBarCheckbox();
-    this.buildRemoveInteractiveButton();
+    this.buildRenameInteractiveButton();
+    this.buildAspectRatioField();
     this.addMorph(this.ui.interactiveSettings);
     this.ui.interactiveSettings.layout = new VerticalLayout();
   }
@@ -1485,14 +1492,13 @@ class Settings extends QinoqMorph {
 
   buildScrollBarCheckbox () {
     const checkbox = new LabeledCheckBox({ label: 'scrollbars enabled on the interactive' });
-    debugger;
     checkbox.checked = this.interactive.isScrollBarVisible;
     this.ui.interactiveSettings.addMorph(checkbox);
 
     connect(checkbox, 'checked', this.interactive, 'setScrollBarVisibility');
   }
 
-  buildRemoveInteractiveButton () {
+  buildRenameInteractiveButton () {
     const button = new QinoqButton({
       textString: 'Rename Interactive',
       padding: rect(8, 5, 0, -2),
@@ -1504,8 +1510,66 @@ class Settings extends QinoqMorph {
     this.ui.interactiveSettings.addMorph(button);
   }
 
-  abandon (bool) {
-    this.editor.settings = null;
-    super.abandon(bool);
+  buildAspectRatioField () {
+    const aspectRatioField = new QinoqMorph({
+      name: 'aspect ratio field'
+    });
+    aspectRatioField.layout = new VerticalLayout({
+      spacing: 2
+    });
+    const checkbox = new LabeledCheckBox({ label: 'interactive has fixed aspect ratio' });
+    checkbox.checked = !!this.interactive.fixedAspectRatio;
+    aspectRatioField.addMorph(checkbox);
+    this.ui.dropDownSelector = new DropDownSelector({
+      values: ['21/9', '16/9', '4/3', 'Custom']
+    });
+    this.ui.dropDownSelector.selectedValue = '16/9';
+    aspectRatioField.addMorph(this.ui.dropDownSelector);
+
+    this.ui.inputLine = new InputLine({
+      visible: false
+    });
+    this.toggleAspectRatio(checkbox.checked);
+    aspectRatioField.addMorph(this.ui.inputLine);
+    this.ui.interactiveSettings.addMorph(aspectRatioField);
+
+    connect(checkbox, 'checked', this, 'toggleAspectRatio');
+    connect(this.ui.dropDownSelector, 'selectedValue', this, 'dropDownSelectorUpdate');
+    connect(this.ui.inputLine, 'inputAccepted', this, 'inputLineUpdate');
+  }
+
+  inputLineUpdate (input) {
+    try {
+      const newRatio = eval(input);
+      this.interactive.fixedAspectRatio = newRatio;
+    } catch (err) {
+      error('Input a number or a fraction (x/y)');
+    }
+  }
+
+  dropDownSelectorUpdate (input) {
+    if (input == 'Custom') {
+      this.ui.inputLine.visible = true;
+      this.ui.inputLine.input = `${this.interactive.fixedAspectRatio}`;
+    } else {
+      this.ui.inputLine.visible = false;
+      this.interactive.fixedAspectRatio = eval(input);
+    }
+  }
+
+  toggleAspectRatio (bool) {
+    bool ? this.enableAspectRatio() : this.disableAspectRatio();
+  }
+
+  enableAspectRatio () {
+    this.ui.dropDownSelector.visible = true;
+    this.ui.dropDownSelector.selectedValue = '16/9';
+    this.interactive.fixedAspectRatio = 16 / 9;
+  }
+
+  disableAspectRatio () {
+    this.ui.dropDownSelector.visible = false;
+    this.ui.inputLine.visible = false;
+    this.interactive.fixedAspectRatio = null;
   }
 }
