@@ -56,6 +56,7 @@ export class Interactive extends DeserializationAwareMorph {
         defaultValue: 16 / 9,
         set (aspectRatio) {
           this.setProperty('fixedAspectRatio', aspectRatio);
+          // eslint-disable-next-line no-self-assign
           this.extent = this.extent;
         }
       },
