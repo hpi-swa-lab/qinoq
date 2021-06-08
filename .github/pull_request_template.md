@@ -186,7 +186,7 @@ Closes [fill in your issues here]
 ### MenuBar
 
 - [ ] there is a button to show all keyboard shortcuts
-  - [ ] this will activate a fader and can be closed by clicking anywhere
+  - [ ] this will activate a fader that can be closed by clicking anywhere
 - [ ] there is a button for the settings
   - [ ] the interactive can be renamed
   - [ ] the scrollbar can be toggled
