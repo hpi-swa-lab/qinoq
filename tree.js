@@ -296,6 +296,7 @@ export class InteractiveGraph extends QinoqMorph {
     this.tree.treeData.asList().forEach(node =>
       node.isCollapsed = this._collapseState.has(node) ? this._collapseState.get(node) : true);
     delete this._collapseState;
+    this.tree.update();
   }
 
   get childGetter () {
