@@ -93,16 +93,7 @@ export class InteractivesEditor extends QinoqMorph {
           if (!this._deserializing) this.ui = {};
         }
       },
-      settings: {
-        set (settings) {
-          if (!settings) {
-            if (this.settings) {
-              this.settings.owner.close();
-            }
-          }
-          this.setProperty('settings', settings);
-        }
-      },
+      settings: {},
       _snappingDisabled: {}
     };
   }
@@ -301,6 +292,7 @@ export class InteractivesEditor extends QinoqMorph {
 
   clearInteractive () {
     if (!this.interactive) return;
+    if (this.settings.owner) this.settings.owner.close();
     this.settings = null;
     this.interactiveInEditMode = false;
 
