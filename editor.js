@@ -1451,10 +1451,6 @@ class MenuBar extends QinoqMorph {
 }
 
 class Settings extends QinoqMorph {
-  // This contains code to allow for easy changes to the aspect ratio of interactives.
-  // Changing the ratio does not work as expected as of writing this.
-  // This is not primarily a problem with the code in here but with how the aspect ratio is applied.
-  // When that is fixed, this functionality can easily be commented in again.
   static get properties () {
     return {
       name: {
@@ -1471,7 +1467,7 @@ class Settings extends QinoqMorph {
         }
       },
       extent: {
-        defaultValue: pt(260, 100)
+        defaultValue: pt(260, 160)
       }
 
     };
@@ -1494,7 +1490,7 @@ class Settings extends QinoqMorph {
     this.buildRemoveInteractiveButton();
     this.buildRenameInteractiveButton();
     this.buildScrollBarCheckbox();
-    // this.buildAspectRatioField();
+    this.buildAspectRatioField();
   }
 
   buildRemoveInteractiveButton () {
@@ -1528,9 +1524,6 @@ class Settings extends QinoqMorph {
     connect(checkbox, 'checked', this.interactive, 'setScrollBarVisibility');
   }
 
-  // Below is only the code for changing the aspect ratio.
-  // Unused as of writing this. See above.
-  // TODO: When fixed please remove this comment.
   buildAspectRatioField () {
     const aspectRatioField = new QinoqMorph({
       name: 'aspect ratio field'
@@ -1568,6 +1561,7 @@ class Settings extends QinoqMorph {
     try {
       const newRatio = eval(input);
       this.interactive.fixedAspectRatio = newRatio;
+      this.editor.onInteractiveZoomed();
       $world.setStatusMessage('Updated ratio', Color.green);
     } catch (err) {
       error('Input a number or a fraction (x/y)');
@@ -1582,6 +1576,7 @@ class Settings extends QinoqMorph {
       this.ui.inputLine.visible = false;
       this.interactive.fixedAspectRatio = eval(input);
     }
+    this.editor.onInteractiveZoomed();
   }
 
   toggleAspectRatio (bool) {
