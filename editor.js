@@ -94,7 +94,16 @@ export class InteractivesEditor extends QinoqMorph {
           if (!this._deserializing) this.ui = {};
         }
       },
-      settings: {},
+      settings: {
+        set (settings) {
+          if (!settings) {
+            if (this.settings) {
+              this.settings.owner.close();
+            }
+          }
+          this.setProperty('settings', settings);
+        }
+      },
       _snappingDisabled: {}
     };
   }
@@ -293,7 +302,7 @@ export class InteractivesEditor extends QinoqMorph {
 
   clearInteractive () {
     if (!this.interactive) return;
-
+    this.settings = null;
     this.interactiveInEditMode = false;
 
     this.interactive.sequences.forEach(sequence => {
@@ -353,13 +362,10 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   ejectInteractive () {
-    if (!this.interactive) return;
-
-    const interactive = $world.addMorph(this.interactive);
+    const interactive = this.interactive;
+    this.reset();
+    $world.addMorph(interactive);
     interactive.position = pt(100, 100);
-    this.clearInteractive();
-    this.settings.owner.close();
-    this.settings = null;
   }
 
   reset () {
@@ -1478,7 +1484,6 @@ class Settings extends QinoqMorph {
   }
 
   buildInteractiveSettings () {
-    debugger;
     this.ui.interactiveSettings = new QinoqMorph({
       name: 'interactive settings'
     });
