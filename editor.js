@@ -1,6 +1,6 @@
-import { ProportionalLayout, config, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
+import { ProportionalLayout, InputLine, config, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
 import { connect, disconnectAll, disconnect } from 'lively.bindings';
-import { pt, Color, rect } from 'lively.graphics';
+import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
 import { InteractiveMorphInspector } from './inspector/index.js';
 import { resource } from 'lively.resources';
@@ -17,13 +17,12 @@ import { EasingSelection } from './components/easing-selection.js';
 import KeyHandler from 'lively.morphic/events/KeyHandler.js';
 import { InteractiveGraph } from './tree.js';
 import { SocialMediaButton } from './components/social-media-button.js';
-import { error } from './utilities/messages.js';
+import { error, success } from './utilities/messages.js';
 import { Canvas } from 'lively.components/canvas.js';
 import { LabeledCheckBox } from 'lively.components/widgets.js';
 import { TIMELINE_CONSTANTS } from './timeline/constants.js';
 
 import { LabeledCheckBox, DropDownSelector } from 'lively.components/widgets.js';
-import InputLine from 'lively.morphic/text/input-line.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -874,8 +873,7 @@ export class InteractivesEditor extends QinoqMorph {
             return;
           }
           this.settings = new Settings({
-            editor: this,
-            interactive: this.interactive
+            _editor: this
           });
           this.settings.openInWindow();
           connect(this.settings.owner, 'close', this, 'settings', { converter: () => null });
@@ -1459,10 +1457,9 @@ class Settings extends QinoqMorph {
       resizable: {
         defaultValue: false
       },
-      editor: {
-        after: ['interactive'],
+      _editor: {
         set (editor) {
-          this.setProperty('editor', editor);
+          this.setProperty('_editor', editor);
           this.initialize();
         }
       },
@@ -1472,7 +1469,7 @@ class Settings extends QinoqMorph {
     };
   }
 
-  initialize (editor, interactive) {
+  initialize () {
     this.ui = {};
     this.buildInteractiveSettings();
   }
@@ -1561,7 +1558,7 @@ class Settings extends QinoqMorph {
       const newRatio = eval(input);
       this.interactive.fixedAspectRatio = newRatio;
       this.editor.onInteractiveZoomed();
-      $world.setStatusMessage('Updated ratio', Color.green);
+      success('Updated ratio!');
     } catch (err) {
       error('Input a number or a fraction (x/y)');
     }
