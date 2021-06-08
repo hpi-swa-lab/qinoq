@@ -53,7 +53,11 @@ export class Interactive extends DeserializationAwareMorph {
         }
       },
       fixedAspectRatio: {
-        defaultValue: 16 / 9
+        defaultValue: 16 / 9,
+        set (aspectRatio) {
+          this.setProperty('fixedAspectRatio', aspectRatio);
+          this.extent = this.extent;
+        }
       },
       extent: {
         defaultValue: pt(533, 300),
