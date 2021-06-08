@@ -266,7 +266,7 @@ export class InteractiveGraph extends QinoqMorph {
     }
   }
 
-  async applyFilter () {
+  applyFilter () {
     if (!this._collapseState) this._collapseState = new WeakMap(this.tree.treeData.asList().map(n => [n, n.isCollapsed]));
     this.tree.treeData.asList().forEach(node =>
       node.isCollapsed = this._collapseState.has(node) ? this._collapseState.get(node) : true);
@@ -274,12 +274,16 @@ export class InteractiveGraph extends QinoqMorph {
     let matchingNodes = filter(this.tree.treeData.root, (node) => this.searchField.matches(node.container.label.textString), this.childGetter);
     matchingNodes.forEach(node => node.container.highlight());
 
-    /* let nodesToUncollapse = [...matchingNodes];
+    let nodesToUncollapse = [...matchingNodes];
+    let visitedNodes = new Set();
     while (nodesToUncollapse.length > 0) {
       let uncollapseNode = nodesToUncollapse.shift();
-      await this.tree.collapse(uncollapseNode);
-      nodesToUncollapse.push(this.tree.treeData.parentNode(uncollapseNode));
-    } */
+      visitedNodes.add(uncollapseNode);
+      this.tree.treeData.collapse(uncollapseNode, false);
+      let parentNode = find(this.tree.treeData.root, (node) => node.children.includes(uncollapseNode), this.childGetter);
+      if (parentNode && !visitedNodes.has(parentNode)) nodesToUncollapse.push(parentNode);
+    }
+    this.tree.update();
   }
 
   unHighlightAll () {
