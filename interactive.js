@@ -481,6 +481,8 @@ class InteractiveScrollHolder extends Morph {
       hand: $world.firstHand,
       isClickTarget: () => false,
       targetMorph: target,
+      position: $world.firstHand.position,
+      positionIn: (morph) => morph.localize($world.firstHand.position),
       state: {}
     };
   }
