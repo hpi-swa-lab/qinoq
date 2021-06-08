@@ -10,3 +10,10 @@ export function error (message = 'Error!', props = {}) {
   console.error(message);
   $world.openStatusMessage(statusMessage, delay);
 }
+
+export function success (message = 'Success!', props = {}) {
+  const { color = Color.green, delay = 4000 } = props;
+  const statusMessage = new StatusMessage({ message, color, hasFixedPosition: true, ...props });
+  Icon.setIcon(statusMessage.submorphs[0], 'check-circle');
+  $world.openStatusMessage(statusMessage, delay);
+}
