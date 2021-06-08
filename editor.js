@@ -866,7 +866,7 @@ export class InteractivesEditor extends QinoqMorph {
           }
           this.settings = new Settings({
             _editor: this
-          });
+          }).initialize();
           this.settings.openInWindow();
           connect(this.settings.owner, 'close', this, 'settings', { converter: () => null });
         }
@@ -1449,12 +1449,6 @@ class Settings extends QinoqMorph {
       resizable: {
         defaultValue: false
       },
-      _editor: {
-        set (editor) {
-          this.setProperty('_editor', editor);
-          this.initialize();
-        }
-      },
       extent: {
         defaultValue: pt(260, 160)
       }
@@ -1464,6 +1458,7 @@ class Settings extends QinoqMorph {
   initialize () {
     this.ui = {};
     this.buildInteractiveSettings();
+    return this;
   }
 
   buildInteractiveSettings () {
