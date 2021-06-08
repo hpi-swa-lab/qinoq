@@ -24,7 +24,6 @@ import { TIMELINE_CONSTANTS } from './timeline/constants.js';
 
 import { LabeledCheckBox, DropDownSelector } from 'lively.components/widgets.js';
 import InputLine from 'lively.morphic/text/input-line.js';
-import Window from 'lively.components/window.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
