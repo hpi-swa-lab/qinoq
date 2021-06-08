@@ -491,10 +491,11 @@ class InteractiveScrollHolder extends Morph {
     // for not absolutely clear reasons it is important that this comes before the hover handling
     this.currentMouseTarget = this.getUnderlyingMorph(event.hand.position);
     this.updateEventDispatcherState();
-    this.currentMouseTarget.onMouseMove(event);
+    if (!this.currentMouseTarget) return;
 
     if (this.currentMouseTarget == this.previousMorphUnderMouse) return;
     if (this.currentMouseTarget) {
+      this.currentMouseTarget.onMouseMove(event);
       this.currentMouseTarget.onHoverIn(this.createMockEvent(this.currentMouseTarget));
       this.handleTooltips(this.currentMouseTarget);
       (this.topbar && (this.topbar.editMode == 'Text' || this.topbar.editMode == 'Shape'))
