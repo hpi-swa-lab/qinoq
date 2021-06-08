@@ -182,3 +182,12 @@ Closes [fill in your issues here]
   - [ ] this works for keyframes in another tab
   - [ ] this works for keyframes in a sequence with no tab
   - [ ] this works for keyframes in another tab with zoom and expanded layers (so scrolling is necessary in both directions)
+
+### MenuBar
+
+- [ ] there is a button to show all keyboard shortcuts
+  - [ ] this will activate a fader and can be closed by clicking anywhere
+- [ ] there is a button for the settings
+  - [ ] the interactive can be renamed
+  - [ ] the scrollbar can be toggled
+  - [ ] the interactive can be ejected form the editor
