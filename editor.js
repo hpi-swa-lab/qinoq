@@ -1,6 +1,6 @@
 import { ProportionalLayout, config, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
 import { connect, disconnectAll, disconnect } from 'lively.bindings';
-import { pt, rect } from 'lively.graphics';
+import { pt, Color, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
 import { InteractiveMorphInspector } from './inspector/index.js';
 import { resource } from 'lively.resources';
@@ -24,6 +24,7 @@ import { TIMELINE_CONSTANTS } from './timeline/constants.js';
 
 import { LabeledCheckBox, DropDownSelector } from 'lively.components/widgets.js';
 import InputLine from 'lively.morphic/text/input-line.js';
+import Window from 'lively.components/window.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -352,13 +353,13 @@ export class InteractivesEditor extends QinoqMorph {
     this.internalScrollChangeWithGUIUpdate(0);
   }
 
-  unloadInteractive () {
+  ejectInteractive () {
     if (!this.interactive) return;
 
     const interactive = $world.addMorph(this.interactive);
     interactive.position = pt(100, 100);
     this.clearInteractive();
-    this.settings.close();
+    this.settings.owner.close();
     this.settings = null;
   }
 
@@ -871,9 +872,9 @@ export class InteractivesEditor extends QinoqMorph {
           this.settings = new Settings({
             editor: this,
             interactive: this.interactive
-          }).openInWindow();
-
-          connect(this.settings, 'close', this, 'settings', { converter: () => null });
+          });
+          this.settings.openInWindow();
+          connect(this.settings.owner, 'close', this, 'settings', { converter: () => null });
         }
       }];
   }
@@ -1446,10 +1447,17 @@ class MenuBar extends QinoqMorph {
 }
 
 class Settings extends QinoqMorph {
+  // This contains code to allow for easy changes to the aspect ratio of interactives.
+  // Changing the ratio does not work as expected as of writing this.
+  // This is not primarily a problem with the code in here but with how the aspect ratio is applied.
+  // When that is fixed, this functionality can easily be commented in again.
   static get properties () {
     return {
-      extent: {
-        defaultValue: pt(200, 200)
+      name: {
+        defaultValue: 'Settings Menu'
+      },
+      resizable: {
+        defaultValue: false
       },
       editor: {
         after: ['interactive'],
@@ -1457,45 +1465,45 @@ class Settings extends QinoqMorph {
           this.setProperty('editor', editor);
           this.initialize();
         }
+      },
+      extent: {
+        defaultValue: pt(260, 100)
       }
+
     };
   }
 
-  initialize () {
-    this.layout = new VerticalLayout();
+  initialize (editor, interactive) {
     this.ui = {};
     this.buildInteractiveSettings();
   }
 
   buildInteractiveSettings () {
-    this.ui.interactiveSettings = new QinoqMorph({ name: 'interactive settings' });
-    this.buildRemoveInteractiveButton();
-    this.buildScrollBarCheckbox();
-    this.buildRenameInteractiveButton();
-    this.buildAspectRatioField();
+    debugger;
+    this.ui.interactiveSettings = new QinoqMorph({
+      name: 'interactive settings'
+    });
+    this.ui.interactiveSettings.layout = new VerticalLayout({
+      autoResize: true,
+      spacing: 5
+    });
     this.addMorph(this.ui.interactiveSettings);
-    this.ui.interactiveSettings.layout = new VerticalLayout();
+    this.buildRemoveInteractiveButton();
+    this.buildRenameInteractiveButton();
+    this.buildScrollBarCheckbox();
+    // this.buildAspectRatioField();
   }
 
   buildRemoveInteractiveButton () {
     const button = new QinoqButton({
-      textString: 'Unload Interactive',
+      textString: 'Eject Interactive',
       tooltip: 'Places the interactive in the world outside of the editor',
       padding: rect(8, 5, 0, -2),
       target: this.editor,
       filled: true,
-      fontSize: 20,
-      action: 'unloadInteractive'
+      action: 'ejectInteractive'
     });
     this.ui.interactiveSettings.addMorph(button);
-  }
-
-  buildScrollBarCheckbox () {
-    const checkbox = new LabeledCheckBox({ label: 'scrollbars enabled on the interactive' });
-    checkbox.checked = this.interactive.isScrollBarVisible;
-    this.ui.interactiveSettings.addMorph(checkbox);
-
-    connect(checkbox, 'checked', this.interactive, 'setScrollBarVisibility');
   }
 
   buildRenameInteractiveButton () {
@@ -1504,30 +1512,45 @@ class Settings extends QinoqMorph {
       padding: rect(8, 5, 0, -2),
       target: this.editor,
       filled: true,
-      fontSize: 20,
       action: 'renameInteractiveWithPrompt'
     });
     this.ui.interactiveSettings.addMorph(button);
   }
 
+  buildScrollBarCheckbox () {
+    const checkbox = new LabeledCheckBox({ label: 'scrollbars enabled on the interactive' });
+    checkbox.layout.spacing = 2;
+    checkbox.checked = this.interactive.isScrollBarVisible;
+    this.ui.interactiveSettings.addMorph(checkbox);
+    connect(checkbox, 'checked', this.interactive, 'setScrollBarVisibility');
+  }
+
+  // Below is only the code for changing the aspect ratio.
+  // Unused as of writing this. See above.
+  // TODO: When fixed please remove this comment.
   buildAspectRatioField () {
     const aspectRatioField = new QinoqMorph({
       name: 'aspect ratio field'
     });
-    aspectRatioField.layout = new VerticalLayout({
+    aspectRatioField.layout = new HorizontalLayout({
       spacing: 2
     });
     const checkbox = new LabeledCheckBox({ label: 'interactive has fixed aspect ratio' });
+    checkbox.layout.spacing = 2;
     checkbox.checked = !!this.interactive.fixedAspectRatio;
-    aspectRatioField.addMorph(checkbox);
+    this.ui.interactiveSettings.addMorph(checkbox);
     this.ui.dropDownSelector = new DropDownSelector({
-      values: ['21/9', '16/9', '4/3', 'Custom']
+      values: ['21/9', '16/9', '4/3', 'Custom'],
+      borderWidth: 1,
+      borderColor: COLOR_SCHEME.BACKGROUND_VARIANT
     });
     this.ui.dropDownSelector.selectedValue = '16/9';
     aspectRatioField.addMorph(this.ui.dropDownSelector);
 
     this.ui.inputLine = new InputLine({
-      visible: false
+      visible: false,
+      borderWidth: 1,
+      borderColor: COLOR_SCHEME.BACKGROUND_VARIANT
     });
     this.toggleAspectRatio(checkbox.checked);
     aspectRatioField.addMorph(this.ui.inputLine);
@@ -1542,6 +1565,7 @@ class Settings extends QinoqMorph {
     try {
       const newRatio = eval(input);
       this.interactive.fixedAspectRatio = newRatio;
+      $world.setStatusMessage('Updated ratio', Color.green);
     } catch (err) {
       error('Input a number or a fraction (x/y)');
     }
