@@ -57,7 +57,7 @@ export class Interactive extends DeserializationAwareMorph {
         set (aspectRatio) {
           this.setProperty('fixedAspectRatio', aspectRatio);
           // eslint-disable-next-line no-self-assign
-          this.extent = this.extent;
+          this.extent = this.applyAspectRatio(this.extent);
         }
       },
       extent: {
@@ -65,7 +65,7 @@ export class Interactive extends DeserializationAwareMorph {
         set (extent) {
           const previousHeight = this.extent.y;
           if (this.fixedAspectRatio) {
-            extent.x = extent.y * this.fixedAspectRatio;
+            extent = this.applyAspectRatio(extent);
           }
           this.setProperty('extent', extent);
           if (!this._deserializing) {
@@ -98,6 +98,16 @@ export class Interactive extends DeserializationAwareMorph {
         }
       }
     };
+  }
+
+  applyAspectRatio (extent, calculateAspectRatio = false) {
+    let aspectRatio;
+    if (calculateAspectRatio) {
+      aspectRatio = this.width / this.height;
+    } else {
+      aspectRatio = this.fixedAspectRatio;
+    }
+    return pt(aspectRatio ? extent.y * aspectRatio : extent.x, extent.y);
   }
 
   fitBounds (extent) {
@@ -394,7 +404,12 @@ class InteractiveScrollHolder extends Morph {
   onMouseWheel (event) {
     if (this.scrollToResize && zoomKeyPressed(event)) {
       event.domEvt.preventDefault();
-      this.interactive.extent = pt(this.interactive.extent.x - event.domEvt.deltaY, this.interactive.extent.y + event.domEvt.deltaY);
+      const newX = this.interactive.extent.x - event.domEvt.deltaY;
+      const newY = this.interactive.extent.y + event.domEvt.deltaY;
+      // if the size gets 0 then the proportional layout will fail to reconstruct the origional sizes of the morphs
+      if (newX < 50 || newY < 50) return;
+      this.interactive.extent = this.interactive.applyAspectRatio(pt(newX, newY), true);
+      this.interactive.position = pt(0, 0);
       this.interactive.interactiveZoomed();
     }
   }
