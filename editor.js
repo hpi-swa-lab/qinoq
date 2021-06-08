@@ -859,6 +859,11 @@ export class InteractivesEditor extends QinoqMorph {
       {
         name: 'open interactive settings',
         exec: () => {
+          if (this.settings) {
+            this.settings.bringToFront();
+            this.settings.show();
+            return;
+          }
           this.settings = new Settings({
             editor: this,
             interactive: this.interactive
@@ -956,7 +961,6 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   renameInteractiveWithPrompt () {
-    debugger;
     const name = this.interactive.name;
     $world.prompt('Enter new Name for the Interactive', { input: name }).then((newName) => {
       if (newName) this.interactive.name = newName;
@@ -1498,5 +1502,10 @@ class Settings extends QinoqMorph {
       action: 'renameInteractiveWithPrompt'
     });
     this.ui.interactiveSettings.addMorph(button);
+  }
+
+  abandon (bool) {
+    this.editor.settings = null;
+    super.abandon(bool);
   }
 }
