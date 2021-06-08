@@ -8,6 +8,7 @@ import { InteractiveTree, InteractiveTreeData } from './components/foreign/inter
 import { SearchField } from 'lively.components/widgets.js';
 
 const CONSTANTS = {
+  DEFAULT_HEIGHT: 300, // When the first editor is opened in a world, the extent of the Graph is not properly set for some reason
   SEARCH_FIELD_HEIGHT: 26,
   SEARCH_FIELD_BORDER_RADIUS: 3
 };
@@ -61,7 +62,7 @@ export class InteractiveGraph extends QinoqMorph {
     this.removeTree();
     this.tree = new QinoqTree({
       treeData: treeData,
-      extent: pt(this.width, this.height - CONSTANTS.SEARCH_FIELD_HEIGHT),
+      extent: pt(this.width, Math.max(CONSTANTS.DEFAULT_HEIGHT, this.height - CONSTANTS.SEARCH_FIELD_HEIGHT)),
       borderWidth: this.borderWidth,
       borderColor: this.borderColor
     });
