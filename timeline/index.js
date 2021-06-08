@@ -281,8 +281,9 @@ export class Timeline extends QinoqMorph {
       const newLayerWidth = this._activeAreaWidth + TIMELINE_CONSTANTS.SEQUENCE_INITIAL_X_OFFSET + TIMELINE_CONSTANTS.INACTIVE_AREA_WIDTH;
       timelineLayer.width = newLayerWidth < timelineLayer.owner.width ? timelineLayer.owner.width : newLayerWidth;
     });
-    if (this.ui.ruler) this.ui.ruler.updateExtent(this._activeAreaWidth);
     this.updateScrollerExtent();
+    if (this.ui.ruler) this.ui.ruler.updateExtent(this._activeAreaWidth);
+    if (this.ui.cursor) this.onScrollChange(this.interactive.scrollPosition);
   }
 
   onScrollChange (scrollPosition) {
@@ -566,11 +567,6 @@ export class GlobalTimeline extends Timeline {
         timelineSequence.hideWarning('right');
       }
     });
-  }
-
-  scrollContainerToStart () {
-    this.editor.internalScrollChangeWithGUIUpdate(0);
-    super.scrollContainerToStart();
   }
 
   zoomToFit () {
@@ -886,11 +882,6 @@ export class SequenceTimeline extends Timeline {
     // therefore, we needed to adapt both values
     // however setting both in this case stopped the scrolling from happening at all
     this.ui.scrollableContainer.setProperty('scroll', pt(0, scrollTop));
-  }
-
-  scrollContainerToStart () {
-    this.editor.internalScrollChangeWithGUIUpdate(this.sequence.start);
-    super.scrollContainerToStart();
   }
 
   zoomToFit () {
