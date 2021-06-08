@@ -870,8 +870,7 @@ export class InteractivesEditor extends QinoqMorph {
         name: 'open interactive settings',
         exec: () => {
           if (this.settings) {
-            this.settings.bringToFront();
-            this.settings.show();
+            this.settings.owner.activate();
             return;
           }
           this.settings = new Settings({
