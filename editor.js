@@ -1469,7 +1469,6 @@ class Settings extends QinoqMorph {
       extent: {
         defaultValue: pt(260, 160)
       }
-
     };
   }
 
