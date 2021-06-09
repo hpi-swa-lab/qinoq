@@ -218,13 +218,12 @@ export class TimelineKeyframe extends QinoqMorph {
       }
     });
 
-    this.handleSnapping(event.hand.dragKeyframeStates);
-
     if (!this.isValidDrag(event.hand.dragKeyframeStates)) {
       event.hand.dragKeyframeStates.forEach(stateForKeyframe => {
         stateForKeyframe.timelineKeyframe.position = stateForKeyframe.previousPosition;
       });
     } else {
+      this.handleSnapping(event.hand.dragKeyframeStates);
       event.hand.dragKeyframeStates.forEach(stateForKeyframe => {
         stateForKeyframe.previousPosition = stateForKeyframe.timelineKeyframe.position;
       });
