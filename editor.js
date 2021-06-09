@@ -1385,4 +1385,9 @@ class MenuBar extends QinoqMorph {
     this.ui.zoomInput.borderColor = COLOR_SCHEME.SECONDARY;
     this.ui.scrollPositionInput.borderColor = COLOR_SCHEME.SECONDARY;
   }
+
+  __after_deserialize__ (snapshot, ref, pool) {
+    super.__after_deserialize__(snapshot, ref, pool);
+    this.ui.zoomInput.relayout(false); // Required to redraw percentage sign, which is otherwise lost after deserialization
+  }
 }
