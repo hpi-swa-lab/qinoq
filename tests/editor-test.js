@@ -112,11 +112,11 @@ describe('Editor', () => {
     it('inserts exactly one placeholder when last morph in sequence is removed', async () => {
       const dayBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'day background');
       await dayBackgroundTimelineSequence.openSequenceView();
-      expect(editor.getSubmorphNamed('placeholder')).to.not.be.ok;
+      expect(editor.getSubmorphNamed('timeline placeholder')).to.not.be.ok;
       editor.removeMorphFromInteractive(dayBackgroundTimelineSequence.sequence.submorphs[0]);
-      expect(editor.getSubmorphNamed('placeholder')).to.be.ok;
+      expect(editor.getSubmorphNamed('timeline placeholder')).to.be.ok;
       const placeholders = [];
-      editor.withAllSubmorphsDo((submorph) => { if (submorph.name === 'placeholder') placeholders.push(submorph); });
+      editor.withAllSubmorphsDo((submorph) => { if (submorph.name === 'timeline placeholder') placeholders.push(submorph); });
       expect(placeholders.length).to.be.equal(1);
     });
 
@@ -125,14 +125,14 @@ describe('Editor', () => {
       dayBackgroundTimelineSequence.sequence.submorphs.forEach(submorph => submorph.remove());
       await dayBackgroundTimelineSequence.openSequenceView();
       editor.addMorphToInteractive(new Morph());
-      expect(editor.getSubmorphNamed('placeholder')).to.not.be.ok;
+      expect(editor.getSubmorphNamed('timeline placeholder')).to.not.be.ok;
     });
 
     it('does not insert placeholder when morph(s) remain in the sequence', async () => {
       const dayBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'tree sequence');
       await dayBackgroundTimelineSequence.openSequenceView();
       editor.removeMorphFromInteractive(dayBackgroundTimelineSequence.sequence.submorphs[0]);
-      expect(editor.getSubmorphNamed('placeholder')).to.not.be.ok;
+      expect(editor.getSubmorphNamed('timeline placeholder')).to.not.be.ok;
     });
 
     it('a layer with keyframes can be expanded', async () => {
