@@ -853,6 +853,8 @@ export class InteractivesEditor extends QinoqMorph {
 
   // Focus on a specific item in the interactive
   async goto (item) {
+    // necessary due to abitrary order of deserialization of the submorphs
+    if (this._deserializing) return;
     if (item.isKeyframe) {
       const keyframe = item;
       const findResult = this.interactive.findKeyframe(keyframe);
