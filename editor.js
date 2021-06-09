@@ -292,7 +292,7 @@ export class InteractivesEditor extends QinoqMorph {
 
   clearInteractive () {
     if (!this.interactive) return;
-    if (this.settings.owner) this.settings.owner.close();
+    if (this.settings && this.settings.owner) this.settings.owner.close();
     this.settings = null;
     this.interactiveInEditMode = false;
 
@@ -1451,7 +1451,8 @@ class Settings extends QinoqMorph {
       },
       extent: {
         defaultValue: pt(260, 160)
-      }
+      },
+      ui: {}
     };
   }
 
@@ -1500,9 +1501,11 @@ class Settings extends QinoqMorph {
   }
 
   buildScrollBarCheckbox () {
-    const checkbox = new LabeledCheckBox({ label: 'Scrollbars enabled on the interactive' });
+    const checkbox = new LabeledCheckBox({
+      label: 'Scrollbars enabled on the interactive',
+      checked: this.interactive.isScrollBarVisible
+    });
     checkbox.layout.spacing = 2;
-    checkbox.checked = this.interactive.isScrollBarVisible;
     this.ui.interactiveSettings.addMorph(checkbox);
     connect(checkbox, 'checked', this.interactive, 'setScrollBarVisibility');
   }
@@ -1514,10 +1517,13 @@ class Settings extends QinoqMorph {
     aspectRatioField.layout = new HorizontalLayout({
       spacing: 2
     });
-    const checkbox = new LabeledCheckBox({ label: 'interactive has fixed aspect ratio' });
+    const checkbox = new LabeledCheckBox({
+      label: 'interactive has fixed aspect ratio',
+      checked: !!this.interactive.fixedAspectRatio
+    });
     checkbox.layout.spacing = 2;
-    checkbox.checked = !!this.interactive.fixedAspectRatio;
     this.ui.interactiveSettings.addMorph(checkbox);
+
     this.ui.dropDownSelector = new DropDownSelector({
       values: ['21/9', '16/9', '4/3', 'Custom'],
       borderWidth: 1,
@@ -1531,7 +1537,6 @@ class Settings extends QinoqMorph {
       borderWidth: 1,
       borderColor: COLOR_SCHEME.BACKGROUND_VARIANT
     });
-    this.toggleAspectRatio(checkbox.checked);
     aspectRatioField.addMorph(this.ui.inputLine);
     this.ui.interactiveSettings.addMorph(aspectRatioField);
 
