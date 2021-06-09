@@ -51,7 +51,9 @@ export class InteractiveGraph extends QinoqMorph {
       {
         fontColor: COLOR_SCHEME.ON_BACKGROUND,
         height: CONSTANTS.SEARCH_FIELD_HEIGHT,
-        borderRadius: CONSTANTS.SEARCH_FIELD_BORDER_RADIUS
+        borderRadius: CONSTANTS.SEARCH_FIELD_BORDER_RADIUS,
+        readOnly: true,
+        halosEnabled: this.editor.debug
       });
     connect(this.searchField, 'searchInput', this, 'onFilterChange');
     this.addMorph(this.searchField);
@@ -64,14 +66,23 @@ export class InteractiveGraph extends QinoqMorph {
       treeData: treeData,
       extent: pt(this.width, Math.max(CONSTANTS.DEFAULT_HEIGHT, this.height - CONSTANTS.SEARCH_FIELD_HEIGHT)),
       borderWidth: this.borderWidth,
-      borderColor: this.borderColor
+      borderColor: this.borderColor,
+      halosEnabled: this.editor.debug
     });
 
     this.addMorph(this.tree);
+    this.searchField.readOnly = false;
   }
 
   removeTree () {
-    if (this.tree) this.tree.remove();
+    if (this.tree) {
+      this.tree.remove();
+      this.tree = null;
+    }
+
+    // Remove searchField availability when there is no tree
+    this.searchField.textString = '';
+    this.searchField.readOnly = true;
   }
 
   removeConnections () {
@@ -258,6 +269,7 @@ export class InteractiveGraph extends QinoqMorph {
   }
 
   onFilterChange () {
+    if (!this.tree) return;
     const searchTerm = this.searchField.textString;
 
     if (searchTerm) {
