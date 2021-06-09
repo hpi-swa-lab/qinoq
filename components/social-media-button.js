@@ -1,6 +1,7 @@
 import { Label, Icon } from 'lively.morphic';
 import { string } from 'lively.lang';
 import { COLOR_SCHEME } from '../colors.js';
+import { error } from '../utilities/messages.js';
 
 export const PRESETS = {
   FACEBOOK: {
@@ -90,7 +91,7 @@ export class SocialMediaButton extends Label {
             ? Object.values(PRESETS).find(preset => preset.name === presetOrPresetName)
             : presetOrPresetName;
           if (!preset) {
-            this.world().setStatusMessage(`Invalid preset: ${presetOrPresetName}`);
+            error(`Invalid preset: ${presetOrPresetName}`);
             return;
           }
           this.setProperty('preset', preset);
