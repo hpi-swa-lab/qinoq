@@ -190,4 +190,4 @@ Closes [fill in your issues here]
 - [ ] there is a button for the settings
   - [ ] the interactive can be renamed
   - [ ] the scrollbar can be toggled
-  - [ ] the interactive can be ejected form the editor
+  - [ ] the interactive can be ejected from the editor
