@@ -1,5 +1,4 @@
 import { ProportionalLayout, InputLine, config, HorizontalLayout, VerticalLayout, Icon, Label } from 'lively.morphic';
-import { ResizeablePanel } from 'lively.components';
 import { connect, disconnectAll, disconnect } from 'lively.bindings';
 import { pt, rect } from 'lively.graphics';
 import { COLOR_SCHEME } from './colors.js';
@@ -22,6 +21,7 @@ import { error, success } from './utilities/messages.js';
 import { Canvas } from 'lively.components/canvas.js';
 import { TIMELINE_CONSTANTS } from './timeline/constants.js';
 import { LabeledCheckBox, DropDownSelector } from 'lively.components/widgets.js';
+import { ResizeablePanel } from './utilities/resizeable-panel.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
