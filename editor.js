@@ -1554,7 +1554,7 @@ class Settings extends QinoqMorph {
       this.editor.onInteractiveZoomed();
       success('Ratio updated!');
     } catch (err) {
-      error('Input a number or a fraction (x/y)');
+      error('Input a fraction (x/y)');
     }
   }
 
