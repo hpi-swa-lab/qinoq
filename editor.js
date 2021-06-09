@@ -971,6 +971,7 @@ class Preview extends QinoqMorph {
           if (!animationPreview && this.animationPreview) {
             this.animationPreview.remove();
           } else if (animationPreview) {
+            if (this.animationPreview) this.animationPreview.remove();
             if (!this._deserializing) this.addMorph(animationPreview);
           }
           this.setProperty('animationPreview', animationPreview);
