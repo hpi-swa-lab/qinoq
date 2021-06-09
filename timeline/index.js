@@ -39,8 +39,10 @@ export class Timeline extends QinoqMorph {
         isFloat: true,
         min: 0,
         set (zoomFactor) {
-          if (zoomFactor <= 0) return;
+          console.log(zoomFactor);
+          if (zoomFactor <= 0) zoomFactor = TIMELINE_CONSTANTS.MINIMAL_ZOOM / 100;
           this.setProperty('zoomFactor', Math.round(zoomFactor * 100) / 100);
+          console.log(this.zoomFactor);
           if (this._deserializing || !this.interactive) return;
           this.redraw();
         }

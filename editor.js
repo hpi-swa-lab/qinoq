@@ -19,6 +19,7 @@ import { InteractiveGraph } from './tree.js';
 import { SocialMediaButton } from './components/social-media-button.js';
 import { error } from './utilities/messages.js';
 import { Canvas } from 'lively.components/canvas.js';
+import { TIMELINE_CONSTANTS } from './timeline/constants.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -1306,7 +1307,7 @@ class MenuBar extends QinoqMorph {
 
   buildZoomInput () {
     this.ui.zoomInput = new NumberWidget({
-      min: 1,
+      min: TIMELINE_CONSTANTS.MINIMAL_ZOOM,
       // these two are necessary for the correct layouting to be applied
       extent: CONSTANTS.MENU_BAR_WIDGET_EXTENT,
       autofit: false,
