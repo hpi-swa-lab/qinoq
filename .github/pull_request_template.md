@@ -160,6 +160,7 @@ Closes [fill in your issues here]
   - [ ] clicking on a morph selects that morph with the inspector and takes you to the sequence tab
 - [ ] typing in "sun" into the search field, sunrise (a keyframe) and sun (an Ellipse) are highlighted and visible (the hierarchy is exposed to show them)
   - [ ] when deleting the search term, the collapse state is restored to what it was when last there was no search term
+- [ ] the search field is disabled when no interactive is loaded
 
 ### Tabs
 
