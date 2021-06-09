@@ -288,7 +288,6 @@ export class ShareSettingsPanel extends KeyValuePanel {
     if (!newTargetMorph.preset || !newTargetMorph.tokens) return;
 
     this._prohibitTargetMorphChange = true;
-
     this.ui.presetDropDown.selectedValue = newTargetMorph.preset.name;
     this.ui.presetDropDown.values = newTargetMorph.presetValues;
 
@@ -296,7 +295,7 @@ export class ShareSettingsPanel extends KeyValuePanel {
   }
 
   onPresetChange (presetName) {
-    if (!this.targetMorph) return;
+    if (!this.targetMorph || this._prohibitTargetMorphChange) return;
     this.targetMorph.preset = presetName;
     if (!this._prohibitTargetMorphChange) this.onTargetMorphChange(this.targetMorph);
   }
