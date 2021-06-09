@@ -87,7 +87,7 @@ export class InteractivesEditor extends QinoqMorph {
       ui: {
         /*
         * Keys:
-        * globalTab, globalTimeline, inspector, menuBar, preview, sequenceOverview, tabContainer, window
+        * globalTab, globalTimeline, inspector, menuBar, preview, sequenceOverview, tabContainer, window, settings
         */
         initialize () {
           if (!this._deserializing) this.ui = {};
@@ -863,10 +863,7 @@ export class InteractivesEditor extends QinoqMorph {
             this.ui.settings.owner.activate();
             return;
           }
-          this.ui.settings = new Settings({
-            _editor: this
-          }).initialize();
-          this.ui.settings.openInWindow();
+          this.ui.settings = new Settings({ _editor: this });
           connect(this.ui.settings.owner, 'close', this.ui, 'settings', { converter: () => null });
         }
       }];
@@ -1451,14 +1448,20 @@ class Settings extends QinoqMorph {
       extent: {
         defaultValue: pt(260, 160)
       },
-      ui: {}
+      ui: {
+        after: ['_editor'],
+        initialize () {
+          if (this._deserializing) return;
+          this.ui = {};
+          this.initialize();
+        }
+      }
     };
   }
 
   initialize () {
-    this.ui = {};
     this.buildInteractiveSettings();
-    return this;
+    this.openInWindow();
   }
 
   buildInteractiveSettings () {
