@@ -406,7 +406,7 @@ class InteractiveScrollHolder extends Morph {
       event.domEvt.preventDefault();
       const newX = this.interactive.extent.x - event.domEvt.deltaY;
       const newY = this.interactive.extent.y + event.domEvt.deltaY;
-      // if the size gets 0 then the proportional layout will fail to reconstruct the origional sizes of the morphs
+      // on size 0 the proportional layout will fail to reconstruct the original sizes of the morphs
       if (newX < 50 || newY < 50) return;
       this.interactive.extent = this.interactive.applyAspectRatio(pt(newX, newY), true);
       this.interactive.position = pt(0, 0);
