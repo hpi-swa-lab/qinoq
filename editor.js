@@ -1549,7 +1549,7 @@ class Settings extends QinoqMorph {
       const newRatio = eval(input);
       this.interactive.fixedAspectRatio = newRatio;
       this.editor.onInteractiveZoomed();
-      success('Updated ratio!');
+      success('Ratio updated!');
     } catch (err) {
       error('Input a number or a fraction (x/y)');
     }
