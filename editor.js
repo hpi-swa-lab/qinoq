@@ -296,6 +296,7 @@ export class InteractivesEditor extends QinoqMorph {
 
     connect(this.interactive, 'remove', this, 'reset');
     connect(this.interactive, '_length', this.ui.menuBar.ui.scrollPositionInput, 'max').update(this.interactive.length);
+    // TODO: let this work with zoom
     connect(this.ui.preview, 'extent', this.interactive, 'extent');
     connect(this.interactive, 'interactiveZoomed', this, 'onInteractiveZoomed');
 
