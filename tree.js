@@ -67,8 +67,8 @@ export class InteractiveGraph extends QinoqMorph {
       extent: pt(this.width, Math.max(CONSTANTS.DEFAULT_HEIGHT, this.height - CONSTANTS.SEARCH_FIELD_HEIGHT)),
       borderWidth: this.borderWidth,
       borderColor: this.borderColor,
-      selectionFontColor: COLOR_SCHEME.ON_SURFACE,
-      nonSelectionFontColor: COLOR_SCHEME.ON_BACKGROUND
+      selectionFontColor: COLOR_SCHEME.ON_PRIMARY,
+      nonSelectionFontColor: COLOR_SCHEME.ON_SURFACE,
       halosEnabled: this.editor.debug
     });
 
@@ -333,7 +333,7 @@ class TreeItemContainer extends QinoqMorph {
   }
 
   async toggleSelected (active) {
-    if (!this.tree || !this.tree.tree) return;
+    if (this._deserializing || !this.tree || !this.tree.tree) return;
     const { selectionFontColor, nonSelectionFontColor } = this.tree.tree;
     this.submorphs
       .filter(m => !m._isControlElement && m.styleClasses.includes('Label'))
