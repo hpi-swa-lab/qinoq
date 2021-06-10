@@ -361,7 +361,7 @@ export class Timeline extends QinoqMorph {
 
     this.ui.layerContainer.width = newWindowExtent.x - this.scrollbarOffset.x - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH;
     // layer container extent change triggers scrollableContainer height change via connection
-    this.ui.scrollableContainer.width = newWindowExtent.x;//, this.owner.height - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - TIMELINE_CONSTANTS.RULER_HEIGHT);
+    this.ui.scrollableContainer.width = newWindowExtent.x;
     this.ui.scrollBar.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, this.ui.scrollBar.height);
     this.ui.scrollBar.position = this.ui.scrollableContainer.bottomLeft.addPt(pt(TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, 0));
 
