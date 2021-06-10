@@ -16,7 +16,7 @@ function mockClickEventFor (target) {
   };
 }
 describe('Qinoq Button', () => {
-  let button, buttonFilled, target, action, counter, mockEvent, mockEventFilled;
+  let button, target, action, counter, mockEvent, mockEventFilled;
 
   beforeEach(() => {
     counter = 0;
@@ -27,7 +27,6 @@ describe('Qinoq Button', () => {
     }]);
     target.action = function () { counter++; };
     button = new QinoqButton({ target: target, action: 'action', doubleAction: 'action' });
-    buttonFilled = new QinoqButton({ target: target, action: 'action', filled: true });
   });
 
   it('is a QinoqButton', () => {
@@ -62,27 +61,19 @@ describe('Qinoq Button', () => {
 
   it('changes style for duration of click', () => {
     button.onMouseDown(mockClickEventFor(button));
-    expect(button.styleSet).to.be.equal('filled');
+    expect(button.styleSet).to.be.equal('pressed');
     button.onMouseUp();
-    expect(button.styleSet).to.be.equal('unfilled');
-
-    buttonFilled.onMouseDown(mockClickEventFor(buttonFilled));
-    expect(buttonFilled.styleSet).to.be.equal('unfilled');
-    buttonFilled.onMouseUp();
-    expect(buttonFilled.styleSet).to.be.equal('filled');
+    expect(button.styleSet).to.be.equal('default');
   });
 
   it('can be disabled and enabled', () => {
     button.disable();
-    expect(button.styleSet).to.be.equal('disabled');
+    expect(button.enabled).to.be.equal(false);
     expect(button.reactsToPointer).to.be.equal(false);
     button.enable();
-    expect(button.styleSet).to.be.equal('unfilled');
+    expect(button.enabled).to.be.equal(true);
+    expect(button.styleSet).to.be.equal('default');
     expect(button.reactsToPointer).to.be.equal(true);
-
-    buttonFilled.disable();
-    buttonFilled.enable();
-    expect(buttonFilled.styleSet).to.be.equal('filled');
   });
 
   it('has a hover effect on the border', () => {
@@ -97,12 +88,8 @@ describe('Qinoq Button', () => {
   it('resets style if pressed and then hovered out without lifting mouse button', () => {
     button.onMouseDown(mockClickEventFor(button));
     button.onHoverIn();
+    expect(button.styleSet).to.be.equal('hovered');
     button.onHoverOut();
-    expect(button.styleSet).to.be.equal('unfilled');
-
-    buttonFilled.onMouseDown(mockClickEventFor(buttonFilled));
-    buttonFilled.onHoverIn();
-    buttonFilled.onHoverOut();
-    expect(buttonFilled.styleSet).to.be.equal('filled');
+    expect(button.styleSet).to.be.equal('default');
   });
 });
