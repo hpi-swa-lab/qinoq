@@ -86,7 +86,7 @@ Closes [fill in your issues here]
 - [ ] when clicking the "Add Sequence" button a sequence is in the hand, which can only be dropped on a timelineLayer and changes color when you are not able to place the sequence
   - [ ] this can be cancelled by pressing ESC
 - [ ] right clicking on a sequence brings up a context menu
-- [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the interactive/beginning of the next/previous sequence
+- [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the interactive/beginning/end of the next/previous sequence
 - [ ] moving a sequence to the right will make the active area (light grey) larger
 - [ ] when changing the zoom factor with the input field, the length of the sequences adapt accordingly, the cursor updates its position and the whole scrollytelling can still be scrolled through
 - [ ] a sequence may be copied, and pasted at another spot in the timeline
