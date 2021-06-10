@@ -252,7 +252,7 @@ export class InteractiveGraph extends QinoqMorph {
 
   buildContainerFor (item, embedded = true) {
     const container = new TreeItemContainer({
-      tree: this,
+      graph: this,
       fill: COLOR_SCHEME.TRANSPARENT,
       target: item,
       fontColor: COLOR_SCHEME.ON_SURFACE,
@@ -321,20 +321,26 @@ class QinoqTree extends InteractiveTree {
   onHoverOut (event) {
     // prevent onHoverOut in InteractiveTree, which triggers selection
   }
+
+  update (force) {
+    this._inUpdate = true;
+    super.update(force);
+    delete this._inUpdate;
+  }
 }
 
 class TreeItemContainer extends QinoqMorph {
   static get properties () {
     return {
       target: {},
-      tree: {}
+      graph: {}
     };
   }
 
   async toggleSelected (active) {
     if (!this._deserializing) {
       this.label.fontColor = active ? COLOR_SCHEME.ON_SECONDARY : COLOR_SCHEME.ON_SURFACE;
-      if (active) {
+      if (active && !this.graph.tree._inUpdate) {
         await this.editor.goto(this.target);
       }
     }
@@ -359,7 +365,7 @@ class TreeItemContainer extends QinoqMorph {
       reactsToPointer: false,
       padding: rect(0, 0, 0, 0),
       acceptsDrops: false,
-      fontSize: this.tree.fontSize
+      fontSize: this.graph.fontSize
     });
 
     label.value = this.target.name;
