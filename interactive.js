@@ -102,11 +102,7 @@ export class Interactive extends DeserializationAwareMorph {
 
   applyAspectRatio (extent, calculateAspectRatio = false) {
     let aspectRatio;
-    if (calculateAspectRatio) {
-      aspectRatio = this.width / this.height;
-    } else {
-      aspectRatio = this.fixedAspectRatio;
-    }
+    aspectRatio = calculateAspectRatio ? this.width / this.height : this.fixedAspectRatio;
     return pt(aspectRatio ? extent.y * aspectRatio : extent.x, extent.y);
   }
 

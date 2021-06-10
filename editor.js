@@ -19,9 +19,7 @@ import { InteractiveGraph } from './tree.js';
 import { SocialMediaButton } from './components/social-media-button.js';
 import { error, success } from './utilities/messages.js';
 import { Canvas } from 'lively.components/canvas.js';
-import { LabeledCheckBox } from 'lively.components/widgets.js';
 import { TIMELINE_CONSTANTS } from './timeline/constants.js';
-
 import { LabeledCheckBox, DropDownSelector } from 'lively.components/widgets.js';
 
 const CONSTANTS = {
