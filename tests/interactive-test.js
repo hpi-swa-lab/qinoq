@@ -79,10 +79,26 @@ describe('Interactive', () => {
   });
 
   it('can get sequence starts and ends', () => {
+    let sequenceThree = new Sequence({ start: 10, duration: 5 });
+    interactive.addSequence(sequenceThree);
+
+    // | - - - sequenceOne - - - - 10|
+    //                          |8 - - - sequenceTwo - - - - - 18 |
+    //                               |10 sequenceThree 15|
+
     expect(interactive.getNextSequenceStartOrEnd(0)).to.equal(8);
     expect(interactive.getNextSequenceStartOrEnd(5)).to.equal(8);
     expect(interactive.getNextSequenceStartOrEnd(8)).to.equal(10);
+    expect(interactive.getNextSequenceStartOrEnd(10)).to.equal(15);
+    expect(interactive.getNextSequenceStartOrEnd(15)).to.equal(18);
+    expect(interactive.getNextSequenceStartOrEnd(18)).to.be.undefined;
+
+    expect(interactive.getPrevSequenceStartOrEnd(20)).to.equal(18);
+    expect(interactive.getPrevSequenceStartOrEnd(18)).to.equal(15);
+    expect(interactive.getPrevSequenceStartOrEnd(15)).to.equal(10);
+    expect(interactive.getPrevSequenceStartOrEnd(10)).to.equal(8);
     expect(interactive.getPrevSequenceStartOrEnd(5)).to.equal(0);
+    expect(interactive.getPrevSequenceStartOrEnd(0)).to.be.undefined;
   });
 
   describe('with morph notifications', () => {
