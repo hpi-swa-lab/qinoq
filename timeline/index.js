@@ -794,9 +794,9 @@ export class SequenceTimeline extends Timeline {
   }
 
   addPlaceholder () {
-    if (this.getSubmorphNamed('timeline placeholder')) return;
+    if (this.getSubmorphNamed('layer placeholder')) return;
     const placeholder = new Morph({
-      name: 'timeline placeholder',
+      name: 'layer placeholder',
       fill: COLOR_SCHEME.BACKGROUND_VARIANT,
       opacity: 0.5,
       height: TIMELINE_CONSTANTS.SEQUENCE_LAYER_HEIGHT,
@@ -817,7 +817,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   removePlaceholder () {
-    const placeholder = this.get('timeline placeholder');
+    const placeholder = this.get('layer placeholder');
     if (placeholder) placeholder.remove();
     this.ui.scrollableContainer.clipMode = 'auto';
   }
