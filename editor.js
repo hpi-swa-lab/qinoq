@@ -1420,6 +1420,8 @@ class MenuBar extends QinoqMorph {
 
   onGlobalTimelineTab () {
     if (!this.interactive) return;
+    this.ui.addSequenceButton.enable();
+    this.ui.addLayerButton.enable();
     this.ui.gotoStartButton.tooltip = 'Go to start';
     this.ui.gotoEndButton.tooltip = 'Go to end';
     this.ui.gotoNextButton.tooltip = 'Go to next sequence';
