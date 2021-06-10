@@ -239,12 +239,20 @@ export class Interactive extends DeserializationAwareMorph {
     return this.sequences.map(sequence => sequence.start).sort((a, b) => a - b);
   }
 
-  getNextSequenceStart (scrollPosition = this.scrollPosition) {
-    return this.getSequenceStarts().find(sequenceStart => sequenceStart > scrollPosition);
+  getSequenceEnds () {
+    return this.sequences.map(sequence => sequence.end).sort((a, b) => a - b);
   }
 
-  getPrevSequenceStart (scrollPosition = this.scrollPosition) {
-    return this.getSequenceStarts().reverse().find(sequenceStart => sequenceStart < scrollPosition);
+  getSequenceStartAndEnds () {
+    return this.getSequenceStarts().concat(this.getSequenceEnds()).sort((a, b) => a - b);
+  }
+
+  getNextSequenceStartOrEnd (scrollPosition = this.scrollPosition) {
+    return this.getSequenceStartAndEnds().find(position => position > scrollPosition);
+  }
+
+  getPrevSequenceStartOrEnd (scrollPosition = this.scrollPosition) {
+    return this.getSequenceStartAndEnds().reverse().find(position => position < scrollPosition);
   }
 
   addLayer (layer) {
