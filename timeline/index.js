@@ -101,7 +101,8 @@ export class Timeline extends QinoqMorph {
         name: 'scrollable container',
         extent: pt(this.width, this.height - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT),
         position: pt(0, TIMELINE_CONSTANTS.RULER_HEIGHT),
-        clipMode: 'auto'
+        clipMode: 'auto',
+        eventPropagationTarget: this // Scrollable container captures events meant for the timeline
       });
     this.addMorph(this.ui.scrollableContainer);
     this.initializeLayerInfoContainer();
