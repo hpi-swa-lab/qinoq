@@ -191,3 +191,4 @@ Closes [fill in your issues here]
   - [ ] the interactive can be renamed
   - [ ] the scrollbar can be toggled
   - [ ] the interactive can be ejected from the editor
+  - [ ] the aspect ratio of the interactive can be changed
