@@ -12,7 +12,10 @@ export class QinoqMorph extends DeserializationAwareMorph {
       },
       acceptsDrops: {
         defaultValue: false
-      }
+      },
+      // Propagate events targeting this morph, which would target the eventPropagationTarget if this morph
+      // would be removed. Only implemented for onContextMenu.
+      eventPropagationTarget: {}
     };
   }
 
@@ -31,6 +34,17 @@ export class QinoqMorph extends DeserializationAwareMorph {
   onMouseDown (event) {
     super.onMouseDown(event);
     if (!event.targetMorph.mayBeSelected) $world.get('interactives editor').execCommand('deselect all items');
+  }
+
+  onContextMenu (event) {
+    if (this.eventPropagationTarget) {
+      if (event.targetMorph == this && event.targetMorphs[1] == this.eventPropagationTarget) {
+        event.targetMorphs.shift();
+        this.eventPropagationTarget.onContextMenu(event);
+      }
+    } else {
+      super.onContextMenu(event);
+    }
   }
 
   menuItems () {
