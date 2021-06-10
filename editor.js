@@ -1436,7 +1436,7 @@ class MenuBar extends QinoqMorph {
   }
 }
 
-class Settings extends QinoqMorph {
+export class Settings extends QinoqMorph {
   static get properties () {
     return {
       name: {
@@ -1549,13 +1549,23 @@ class Settings extends QinoqMorph {
 
   inputLineUpdate (input) {
     try {
-      const newRatio = eval(input);
+      const newRatio = Settings.matchNumberOrFraction(input);
+      if (!newRatio) throw new Error('The input was not a number!');
       this.interactive.fixedAspectRatio = newRatio;
       this.editor.onInteractiveZoomed();
       success('Ratio updated!');
     } catch (err) {
       error('Input a fraction (x/y)');
     }
+  }
+
+  static matchNumberOrFraction (inputString) {
+    // eslint-disable-next-line no-useless-escape
+    const match = inputString.match(RegExp('^(\\d+)((\\.\\d+)|(\\/\\d+))?$', 'i'));
+    if (!match) return null;
+    if (!match[2]) return Number(match[1]);
+    if (match[2].includes('.')) return Number(match[1].concat(match[3]));
+    if (match[2].includes('/')) return Number(match[1]) / Number(match[4].substring(1));
   }
 
   dropDownSelectorUpdate (input) {
