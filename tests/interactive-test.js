@@ -78,9 +78,11 @@ describe('Interactive', () => {
     expect(interactive.submorphs.length).equals(2);
   });
 
-  it('can get sequence starts', () => {
-    expect(interactive.getNextSequenceStart(5)).to.equal(8);
-    expect(interactive.getPrevSequenceStart(5)).to.equal(0);
+  it('can get sequence starts and ends', () => {
+    expect(interactive.getNextSequenceStartOrEnd(0)).to.equal(8);
+    expect(interactive.getNextSequenceStartOrEnd(5)).to.equal(8);
+    expect(interactive.getNextSequenceStartOrEnd(8)).to.equal(10);
+    expect(interactive.getPrevSequenceStartOrEnd(5)).to.equal(0);
   });
 
   describe('with morph notifications', () => {
