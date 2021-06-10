@@ -107,7 +107,7 @@ export class Timeline extends QinoqMorph {
     this.initializeLayerInfoContainer();
 
     this.initializeLayerContainer();
-    connect(this.ui.layerContainer, 'extent', this.ui.scrollableContainer, 'height', { converter: ' (extent) => extent.y > timeline.height - scrollbarHeight ? timeline.height - scrollbarHeight - rulerHeight: extent.y', varMapping: { timeline: this, scrollbarHeight: TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT, rulerHeight: TIMELINE_CONSTANTS.RULER_HEIGHT } }).update(this.ui.layerContainer.extent);
+    connect(this.ui.layerContainer, 'extent', this.ui.scrollableContainer, 'height', { converter: ' (extent) => timeline.height - scrollbarHeight - rulerHeight', varMapping: { timeline: this, scrollbarHeight: TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT, rulerHeight: TIMELINE_CONSTANTS.RULER_HEIGHT } }).update(this.ui.layerContainer.extent);
     this.initializeScrollBar();
   }
 
@@ -358,7 +358,8 @@ export class Timeline extends QinoqMorph {
     if (!this.ui.scrollableContainer || !this.ui.scrollBar || !this.ui.layerContainer || !this.owner) return;
 
     this.ui.layerContainer.width = newWindowExtent.x - this.scrollbarOffset.x - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH;
-    this.ui.scrollableContainer.extent = pt(newWindowExtent.x, this.owner.height - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - TIMELINE_CONSTANTS.RULER_HEIGHT);
+    // layer container extent change triggers scrollableContainer height change via connection
+    this.ui.scrollableContainer.width = newWindowExtent.x;//, this.owner.height - TIMELINE_CONSTANTS.VERTICAL_SCROLLBAR_HEIGHT - TIMELINE_CONSTANTS.RULER_HEIGHT);
     this.ui.scrollBar.extent = pt(newWindowExtent.x - this.scrollbarOffset.x - TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, this.ui.scrollBar.height);
     this.ui.scrollBar.position = this.ui.scrollableContainer.bottomLeft.addPt(pt(TIMELINE_CONSTANTS.LAYER_INFO_WIDTH, 0));
 
