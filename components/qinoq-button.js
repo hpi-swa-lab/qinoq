@@ -51,7 +51,7 @@ export class QinoqButton extends Label {
         }
       },
       active: {
-		    after: ['enabled'],
+        after: ['enabled'],
         defaultValue: false,
         set (active) {
           this.setProperty('active', active);
