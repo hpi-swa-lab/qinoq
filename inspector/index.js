@@ -118,6 +118,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
       _editor: this.editor
     });
     this.ui.styleInspectorTab.content = this.styleInspector;
+    this.ui.styleInspectorTab.borderColor = COLOR_SCHEME.PRIMARY;
   }
 
   initializeAnimationsInspector () {
@@ -126,6 +127,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
       _editor: this.editor
     });
     this.ui.animationsInspectorTab.content = this.animationsInspector;
+    this.ui.animationsInspectorTab.borderColor = COLOR_SCHEME.PRIMARY;
   }
 
   selectMorphThroughHalo (morph) {
