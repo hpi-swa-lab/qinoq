@@ -52,6 +52,12 @@ export class InteractiveMorphInspector extends QinoqMorph {
             this.setProperty('targetMorph', null);
           }
         }
+      },
+      extent: {
+        set (extent) {
+          this.setProperty('extent', extent);
+          if (!this._deserializing && this.ui && this.ui.tabContainer) this.ui.tabContainer.extent = pt(this.width, this.height - this.ui.headlinePane.height);
+        }
       }
     };
   }
