@@ -197,6 +197,7 @@ export class InteractivesEditor extends QinoqMorph {
 
     this.ui.globalTab = await this.ui.tabContainer.addTab('[no interactive loaded]', this.ui.globalTimeline);
     this.ui.globalTab.closeable = false;
+    this.ui.globalTab.borderColor = COLOR_SCHEME.PRIMARY;
 
     this.addMorph(this.ui.tabContainer);
   }
@@ -393,6 +394,7 @@ export class InteractivesEditor extends QinoqMorph {
 
     const timeline = this.initializeSequenceTimeline(sequence);
     const tab = await this.ui.tabContainer.addTab(sequence.name, timeline);
+    tab.borderColor = COLOR_SCHEME.PRIMARY;
     connect(sequence, 'name', tab, 'caption');
     connect(tab, 'caption', sequence, 'name');
     return tab;
