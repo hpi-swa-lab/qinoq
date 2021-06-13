@@ -12,8 +12,11 @@ import { DropDownSelector } from 'lively.components/widgets.js';
 class InspectorPanel extends QinoqMorph {
   static get properties () {
     return {
+      fontColor: {
+        defaultValue: COLOR_SCHEME.ON_SURFACE
+      },
       ui: {
-        after: ['submorphs'],
+        after: ['submorphs', 'fontColor'],
         initialize () {
           if (!this._deserializing) {
             this.ui = {};
@@ -87,7 +90,8 @@ class InspectorPanel extends QinoqMorph {
   buildTitleMorph () {
     if (this.getSubmorphNamed('title')) return;
     this.ui.title = new Label({
-      fontWeight: 'bolder'
+      fontWeight: 'bolder',
+      fontColor: this.fontColor
     });
     this.addMorphAt(this.ui.title, 0);
   }
@@ -201,7 +205,8 @@ class KeyValuePanel extends InspectorPanel {
   buildLabel (text, container = undefined) {
     const owner = container || this.ui.container;
     return owner.addMorph(new Label({
-      textString: string.camelize(text[0].toUpperCase() + text.substring(1))
+      textString: string.camelize(text[0].toUpperCase() + text.substring(1)),
+      fontColor: this.fontColor
     }));
   }
 
@@ -218,7 +223,7 @@ class KeyValuePanel extends InspectorPanel {
       fill: COLOR_SCHEME.SURFACE,
       stringValue: value,
       borderColor: COLOR_SCHEME.PRIMARY,
-      fontColor: COLOR_SCHEME.ON_SURFACE,
+      fontColor: this.fontColor,
       borderStyle: 'solid'
     }));
     connect(field, 'inputChanged', this, 'changeTokenValue', {
@@ -275,7 +280,9 @@ class KeyValuePanel extends InspectorPanel {
 
 export class ShareSettingsPanel extends KeyValuePanel {
   build () {
-    this.ui.presetDropDown = this.addMorph(new DropDownSelector());
+    this.ui.presetDropDown = this.addMorph(new DropDownSelector({
+      fontColor: this.fontColor
+    }));
     this.ui.presetDropDown.getSubmorphNamed('currentValue').fontSize = 14;
     this.ui.presetDropDown.dropDownLabel.fontSize = 14;
     connect(this.ui.presetDropDown, 'selectedValue', this, 'onPresetChange');

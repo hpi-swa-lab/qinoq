@@ -12,11 +12,15 @@ import { disconnect, connect } from 'lively.bindings';
 export class AnimationsInspector extends QinoqMorph {
   static get properties () {
     return {
+      fontColor: {
+        defaultValue: COLOR_SCHEME.ON_SURFACE
+      },
       name: {
         defaultValue: 'animations inspector'
       },
       inspector: {},
       ui: {
+        after: ['fontColor'],
         initialize () {
           if (this._deserializing) return;
           this.ui = {};
@@ -113,7 +117,8 @@ export class AnimationsInspector extends QinoqMorph {
     this.propertyControls[property] = new PropertyControl({
       property: property,
       propertyType: propertyType,
-      animationsInspector: this
+      animationsInspector: this,
+      fontColor: this.fontColor
     });
 
     this.ui.propertyPane.addMorph(this.propertyControls[property]);
@@ -238,6 +243,15 @@ export class AnimationsInspector extends QinoqMorph {
 class PropertyControl extends QinoqMorph {
   static get properties () {
     return {
+      fontColor: {
+        after: ['ui'],
+        set (color) {
+          this.setProperty('fontColor', 'color');
+          if (!this._deserializing) {
+            this.ui.label.fontColor = color;
+          }
+        }
+      },
       targetMorph: {},
       property: {},
       propertyType: {},
@@ -265,7 +279,8 @@ class PropertyControl extends QinoqMorph {
     this.ui.label = this.addMorph(new Label({
       name: `${this.property} label`,
       textString: this.property,
-      position: pt(CONSTANTS.LABEL_X, 0)
+      position: pt(CONSTANTS.LABEL_X, 0),
+      fontColor: this.fontColor
     }));
   }
 
