@@ -8,7 +8,7 @@ export const COLOR_SCHEME = {
   ON_SECONDARY: Color.white,
   BACKGROUND: Color.white,
   BACKGROUND_VARIANT: Color.rgb(200, 200, 200),
-  ON_BACKGROUND: Color.rgb(100, 100, 100),
+  ON_BACKGROUND: Color.rgb(40, 40, 40),
   ON_BACKGROUND_VARIANT: Color.rgb(220, 220, 220),
   ON_BACKGROUND_DARKER_VARIANT: Color.rgb(200, 200, 200),
   //
@@ -16,7 +16,7 @@ export const COLOR_SCHEME = {
   SURFACE: Color.white,
   SURFACE_VARIANT: Color.rgb(220, 220, 220),
   SURFACE_DARKER_VARIANT: Color.rgb(200, 200, 200),
-  ON_SURFACE: Color.rgb(60, 60, 60),
+  ON_SURFACE: Color.rgb(40, 40, 40),
   ON_SURFACE_VARIANT: Color.rgb(220, 220, 220),
   ERROR: Color.rgb(255, 0, 14),
   ON_ERROR: Color.white,
