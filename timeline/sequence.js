@@ -27,7 +27,7 @@ export class TimelineSequence extends QinoqMorph {
         defaultValue: 1
       },
       borderColor: {
-        defaultValue: COLOR_SCHEME.ON_BACKGROUND
+        defaultValue: COLOR_SCHEME.ON_SURFACE
       },
       borderRadius: {
         defaultValue: 3
@@ -234,7 +234,7 @@ export class TimelineSequence extends QinoqMorph {
   }
 
   onSelectionChange (selected) {
-    this.borderColor = selected ? COLOR_SCHEME.PRIMARY : COLOR_SCHEME.ON_BACKGROUND;
+    this.borderColor = selected ? COLOR_SCHEME.PRIMARY : COLOR_SCHEME.ON_SURFACE;
   }
 
   onDragStart (event) {
