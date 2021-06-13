@@ -333,14 +333,8 @@ class TreeItemContainer extends QinoqMorph {
   }
 
   async toggleSelected (active) {
-    if (this._deserializing || !this.tree || !this.tree.tree) return;
-    const { selectionFontColor, nonSelectionFontColor } = this.tree.tree;
-    this.submorphs
-      .filter(m => !m._isControlElement && m.styleClasses.includes('Label'))
-      .forEach(m => {
-        m.fontColor = active ? selectionFontColor : nonSelectionFontColor;
-      });
-
+    if (this._deserializing) return;
+    this.label.fontColor = active ? COLOR_SCHEME.ON_SECONDARY : COLOR_SCHEME.ON_SURFACE;
     if (active) {
       await this.editor.goto(this.target);
     }
