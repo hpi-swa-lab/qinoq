@@ -10,7 +10,7 @@ export class StyleInspector extends QinoqMorph {
       },
       inspector: {},
       ui: {
-        after: ['submorphs'],
+        after: ['submorphs', 'fontColor'],
         initialize () {
           if (this._deserializing) return;
           this.ui = {};
