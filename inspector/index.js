@@ -56,6 +56,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
       extent: {
         set (extent) {
           this.setProperty('extent', extent);
+          // if (this._deserializing) return;
           if (this.ui && this.ui.tabContainer && this.ui.headlinePane) {
             this.ui.tabContainer.extent =
               pt(this.ui.tabContainer.width, this.height - this.ui.headlinePane.height);
