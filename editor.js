@@ -233,12 +233,7 @@ export class InteractivesEditor extends QinoqMorph {
 
     const topWindowHeight = this.ui.subWindow.top;
 
-    this.ui.interactiveGraph.extent = pt(
-      this.ui.interactiveGraph.width,
-      topWindowHeight - this.ui.interactiveGraph.submorphs[0].height -
-      this.ui.interactiveGraph.scrollbarOffset.x -
-      2 * this.ui.interactiveGraph.borderWidth
-    );
+    this.ui.interactiveGraph.extent = pt(this.ui.interactiveGraph.width, topWindowHeight);
 
     this.ui.inspector.position = pt(extent.x - this.ui.inspector.width, 0);
     this.ui.inspector.extent = pt(this.ui.inspector.width,
@@ -247,6 +242,7 @@ export class InteractivesEditor extends QinoqMorph {
     this.ui.preview.extent =
       pt(extent.x - this.ui.interactiveGraph.width - this.ui.inspector.width,
         topWindowHeight);
+    debugger;
     this.ui.preview.position =
       pt(this.ui.interactiveGraph.right +
         (this.ui.inspector.left -

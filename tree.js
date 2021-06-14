@@ -31,8 +31,13 @@ export class InteractiveGraph extends QinoqMorph {
       },
       extent: {
         set (extent) {
-          this.setProperty('extent', extent);
-          if (this.tree) this.tree.extent = extent;
+          let adjustedExtent = extent;
+          if (this.tree) {
+            adjustedExtent = pt(extent.x, extent.y - this.scrollbarOffset.y -
+              2 * this.borderWidth);
+            this.tree.extent = adjustedExtent;
+          }
+          this.setProperty('extent', adjustedExtent);
         }
       },
       searchField: { }
@@ -46,7 +51,8 @@ export class InteractiveGraph extends QinoqMorph {
   build () {
     this.removeConnections();
     this.layout = new VerticalLayout({
-      resizeSubmorphs: true
+      resizeSubmorphs: true,
+      autoResize: false
     });
     this.buildSearchField();
     this.buildTree();
@@ -70,7 +76,8 @@ export class InteractiveGraph extends QinoqMorph {
     this.removeTree();
     this.tree = new QinoqTree({
       treeData: treeData,
-      extent: pt(this.width, Math.max(CONSTANTS.DEFAULT_HEIGHT, this.height - CONSTANTS.SEARCH_FIELD_HEIGHT)),
+      extent: pt(this.width,
+        this.height - CONSTANTS.SEARCH_FIELD_HEIGHT),
       borderWidth: this.borderWidth,
       borderColor: this.borderColor,
       selectionFontColor: COLOR_SCHEME.ON_PRIMARY,
