@@ -69,6 +69,7 @@ export class Interactive extends DeserializationAwareMorph {
           }
           this.setProperty('extent', extent);
           if (!this._deserializing) {
+            this.updateSequenceExtents();
             this.scaleText(previousHeight);
           }
         }
@@ -98,6 +99,10 @@ export class Interactive extends DeserializationAwareMorph {
         }
       }
     };
+  }
+
+  updateSequenceExtents () {
+    this.sequences.forEach(sequence => sequence.extent = this.extent);
   }
 
   applyAspectRatio (extent, calculateAspectRatio = false) {
@@ -278,13 +283,11 @@ export class Interactive extends DeserializationAwareMorph {
     sequence.interactive = this;
     this.updateInteractiveLength();
     signal(this, 'onSequenceAddition', sequence);
-    connect(this, 'extent', sequence, 'extent');
     this.sortSequences();
   }
 
   removeSequence (sequence) {
     disconnectAll(sequence);
-    disconnect(this, 'extent', sequence, 'extent');
     arr.remove(this.sequences, sequence);
     sequence.remove();
     signal(this, 'onSequenceRemoval', sequence);
