@@ -6,6 +6,7 @@ import { QinoqMorph } from '../qinoq-morph.js';
 import { serialize, deserialize } from 'lively.serializer2';
 import { LottieMorph } from '../interactive-morphs/lottie-morph.js';
 import { Morph } from 'lively.morphic';
+import { promise } from 'lively.lang';
 
 let editor, interactive;
 function closeEditor () {
@@ -242,6 +243,20 @@ describe('Editor', () => {
       expect(timelineSequences().every(timelineSequence => timelineSequence.isSelected)).to.be.ok;
       editor.simulateKeys('Ctrl-A');
       expect(timelineSequences().every(timelineSequence => !timelineSequence.isSelected)).to.be.ok;
+    });
+
+    it('can select all and no keyframes', async () => {
+      const skySequence = interactive.sequences.find(sequence => sequence.name == 'sky sequence');
+      await editor.goto(skySequence);
+      await promise.delay(20);
+      let timeline = editor.displayedTimeline;
+      timeline.overviewLayers.forEach(overviewLayer => overviewLayer.isExpanded = true);
+      expect(timeline.keyframes.every(timelineSequence => !timelineSequence.isSelected)).to.be.ok;
+      timeline.keyframes[0].isSelected = true;
+      editor.simulateKeys('Ctrl-A');
+      expect(timeline.keyframes.every(timelineSequence => timelineSequence.isSelected)).to.be.ok;
+      editor.simulateKeys('Ctrl-A');
+      expect(timeline.keyframes.every(timelineSequence => !timelineSequence.isSelected)).to.be.ok;
     });
 
     it('can change interactive scroll position via arrow keys', () => {
