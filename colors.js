@@ -24,8 +24,7 @@ export const COLOR_SCHEME = {
   TRANSPARENT: Color.transparent,
   //
   KEYFRAME_FILL: Color.rgb(134, 134, 134),
-  KEYFRAME_BORDER: Color.rgb(69, 69, 69),
-  BUTTON_BLUE: Color.rgb(0, 110, 230)
+  KEYFRAME_BORDER: Color.rgb(69, 69, 69)
 };
 
 // use this function to get a color for a property name
