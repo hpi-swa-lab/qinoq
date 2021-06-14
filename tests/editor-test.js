@@ -253,11 +253,11 @@ describe('Editor', () => {
       expect(editor.interactive.scrollPosition).to.be.equal(51);
     });
 
-    it('can delete a sequence via Delete key', () => {
+    it('can delete a sequence via Backspace key', () => {
       const nightBackgroundSequence = interactive.sequences.find(sequence => sequence.name == 'night background');
       const nightBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence == nightBackgroundSequence);
       nightBackgroundTimelineSequence.isSelected = true;
-      editor.simulateKeys('Delete');
+      editor.simulateKeys('Backspace');
       expect(nightBackgroundTimelineSequence.world()).to.not.be.ok;
       expect(interactive.sequences).to.not.include(nightBackgroundSequence);
     });
