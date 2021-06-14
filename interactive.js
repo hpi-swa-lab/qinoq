@@ -163,7 +163,7 @@ export class Interactive extends DeserializationAwareMorph {
   }
 
   updateInteractiveLength () {
-    this._length = Math.max(...this.sequences.map(sequence => sequence.end));
+    this._length = Math.max(0, Math.max(...this.sequences.map(sequence => sequence.end)));
   }
 
   openInWorld () {
