@@ -11,7 +11,7 @@ export const COLOR_SCHEME = {
   ON_BACKGROUND: Color.rgb(40, 40, 40),
   ON_BACKGROUND_VARIANT: Color.rgb(230, 230, 230),
   ON_BACKGROUND_DARKER_VARIANT: Color.rgb(200, 200, 200),
-  //
+
   PROMPT_BACKGROUND: Color.rgb(236, 240, 241),
   SURFACE: Color.white,
   SURFACE_VARIANT: Color.rgb(230, 230, 230),
@@ -22,7 +22,7 @@ export const COLOR_SCHEME = {
   ERROR: Color.rgb(255, 0, 14),
   ON_ERROR: Color.white,
   TRANSPARENT: Color.transparent,
-  //
+
   KEYFRAME_FILL: Color.rgb(134, 134, 134),
   KEYFRAME_BORDER: Color.rgb(69, 69, 69)
 };

@@ -246,10 +246,8 @@ class PropertyControl extends QinoqMorph {
       fontColor: {
         after: ['ui'],
         set (color) {
-          this.setProperty('fontColor', 'color');
-          if (!this._deserializing) {
-            this.ui.label.fontColor = color;
-          }
+          this.setProperty('fontColor', color);
+          if (!this._deserializing) this.ui.label.fontColor = color;
         }
       },
       targetMorph: {},
