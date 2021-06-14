@@ -833,6 +833,14 @@ export class SequenceTimeline extends Timeline {
     this.ui.layerInfoContainer.addMorphAt(layerInfo, index);
   }
 
+  selectAllItems (deselectIfAllAreSelected = true) {
+    if (deselectIfAllAreSelected && arr.equals(this.keyframes, this.selectedTimelineKeyframes)) {
+      this.deselectAllItems();
+    } else {
+      this.keyframes.forEach(timelineKeyframe => timelineKeyframe.isSelected = true);
+    }
+  }
+
   deselectAllTimelineKeyframesExcept (timelineKeyframe) {
     this.selectedTimelineKeyframes.forEach(keyframe => keyframe.isSelected = false);
     timelineKeyframe.isSelected = true;
