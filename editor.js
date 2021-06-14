@@ -127,7 +127,7 @@ export class InteractivesEditor extends QinoqMorph {
         left: 0,
         right: CONSTANTS.BORDER_WIDTH,
         top: 0,
-        valueOf: (v) => v.left
+        valueOf: (value) => value.left
       }
     }));
 
@@ -142,7 +142,7 @@ export class InteractivesEditor extends QinoqMorph {
         left: CONSTANTS.BORDER_WIDTH,
         right: 0,
         top: 0,
-        valueOf: (v) => v.left
+        valueOf: (value) => value.left
       }
     });
     this.addMorph(this.ui.inspector);
@@ -155,7 +155,7 @@ export class InteractivesEditor extends QinoqMorph {
         left: 0,
         right: 0,
         top: CONSTANTS.BORDER_WIDTH,
-        valueOf: (v) => v.left
+        valueOf: (value) => value.left
       }
     });
     this.ui.menuBar.disableUIElements();
