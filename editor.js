@@ -38,7 +38,8 @@ const CONSTANTS = {
   MENU_BAR_WIDGET_WIDTH: 100,
   MENU_BAR_WIDGET_HEIGHT: 25,
   FONT_SIZE_TEXT: 18,
-  FONT_SIZE_HEADINGS: 20
+  FONT_SIZE_HEADINGS: 20,
+  SCROLL_BAR_HEIGHT: 10
 };
 CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
 CONSTANTS.TIMELINE_HEIGHT = CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT - CONSTANTS.MENU_BAR_HEIGHT;
@@ -231,7 +232,7 @@ export class InteractivesEditor extends QinoqMorph {
       this._latestSubWindowRatio = this.ui.subWindow.height / this.height;
     }
 
-    const topWindowHeight = this.ui.subWindow.top;
+    const topWindowHeight = this.ui.subWindow.top - CONSTANTS.SCROLL_BAR_HEIGHT;
 
     this.ui.interactiveGraph.extent = pt(this.ui.interactiveGraph.width, topWindowHeight);
 
