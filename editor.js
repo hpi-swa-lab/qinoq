@@ -557,11 +557,11 @@ export class InteractivesEditor extends QinoqMorph {
     }
     if (previouslyDisplayedTimeline) {
       disconnect(this.ui.window, 'extent', previouslyDisplayedTimeline, 'relayout');
-      disconnect(this, 'onScrollChange', previouslyDisplayedTimeline, 'onScrollChange');
+      disconnect(this, 'onScrollChange', previouslyDisplayedTimeline, 'updateRulerAndCursor');
     }
     this.updateZoomInputNumber(displayedTimeline.zoomFactor);
     connect(this.ui.window, 'extent', displayedTimeline, 'relayout').update(this.ui.window.extent);
-    connect(this, 'onScrollChange', displayedTimeline, 'onScrollChange').update(this.interactive.scrollPosition);
+    connect(this, 'onScrollChange', displayedTimeline, 'updateRulerAndCursor').update(this.interactive.scrollPosition);
     return displayedTimeline;
   }
 

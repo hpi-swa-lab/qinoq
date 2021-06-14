@@ -236,7 +236,7 @@ export class Timeline extends QinoqMorph {
     this.onLoadContent(content);
     this.initializeCursor();
     this.initializeRuler();
-    this.onScrollChange(this.interactive.scrollPosition);
+    this.updateRulerAndCursor(this.interactive.scrollPosition);
 
     connect(content, 'name', this, 'name', { converter: newName => `${newName.toLowerCase()} timeline` }).update(content.name);
     this._createOverviewLayers = false;
@@ -283,10 +283,10 @@ export class Timeline extends QinoqMorph {
     });
     this.updateScrollerExtent();
     if (this.ui.ruler) this.ui.ruler.updateExtent(this._activeAreaWidth);
-    if (this.ui.cursor) this.onScrollChange(this.interactive.scrollPosition);
+    if (this.ui.cursor) this.updateRulerAndCursor(this.interactive.scrollPosition);
   }
 
-  onScrollChange (scrollPosition) {
+  updateRulerAndCursor (scrollPosition) {
     this.ui.cursor.location = this.getPositionFromScroll(scrollPosition);
     this.ui.ruler.displayValue = this.getDisplayValueFromScroll(scrollPosition);
     this.ui.ruler.updateHeadPosition(this.ui.cursor.location);
@@ -383,7 +383,7 @@ export class Timeline extends QinoqMorph {
 
   abandon (bool) {
     super.abandon(bool);
-    disconnect(this.editor, 'onScrollChange', this, 'onScrollChange');
+    disconnect(this.editor, 'onScrollChange', this, 'updateRulerAndCursor');
     if (this.interactive) disconnect(this.interactive, 'name', this, 'name');
   }
 }
