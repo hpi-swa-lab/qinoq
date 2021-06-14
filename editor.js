@@ -21,6 +21,7 @@ import { error, success } from './utilities/messages.js';
 import { Canvas } from 'lively.components/canvas.js';
 import { TIMELINE_CONSTANTS } from './timeline/constants.js';
 import { LabeledCheckBox, DropDownSelector } from 'lively.components/widgets.js';
+import { ResizeablePanel } from './utilities/resizeable-panel.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
@@ -37,7 +38,8 @@ const CONSTANTS = {
   MENU_BAR_WIDGET_WIDTH: 100,
   MENU_BAR_WIDGET_HEIGHT: 25,
   FONT_SIZE_TEXT: 18,
-  FONT_SIZE_HEADINGS: 20
+  FONT_SIZE_HEADINGS: 20,
+  SCROLL_BAR_HEIGHT: 10
 };
 CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
 CONSTANTS.TIMELINE_HEIGHT = CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT - CONSTANTS.MENU_BAR_HEIGHT;
@@ -91,6 +93,9 @@ export class InteractivesEditor extends QinoqMorph {
           if (!this._deserializing) this.ui = {};
         }
       },
+      _latestSubWindowRatio: {
+        defaultValue: CONSTANTS.SUBWINDOW_HEIGHT / CONSTANTS.EDITOR_HEIGHT
+      },
       _snappingDisabled: {}
     };
   }
@@ -98,13 +103,13 @@ export class InteractivesEditor extends QinoqMorph {
   async initialize () {
     if ($world.get('lively top bar')) this.customizeTopBar();
     connect($world, 'onTopBarLoaded', this, 'customizeTopBar');
-    this.initializeLayout();
     this.ui.window = this.openInWindow({
       title: 'Interactives Editor',
       name: 'window for interactives editor',
       acceptsDrops: false
     });
     await this.initializePanels();
+    this.initializeLayout();
     connect(this.ui.window, 'close', this, 'abandon');
     connect(this.ui.window, 'position', this, 'positionChanged');
     connect(this.ui.window, 'minimized', this, 'onWindowMinimizedChange');
@@ -118,6 +123,8 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   async initializePanels () {
+    this.ui.preview = this.addMorph(new Preview({ _editor: this }));
+
     this.ui.interactiveGraph = this.addMorph(new InteractiveGraph({
       position: pt(0, 0),
       extent: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT),
@@ -130,8 +137,6 @@ export class InteractivesEditor extends QinoqMorph {
         valueOf: (value) => value.left
       }
     }));
-
-    this.ui.preview = this.addMorph(new Preview({ _editor: this }));
 
     this.ui.inspector = new InteractiveMorphInspector({
       position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0),
@@ -147,8 +152,19 @@ export class InteractivesEditor extends QinoqMorph {
     });
     this.addMorph(this.ui.inspector);
 
+    this.ui.subWindow = new SubWindow({
+      extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT),
+      resizers: { north: true }
+    });
+    connect(this.ui.subWindow, 'onResize', this, 'relayout', {
+      converter: '() => target.extent'
+    });
+    connect(this.ui.subWindow, 'onResizeEnd', this, 'relayout', {
+      converter: '() => target.extent'
+    });
+
     this.ui.menuBar = new MenuBar({
-      position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT),
+      extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.MENU_BAR_HEIGHT),
       _editor: this,
       borderWidth: {
         bottom: CONSTANTS.BORDER_WIDTH,
@@ -159,7 +175,7 @@ export class InteractivesEditor extends QinoqMorph {
       }
     });
     this.ui.menuBar.disableUIElements();
-    this.addMorph(this.ui.menuBar);
+    this.ui.subWindow.addMorph(this.ui.menuBar);
     connect(this, 'onDisplayedTimelineChange', this.ui.menuBar, 'onGlobalTimelineTab', {
       updater: `($update, displayedTimeline) => { 
         if (displayedTimeline == source.ui.globalTimeline) $update();
@@ -179,8 +195,6 @@ export class InteractivesEditor extends QinoqMorph {
 
     this.ui.tabContainer = await resource('part://tabs/tabs').read();
     Object.assign(this.ui.tabContainer, {
-      position: pt(0, CONSTANTS.SUBWINDOW_HEIGHT + CONSTANTS.MENU_BAR_HEIGHT),
-      extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.TIMELINE_HEIGHT),
       showNewTabButton: false,
       tabHeight: 28,
       visible: false
@@ -199,14 +213,41 @@ export class InteractivesEditor extends QinoqMorph {
     this.ui.globalTab.closeable = false;
     this.ui.globalTab.borderColor = COLOR_SCHEME.PRIMARY;
 
-    this.addMorph(this.ui.tabContainer);
+    this.ui.subWindow.addMorph(this.ui.tabContainer);
+    this.addMorph(this.ui.subWindow);
   }
 
   initializeLayout () {
-    this.layout = new ProportionalLayout({
-      lastExtent: this.extent
-    });
+    connect(this, 'extent', this, 'relayout');
     this.extent = pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.EDITOR_HEIGHT);
+  }
+
+  relayout (extent) {
+    if (!this.ui.subWindow.isResizing) {
+      this.ui.subWindow.extent = pt(extent.x, this.height * this._latestSubWindowRatio);
+      this.ui.subWindow.position = pt(0, extent.y - this.ui.subWindow.height);
+    } else {
+      // remember the ratio between top and sub window
+      // so we can keep that ratio when resizing the window
+      this._latestSubWindowRatio = this.ui.subWindow.height / this.height;
+    }
+
+    const topWindowHeight = this.ui.subWindow.top - CONSTANTS.SCROLL_BAR_HEIGHT;
+
+    this.ui.interactiveGraph.extent = pt(this.ui.interactiveGraph.width, topWindowHeight);
+
+    this.ui.inspector.position = pt(extent.x - this.ui.inspector.width, 0);
+    this.ui.inspector.extent = pt(this.ui.inspector.width,
+      topWindowHeight);
+
+    this.ui.preview.extent =
+      pt(extent.x - this.ui.interactiveGraph.width - this.ui.inspector.width,
+        topWindowHeight);
+    this.ui.preview.position =
+      pt(this.ui.interactiveGraph.right +
+        (this.ui.inspector.left -
+         this.ui.interactiveGraph.right -
+         this.ui.preview.width) / 2, 0);
   }
 
   async createInteractiveWithNamePrompt () {
@@ -251,6 +292,7 @@ export class InteractivesEditor extends QinoqMorph {
 
     connect(this.interactive, 'remove', this, 'reset');
     connect(this.interactive, '_length', this.ui.menuBar.ui.scrollPositionInput, 'max').update(this.interactive.length);
+    // TODO: let this work with zoom
     connect(this.ui.preview, 'extent', this.interactive, 'extent');
     connect(this.interactive, 'interactiveZoomed', this, 'onInteractiveZoomed');
 
@@ -262,16 +304,7 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   onInteractiveZoomed () {
-    const previewExtent = this.ui.preview.extent;
-
-    // only show scrollbars if they are necessary
-    if (this.interactive.extent.x >= previewExtent.x) {
-      this.ui.preview.clipMode = 'scroll';
-    }
-    if (this.interactive.extent.y >= previewExtent.y) {
-      this.ui.preview.clipMode = 'scroll';
-    }
-    if (!(this.interactive.extent.x > previewExtent.x) && !(this.interactive.extent.y > previewExtent.y)) this.ui.preview.clipMode = 'hidden';
+    this.ui.preview.updateScrollbarVisibility();
   }
 
   // call this to propagate changes to the scrollPosition to the actual interactive
@@ -998,7 +1031,12 @@ class Preview extends QinoqMorph {
         defaultValue: 'preview'
       },
       extent: {
-        defaultValue: pt(CONSTANTS.PREVIEW_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT)
+        defaultValue: pt(CONSTANTS.PREVIEW_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT),
+        after: ['_editor', 'ui'],
+        set (extent) {
+          this.setProperty('extent', extent);
+          if (!this._deserializing) this.updateScrollbarVisibility();
+        }
       },
       borderColor: {
         defaultValue: COLOR_SCHEME.ON_BACKGROUND_DARKER_VARIANT
@@ -1114,6 +1152,20 @@ class Preview extends QinoqMorph {
 
   removeAnimationPreview () {
     this.animationPreview = null;
+  }
+
+  updateScrollbarVisibility () {
+    if (!this.interactive) return;
+
+    // only show scrollbars if they are necessary
+    if (this.interactive.width >= this.width ||
+        this.interactive.height >= this.height) {
+      this.clipMode = 'scroll';
+    }
+    if (!(this.interactive.width > this.width) &&
+        !(this.interactive.height > this.height)) {
+      this.clipMode = 'hidden';
+    }
   }
 }
 
@@ -1454,6 +1506,22 @@ class MenuBar extends QinoqMorph {
     });
     this.ui.zoomInput.borderColor = COLOR_SCHEME.PRIMARY;
     this.ui.scrollPositionInput.borderColor = COLOR_SCHEME.PRIMARY;
+  }
+}
+
+class SubWindow extends ResizeablePanel {
+  relayout () {
+    super.relayout();
+
+    const menuBar = this.get('menu bar');
+    const tabs = this.get('aTabs');
+
+    if (!menuBar || !tabs) return;
+
+    menuBar.position = pt(0, 0);
+    menuBar.extent = pt(this.width, menuBar.height);
+    tabs.position = pt(0, menuBar.height);
+    tabs.extent = pt(this.width, this.height - menuBar.height);
   }
 }
 
