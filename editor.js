@@ -304,16 +304,7 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   onInteractiveZoomed () {
-    const previewExtent = this.ui.preview.extent;
-
-    // only show scrollbars if they are necessary
-    if (this.interactive.extent.x >= previewExtent.x) {
-      this.ui.preview.clipMode = 'scroll';
-    }
-    if (this.interactive.extent.y >= previewExtent.y) {
-      this.ui.preview.clipMode = 'scroll';
-    }
-    if (!(this.interactive.extent.x > previewExtent.x) && !(this.interactive.extent.y > previewExtent.y)) this.ui.preview.clipMode = 'hidden';
+    this.ui.preview.updateScrollbarVisibility();
   }
 
   // call this to propagate changes to the scrollPosition to the actual interactive
@@ -1040,7 +1031,12 @@ class Preview extends QinoqMorph {
         defaultValue: 'preview'
       },
       extent: {
-        defaultValue: pt(CONSTANTS.PREVIEW_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT)
+        defaultValue: pt(CONSTANTS.PREVIEW_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT),
+        after: ['_editor', 'ui'],
+        set (extent) {
+          this.setProperty('extent', extent);
+          if (!this._deserializing) this.updateScrollbarVisibility();
+        }
       },
       borderColor: {
         defaultValue: COLOR_SCHEME.ON_BACKGROUND_DARKER_VARIANT
@@ -1156,6 +1152,20 @@ class Preview extends QinoqMorph {
 
   removeAnimationPreview () {
     this.animationPreview = null;
+  }
+
+  updateScrollbarVisibility () {
+    if (!this.interactive) return;
+
+    // only show scrollbars if they are necessary
+    if (this.interactive.width >= this.width ||
+        this.interactive.height >= this.height) {
+      this.clipMode = 'scroll';
+    }
+    if (!(this.interactive.width > this.width) &&
+        !(this.interactive.height > this.height)) {
+      this.clipMode = 'hidden';
+    }
   }
 }
 
