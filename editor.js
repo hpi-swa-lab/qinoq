@@ -163,7 +163,7 @@ export class InteractivesEditor extends QinoqMorph {
     });
 
     this.ui.menuBar = new MenuBar({
-      extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.MENU_BAR_HEIGHT)
+      extent: pt(CONSTANTS.EDITOR_WIDTH, CONSTANTS.MENU_BAR_HEIGHT),
       _editor: this,
       borderWidth: {
         bottom: CONSTANTS.BORDER_WIDTH,
@@ -242,7 +242,6 @@ export class InteractivesEditor extends QinoqMorph {
     this.ui.preview.extent =
       pt(extent.x - this.ui.interactiveGraph.width - this.ui.inspector.width,
         topWindowHeight);
-    debugger;
     this.ui.preview.position =
       pt(this.ui.interactiveGraph.right +
         (this.ui.inspector.left -
