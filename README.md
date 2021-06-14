@@ -102,3 +102,9 @@ Morphs can simply be added by calling `addMorph` on a sequence. The following me
 - `onInteractiveScrollChange(scrollPosition)` when the scrollPosition in the interactive is changed
 - `onSequenceEnter` is always called when the sequence is now drawn and was previously not drawn. Note that this may also happen when the user scrolls backwards
 - `onSequenceLeave` is called whenever the sequence was previously drawn but is no longer drawn
+
+## Bundling
+
+Interactives can be bundled as any other morph in `lively.next`. However, there is one catch that one needs to be aware of:
+If an Interctive was resized, **one needs to scroll through the whole interactive once before bundling**.
+Otherwise, not all sequences are updated with the correct extent and the bundled interactive will look off.
