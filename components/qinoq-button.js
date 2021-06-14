@@ -93,7 +93,7 @@ export class QinoqButton extends Label {
   updateStyle () {
     if (!this.enabled) {
       this.fill = COLOR_SCHEME.SURFACE_VARIANT;
-      this.fontColor = COLOR_SCHEME.ON_SURFACE;
+      this.fontColor = COLOR_SCHEME.ON_SURFACE_DARKER_VARIANT;
       return;
     }
 
