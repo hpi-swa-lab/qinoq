@@ -133,7 +133,7 @@ export class InteractiveGraph extends QinoqMorph {
           parent.children = this.generateChildrenOfNode(parent.target);
         }
       }
-      this.tree.update();
+      this.tree.update(false, false);
     }
     this.tree.scroll = previousScroll;
   }
@@ -296,7 +296,7 @@ export class InteractiveGraph extends QinoqMorph {
       let parentNode = find(this.tree.treeData.root, (node) => node.children.includes(uncollapseNode), this.childGetter);
       if (parentNode && !visitedNodes.has(parentNode)) nodesToUncollapse.push(parentNode);
     }
-    this.tree.update();
+    this.tree.update(false, false);
   }
 
   unHighlightAll () {
@@ -309,7 +309,7 @@ export class InteractiveGraph extends QinoqMorph {
     this.tree.treeData.asList().forEach(node =>
       node.isCollapsed = this._collapseState.has(node) ? this._collapseState.get(node) : true);
     delete this._collapseState;
-    this.tree.update();
+    this.tree.update(false, false);
   }
 
   get childGetter () {
@@ -322,8 +322,8 @@ class QinoqTree extends InteractiveTree {
     // prevent onHoverOut in InteractiveTree, which triggers selection
   }
 
-  update (force) {
-    this._inUpdate = true;
+  update (force, updatingSelection = true) {
+    if (!updatingSelection) this._inUpdate = true;
     super.update(force);
     delete this._inUpdate;
   }
