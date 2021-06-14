@@ -1,6 +1,7 @@
-import { Morph } from 'lively.morphic';
 import { pt, Color } from 'lively.graphics';
 import { connect, disconnectAll } from 'lively.bindings';
+import { DeserializationAwareMorph } from './deserialization-morph.js';
+import { Morph } from 'lively.morphic';
 
 const CONSTANTS = {
   DEFAULT_RESIZER_WIDTH: 4
@@ -12,7 +13,7 @@ These can be individually enabled programmatically and are layouted correctly wh
 E.g. the north resizer will position itself always at the top of the panels on resizements.
 It can be used e.g. as a container when creating applications with resizable sub-windows.
 */
-export class ResizeablePanel extends Morph {
+export class ResizeablePanel extends DeserializationAwareMorph {
   static get properties () {
     return {
       ui: {
@@ -41,7 +42,7 @@ export class ResizeablePanel extends Morph {
               }
             : resizersOrBoolean;
           this.setProperty('resizers', resizers);
-          this.updateResizers();
+          if (!this._deserializing) this.updateResizers();
         }
       },
       extent: {
@@ -206,7 +207,7 @@ export class ResizeablePanel extends Morph {
   }
 
   relayout () {
-    Object.keys(this.ui.resizers).forEach(side => {
+    Object.keys(this.ui.resizers).filter(key => key != '_rev').forEach(side => {
       const resizer = this.ui.resizers[side];
       switch (side) {
         case 'north':
