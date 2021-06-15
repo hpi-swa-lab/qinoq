@@ -34,7 +34,7 @@ Closes [fill in your issues here]
 - [ ] a new scrollytelling can be created with a button
 - [ ] can be loaded in the editor via drag and drop
 - [ ] an interactive can be grabbed out of the editor and placed in the world with both the editor and interactive still working. The editor is cleared
-- [ ] when the interactive is loaded into the preview, one can zoom in/ out of it by using Ctrl + Mousewheel over it
+- [ ] when the interactive is loaded into the interactive holder, one can zoom in/ out of it by using Ctrl + Mousewheel over it
 
 ### TimelineLayer
 
@@ -113,7 +113,7 @@ Closes [fill in your issues here]
 - [ ] when clicking on a single keyframe this one is highlighted with a blue border
 - [ ] clicking the buttons in the MenuBar sets the ScrollPosition to the beginning/end of the sequence and to the prev/next keyframe
 - [ ] when changing the zoom factor with the input field, the length of the active area adapt accordingly as well as the position of the keyframes and the cursor updates its position
-- [ ] hovering over a property layer that animates position (e.g. position on sun), a graph in the preview is shown that displays the positions of the keyframes and lines between them
+- [ ] hovering over a property layer that animates position (e.g. position on sun), a graph in the interactive holder is shown that displays the positions of the keyframes and lines between them
 - [ ] it is possible to select more than one keyframe using `Alt`
 - [ ] when more than two keyframes are selected, the context menu allows changing of relative positions, where entering a relative position changes the position of all selected keyframes - this works with all menu items and is undoable as expected (one undo for all selected keyframes)
 - [ ] having more than one keyframe selected and dragging one moves all keyframes, this is undoable
