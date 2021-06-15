@@ -613,12 +613,12 @@ export class PropertyTimelineLayer extends SequenceTimelineLayer {
 
   onHoverIn () {
     if (this.animation.property == 'position') {
-      this.editor.ui.preview.addAnimationPreview(this.animation);
+      this.editor.ui.interactiveHolder.addAnimationPreview(this.animation);
     }
   }
 
   onHoverOut () {
-    this.editor.ui.preview.removeAnimationPreview();
+    this.editor.ui.interactiveHolder.removeAnimationPreview();
   }
 
   __after_deserialize__ (snapshot, ref, pool) {

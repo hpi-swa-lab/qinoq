@@ -27,7 +27,7 @@ import { LottieMorph } from './interactive-morphs/lottie-morph.js';
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,
   EDITOR_HEIGHT: 569,
-  PREVIEW_WIDTH: 533,
+  INTERACTIVE_HOLDER_WIDTH: 533,
   SUBWINDOW_HEIGHT: 300,
   BORDER_WIDTH: 1,
   MENU_BAR_HEIGHT: 38,
@@ -41,7 +41,7 @@ const CONSTANTS = {
   FONT_SIZE_TEXT: 18,
   FONT_SIZE_HEADINGS: 20
 };
-CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.PREVIEW_WIDTH) / 2;
+CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.INTERACTIVE_HOLDER_WIDTH) / 2;
 CONSTANTS.TIMELINE_HEIGHT = CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT - CONSTANTS.MENU_BAR_HEIGHT;
 CONSTANTS.MENU_BAR_WIDGET_EXTENT = pt(CONSTANTS.MENU_BAR_WIDGET_WIDTH, CONSTANTS.MENU_BAR_WIDGET_HEIGHT);
 
@@ -90,7 +90,7 @@ export class InteractivesEditor extends QinoqMorph {
       ui: {
         /*
         * Keys:
-        * globalTab, globalTimeline, inspector, menuBar, preview, sequenceOverview, tabContainer, window, settings
+        * globalTab, globalTimeline, inspector, menuBar, interactiveHolder, sequenceOverview, tabContainer, window, settings
         */
         initialize () {
           if (!this._deserializing) this.ui = {};
@@ -136,10 +136,10 @@ export class InteractivesEditor extends QinoqMorph {
       }
     }));
 
-    this.ui.preview = this.addMorph(new Preview({ _editor: this }));
+    this.ui.interactiveHolder = this.addMorph(new InteractiveHolder({ _editor: this }));
 
     this.ui.inspector = new InteractiveMorphInspector({
-      position: pt(CONSTANTS.PREVIEW_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0),
+      position: pt(CONSTANTS.INTERACTIVE_HOLDER_WIDTH + CONSTANTS.SIDEBAR_WIDTH, 0),
       extent: pt(CONSTANTS.SIDEBAR_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT),
       _editor: this,
       borderWidth: {
@@ -232,7 +232,7 @@ export class InteractivesEditor extends QinoqMorph {
 
   initializeInteractive (interactive) {
     if (!interactive) return;
-    this.ui.preview.loadContent(interactive);
+    this.ui.interactiveHolder.loadContent(interactive);
     this.ui.globalTimeline.loadContent(interactive);
     this.ui.interactiveGraph.buildTree();
 
@@ -256,7 +256,7 @@ export class InteractivesEditor extends QinoqMorph {
 
     connect(this.interactive, 'remove', this, 'reset');
     connect(this.interactive, '_length', this.ui.menuBar.ui.scrollPositionInput, 'max').update(this.interactive.length);
-    connect(this.ui.preview, 'extent', this.interactive, 'extent');
+    connect(this.ui.interactiveHolder, 'extent', this.interactive, 'extent');
     connect(this.interactive, 'interactiveZoomed', this, 'onInteractiveZoomed');
 
     connect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
@@ -267,7 +267,7 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   onInteractiveZoomed () {
-    this.ui.preview.updateScrollbarVisibility();
+    this.ui.interactiveHolder.updateScrollbarVisibility();
   }
 
   // call this to propagate changes to the scrollPosition to the actual interactive
@@ -322,14 +322,14 @@ export class InteractivesEditor extends QinoqMorph {
     });
 
     this.interactive.scrollOverlay.scrollToResize = false;
-    this.ui.preview.clipMode = 'hidden';
+    this.ui.interactiveHolder.clipMode = 'hidden';
 
     disconnect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
 
     disconnect(this.interactive, 'name', this.ui.globalTimeline, 'name');
     disconnect(this.interactive, 'remove', this, 'reset');
 
-    disconnect(this.ui.preview, 'extent', this.interactive, 'extent');
+    disconnect(this.ui.interactiveHolder, 'extent', this.interactive, 'extent');
     disconnect(this.interactive, 'interactiveZoomed', this, 'onInteractiveZoomed');
 
     disconnect(this.interactive, 'name', this.ui.globalTab, 'caption');
@@ -362,7 +362,7 @@ export class InteractivesEditor extends QinoqMorph {
     this.ui.interactiveGraph.removeTree();
     this.ui.interactiveGraph.removeConnections();
 
-    this.ui.preview.showEmptyPreviewPlaceholder();
+    this.ui.interactiveHolder.showEmptyInteractiveHolderPlaceholder();
     this.ui.menuBar.disableUIElements();
     this.updateZoomInputNumber(1);
     this.internalScrollChangeWithGUIUpdate(0);
@@ -984,17 +984,17 @@ export class InteractivesEditor extends QinoqMorph {
   }
 }
 
-class Preview extends QinoqMorph {
+class InteractiveHolder extends QinoqMorph {
   static get properties () {
     return {
       acceptsDrops: {
         defaultValue: true
       },
       name: {
-        defaultValue: 'preview'
+        defaultValue: 'interactive holder'
       },
       extent: {
-        defaultValue: pt(CONSTANTS.PREVIEW_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT),
+        defaultValue: pt(CONSTANTS.INTERACTIVE_HOLDER_WIDTH, CONSTANTS.SUBWINDOW_HEIGHT),
         after: ['_editor', 'ui'],
         set (extent) {
           this.setProperty('extent', extent);
@@ -1016,7 +1016,7 @@ class Preview extends QinoqMorph {
       _editor: {
         set (editor) {
           this.setProperty('_editor', editor);
-          this.showEmptyPreviewPlaceholder();
+          this.showEmptyInteractiveHolderPlaceholder();
         }
       },
       animationPreview: {
@@ -1062,7 +1062,7 @@ class Preview extends QinoqMorph {
     this.clipMode = 'hidden';
   }
 
-  showEmptyPreviewPlaceholder () {
+  showEmptyInteractiveHolderPlaceholder () {
     this.submorphs = [];
 
     const placeholderColor = COLOR_SCHEME.ON_SURFACE_VARIANT;
