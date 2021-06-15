@@ -9,7 +9,8 @@ import { SequenceTimelineLayerInfo, GlobalTimelineLayerInfo } from './layer-info
 import { COLOR_SCHEME } from '../colors.js';
 import { arr } from 'lively.lang';
 import { singleSelectKeyPressed, zoomKeyPressed } from '../keys.js';
-import { Sequence, Keyframe } from '../index.js';
+import { Keyframe } from '../animations.js';
+import { Sequence } from '../interactive.js';
 import { EasingSelection } from '../components/easing-selection.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 import { error } from '../utilities/messages.js';
