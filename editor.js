@@ -1119,7 +1119,6 @@ class Preview extends QinoqMorph {
 
   updateScrollbarVisibility () {
     if (!this.interactive) return;
-
     // only show scrollbars if they are necessary
     if (this.interactive.width >= this.width ||
         this.interactive.height >= this.height) {
