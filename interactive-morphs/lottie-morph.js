@@ -8,7 +8,7 @@ export class LottieMorph extends HTMLMorph {
     return {
       animationDataUrl: {
         copyAssetOnFreeze: true,
-        async set (url) {
+        set (url) {
           if (!url.startsWith(document.location.origin) && !url.startsWith('http')) {
             let baseUrl;
             if (url.startsWith('/')) baseUrl = document.location.origin;
@@ -23,8 +23,10 @@ export class LottieMorph extends HTMLMorph {
           }
           this.setProperty('animationDataUrl', url);
           this.lottieAnimation = null;
-          this.animationData = this.fixAssets(await resource(url).readJson(), url);
-          this.initialize();
+          resource(url).readJson().then((animData) => {
+            this.animationData = this.fixAssets(animData, url);
+            this.initialize();
+          });
         }
       },
       progress: {
@@ -51,7 +53,13 @@ export class LottieMorph extends HTMLMorph {
     return true;
   }
 
-  onLoad () {
+  // This was previously onLoad. Right now it allows us to mitigate a race condition.
+  // The race condition was introduced due to missing instrumentation of custom packages by the lively freezer.
+  // The missing instrumentation lead to the initialization order of the morph not being correct.
+  // There will be a fix in upstream lively for this. After the fix, this can be changed back.
+  onOwnerChanged (newOwner) {
+    if (!newOwner) return;
+
     if (!this.animationDataUrl) {
       this.animationDataUrl = 'https://assets6.lottiefiles.com/datafiles/AtGF4p7zA8LpP2R/data.json';
       if (!this.tooltip) {
