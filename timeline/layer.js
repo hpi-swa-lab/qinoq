@@ -1,7 +1,7 @@
 import { COLOR_SCHEME } from '../colors.js';
 import { pt, Color } from 'lively.graphics';
 import { connect, disconnect } from 'lively.bindings';
-import { Canvas } from 'lively.components/canvas.js';
+
 import { animatedProperties, getColorForProperty } from '../properties.js';
 import { TimelineKeyframe, KeyframeLine } from './keyframe.js';
 import { QinoqMorph } from '../qinoq-morph.js';

@@ -1,6 +1,5 @@
 import { StatusMessage } from 'lively.halos';
 import { Icon } from 'lively.morphic';
-import { Color } from 'lively.graphics';
 
 export function error (message = 'Error!', props = {}) {
   const { color = Color.red, delay = 4000 } = props;

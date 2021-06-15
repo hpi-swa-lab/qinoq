@@ -1,7 +1,5 @@
-import { VerticalLayout, Icon, Label } from 'lively.morphic';
-import { pt, rect } from 'lively.graphics';
+import { VerticalLayout, Label } from 'lively.morphic';
 import { COLOR_SCHEME } from '../colors.js';
-import { Sequence } from '../interactive.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 import { QinoqButton } from '../components/qinoq-button.js';
 import { TIMELINE_CONSTANTS } from './constants.js';
