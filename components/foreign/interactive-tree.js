@@ -1,9 +1,9 @@
 import { Tree, TreeData } from 'lively.components/tree.js';
-import { morph, Icon, HorizontalLayout, easings, Morph } from 'lively.morphic/index.js';
+import { morph, Icon, easings, Morph } from 'lively.morphic/index.js';
 import { Color, Rectangle, rect, pt } from 'lively.graphics/index.js';
-import { connect, noUpdate, disconnect, disconnectAll, once } from 'lively.bindings/index.js';
-import { arr, num, fun, tree, promise } from 'lively.lang/index.js';
-import { ConnectionHalo } from 'lively.ide/fabrik.js';
+import { noUpdate } from 'lively.bindings/index.js';
+import { arr, fun, tree } from 'lively.lang/index.js';
+
 import { getClassName } from 'lively.serializer2';
 
 export class InteractiveTreeContainer extends Morph {
