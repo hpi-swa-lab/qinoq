@@ -51,7 +51,7 @@ describe('Interactive graph', () => {
     const newSequence = editor.execCommand('create new sequence', {});
     expect(interactive.sequences).to.include(newSequence);
     let nodeSequences = nodes().filter(node => node.target.isSequence).map(node => node.target);
-    expect(interactive.sequences).to.be.equal(nodeSequences);
+    expect(interactive.sequences).to.have.members(nodeSequences);
     interactive.removeSequence(newSequence);
     nodeSequences = nodes().filter(node => node.target.isSequence).map(node => node.target);
     expect(interactive.sequences).to.be.equal(nodeSequences);
