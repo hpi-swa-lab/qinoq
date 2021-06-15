@@ -1,8 +1,7 @@
 import { Morph, ShadowObject, HorizontalLayout, Label, VerticalLayout, easings, stringToEasing } from 'lively.morphic';
 import { pt } from 'lively.graphics';
-
 import { Canvas } from 'lively.components/canvas.js';
-import { Keyframe } from 'qinoq';
+import { Keyframe } from '../animations.js';
 import { Button } from 'lively.components';
 import { promise } from 'lively.lang';
 import { SearchField } from 'lively.components/widgets.js';
