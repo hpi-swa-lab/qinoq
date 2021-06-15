@@ -437,7 +437,7 @@ class InteractiveScrollHolder extends Morph {
     this.opacity = 1;
     this.clipMode = 'hidden';
     if (!this.passThroughMorph) {
-      const targetMorph = this.getUnderlyingMorph(event.hand.position);
+      const targetMorph = this.getUnderlyingMorph(event.hand.globalPosition);
       this.delegatedTarget = undefined;
       if (targetMorph.draggable) {
         this.delegatedTarget = targetMorph;
@@ -499,7 +499,7 @@ class InteractiveScrollHolder extends Morph {
 
   onMouseDown (event) {
     super.onMouseDown(event);
-    this.currentMouseTarget = this.getUnderlyingMorph(event.hand.position);
+    this.currentMouseTarget = this.getUnderlyingMorph(event.hand.globalPosition);
 
     // allows to select text in text morphs by dragging in sequence view
     if (!this.passThroughMorph || this.topbar.editMode == 'Halo' || this.topbar.editMode == 'Hand') this.updateEventDispatcherState();
@@ -516,14 +516,14 @@ class InteractiveScrollHolder extends Morph {
       isClickTarget: () => false,
       targetMorph: target,
       position: $world.firstHand.position,
-      positionIn: (morph) => morph.localize($world.firstHand.position),
+      positionIn: (morph) => morph.localize($world.firstHand.globalPosition),
       state: {}
     };
   }
 
   onMouseMove (event) {
     // for not absolutely clear reasons it is important that this comes before the hover handling
-    this.currentMouseTarget = this.getUnderlyingMorph(event.hand.position);
+    this.currentMouseTarget = this.getUnderlyingMorph(event.hand.globalPosition);
     this.updateEventDispatcherState();
     if (!this.currentMouseTarget) return;
 
@@ -545,7 +545,7 @@ class InteractiveScrollHolder extends Morph {
   }
 
   onMouseUp (event) {
-    this.getUnderlyingMorph(event.hand.position).onMouseUp(event);
+    this.getUnderlyingMorph(event.hand.globalPosition).onMouseUp(event);
   }
 
   get tooltipViewer () {
@@ -567,7 +567,7 @@ class InteractiveScrollHolder extends Morph {
   }
 
   onContextMenu (event) {
-    const underlyingMorph = this.getUnderlyingMorph(event.hand.position);
+    const underlyingMorph = this.getUnderlyingMorph(event.hand.globalPosition);
     event.targetMorphs.unshift(underlyingMorph);
     underlyingMorph.onContextMenu(event);
   }
