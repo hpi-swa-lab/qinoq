@@ -50,6 +50,9 @@ export class InteractivesEditor extends QinoqMorph {
         set (interactive) {
           if (this._deserializing) {
             this.setProperty('interactive', interactive);
+            if (interactive) {
+              this.ui.interactiveGraph.buildTree();
+            }
             return;
           }
           this.clearInteractive();
