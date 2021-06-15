@@ -2,7 +2,7 @@ import { HorizontalLayout, Label } from 'lively.morphic';
 import { pt } from 'lively.graphics';
 import { COLOR_SCHEME } from '../colors.js';
 import { disconnect, connect } from 'lively.bindings';
-import { Sequence } from '../index.js';
+import { Sequence } from '../interactive.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 import { resource } from 'lively.resources';
 import { TargetPicker } from './target-picker.js';

@@ -1,4 +1,5 @@
-import { Sequence, Interactive, Layer, PointAnimation, NumberAnimation, ColorAnimation, Keyframe } from './index.js';
+import { Sequence, Interactive, Layer } from './interactive.js';
+import { PointAnimation, NumberAnimation, ColorAnimation, Keyframe } from './animations.js';
 import { Morph, Image, Ellipse, Polygon } from 'lively.morphic';
 import { Color, pt } from 'lively.graphics';
 import { LottieMorph } from './interactive-morphs/lottie-morph.js';

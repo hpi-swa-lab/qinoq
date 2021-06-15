@@ -6,7 +6,6 @@ import { InteractiveMorphInspector } from './inspector/index.js';
 import { resource } from 'lively.resources';
 import { arr } from 'lively.lang';
 import { GlobalTimeline, SequenceTimeline } from './timeline/index.js';
-import { Sequence, LottieMorph, Keyframe, NumberAnimation, Interactive, Layer } from './index.js';
 import { NumberWidget } from 'lively.ide/value-widgets.js';
 
 import { arrowRightPressed, arrowLeftPressed } from './keys.js';
@@ -21,6 +20,9 @@ import { error, success } from './utilities/messages.js';
 import { Canvas } from 'lively.components/canvas.js';
 import { TIMELINE_CONSTANTS } from './timeline/constants.js';
 import { LabeledCheckBox, DropDownSelector } from 'lively.components/widgets.js';
+import { NumberAnimation, Keyframe } from './animations.js';
+import { Layer, Sequence, Interactive } from './interactive.js';
+import { LottieMorph } from './interactive-morphs/lottie-morph.js';
 
 const CONSTANTS = {
   EDITOR_WIDTH: 1000,

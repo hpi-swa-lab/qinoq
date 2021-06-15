@@ -2,7 +2,7 @@ import { Button } from 'lively.components';
 import { rect, pt } from 'lively.graphics';
 import { Icon } from 'lively.morphic';
 import { InteractiveMorphSelector } from 'lively.halos';
-import { Sequence } from '../index.js';
+import { Sequence } from '../interactive.js';
 import { CONSTANTS } from './constants.js';
 
 export class TargetPicker extends Button {
