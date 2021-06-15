@@ -363,26 +363,26 @@ describe('Editor', () => {
     });
   });
 
-  describe('with Interactive in Preview', () => {
+  describe('with Interactive in InteractiveHolder', () => {
     beforeEach(async () => {
       closeEditor();
       editor = await new InteractivesEditor().initialize();
       interactive = await exampleInteractive();
     });
 
-    it('resizes interactive without aspect ratio to fit preview exactly', () => {
+    it('resizes interactive without aspect ratio to fit interactive holder exactly', () => {
       interactive.fixedAspectRatio = null;
       interactive.extent = pt(500, 500);
-      const previewExtent = pt(editor.ui.preview.extent.x, editor.ui.preview.extent.y);
+      const interactiveHolderExtent = pt(editor.ui.interactiveHolder.extent.x, editor.ui.interactiveHolder.extent.y);
       editor.interactive = interactive;
-      expect(interactive.extent).to.be.equal(previewExtent);
+      expect(interactive.extent).to.be.equal(interactiveHolderExtent);
     });
 
-    it('resizes interactive with fixed aspect ratio to same height as preview', () => {
+    it('resizes interactive with fixed aspect ratio to same height as interactive holder', () => {
       interactive.fixedAspectRatio = 16 / 9;
-      const previewHeight = editor.ui.preview.extent.y;
+      const interactiveHolderHeight = editor.ui.interactiveHolder.extent.y;
       editor.interactive = interactive;
-      expect(interactive.height).to.be.equal(previewHeight);
+      expect(interactive.height).to.be.equal(interactiveHolderHeight);
     });
 
     it('allows to zoom in the interactive', () => {

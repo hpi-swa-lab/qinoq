@@ -40,7 +40,7 @@ interactive.openInWorld();  // optional: opens interactive as morph in the world
 
 /* load interactive into editor */
 editor.interactive = interactive;  // alternatively, you can grab-and-drop
-                                   // the opened interactive into the preview of the editor
+                                   // the opened interactive into the Interactive Holder of the editor
                                    // (via the "grab"-halo)
 ```
 
