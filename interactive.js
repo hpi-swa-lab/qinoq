@@ -279,6 +279,7 @@ export class Interactive extends DeserializationAwareMorph {
     this.updateInteractiveLength();
     signal(this, 'onSequenceAddition', sequence);
     connect(this, 'extent', sequence, 'extent');
+    this.sortSequences();
   }
 
   removeSequence (sequence) {
