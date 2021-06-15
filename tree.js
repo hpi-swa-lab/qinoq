@@ -24,6 +24,7 @@ export class InteractiveGraph extends QinoqMorph {
       },
       tree: {},
       _editor: {
+        after: ['submorphs'],
         set (_editor) {
           this.setProperty('_editor', _editor);
           this.build();
@@ -47,6 +48,7 @@ export class InteractiveGraph extends QinoqMorph {
   }
 
   buildSearchField () {
+    if (this.searchField) this.searchField.remove();
     this.searchField = new SearchField(
       {
         fontColor: COLOR_SCHEME.ON_BACKGROUND,
