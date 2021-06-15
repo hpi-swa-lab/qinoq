@@ -1,6 +1,6 @@
 import { Label, Icon } from 'lively.morphic';
 import { string } from 'lively.lang';
-import { COLOR_SCHEME } from '../colors.js';
+
 import { error } from '../utilities/messages.js';
 
 export const PRESETS = {
