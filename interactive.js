@@ -642,10 +642,16 @@ export class Sequence extends DeserializationAwareMorph {
   static get properties () {
     return {
       start: {
+        set (start) {
+          this.setProperty('start', Math.round(start));
+        },
         defaultValue: 0
       },
       duration: {
         defaultValue: 0,
+        set (duration) {
+          this.setProperty('duration', Math.round(duration));
+        },
         isFloat: false
       },
       _progress: {
