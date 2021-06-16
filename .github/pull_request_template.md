@@ -78,10 +78,10 @@ Closes [fill in your issues here]
 
 - [ ] the tree sequence is resizable both left and right, this can be reversed
 - [ ] when 3 sequences are selected and one tries to resize all get deselected except the one that gets resized
-- [ ] the day sequence can't be dragged or resized onto the night sequence, instead it will snap to the night sequence and the snap indicator is shown
+- [ ] the day background sequence can't be dragged or resized onto the night sequence, instead it will snap to the night sequence and the snap indicator is shown
   - [ ] snapping may be disabled with the snap toggle button in the menu bar
   - [ ] toggling the button again enables snapping
-- [ ] the day sequence can be dragged to the middle layer onto a free spot
+- [ ] the day background sequence can be dragged to the middle layer onto a free spot
 - [ ] the night sequence can't be dragged or resized beyond the left timeline bounds
 - [ ] when clicking the "Add Sequence" button a sequence is in the hand, which can only be dropped on a timelineLayer and changes color when you are not able to place the sequence
   - [ ] this can be cancelled by pressing ESC
