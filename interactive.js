@@ -746,7 +746,7 @@ export class Sequence extends DeserializationAwareMorph {
   }
 
   isDisplayed () {
-    return this.progress >= 0 && this.progress < 1 && !this.layer.hidden && !this.isHidden;
+    return this.progress >= 0 && this.progress <= 1 && !this.layer.hidden && !this.isHidden;
   }
 
   toggleHide () {

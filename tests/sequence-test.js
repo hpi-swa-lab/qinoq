@@ -33,6 +33,8 @@ describe('Sequence object', () => {
     sequence.updateProgress(0);
     expect(sequence.isDisplayed()).to.be.true;
     sequence.updateProgress(10);
+    expect(sequence.isDisplayed()).to.be.true;
+    sequence.updateProgress(15);
     expect(sequence.isDisplayed()).to.be.false;
     sequence.layer.hidden = true;
     sequence.updateProgress(0);
