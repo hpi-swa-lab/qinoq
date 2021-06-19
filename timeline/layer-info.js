@@ -158,6 +158,10 @@ export class SequenceTimelineLayerInfo extends TimelineLayerInfo {
     return true;
   }
 
+  get sequence () {
+    return this.timeline.sequence;
+  }
+
   updateLabel () {
     if (this.timelineLayer.isOverviewLayer) {
       this.name = this.morph.name;
@@ -212,6 +216,22 @@ export class SequenceTimelineLayerInfo extends TimelineLayerInfo {
     }
   }
 
+  bringMorphToFront () {
+    this.sequence.addMorphAt(this.morph, this.sequence.submorphs.length);
+  }
+
+  bringMorphForward () {
+    this.sequence.addMorphAt(this.morph, this.sequence.submorphs.indexOf(this.morph) + 2);
+  }
+
+  sendMorphBackward () {
+    this.sequence.addMorphAt(this.morph, this.sequence.submorphs.indexOf(this.morph) - 1);
+  }
+
+  sendMorphToBack () {
+    this.sequence.addMorphBack(this.morph);
+  }
+
   menuItems () {
     const menuOptions = [];
     menuOptions.push(['🔍 Select morph in inspector', () => {
@@ -225,6 +245,12 @@ export class SequenceTimelineLayerInfo extends TimelineLayerInfo {
       menuOptions.push(['👥 Copy Morph', () => this.editor.copyMorph(this.morph)]);
       menuOptions.push(['✂️ Cut Morph', () => this.editor.cutMorph(this.morph)]);
       if (this.editor.clipboard.containsMorph) menuOptions.push(['✏️ Paste Morph', () => this.editor.pasteMorphFromClipboard()]);
+      menuOptions.push(['🍔 Order', [
+        ['Bring to front', () => this.bringMorphToFront()],
+        ['Bring forward', () => this.bringMorphForward()],
+        ['Send backward', () => this.sendMorphBackward()],
+        ['Send to back', () => this.sendMorphToBack()]
+      ]]);
       if (this.timelineLayer.mayBeExpanded) {
         menuOptions.push(['➕ Expand view', () => this.timelineLayer.isExpanded = true]);
       } else if (this.timelineLayer.isExpanded) {
