@@ -137,6 +137,8 @@ Closes [fill in your issues here]
   - [ ] the morph, its layers and keyframes appear
     - [ ] the interactive can still be scrolled and a keyframe in the pasted morph can be moved
     - [ ] the same morph can be pasted multiple times
+- [ ] Through the layer info context menu, morphs may be rearranged so that the sun is in front of the cloud
+    - [ ] Layers (Overview and Propertylayers) change accordingly
 
 ### Inspector
 
