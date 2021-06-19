@@ -218,18 +218,22 @@ export class SequenceTimelineLayerInfo extends TimelineLayerInfo {
 
   bringMorphToFront () {
     this.sequence.addMorphAt(this.morph, this.sequence.submorphs.length);
+    this.timeline.reorderLayers();
   }
 
   bringMorphForward () {
     this.sequence.addMorphAt(this.morph, this.sequence.submorphs.indexOf(this.morph) + 2);
+    this.timeline.reorderLayers();
   }
 
   sendMorphBackward () {
     this.sequence.addMorphAt(this.morph, this.sequence.submorphs.indexOf(this.morph) - 1);
+    this.timeline.reorderLayers();
   }
 
   sendMorphToBack () {
     this.sequence.addMorphBack(this.morph);
+    this.timeline.reorderLayers();
   }
 
   menuItems () {
