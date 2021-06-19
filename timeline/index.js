@@ -736,6 +736,10 @@ export class SequenceTimeline extends Timeline {
     return this.keyframes.find(timelineKeyframe => timelineKeyframe.keyframe.equals(keyframe));
   }
 
+  getOverviewLayerForMorph (morph) {
+    return this.overviewLayers.find(overviewLayer => overviewLayer.morph == morph);
+  }
+
   get isSequenceTimeline () {
     return true;
   }
@@ -1001,6 +1005,19 @@ export class SequenceTimeline extends Timeline {
   redraw () {
     this._activeAreaWidth = TIMELINE_CONSTANTS.IN_EDIT_MODE_SEQUENCE_WIDTH * this.zoomFactor;
     this.timelineLayers.forEach(timelineLayer => timelineLayer.redraw());
+  }
+
+  reorderLayers () {
+    this.sequence.submorphs.forEach(morph => {
+      let overviewLayer = this.getOverviewLayerForMorph(morph);
+      this.ui.layerContainer.addMorph(overviewLayer.layouter);
+      this.ui.layerInfoContainer.addMorph(overviewLayer.layerInfo);
+      overviewLayer.propertyLayers.forEach(propertyLayer => {
+        this.ui.layerContainer.addMorph(propertyLayer.layouter);
+        this.ui.layerInfoContainer.addMorph(propertyLayer.layerInfo);
+      });
+    });
+    this.ui.layerContainer.addMorph(this.ui.cursor);
   }
 
   updateLayers () {
