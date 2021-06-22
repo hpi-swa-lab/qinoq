@@ -77,7 +77,12 @@ export class LottieMorph extends HTMLMorph {
     items = items.slice(3); // remove edit CSS and edit HTML options
     items.unshift(
       ['change animation data url...', async () => {
-        const url = await this.world().prompt('Enter Animation Data URL:', { input: this.animationDataUrl, lineWrapping: true, width: 600 });
+        const url = await this.world().prompt('Enter Animation Data URL:', {
+          input: this.animationDataUrl,
+          lineWrapping: true,
+          width: 600,
+          selectInput: true
+        });
         if (url) this.animationDataUrl = url;
       }],
       { isDivider: true });
