@@ -70,7 +70,7 @@ Closes [fill in your issues here]
 - [ ] all sequences can be selected with `Ctrl + A`
 - [ ] when all sequences are selected, `Ctrl + A` deselects all sequences
 - [ ] in the standard sequence setup, clicking on the night background and then clicking on the tree sequence while pressing `Shift` selects tree sequence, night background and day background
-- [ ] selected Sequences can be deleted with `Backspace`
+- [ ] selected Sequences can be deleted with `Del`
 - [ ] when multiple sequences are selected the context menu renames all of them
 - [ ] having multiple sequences selected dragging one drags all and they snap in all possible positions
 
