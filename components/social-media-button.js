@@ -65,6 +65,11 @@ export const PRESETS = {
     name: 'VK',
     icon: 'vk',
     href: 'http://vk.com/share.php?title={text}&url={url}'
+  },
+  INSTAGRAM: {
+    name: 'Instagram',
+    icon: 'instagram',
+    href: 'https://instagram.com/{url}'
   }
 };
 
