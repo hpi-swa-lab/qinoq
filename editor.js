@@ -410,7 +410,7 @@ export class InteractivesEditor extends QinoqMorph {
       { keys: 'Shift-Right', command: { command: 'move sequence right or increase scroll position', args: { stepSize: CONSTANTS.LARGE_SCROLL_STEP } } },
       { keys: 'Ctrl-A', command: 'select all items' },
       { keys: 'Ctrl-C', command: 'copy selection' },
-      { keys: 'Backspace', command: 'delete selected items' }
+      { keys: 'Delete', command: 'delete selected items' }
     ].concat(super.keybindings);
   }
 
