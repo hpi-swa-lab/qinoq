@@ -139,7 +139,7 @@ export class GlobalTimelineLayerInfo extends TimelineLayerInfo {
     if (this.timelineLayer.index < this.timelineLayer.highestIndex) {
       menuOptions.push(['⬇️ Move layer down', () => this.timelineLayer.moveLayerBy(1)]);
     }
-    menuOptions.push(['❌ Remove layer', async () => await this.promptRemoveLayer()]);
+    menuOptions.push(['🗑️ Remove layer', async () => await this.promptRemoveLayer()]);
 
     return menuOptions;
   }
@@ -219,10 +219,10 @@ export class SequenceTimelineLayerInfo extends TimelineLayerInfo {
       if (this.morph.world()) this.morph.show();
     }]);
     menuOptions.push(['✏️ Rename morph', async () => await this.promptMorphName()]);
-    menuOptions.push(['❌ Remove morph', async () => await this.abandonMorph()]);
-    menuOptions.push(['▭ Show halo for morph', () => $world.showHaloFor(this.morph)]);
+    menuOptions.push(['🗑️ Remove morph', async () => await this.abandonMorph()]);
+    menuOptions.push(['⏹️ Show halo for morph', () => $world.showHaloFor(this.morph)]);
     if (this.timelineLayer.isOverviewLayer) {
-      menuOptions.push(['🗐 Copy Morph', () => this.editor.copyMorph(this.morph)]);
+      menuOptions.push(['👥 Copy Morph', () => this.editor.copyMorph(this.morph)]);
       menuOptions.push(['✂️ Cut Morph', () => this.editor.cutMorph(this.morph)]);
       if (this.editor.clipboard.containsMorph) menuOptions.push(['✏️ Paste Morph', () => this.editor.pasteMorphFromClipboard()]);
       if (this.timelineLayer.mayBeExpanded) {
