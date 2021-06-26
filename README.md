@@ -46,6 +46,10 @@ editor.interactive = interactive;  // alternatively, you can grab-and-drop
 
 ## Interactive API
 
+The recommended way of creating and structuring Interactives is using the graphical editor.
+However, programmatic changes can be necessary to achieve advanced behaviors.
+The necessary API, that is used internally by the editor too, is described here.
+
 ### Structure of an Interactive
 
 An Interactive has three building blocks: the Interactive itself, Layers and Sequences.
@@ -86,6 +90,13 @@ interactive.addSequence(exampleSequence);
 
 Animations are stored in sequences. Every animation affects one property in one morph (in that sequence).
 Animations are based on Keyframes that store specific property values at specific relative positions.
+Currently, `qinoq` provides support for animations on
+
+- Numbers
+- Points
+- Colors and
+- Textstrings.
+
 This code adds an animation to the morph "bird" in the "skySequence", which is composed of 3 Keyframes. The animation makes the bird move over the screen by changing the position property.
 
 ```js
@@ -95,13 +106,57 @@ birdAnimation.addKeyframes([new Keyframe(0, pt(0, 200), 'start'), new Keyframe(0
 skySequence.addAnimation(birdAnimation);
 ```
 
+#### Animatable Properties
+
+Per default, the following morph properties can be animated in the inspector of the editor. The list contains the property names and the corresponding animation type.
+For more information refer to `properties.js`.
+
+- extent: 'point'
+- position: 'point'
+- fill: 'color'
+- blur: 'number'
+- flipped: 'number'
+- tilted: 'number'
+- grayscale: 'number'
+- opacity: 'number'
+- rotation: 'number'
+- scale: 'number'
+- textString: 'string'
+- fontSize: 'number'
+- fontColor: 'color'
+- progress: 'number'
+
+There is no limitation on properties that can be animated. However, not all properties will be visible in the inspector.
+The next section will explain how custom properties can be added to the editor.
+
+#### Custom properties to be animated in the inspector
+
+To include another property in the inspector to allow the creation and editing of animations via GUI, you need to add the `animateAs` key to the morphic property definition.
+You need to specify one of the supported animation types, depending on the values the property can have.
+
+The code below demonstrates how a property `temperature` can be made animatable with a `NumberAnimation` in the editor:
+
+```js
+static get properties () {
+    return {
+      temperature: {
+        animateAs: 'number',
+        // arbitrary keys valid in property definitions
+        defaultValue: 0,
+        min: 0,
+        max: 36,
+      }
+    }
+}
+```
+
 ### Morphs in the interactive
 
 Morphs can simply be added by calling `addMorph` on a sequence. The following methods are called on morphs in an interactive, if they are defined:
 
-- `onInteractiveScrollChange(scrollPosition)` when the scrollPosition in the interactive is changed
-- `onSequenceEnter` is always called when the sequence is now drawn and was previously not drawn. Note that this may also happen when the user scrolls backwards
-- `onSequenceLeave` is called whenever the sequence was previously drawn but is no longer drawn
+- `onInteractiveScrollChange(scrollPosition)` when the scrollPosition in the interactive is changed.
+- `onSequenceEnter` is always called when the sequence is now drawn and was previously not drawn. Note that this may also happen when the user scrolls backwards.
+- `onSequenceLeave` is called whenever the sequence was previously drawn but is no longer drawn. Note that this may also happen when the user scrolls backwards.
 
 ## Bundling
 
