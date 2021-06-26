@@ -1,6 +1,6 @@
 /* global it, describe, before, beforeEach, after, afterEach */
 import { expect } from 'mocha-es6';
-import { exampleInteractive, Interactive, InteractivesEditor } from '../index.js';
+import { exampleInteractive, Sequence, Interactive, InteractivesEditor } from '../index.js';
 import { pt } from 'lively.graphics';
 import { QinoqMorph } from '../qinoq-morph.js';
 import { serialize, deserialize } from 'lively.serializer2';
@@ -228,6 +228,73 @@ describe('Editor', () => {
         editor.pasteMorphFromClipboard();
         expect(editor.currentSequence.animations.length).to.be.equal(2);
         expect(editor.currentSequence.animations[1].sequence).to.be.deep.equal(editor.currentSequence);
+      });
+    });
+
+    describe('reordering of morphs in layer info', () => {
+      let testSequence;
+      let morph1, morph2, morph3, morph4;
+      beforeEach(async () => {
+        testSequence = Sequence.baseSequence();
+        morph1 = new Morph();
+        morph2 = new Morph();
+        morph3 = new Morph();
+        morph4 = new Morph();
+        testSequence.submorphs = [morph1, morph2, morph3, morph4];
+        interactive.addSequence(testSequence);
+        editor.initializeSequenceView(testSequence);
+        await new Promise(r => setTimeout(r, 10));
+      });
+
+      function getLayerForMorph (morph) {
+        return editor.displayedTimeline.getOverviewLayerForMorph(morph);
+      }
+
+      function getOrderOfMorphsInLayers () {
+        return editor.displayedTimeline.overviewLayers.map(overviewLayer => overviewLayer.morph);
+      }
+
+      function orderOfLayersMatchesSubmorphOrder () {
+        expect(getOrderOfMorphsInLayers().reverse()).to.be.equal(testSequence.submorphs);
+      }
+
+      it('is available', () => {
+        expect(getLayerForMorph(morph1).layerInfo.menuItems().some(menuItem => menuItem[0].includes('Order')));
+        orderOfLayersMatchesSubmorphOrder();
+      });
+
+      it('brings a morph to the front', () => {
+        getLayerForMorph(morph2).layerInfo.bringMorphToFront();
+        expect(testSequence.submorphs).to.be.equal([morph1, morph3, morph4, morph2]);
+        orderOfLayersMatchesSubmorphOrder();
+      });
+
+      it('sends a morph to the back', () => {
+        getLayerForMorph(morph3).layerInfo.sendMorphToBack();
+        expect(testSequence.submorphs).to.be.equal([morph3, morph1, morph2, morph4]);
+        orderOfLayersMatchesSubmorphOrder();
+      });
+
+      it('brings a morph forward', () => {
+        getLayerForMorph(morph2).layerInfo.bringMorphForward();
+        expect(testSequence.submorphs).to.be.equal([morph1, morph3, morph2, morph4]);
+        orderOfLayersMatchesSubmorphOrder();
+      });
+
+      it('sends a morph back', () => {
+        getLayerForMorph(morph3).layerInfo.sendMorphBackward();
+        expect(testSequence.submorphs).to.be.equal([morph1, morph3, morph2, morph4]);
+        orderOfLayersMatchesSubmorphOrder();
+      });
+
+      it('works with new morphs', () => {
+        let morph5 = new Morph();
+        editor.addMorphToInteractive(morph5);
+        expect(testSequence.submorphs).to.be.equal([morph1, morph2, morph3, morph4, morph5]);
+        orderOfLayersMatchesSubmorphOrder();
+        getLayerForMorph(morph5).layerInfo.sendMorphBackward();
+        expect(testSequence.submorphs).to.be.equal([morph1, morph2, morph3, morph5, morph4]);
+        orderOfLayersMatchesSubmorphOrder();
       });
     });
 
