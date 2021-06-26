@@ -1008,7 +1008,7 @@ export class SequenceTimeline extends Timeline {
   }
 
   reorderLayers () {
-    this.sequence.submorphs.forEach(morph => {
+    [...this.sequence.submorphs].reverse().forEach(morph => {
       let overviewLayer = this.getOverviewLayerForMorph(morph);
       this.ui.layerContainer.addMorph(overviewLayer.layouter);
       this.ui.layerInfoContainer.addMorph(overviewLayer.layerInfo);
