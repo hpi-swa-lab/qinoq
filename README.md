@@ -47,7 +47,7 @@ editor.interactive = interactive;  // alternatively, you can grab-and-drop
 ## Interactive API
 
 The recommended way of creating and structuring Interactives is using the graphical editor.
-However, programmatic changes can be necessary to achieve advanced behaviors.
+However, programmatic changes can be necessary to achieve advanced behavior.
 The necessary API, that is used internally by the editor too, is described here.
 
 ### Structure of an Interactive
@@ -132,7 +132,7 @@ The next section will explain how custom properties can be added to the editor.
 #### Custom properties to be animated in the inspector
 
 To include another property in the inspector to allow the creation and editing of animations via GUI, you need to add the `animateAs` key to the morphic property definition.
-You need to specify one of the supported animation types, depending on the values the property can have.
+You need to specify one of the supported animation types ('number','color','point','string'), depending on the values the property can have.
 
 The code below demonstrates how a property `temperature` can be made animatable with a `NumberAnimation` in the editor:
 
