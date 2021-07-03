@@ -25,6 +25,13 @@ export class WebAnimation {
         ];
         this.translate = 'add';
         break;
+      case 'scale':
+        return [
+          { transform: `scale(${this.keyframes[0].value})` }, // beginning
+          { transform: `scale(${this.keyframes[1].value})` } // end
+        ];
+        this.translate = 'add';
+        break;
       case 'fill':
         const c1 = this.keyframes[0].value;
         const c2 = this.keyframes[1].value;
@@ -47,7 +54,8 @@ export class WebAnimation {
         this._keyframes,
         {
           fill: 'both',
-          duration: 100
+          duration: 100,
+          composite: this.translate
         }
       );
       this.webAnimation.pause();
