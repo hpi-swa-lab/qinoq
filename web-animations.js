@@ -1,4 +1,11 @@
 export class WebAnimation {
+  static usesTransform (prop) {
+    return [
+      'position',
+      'scale'
+    ].includes(prop);
+  }
+
   constructor (targetMorph, property) {
     this.target = targetMorph;
     this.property = property;
@@ -14,7 +21,6 @@ export class WebAnimation {
   }
 
   generateCSSKeyframes () {
-    debugger;
     switch (this.property) {
       case 'position':
         const xOffset = this.keyframes[1].value.x - this.keyframes[0].value.x;
@@ -23,14 +29,12 @@ export class WebAnimation {
           { transform: 'translate(0px,0px)' }, // beginning
           { transform: `translate(${xOffset}px,${yOffset}px)` } // end
         ];
-        this.translate = 'add';
         break;
       case 'scale':
         return [
           { transform: `scale(${this.keyframes[0].value})` }, // beginning
           { transform: `scale(${this.keyframes[1].value})` } // end
         ];
-        this.translate = 'add';
         break;
       case 'fill':
         const c1 = this.keyframes[0].value;
@@ -39,7 +43,6 @@ export class WebAnimation {
           { backgroundColor: `${this.keyframes[0].value}` }, // beginning
           { backgroundColor: `${this.keyframes[1].value}` } // end
         ];
-        this.translate = 'add';
         break;
       default:
         throw 'Provide Valid Property to Animate';
@@ -50,13 +53,16 @@ export class WebAnimation {
     this.targetNode = this.target.env.renderer.getNodeForMorph(this.target);
     if (!this.targetNode) return;
     if (!this.webAnimation) {
+      const timingOptions = {
+        fill: 'both',
+        duration: 100
+      };
+      if (WebAnimation.usesTransform(this.property)) {
+        timingOptions.composite = 'add';
+      }
       this.webAnimation = this.target.env.renderer.getNodeForMorph(this.target).animate(
         this._keyframes,
-        {
-          fill: 'both',
-          duration: 100,
-          composite: this.translate
-        }
+        timingOptions
       );
       this.webAnimation.pause();
     }
