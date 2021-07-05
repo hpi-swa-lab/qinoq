@@ -74,6 +74,5 @@ export class WebAnimation {
       this.webAnimation.pause();
     }
     this.webAnimation.currentTime = progress * 100;
-    console.log(this.webAnimation.currentTime);
   }
 }
