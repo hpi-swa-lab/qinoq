@@ -18,6 +18,13 @@ export class WebAnimation {
   addKeyframes (keyframes) {
     this.keyframes = keyframes;
     this._keyframes = this.generateCSSKeyframes();
+    this._keyframes.forEach((kf, i) => {
+      kf.offset = this.keyframes[i].position;
+    });
+    if (this.keyframes[1].position != 1) {
+      this._keyframes.push(JSON.parse(JSON.stringify(this._keyframes[1])));
+      this._keyframes[2].offset = 1;
+    }
   }
 
   generateCSSKeyframes () {
@@ -54,7 +61,7 @@ export class WebAnimation {
     if (!this.targetNode) return;
     if (!this.webAnimation) {
       const timingOptions = {
-        fill: 'both',
+        fill: 'forwards',
         duration: 100
       };
       if (WebAnimation.usesTransform(this.property)) {
