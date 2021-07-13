@@ -1,4 +1,4 @@
-import { pt } from 'lively.graphics';
+import { pt, Color } from 'lively.graphics';
 import { arr } from 'lively.lang';
 import { Sequence } from './interactive.js';
 import { easings, stringToEasing } from 'lively.morphic';
@@ -254,6 +254,8 @@ export class PointAnimation extends Animation {
 
 export class ColorAnimation extends Animation {
   interpolate (progress, start, end) {
+    if (!start.value.isColor) start.value = Color.fromTuple(Color.parseHex(start.value));
+    if (!end.value.isColor) end.value = Color.fromTuple(Color.parseHex(end.value));
     const factor = end.easing(this.lerp(start, end, progress));
     return start.value.interpolate(factor, end.value);
   }
