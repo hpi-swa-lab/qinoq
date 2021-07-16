@@ -161,5 +161,5 @@ Morphs can simply be added by calling `addMorph` on a sequence. The following me
 ## Bundling
 
 Interactives can be bundled as any other morph in `lively.next`. However, there is one catch that one needs to be aware of:
-If an Interctive was resized, **one needs to scroll through the whole interactive once before bundling**.
+If an Interactive was resized, **one needs to scroll through the whole interactive once before bundling**.
 Otherwise, not all sequences are updated with the correct extent and the bundled interactive will look off.
