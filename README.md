@@ -95,7 +95,7 @@ Currently, `qinoq` provides support for animations on
 - Numbers
 - Points
 - Colors and
-- Textstrings.
+- Textstrings (i.e. **rich text** is not supported).
 
 This code adds an animation to the morph "bird" in the "skySequence", which is composed of 3 Keyframes. The animation makes the bird move over the screen by changing the position property.
 
