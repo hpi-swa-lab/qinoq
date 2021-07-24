@@ -67,7 +67,7 @@ export class WebAnimation {
         // combine effects that rely on the same CSS property
         timingOptions.composite = 'add';
       }
-      this.webAnimation = this.target.env.renderer.getNodeForMorph(this.target).animate(
+      this.webAnimation = this.targetNode.animate(
         this._keyframes,
         timingOptions
       );
