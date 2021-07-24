@@ -38,13 +38,11 @@ export class WebAnimation {
           { transform: 'translate(0px,0px)' },
           { transform: `translate(${xOffset}px,${yOffset}px)` }
         ];
-        break;
       case 'scale':
         return [
           { transform: `scale(${this.keyframes[0].value})` },
           { transform: `scale(${this.keyframes[1].value})` }
         ];
-        break;
       case 'fill':
         const c1 = this.keyframes[0].value;
         const c2 = this.keyframes[1].value;
@@ -52,7 +50,6 @@ export class WebAnimation {
           { backgroundColor: `${this.keyframes[0].value}` },
           { backgroundColor: `${this.keyframes[1].value}` }
         ];
-        break;
       default:
         throw 'Not yet implemented.';
     }
