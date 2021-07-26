@@ -364,6 +364,8 @@ export class Interactive extends DeserializationAwareMorph {
   }
 }
 
+export class Scrollytelling extends Interactive {}
+
 class InteractiveScrollHolder extends Morph {
   static get properties () {
     return {
