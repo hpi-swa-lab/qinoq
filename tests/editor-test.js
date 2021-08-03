@@ -603,7 +603,7 @@ describe('Editor and Interactive connections', () => {
   async function performEditorActions () {
     const someTimelineSequence = editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence)[0];
     await someTimelineSequence.openSequenceView();
-    editor.ui.inspector.targetMorph = someTimelineSequence.sequence.submorphs[0];
+    editor.ui.inspector.targetMorph = someTimelineSequence.sequence.submorphs[1];
   }
 
   function interactiveConnections () {
