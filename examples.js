@@ -80,6 +80,7 @@ export function treeExample () {
 export function skyExample () {
   const skySequence = new Sequence({ name: 'sky sequence', start: 0, duration: 500 });
 
+  /*
   const stars = new LottieMorph({ fill: Color.transparent, extent: pt(200, 200), position: pt(0, 0), name: 'lottie stars', animationDataUrl: 'https://assets4.lottiefiles.com/packages/lf20_Aerz0y.json' });
   skySequence.addMorph(stars);
 
@@ -90,6 +91,7 @@ export function skyExample () {
   const starProgressAnimation = new NumberAnimation(stars, 'progress');
   starProgressAnimation.addKeyframes([new Keyframe(0, 0.4, { name: 'start of the animation' }), new Keyframe(0.2, 0.75, { name: 'animation done' })]);
   skySequence.addAnimation(starProgressAnimation);
+  */
 
   const sun = new Ellipse({ name: 'sun', extent: pt(70, 70), fill: Color.rgb(250, 250, 20), position: pt(0, 350) });
   skySequence.addMorph(sun);
