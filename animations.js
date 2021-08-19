@@ -4,6 +4,7 @@ import { Sequence } from './interactive.js';
 import { easings, stringToEasing } from 'lively.morphic';
 import { animatedProperties } from './properties.js';
 import { newUUID } from 'lively.lang/string.js';
+import { Bezier } from './bezierjs.js';
 
 class Animation {
   constructor (targetMorph, property, useRelativeValues = false) {
@@ -215,6 +216,34 @@ export class NumberAnimation extends Animation {
 
   get min () {
     return Math.min(...this.keyframes.map(keyframe => keyframe.value));
+  }
+}
+
+export class PointPathAnimation extends Animation {
+  constructor (targetMorph, property, useRelativeValues = false, curve) {
+    super(targetMorph, property, useRelativeValues);
+    this.LUT = curve.getLUT(102);
+  }
+
+  static example (target, property) {
+    const animation = new PointPathAnimation(target, property, false, new Bezier(150, 40, 80, 30, 105, 150));
+    const key1 = new Keyframe(0);
+    const key2 = new Keyframe(1);
+    animation.addKeyframe(key1);
+    animation.addKeyframe(key2);
+    return animation;
+  }
+
+  interpolate (progress, start, end) {
+    const factor = end.easing(this.lerp(start, end, progress));
+    const index = (progress != 0 && progress != 1) ? (progress * factor).toFixed(2) * 100 : progress * 100;
+    const lookupResult = this.LUT[index];
+    debugger;
+    return pt(lookupResult.x, lookupResult.y);
+  }
+
+  get tye () {
+    return 'path';
   }
 }
 

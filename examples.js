@@ -1,5 +1,5 @@
 import { Sequence, Interactive, Layer } from './interactive.js';
-import { PointAnimation, NumberAnimation, ColorAnimation, Keyframe } from './animations.js';
+import { PointAnimation, PointPathAnimation, NumberAnimation, ColorAnimation, Keyframe } from './animations.js';
 import { Morph, Image, Ellipse, Polygon } from 'lively.morphic';
 import { Color, pt } from 'lively.graphics';
 import { LottieMorph } from './interactive-morphs/lottie-morph.js';
@@ -94,8 +94,8 @@ export function skyExample () {
   const sun = new Ellipse({ name: 'sun', extent: pt(70, 70), fill: Color.rgb(250, 250, 20), position: pt(0, 350) });
   skySequence.addMorph(sun);
 
-  const sunPositionAnimation = new PointAnimation(sun, 'position', true);
-  sunPositionAnimation.addKeyframes([new Keyframe(0, pt(0, 1.2), { name: 'start' }), new Keyframe(0.5, pt(0.1, 0.27), { name: 'middle', easing: 'inQuad' }), new Keyframe(1, pt(0.45, 0.05), { name: 'end', easing: 'outCubic' })]);
+  const sunPositionAnimation = new PointPathAnimation.example(sun, 'position');
+  // sunPositionAnimation.addKeyframes([new Keyframe(0, pt(0, 1.2), { name: 'start' }), new Keyframe(0.5, pt(0.1, 0.27), { name: 'middle', easing: 'inQuad' }), new Keyframe(1, pt(0.45, 0.05), { name: 'end', easing: 'outCubic' })]);
   skySequence.addAnimation(sunPositionAnimation);
 
   const sunScaleAnimation = new NumberAnimation(sun, 'scale');
