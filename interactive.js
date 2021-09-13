@@ -414,11 +414,9 @@ class InteractiveScrollHolder extends Morph {
   onMouseWheel (event) {
     if (this.scrollToResize && zoomKeyPressed(event)) {
       event.domEvt.preventDefault();
-      const newX = this.interactive.extent.x - event.domEvt.deltaY;
-      const newY = this.interactive.extent.y + event.domEvt.deltaY;
-      // on size 0 the proportional layout will fail to reconstruct the original sizes of the morphs
-      if (newX < 50 || newY < 50) return;
-      this.interactive.extent = this.interactive.applyAspectRatio(pt(newX, newY), true);
+      // 1000 is an empirical value derived from the feeling on my device.
+      // Might need to be adapted later one, especially since the feeling might diverge for touchpads.
+      this.interactive.scale += event.domEvt.deltaY / 1000;
       this.interactive.position = pt(0, 0);
       this.interactive.interactiveZoomed();
     }
