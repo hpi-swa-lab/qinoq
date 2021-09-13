@@ -3,6 +3,7 @@ import { COLOR_SCHEME } from '../colors.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 import { QinoqButton } from '../components/qinoq-button.js';
 import { TIMELINE_CONSTANTS } from './constants.js';
+import { rect } from 'lively.graphics';
 
 export class TimelineLayerInfo extends QinoqMorph {
   static get properties () {
@@ -182,7 +183,8 @@ export class SequenceTimelineLayerInfo extends TimelineLayerInfo {
       name: 'collapse button',
       target: this.timelineLayer,
       action: 'toggleExpand',
-      icon: 'caret-right'
+      icon: 'caret-right',
+      padding: rect(15, 3, -12, 0)
     });
     this.addMorphAt(this.ui.collapseButton, 1);
     this.disableCollapseButton();
