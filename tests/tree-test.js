@@ -51,6 +51,10 @@ describe('Interactive graph', () => {
 
   });
 
+  it('updates tree after a single keyframe was removed in a copied sequence', () => {
+
+  });
+
   it('has nodes for all sequences after adding new sequence', () => {
     const newSequence = editor.execCommand('create new sequence', {});
     expect(interactive.sequences).to.include(newSequence);

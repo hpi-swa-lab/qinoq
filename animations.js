@@ -123,6 +123,7 @@ class Animation {
   copy () {
     const copiedAnimation = createAnimationForPropertyType(this.type, this.target, this.property);
     copiedAnimation.useRelativeValues = this.useRelativeValues;
+    copiedAnimation.name = 'copy of ' + this.name;
     const copiedKeyframes = this.keyframes.map(keyframe => keyframe.copy());
     copiedAnimation.addKeyframes(copiedKeyframes, true);
     return copiedAnimation;
@@ -132,8 +133,12 @@ class Animation {
     return true;
   }
 
+  set name (name) {
+    this._name = name;
+  }
+
   get name () {
-    return `${this.type} animation on ${this.property}`;
+    return this._name ? this._name : `${this.type} animation on ${this.property}`;
   }
 
   get type () {

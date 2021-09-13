@@ -50,6 +50,10 @@ describe('Animation object', () => {
     expect(animation.lerp(keyFrameOne, keyFrameTwo, 5)).equals(0.5);
     expect(animation.lerp(keyFrameOne, keyFrameTwo, 10)).equals(1);
   });
+
+  it('can be copied with a new, unique name', () => {
+    expect(animation.copy().name).to.not.equal(animation.name);
+  });
 });
 
 describe('Typewriter animation', () => {
