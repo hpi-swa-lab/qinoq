@@ -137,7 +137,7 @@ export class InteractiveGraph extends QinoqMorph {
           parent.children = this.generateChildrenOfNode(parent.target);
         }
       }
-      this.tree.update(false, false);
+      this.tree.update(true, false);
     }
     this.tree.scroll = previousScroll;
   }

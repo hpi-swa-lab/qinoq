@@ -47,6 +47,14 @@ describe('Interactive graph', () => {
     expect(interactive.sequences).to.be.equal(nodeSequences);
   });
 
+  it('has node for morph and animation after adding a morph and animating it', () => {
+
+  });
+
+  it('has node for sequence and morph after adding a sequence and a morph to it', () => {
+
+  });
+
   it('does not add keyframes to original animation when copying a sequence', () => {
 
   });
