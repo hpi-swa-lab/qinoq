@@ -496,7 +496,7 @@ export class InteractivesEditor extends QinoqMorph {
       morph.position = properties.prevPosition;
       Object.assign(morph, properties.pointerAndShadow);
     });
-    error('Only add in sequence view');
+    error('Add in sequence view!');
   }
 
   addMorphToInteractive (morph) {

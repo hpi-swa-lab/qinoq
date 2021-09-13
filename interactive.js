@@ -5,6 +5,7 @@ import { newUUID } from 'lively.lang/string.js';
 import { arr } from 'lively.lang';
 import { DeserializationAwareMorph } from './utilities/deserialization-morph.js';
 import { zoomKeyPressed } from './keys.js';
+import { error } from './utilities/messages.js';
 
 const DEFAULT_SCROLLOVERLAY_OPACITY = 0.001;
 
@@ -469,6 +470,12 @@ class InteractiveScrollHolder extends Morph {
   }
 
   onHoverIn (event) {
+    if (!this.passThroughMorph && this.topbar) {
+      if (this.topbar.editMode != 'Halo' && this.topbar.editMode != 'Hand') {
+        this.topbar.setEditMode('Hand');
+        error('Draw in sequence view!');
+      }
+    }
     if (this.passThroughMorph && this.topbar) {
       // upon attaching a new target to the topbar it switches to halo mode
       // since we attach on HoverIn, we need to restore the previous mode
@@ -606,7 +613,7 @@ class InteractiveScrollHolder extends Morph {
   onOwnerChanged (newOwner) {
     if (!newOwner) return;
     // for unkown reasons, the scrollOverlay escaped the editor on some interactions
-    // this catches it back it
+    // this catches it back
     if (this.owner != this.interactive.owner) {
       this.interactive.owner.addMorph(this);
     }
