@@ -47,6 +47,10 @@ describe('Interactive graph', () => {
     expect(interactive.sequences).to.be.equal(nodeSequences);
   });
 
+  it('does not add keyframes to original animation when copying a sequence', () => {
+
+  });
+
   it('has nodes for all sequences after adding new sequence', () => {
     const newSequence = editor.execCommand('create new sequence', {});
     expect(interactive.sequences).to.include(newSequence);

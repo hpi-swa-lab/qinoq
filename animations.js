@@ -21,7 +21,7 @@ class Animation {
       : this.keyframes.find(keyframe => keyframe.position === position);
   }
 
-  addKeyframe (keyframe, doNotSort = false) {
+  addKeyframe (keyframe, doNotSort = false, dontSignalAddition = false) {
     const existingKeyframe = this.getKeyframeAt(keyframe.position);
     if (existingKeyframe) {
       existingKeyframe.overwriteWithKeyframe(keyframe);
@@ -31,7 +31,7 @@ class Animation {
       if (keyframe.hasDefaultName() && this.interactive) {
         keyframe.name = `Keyframe ${this.interactive.nextKeyframeNumber++}`;
       }
-      if (this.sequence) this.sequence.onKeyframeAddedInAnimation({ keyframe, animation: this });
+      if (!dontSignalAddition && this.sequence) this.sequence.onKeyframeAddedInAnimation({ keyframe, animation: this });
     }
     if (!doNotSort) {
       this._sortKeyframes();
@@ -44,8 +44,8 @@ class Animation {
     if (this.keyframes.length === 0) Sequence.getSequenceOfMorph(this.target).removeAnimation(this);
   }
 
-  addKeyframes (keyframes) {
-    keyframes.forEach(keyframe => this.addKeyframe(keyframe, true));
+  addKeyframes (keyframes, dontSignalAddition = false) {
+    keyframes.forEach(keyframe => this.addKeyframe(keyframe, true, dontSignalAddition));
     this._sortKeyframes();
   }
 
@@ -124,7 +124,7 @@ class Animation {
     const copiedAnimation = createAnimationForPropertyType(this.type, this.target, this.property);
     copiedAnimation.useRelativeValues = this.useRelativeValues;
     const copiedKeyframes = this.keyframes.map(keyframe => keyframe.copy());
-    copiedAnimation.addKeyframes(copiedKeyframes);
+    copiedAnimation.addKeyframes(copiedKeyframes, true);
     return copiedAnimation;
   }
 
