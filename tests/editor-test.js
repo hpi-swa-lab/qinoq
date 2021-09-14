@@ -479,6 +479,12 @@ describe('Editor', () => {
       expect(editor.ui.interactiveHolder.clipMode).to.equal('hidden');
     });
 
+    it('does not show scollbars when interactive gets removed', () => {
+      editor.clearInteractive();
+      expect(editor.ui.interactiveHolder.clipMode).to.equal('hidden');
+    });
+  });
+
   it('scrollholder is submorph of preview', () => {
     expect(interactive.scrollOverlay.owner).to.be.deep.equal(interactive.owner);
   });

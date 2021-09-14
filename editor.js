@@ -322,7 +322,6 @@ export class InteractivesEditor extends QinoqMorph {
     });
 
     this.interactive.scrollOverlay.scrollToResize = false;
-    this.ui.interactiveHolder.clipMode = 'hidden';
 
     disconnect(this.interactive, 'onInternalScrollChange', this, 'onExternalScrollChange');
 
@@ -1063,6 +1062,7 @@ class InteractiveHolder extends QinoqMorph {
   }
 
   showEmptyInteractiveHolderPlaceholder () {
+    this.clipMode = 'hidden';
     this.submorphs = [];
 
     const placeholderColor = COLOR_SCHEME.ON_SURFACE_VARIANT;
