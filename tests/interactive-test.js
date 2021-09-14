@@ -269,6 +269,14 @@ describe('Interactive', () => {
       expect(morph.fontSize).to.be.equal(initialFontSize);
     });
 
+    it('scales text consistently even after becoming very small', () => {
+      const initialInteractiveHeight = interactive.height;
+      const initialFontSize = morph.fontSize;
+      interactive.extent = pt(1, 1);
+      interactive.height = initialInteractiveHeight;
+      expect(morph.fontSize).to.be.equal(initialFontSize);
+    });
+
     it('does not change text sizes when saved and loaded', () => {
       // this assumes that the DeserializationAwareMorph works as expected
       // just calling deserialize(serialize(interactive)) did not achieve the same behavior as reloading the world in the browser

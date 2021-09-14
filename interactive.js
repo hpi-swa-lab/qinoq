@@ -64,7 +64,6 @@ export class Interactive extends DeserializationAwareMorph {
       extent: {
         defaultValue: pt(533, 300),
         set (extent) {
-          const previousHeight = this.extent.y;
           // the extent becoming zero in either dimension breaks proportional layouts
           if (extent.x < 1 || extent.y < 1) extent = pt(1, 1);
 
@@ -74,7 +73,7 @@ export class Interactive extends DeserializationAwareMorph {
           this.setProperty('extent', extent);
           if (!this._deserializing) {
             this.updateSequenceExtents();
-            this.scaleText(previousHeight);
+            this.scaleText();
           }
         }
       },
@@ -158,11 +157,10 @@ export class Interactive extends DeserializationAwareMorph {
     connect(this, 'scale', this.scrollOverlay, 'scale');
   }
 
-  scaleText (previousHeight) {
+  scaleText () {
     const morphsWithText = this.sequences.flatMap(sequence => sequence.submorphs).filter(morph => 'fontSize' in morph);
     morphsWithText.forEach(morph => {
-      const fontExtentRatio = morph.fontSize / previousHeight;
-      morph.fontSize = Math.round(fontExtentRatio * this.extent.y);
+      morph.fontSize = Math.ceil(morph._fontRatio * this.extent.y);
     });
   }
 
@@ -280,6 +278,11 @@ export class Interactive extends DeserializationAwareMorph {
   }
 
   addSequence (sequence) {
+    // morphs with text in the added sequence do not yet have a stored fontRatio
+    sequence.submorphs.forEach(morph => {
+      if (morph.fontSize) morph._fontRatio = morph.fontSize * this.extent.y;
+    });
+
     connect(sequence, 'layer', this, 'sortSequences');
     this.sequences.push(sequence);
     if (!sequence.layer || !this.layers.includes(sequence.layer)) {
@@ -764,6 +767,11 @@ export class Sequence extends DeserializationAwareMorph {
     this.isHidden = !this.isHidden;
   }
 
+  addMorph (morph) {
+    super.addMorph(morph);
+    if (morph.fontSize && this.interactive) morph._fontRatio = morph.fontSize / this.interactive.extent.y;
+  }
+
   /**
   * Remove a morph from a sequence and clear references to it,
   * e.g. removing animations with that morph
@@ -772,7 +780,10 @@ export class Sequence extends DeserializationAwareMorph {
   *  while not calling abandon on the morph
   **/
   abandonMorph (morph, doNotAbandonMorph = false) {
-    if (doNotAbandonMorph) morph.remove(); else morph.abandon(true);
+    if (doNotAbandonMorph) {
+      if (morph._fontRatio) delete morph._fontRatio;
+      morph.remove();
+    } else morph.abandon(true);
     this.animations.filter(animation => animation.target == morph).forEach(animation => this.removeAnimation(animation));
     signal(this, 'onMorphRemoval', morph);
   }
