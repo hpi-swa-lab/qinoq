@@ -767,8 +767,18 @@ export class Sequence extends DeserializationAwareMorph {
     this.isHidden = !this.isHidden;
   }
 
-  addMorph (morph) {
-    super.addMorph(morph);
+  addMorph (morph, insertBeforeMorph) {
+    super.addMorph(morph, insertBeforeMorph);
+    if (morph.fontSize && this.interactive) morph._fontRatio = morph.fontSize / this.interactive.extent.y;
+  }
+
+  addMorphAt (morph, index) {
+    super.addMorphAt(morph, index);
+    if (morph.fontSize && this.interactive) morph._fontRatio = morph.fontSize / this.interactive.extent.y;
+  }
+
+  addMorphBack (morph) {
+    super.addMorphBack(morph);
     if (morph.fontSize && this.interactive) morph._fontRatio = morph.fontSize / this.interactive.extent.y;
   }
 
