@@ -790,6 +790,12 @@ export class Sequence extends DeserializationAwareMorph {
   *  while not calling abandon on the morph
   **/
   abandonMorph (morph, doNotAbandonMorph = false) {
+    // remove all custom connection from the interactive to the morph to be removed
+    this.interactive.attributeConnections.forEach(connection => {
+      if (connection.targetObj == morph) {
+        disconnect(this.interactive, connection.sourceAttrName, morph, connection.targetMethodName);
+      }
+    });
     if (doNotAbandonMorph) {
       if (morph._fontRatio) delete morph._fontRatio;
       morph.remove();

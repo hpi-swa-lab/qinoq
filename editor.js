@@ -471,6 +471,10 @@ export class InteractivesEditor extends QinoqMorph {
     const sequenceProps = { ...sequence._morphicState, submorphs: [], animations: [], start, layer };
     const newSequence = new Sequence(sequenceProps);
     morphs.forEach(morph => {
+      // morph.copy also copies connections
+      // this is undesirable for us which is why we copy the morph without connections
+      // and restore the original ones later
+      // TODO: only filter our connections, maybe some are wanted
       const connections = morph.attributeConnections;
       morph.attributeConnections = [];
       const copiedMorph = morph.copy();
@@ -549,6 +553,7 @@ export class InteractivesEditor extends QinoqMorph {
   prepareToRemoveMorph (morph, sequenceOfMorph) {
     disconnect(morph, 'onRemove', this, 'moveMorphOutOfInteractive');
     disconnect(morph, 'onAbandon', this, 'removeMorphFromInteractive');
+
     const tab = this.getTabFor(sequenceOfMorph);
     if (tab) {
       const timeline = this.getTimelineFor(tab);
@@ -951,7 +956,7 @@ export class InteractivesEditor extends QinoqMorph {
   pasteMorphFromClipboard () {
     const { morph, animations } = this.clipboard.content;
 
-    // morph.copy also copied connections
+    // morph.copy also copies connections
     // this is undesirable for us which is why we copy the morph without connections
     // and restore the original ones later
     // TODO: only filter our connections, maybe some are wanted

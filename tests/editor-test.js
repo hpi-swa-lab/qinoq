@@ -7,6 +7,7 @@ import { serialize, deserialize } from 'lively.serializer2';
 import { LottieMorph } from '../interactive-morphs/lottie-morph.js';
 import { Morph } from 'lively.morphic';
 import { promise } from 'lively.lang';
+import { connect } from 'lively.bindings';
 
 let editor, interactive;
 function closeEditor () {
@@ -35,6 +36,21 @@ describe('Editor', () => {
   function timelineSequences () {
     return editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence);
   }
+
+  it('interactive removes connections from interactive when target gets removed', async () => {
+    const newMorph = new Morph();
+    const dayBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'day background');
+    await dayBackgroundTimelineSequence.openSequenceView();
+    editor.addMorphToInteractive(newMorph);
+
+    const connectionCount = editor.interactive.attributeConnections.length;
+    connect(interactive, 'onScrollChange', newMorph, 'visible');
+
+    expect(interactive.attributeConnections.length).to.be.equal(connectionCount + 1);
+    newMorph.abandon();
+
+    expect(interactive.attributeConnections.length).to.be.equal(connectionCount);
+  });
 
   describe('with global timeline', () => {
     it('sets _lastSelectedTimelineSequence on the first click on a single sequence', () => {
