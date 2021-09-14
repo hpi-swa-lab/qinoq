@@ -1119,13 +1119,15 @@ class InteractiveHolder extends QinoqMorph {
 
   updateScrollbarVisibility () {
     if (!this.interactive) return;
+
     // only show scrollbars if they are necessary
-    if (this.interactive.width >= this.width ||
-        this.interactive.height >= this.height) {
+    const scrollBarWidth = this.scrollbarOffset.x;
+    if (this.interactive.bounds().width - scrollBarWidth > this.width ||
+         this.interactive.bounds().height - scrollBarWidth > this.height) {
       this.clipMode = 'scroll';
     }
-    if (!(this.interactive.width > this.width) &&
-        !(this.interactive.height > this.height)) {
+    if (!(this.interactive.bounds().width - scrollBarWidth > this.width) &&
+         !(this.interactive.bounds().height - scrollBarWidth > this.height)) {
       this.clipMode = 'hidden';
     }
   }

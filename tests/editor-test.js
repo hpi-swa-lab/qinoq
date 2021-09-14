@@ -435,6 +435,7 @@ describe('Editor', () => {
       closeEditor();
       editor = await new InteractivesEditor().initialize();
       interactive = await exampleInteractive();
+      editor.interactive = interactive;
     });
 
     it('resizes interactive without aspect ratio to fit interactive holder exactly', () => {
@@ -452,18 +453,31 @@ describe('Editor', () => {
       expect(interactive.height).to.be.equal(interactiveHolderHeight);
     });
 
-    it('allows to zoom in the interactive', () => {
-      const originalExtent = interactive.extent;
+    it('allows to zoom in the interactive and shows scrollbars', async () => {
       const event = {
+        isCtrlDown: () => { return true; },
         domEvt: {
-          deltaY: 10,
-          ctrlKey: true
+          deltaY: 106,
+          ctrlKey: true,
+          preventDefault: () => true
         }
       };
+
+      const originalBounds = interactive.bounds();
       interactive.scrollOverlay.onMouseWheel(event);
-      expect(interactive.extent).to.not.equal(originalExtent);
+
+      expect(interactive.bounds()).to.not.be.deep.equal(originalBounds);
+      expect(editor.ui.interactiveHolder.clipMode).to.equal('scroll');
     });
-  });
+
+    it('does not show scrollbars when they are not needed anymore', () => {
+      interactive.scale = 2;
+      editor.ui.interactiveHolder.updateScrollbarVisibility();
+      expect(editor.ui.interactiveHolder.clipMode).to.equal('scroll');
+      interactive.scale = 1;
+      editor.ui.interactiveHolder.updateScrollbarVisibility();
+      expect(editor.ui.interactiveHolder.clipMode).to.equal('hidden');
+    });
 
   it('scrollholder is submorph of preview', () => {
     expect(interactive.scrollOverlay.owner).to.be.deep.equal(interactive.owner);

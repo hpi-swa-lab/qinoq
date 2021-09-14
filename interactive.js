@@ -152,6 +152,7 @@ export class Interactive extends DeserializationAwareMorph {
     connect(this, 'position', this.scrollOverlay, 'position');
     connect(this, 'onLengthChange', scrollLengthContainer, 'extent', { converter: '(length) => pt(1, length + source.extent.y)', varMapping: { pt } });
     connect(this, 'extent', this, 'updateScrollContainerExtents');
+    connect(this, 'scale', this.scrollOverlay, 'scale');
   }
 
   scaleText (previousHeight) {
