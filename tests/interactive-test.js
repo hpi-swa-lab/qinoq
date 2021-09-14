@@ -254,6 +254,12 @@ describe('Interactive', () => {
       expect(interactive.width).to.not.be.equal(initialInteractiveWidth * 3);
     });
 
+    it('does not become 0 pixel small in either dimention', () => {
+      interactive.extent = pt(0, 0);
+      expect(interactive.extent.x).to.be.above(0);
+      expect(interactive.extent.y).to.be.above(0);
+    });
+
     it('scales text depending on own height', () => {
       const initialInteractiveHeight = interactive.height;
       const initialFontSize = morph.fontSize;

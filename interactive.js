@@ -65,6 +65,9 @@ export class Interactive extends DeserializationAwareMorph {
         defaultValue: pt(533, 300),
         set (extent) {
           const previousHeight = this.extent.y;
+          // the extent becoming zero in either dimension breaks proportional layouts
+          if (extent.x < 1 || extent.y < 1) extent = pt(1, 1);
+
           if (this.fixedAspectRatio) {
             extent = this.applyAspectRatio(extent);
           }
