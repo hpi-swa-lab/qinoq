@@ -1518,6 +1518,7 @@ export class Settings extends QinoqMorph {
 
   buildRemoveInteractiveButton () {
     const button = new QinoqButton({
+      name: 'ejectButton',
       textString: 'Eject Interactive',
       tooltip: 'Places the interactive in the world outside of the editor',
       padding: rect(8, 5, 0, -2),
@@ -1530,6 +1531,7 @@ export class Settings extends QinoqMorph {
 
   buildRenameInteractiveButton () {
     const button = new QinoqButton({
+      name: 'renameButton',
       textString: 'Rename Interactive',
       padding: rect(8, 5, 0, -2),
       target: this.editor,
@@ -1541,6 +1543,7 @@ export class Settings extends QinoqMorph {
 
   buildScrollBarCheckbox () {
     const checkbox = new LabeledCheckBox({
+      name: 'scrollBarBox',
       label: 'Scrollbars enabled on the interactive',
       checked: this.interactive.isScrollBarVisible
     });
@@ -1557,6 +1560,7 @@ export class Settings extends QinoqMorph {
       spacing: 2
     });
     const checkbox = new LabeledCheckBox({
+      name: 'fixedRatioBox',
       label: 'interactive has fixed aspect ratio',
       checked: !!this.interactive.fixedAspectRatio
     });
@@ -1564,6 +1568,7 @@ export class Settings extends QinoqMorph {
     this.ui.interactiveSettings.addMorph(checkbox);
 
     this.ui.dropDownSelector = new DropDownSelector({
+      name: 'aspectRatioDropDown',
       values: ['21/9', '16/9', '4/3', 'Custom'],
       borderWidth: 1,
       borderColor: COLOR_SCHEME.BACKGROUND_VARIANT
@@ -1572,6 +1577,7 @@ export class Settings extends QinoqMorph {
     aspectRatioField.addMorph(this.ui.dropDownSelector);
 
     this.ui.inputLine = new InputLine({
+      name: 'customRatioInput',
       visible: false,
       borderWidth: 1,
       borderColor: COLOR_SCHEME.BACKGROUND_VARIANT
@@ -1630,5 +1636,9 @@ export class Settings extends QinoqMorph {
     this.ui.dropDownSelector.visible = false;
     this.ui.inputLine.visible = false;
     this.interactive.fixedAspectRatio = null;
+  }
+
+  isSettings () {
+    return true;
   }
 }

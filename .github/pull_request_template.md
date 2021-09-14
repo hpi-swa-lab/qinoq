@@ -34,7 +34,6 @@ Closes [fill in your issues here]
 - [ ] a new scrollytelling can be created with a button
 - [ ] can be loaded in the editor via drag and drop
 - [ ] an interactive can be grabbed out of the editor and placed in the world with both the editor and interactive still working. The editor is cleared
-- [ ] when the interactive is loaded into the interactive holder, one can zoom in/ out of it by using Ctrl + Mousewheel over it
 
 ### TimelineLayer
 
@@ -185,10 +184,3 @@ Closes [fill in your issues here]
   - [ ] this works for keyframes in a sequence with no tab
   - [ ] this works for keyframes in another tab with zoom and expanded layers (so scrolling is necessary in both directions)
 
-### MenuBar
-
-- [ ] there is a button for the settings
-  - [ ] the interactive can be renamed
-  - [ ] the scrollbar can be toggled
-  - [ ] the interactive can be ejected from the editor
-  - [ ] the aspect ratio of the interactive can be changed

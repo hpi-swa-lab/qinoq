@@ -7,7 +7,7 @@ import { DeserializationAwareMorph } from './utilities/deserialization-morph.js'
 import { zoomKeyPressed } from './keys.js';
 import { error } from './utilities/messages.js';
 
-const DEFAULT_SCROLLOVERLAY_OPACITY = 0.001;
+export const DEFAULT_SCROLLOVERLAY_OPACITY = 0.001;
 
 export class Interactive extends DeserializationAwareMorph {
   static async base (props = {}) {
