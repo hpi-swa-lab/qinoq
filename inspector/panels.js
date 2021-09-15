@@ -214,7 +214,7 @@ class KeyValuePanel extends InspectorPanel {
   buildTextField (title, value) {
     this.buildLabel(title);
     const field = this.ui.container.addMorph(new InputLine({
-      position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
+      position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_Y),
       fixedWidth: true,
       fixedHeight: true,
       extent: CONSTANTS.WIDGET_EXTENT,

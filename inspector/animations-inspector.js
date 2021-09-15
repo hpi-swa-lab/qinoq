@@ -83,7 +83,6 @@ export class AnimationsInspector extends QinoqMorph {
 
   initialize () {
     this.buildPropertyControls();
-    this.refreshAllPropertiesInInspector();
     this.displayedProperties.forEach(property => {
       this.propertyControls[property].updateButtonStyle();
     });
@@ -137,54 +136,11 @@ export class AnimationsInspector extends QinoqMorph {
 
   createConnections () {
     connect(this.targetMorph, 'name', this.inspector.ui.headline, 'textString', { converter: '() => {return `Inspecting ${targetMorph.toString()}`}', varMapping: { targetMorph: this.targetMorph } });
-    this.displayedProperties.forEach(inspectedProperty => {
-      this.propertyControls[inspectedProperty].createConnection();
-    });
     connect(this.editor, 'onScrollChange', this, 'resetHighlightingForAllUnsavedChanges');
   }
 
   updatePropertyInInspector (property) {
-    this._updatingInspector = true;
-    this.propertyControls[property].updateValue();
-    this._updatingInspector = false;
-
     const updatingSpec = { property: property, value: this.targetMorph[property] };
-    this.highlightUnsavedChanges(updatingSpec);
-  }
-
-  updateInInspector (spec) {
-    if (this._updatingMorph) {
-      return;
-    }
-    if (!spec) {
-      return;
-    }
-    const { property, propertyType } = spec;
-    this.updatePropertyInInspector(property);
-  }
-
-  refreshAllPropertiesInInspector () {
-    if (this._updatingMorph) {
-      return;
-    }
-    this._updatingInspector = true;
-    this.displayedProperties.forEach(property => {
-      this.updatePropertyInInspector(property);
-    });
-    this._updatingInspector = false;
-  }
-
-  updateInMorph (updatingSpec = { property: null, value: null }) {
-    const property = updatingSpec.property;
-    if (this._updatingInspector) {
-      return;
-    }
-    this._updatingMorph = true;
-
-    this.propertyControls[property].updateTarget();
-
-    this._updatingMorph = false;
-
     this.highlightUnsavedChanges(updatingSpec);
   }
 
@@ -283,37 +239,8 @@ class PropertyControl extends QinoqMorph {
   }
 
   buildWidget () {
-    switch (this.propertyType) {
-      case 'point':
-        // extent and autofit are necessary for the correct layouting to be applied
-        this.ui.x = this.addMorph(new NumberWidget({
-          position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
-          extent: CONSTANTS.WIDGET_EXTENT,
-          autofit: false,
-          floatingPoint: false
-        }));
-        this.ui.y = this.addMorph(new NumberWidget({
-          position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_TWO_Y),
-          extent: CONSTANTS.WIDGET_EXTENT,
-          autofit: false,
-          floatingPoint: false
-        }));
-        break;
-      case 'color':
-        this.ui.color = this.addMorph(new ColorPickerField({
-          position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
-          colorValue: this.targetMorph[this.property],
-          dropShadow: new ShadowObject(true)
-        }));
-        break;
-      case 'number':
-        this.buildNumberPropertyControl();
-        break;
-      case 'string':
-        this.buildStringPropertyControl();
-    }
     this.ui.keyframeButton = this.addMorph(new KeyframeButton({
-      position: pt(CONSTANTS.KEYFRAME_BUTTON_X, CONSTANTS.WIDGET_ONE_Y),
+      position: pt(CONSTANTS.KEYFRAME_BUTTON_X, CONSTANTS.WIDGET_Y),
       animationsInspector: this.animationsInspector,
       property: this.property,
       propertyType: this.propertyType,
@@ -322,130 +249,12 @@ class PropertyControl extends QinoqMorph {
     }));
   }
 
-  buildStringPropertyControl () {
-    this.ui.string = this.addMorph(new StringWidget({
-      position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
-      fixedWidth: true,
-      fixedHeight: true,
-      extent: CONSTANTS.WIDGET_EXTENT,
-      fontFamilty: 'Sans-Serif',
-      fontSize: 16,
-      fill: COLOR_SCHEME.SURFACE,
-      dropShadow: new ShadowObject(true)
-    }))
-    ;
-  }
-
-  buildNumberPropertyControl () {
-    const spec = this.targetMorph.propertiesAndPropertySettings().properties[this.property];
-    let floatingPoint = spec.isFloat;
-    let unit = '';
-    let min = -Infinity;
-    let max = Infinity;
-    if (spec.isFloat && spec.max === 1) {
-      // Use a percentage value instead of just numbers
-      unit = '%';
-      floatingPoint = false; // Numbers have too many digits with floating point
-      min = 0;
-      max = 100;
-    }
-
-    this.ui.number = this.addMorph(new NumberWidget({
-      position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
-      floatingPoint,
-      unit,
-      min,
-      max,
-      // these two are necessary for the correct layouting to be applied
-      extent: CONSTANTS.WIDGET_EXTENT,
-      autofit: false
-    }));
-  }
-
-  updateValue () {
-    switch (this.propertyType) {
-      case 'point':
-        this.ui.x.number = this.targetMorph[this.property].x;
-        this.ui.y.number = this.targetMorph[this.property].y;
-        break;
-      case 'color':
-        this.ui.color.update(this.targetMorph[this.property]);
-        break;
-      case 'number':
-        if (this.ui.number.unit == '%') {
-          this.ui.number.number = this.targetMorph[this.property] * 100;
-        } else {
-          this.ui.number.number = this.targetMorph[this.property];
-        }
-        break;
-      case 'string':
-        if (this.ui.string.stringValue != this.targetMorph[this.property]) { this.ui.string.stringValue = this.targetMorph[this.property]; }
-        break;
-    }
-  }
-
-  updateTarget () {
-    switch (this.propertyType) {
-      case 'point':
-        this.targetMorph[this.property] = pt(this.ui.x.number, this.ui.y.number);
-        break;
-      case 'color':
-        this.targetMorph[this.property] = this.ui.color.colorValue;
-        break;
-      case 'number':
-        if (this.ui.number.unit == '%') {
-          this.targetMorph[this.property] = this.ui.number.number / 100;
-        } else {
-          this.targetMorph[this.property] = this.ui.number.number;
-        }
-        break;
-      case 'string':
-        this.targetMorph[this.property] = this.ui.string.stringValue;
-        break;
-    }
-  }
-
   updateButtonStyle () {
     this.ui.keyframeButton.updateStyle();
-  }
-
-  createConnection () {
-    connect(this.targetMorph, this.property, this.animationsInspector, 'updateInInspector', { converter: '() => {return {property, propertyType}}', varMapping: { property: this.property, propertyType: this.propertyType } });
-    switch (this.propertyType) {
-      case 'point':
-        connect(this.ui.x, 'number', this.animationsInspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.ui.x.number } });
-        connect(this.ui.y, 'number', this.animationsInspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.ui.y.number } });
-        break;
-      case 'color':
-        connect(this.ui.color, 'colorValue', this.animationsInspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.ui.color } });
-        break;
-      case 'number':
-        connect(this.ui.number, 'number', this.animationsInspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.ui.number } });
-        break;
-      case 'string':
-        connect(this.ui.string, 'inputAccepted', this.animationsInspector, 'updateInMorph', { converter: '() => {return {property, value} }', varMapping: { property: this.property, value: this.ui.string } });
-        break;
-    }
   }
 
   disbandConnection () {
     this.ui.keyframeButton.remove();
     this.ui.label.remove();
-    disconnect(this.targetMorph, this.property, this.animationsInspector, 'updateInInspector');
-    switch (this.propertyType) {
-      case 'point':
-        disconnect(this.ui.x, 'number', this.animationsInspector, 'updateInMorph');
-        disconnect(this.ui.y, 'number', this.animationsInspector, 'updateInMorph');
-        break;
-      case 'color':
-        disconnect(this.ui.color, 'colorValue', this.animationsInspector, 'updateInMorph');
-        break;
-      case 'number':
-        disconnect(this.ui.number, 'number', this.animationsInspector, 'updateInMorph');
-        break;
-      case 'string':
-        disconnect(this.ui.string, 'inputAccepted', this.animationsInspector, 'updateInMorph');
-        break;
-    }
   }
 }
