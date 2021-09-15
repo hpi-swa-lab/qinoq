@@ -163,3 +163,12 @@ Morphs can simply be added by calling `addMorph` on a sequence. The following me
 Interactives can be bundled as any other morph in `lively.next`. However, there is one catch that one needs to be aware of:
 If an Interactive was resized, **one needs to scroll through the whole interactive once before bundling**.
 Otherwise, not all sequences are updated with the correct extent and the bundled interactive will look off.
+
+## Known Pitfalls
+
+- When connecting the interactive with a morph inside of it, the editor will clean up this connection upon deletion of the morph from the interactive **as long as it was added via the editor (e.g. grab-and-drop). When adding morphs programmatically, you will need to clean up created connections yourself.
+
+## LottieMorphs
+
+If you are in posession of the complete LottieMorph source code, you need to copy-paste the complete implementation into `interactive-morphs/lottie-morph.js`.
+No other steps are required and you can start creating fully functioning LottieMorphs e.g., via the TopBar.
