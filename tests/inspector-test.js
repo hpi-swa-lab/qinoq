@@ -5,6 +5,7 @@ import { exampleInteractive, InteractivesEditor } from 'qinoq';
 import { COLOR_SCHEME } from '../colors.js';
 import { SocialMediaButton, PRESETS } from '../components/social-media-button.js';
 import { TEST_PRESETS } from './utils/social-media-button-test-utils.js';
+import { Color } from 'lively.graphics';
 
 class InspectorTestMorph extends Morph {
   static get properties () {
@@ -125,6 +126,21 @@ describe('Inspector', () => {
       editor.internalScrollChangeWithGUIUpdate(333);
       const keyFramebuttonForFill = animationsInspector.propertyControls.fill.ui.keyframeButton;
       expect(keyFramebuttonForFill.fill).to.not.be.deep.equal(COLOR_SCHEME.KEYFRAME_FILL);
+    });
+
+    it('shows a warning if an animated property has been changed but no keyframe has been set', async () => {
+      const dayBackgroundTimelineSequence = getDayBackgroundTimelineSequence();
+      const dayBackgroundSequence = dayBackgroundTimelineSequence.sequence;
+
+      await dayBackgroundTimelineSequence.openSequenceView();
+      inspector.targetMorph = dayBackgroundSequence.submorphs[0];
+
+      dayBackgroundSequence.submorphs[0].fill = Color.black;
+
+      const fillWarning = animationsInspector.propertyControls.opacity.submorphs[1].name;
+      expect(animationsInspector.propertyControls.opacity.submorphs.length).to.equal(2);
+      expect(animationsInspector.propertyControls.fill.submorphs.length).to.equal(3);
+      expect(animationsInspector.propertyControls.fill.submorphs[2].name).to.equal('warning label');
     });
 
     describe('can not animate', () => {

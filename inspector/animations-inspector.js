@@ -180,6 +180,7 @@ export class AnimationsInspector extends QinoqMorph {
 
     if (animationOnProperty && !this.checkForPropertyEquality(animationOnProperty.getValueForProgress(this.sequence.progress), changedValue)) {
       this.propertyControls[changedProperty].highlight = new Label({
+        name: 'warning label',
         position: pt(this.propertyControls[changedProperty].ui.keyframeButton.topRight.x + 5, 5),
         fontColor: COLOR_SCHEME.ERROR,
         halosEnabled: false,
