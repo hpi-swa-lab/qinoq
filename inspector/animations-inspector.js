@@ -123,6 +123,23 @@ export class AnimationsInspector extends QinoqMorph {
     this.ui.propertyPane.addMorph(this.propertyControls[property]);
   }
 
+  updatePropertyInInspector (property) {
+    this._updatingInspector = true;
+    this.propertyControls[property].updateValue();
+    this._updatingInspector = false;
+
+    const updatingSpec = { property: property, value: this.targetMorph[property] };
+    this.highlightUnsavedChanges(updatingSpec);
+  }
+
+  updateInInspector (spec) {
+    if (!spec) {
+      return;
+    }
+    const { property, propertyType } = spec;
+    this.updatePropertyInInspector(property);
+  }
+
   disbandConnections () {
     if (this.targetMorph) {
       disconnect(this.targetMorph, 'name', this.inspector.ui.headline, 'textString');
@@ -136,12 +153,10 @@ export class AnimationsInspector extends QinoqMorph {
 
   createConnections () {
     connect(this.targetMorph, 'name', this.inspector.ui.headline, 'textString', { converter: '() => {return `Inspecting ${targetMorph.toString()}`}', varMapping: { targetMorph: this.targetMorph } });
+    this.displayedProperties.forEach(inspectedProperty => {
+      this.propertyControls[inspectedProperty].createConnection();
+    });
     connect(this.editor, 'onScrollChange', this, 'resetHighlightingForAllUnsavedChanges');
-  }
-
-  updatePropertyInInspector (property) {
-    const updatingSpec = { property: property, value: this.targetMorph[property] };
-    this.highlightUnsavedChanges(updatingSpec);
   }
 
   resetHighlightingForProperty (changedProperty) {
@@ -253,7 +268,12 @@ class PropertyControl extends QinoqMorph {
     this.ui.keyframeButton.updateStyle();
   }
 
+  createConnection () {
+    connect(this.targetMorph, this.property, this.animationsInspector, 'highlightUnsavedChanges', { converter: '(x) => {return {property, value: x}}', varMapping: { property: this.property } });
+  }
+
   disbandConnection () {
+    disconnect(this.targetMorph, this.property, this.animationsInspector, 'highlightUnsavedChanges');
     this.ui.keyframeButton.remove();
     this.ui.label.remove();
   }
