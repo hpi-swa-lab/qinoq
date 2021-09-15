@@ -1008,6 +1008,14 @@ class InteractiveHolder extends QinoqMorph {
       borderColor: {
         defaultValue: COLOR_SCHEME.ON_BACKGROUND_DARKER_VARIANT
       },
+      borderWidth: {
+        defaultValue: {
+          left: 1,
+          top: 0,
+          bottom: 0,
+          right: 0
+        }
+      },
       position: {
         defaultValue: pt(CONSTANTS.SIDEBAR_WIDTH, 0)
       },
