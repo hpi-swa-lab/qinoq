@@ -137,10 +137,6 @@ export class InteractiveMorphInspector extends QinoqMorph {
     }
   }
 
-  updateInMorph () {
-    this.animationsInspector.updateInMorph();
-  }
-
   deselect () {
     if (!this.animationsInspector) return;
     this.animationsInspector.disbandConnections();
