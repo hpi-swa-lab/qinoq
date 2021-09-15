@@ -3,11 +3,12 @@ import { VerticalLayout, HorizontalLayout, Label } from 'lively.morphic';
 import { QinoqButton } from '../components/qinoq-button.js';
 import { pt, rect } from 'lively.graphics';
 import { string } from 'lively.lang';
-import { StringWidget } from 'lively.ide/value-widgets.js';
+
 import { CONSTANTS } from './constants.js';
 import { COLOR_SCHEME } from '../colors.js';
 import { connect, disconnect, disconnectAll } from 'lively.bindings';
 import { DropDownSelector } from 'lively.components/widgets.js';
+import InputLine from 'lively.morphic/text/input-line.js';
 
 class InspectorPanel extends QinoqMorph {
   static get properties () {
@@ -212,7 +213,7 @@ class KeyValuePanel extends InspectorPanel {
 
   buildTextField (title, value) {
     this.buildLabel(title);
-    const field = this.ui.container.addMorph(new StringWidget({
+    const field = this.ui.container.addMorph(new InputLine({
       position: pt(CONSTANTS.WIDGET_X, CONSTANTS.WIDGET_ONE_Y),
       fixedWidth: true,
       fixedHeight: true,
@@ -221,10 +222,11 @@ class KeyValuePanel extends InspectorPanel {
       fontSize: 14,
       padding: rect(1, 1, 0, 0),
       fill: COLOR_SCHEME.SURFACE,
-      stringValue: value,
+      textString: value,
       borderColor: COLOR_SCHEME.PRIMARY,
       fontColor: this.fontColor,
-      borderStyle: 'solid'
+      borderStyle: 'solid',
+      borderWidth: 1
     }));
     connect(field, 'inputChanged', this, 'changeTokenValue', {
       converter: `(change) => {
@@ -281,7 +283,10 @@ class KeyValuePanel extends InspectorPanel {
 export class ShareSettingsPanel extends KeyValuePanel {
   build () {
     this.ui.presetDropDown = this.addMorph(new DropDownSelector({
-      fontColor: this.fontColor
+      fontColor: this.fontColor,
+      borderColor: COLOR_SCHEME.PRIMARY,
+      borderStyle: 'solid',
+      borderWidth: 1
     }));
     this.ui.presetDropDown.getSubmorphNamed('currentValue').fontSize = 14;
     this.ui.presetDropDown.dropDownLabel.fontSize = 14;

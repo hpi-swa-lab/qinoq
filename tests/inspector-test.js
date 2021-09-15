@@ -257,25 +257,25 @@ describe('Inspector', () => {
         it('shows the share panel with text fields for all changeable tokens', () => {
           const widgetContainer = sharePanel.submorphs[2];
           expect(widgetContainer.submorphs[0].textString).to.be.equal('Text');
-          expect(widgetContainer.submorphs[1].name).to.be.equal('aStringWidget');
+          expect(widgetContainer.submorphs[1].name).to.be.equal('anInputLine');
           expect(widgetContainer.submorphs[2].textString).to.be.equal('Url');
-          expect(widgetContainer.submorphs[3].name).to.be.equal('aStringWidget');
+          expect(widgetContainer.submorphs[3].name).to.be.equal('anInputLine');
 
           shareButton.preset = TEST_PRESETS.CUSTOM;
           inspector.targetMorph = morph; // trigger panel update
           inspector.targetMorph = shareButton;
 
           expect(widgetContainer.submorphs[0].textString).to.be.equal('Url');
-          expect(widgetContainer.submorphs[1].name).to.be.equal('aStringWidget');
+          expect(widgetContainer.submorphs[1].name).to.be.equal('anInputLine');
           expect(widgetContainer.submorphs[2].textString).to.be.equal('Text input');
-          expect(widgetContainer.submorphs[3].name).to.be.equal('aStringWidget');
+          expect(widgetContainer.submorphs[3].name).to.be.equal('anInputLine');
 
           shareButton.preset = 'Facebook';
           inspector.targetMorph = morph; // trigger panel update
           inspector.targetMorph = shareButton;
 
           expect(widgetContainer.submorphs[0].textString).to.be.equal('Url');
-          expect(widgetContainer.submorphs[1].name).to.be.equal('aStringWidget');
+          expect(widgetContainer.submorphs[1].name).to.be.equal('anInputLine');
         });
 
         it('shows the share panel with text fields which respect present token values', () => {
