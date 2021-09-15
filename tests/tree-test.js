@@ -46,7 +46,7 @@ function nodes () {
 }
 
 describe('Rendered tree for the graph', () => {
-  // need to run as a whole describe blog
+  // needs to run as a whole describe blog
   before(async () => {
     await openNewEditorWithEmptyInteractive();
   });
@@ -69,7 +69,6 @@ describe('Rendered tree for the graph', () => {
   it('has expandable node for morph after adding a morph and animating it', () => {
     // expand sequence so that morph is visible
     treeData().root.children[0].isCollapsed = false;
-    tree().update();
     const kf = new Keyframe(0, Color.rgbHex('#ff4d00'));
     const animation = new ColorAnimation(morph, 'fill');
     animation.addKeyframe(kf);
@@ -87,6 +86,7 @@ describe('Rendered tree for the graph', () => {
 });
 
 describe('Interactive graph', () => {
+  // needs to run as a whole describe blog
   before(async () => {
     await openNewEditorWithExampleInteractive();
   });
@@ -115,11 +115,33 @@ describe('Interactive graph', () => {
   });
 
   it('does not add keyframes to original animation when copying a sequence', () => {
-
+    editor.copySequence(interactive.sequences[3]); // sky sequence
+    const skySequenceNode = nodes().filter(node => node.target.isSequence && node.target.name == 'sky sequence')[0];
+    // 3 keyframes in original sequence
+    expect(skySequenceNode.children[0].children[0].children.length).to.equal(3);
+    editor.pasteSequenceAt(1000, interactive.layers[0]);
+    expect(skySequenceNode.children[0].children[0].children.length).to.equal(3);
   });
 
-  it('updates tree after a single keyframe was removed in a copied sequence', () => {
+  it('updates tree after a single keyframe was removed in a copied sequence', async () => {
+    const copiedSkySequenceNode = nodes().filter(node => node.target.isSequence && node.target.name == 'copy of sky sequence')[0];
+    // expand sequence
+    copiedSkySequenceNode.isCollapsed = false;
+    // expand morph
+    copiedSkySequenceNode.children[0].isCollapsed = false;
+    // expand animation
+    copiedSkySequenceNode.children[0].children[0].isCollapsed = false;
+    tree().update();
+    expect(tree().document.root.size).to.equal(13);
 
+    const copiedSkySequence = interactive.sequences[2];
+    await editor.initializeSequenceView(copiedSkySequence);
+
+    const overviewLayer = editor.displayedTimeline.overviewLayers.find(overviewLayer => overviewLayer.morph.name === 'sun');
+    if (!overviewLayer.isExpanded) overviewLayer.isExpanded = true;
+    const timelineKeyframe = editor.displayedTimeline.getTimelineKeyframe(copiedSkySequence.animations[0].keyframes[0]);
+    timelineKeyframe.delete();
+    expect(tree().document.root.size).to.equal(12);
   });
 
   describe('item container', () => {
