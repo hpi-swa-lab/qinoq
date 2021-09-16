@@ -8,6 +8,7 @@ import { ColorPickerField } from 'lively.ide/styling/color-picker.js';
 import { KeyframeButton } from './keyframe-button.js';
 import { COLOR_SCHEME } from '../colors.js';
 import { disconnect, connect } from 'lively.bindings';
+import { DropDownSelector } from 'lively.components/widgets.js';
 
 export class AnimationsInspector extends QinoqMorph {
   static get properties () {
@@ -27,9 +28,9 @@ export class AnimationsInspector extends QinoqMorph {
           this.build();
         }
       },
-      propertyControls: {
+      propertyAnimators: {
         initialize () {
-          if (!this._deserializing) this.propertyControls = {};
+          if (!this._deserializing) this.propertyAnimators = {};
         }
       },
       clipMode: {
@@ -47,7 +48,7 @@ export class AnimationsInspector extends QinoqMorph {
 
   get displayedProperties () {
     // serialized objects might contain a _rev key that is not removed after deserialization
-    return Object.keys(this.propertyControls).filter(property => property !== '_rev');
+    return Object.keys(this.propertyAnimators).filter(property => property !== '_rev');
   }
 
   get propertiesToDisplay () {
@@ -82,11 +83,20 @@ export class AnimationsInspector extends QinoqMorph {
   }
 
   initialize () {
-    this.buildPropertyControls();
+    this.clearView();
+    this.buildAnimationsDropDown();
+    this.buildAnimatedPropertyAnimators();
     this.displayedProperties.forEach(property => {
-      this.propertyControls[property].updateButtonStyle();
+      this.propertyAnimators[property].updateButtonStyle();
     });
     this.createConnections();
+  }
+
+  clearView () {
+    if (!this.inspector.targetMorph) {
+      return;
+    }
+    this.ui.propertyPane.submorphs.forEach(morph => morph.withAllSubmorphsDo(submorph => submorph.remove()));
   }
 
   build () {
@@ -100,52 +110,51 @@ export class AnimationsInspector extends QinoqMorph {
     });
   }
 
-  buildPropertyControls () {
-    if (!this.inspector.targetMorph) {
-      return;
-    }
-    this.ui.propertyPane.submorphs.forEach(morph => morph.withAllSubmorphsDo(submorph => submorph.remove()));
-    const props = Object.keys(this.propertiesToDisplay);
-    props.forEach(propToInspect => {
-      const propertyType = this.propertiesToDisplay[propToInspect];
-      this.buildPropertyControl(propToInspect, propertyType);
+  buildAnimationsDropDown () {
+    const dropdown = new DropDownSelector({
+      fontColor: this.fontColor,
+      borderColor: COLOR_SCHEME.PRIMARY,
+      borderStyle: 'solid',
+      borderWidth: 1,
+      tooltip: 'Select a property to animate'
+    });
+    dropdown.dropDownLabel.fontSize = 14;
+    dropdown.getSubmorphNamed('currentValue').fontSize = 14;
+    dropdown.values = Object.keys(this.propertiesToDisplay);
+    dropdown.selectedValue = 'position';
+    this.ui.propertyPane.addMorph(dropdown);
+    connect(dropdown, 'selectedValue', this, 'updateShownAnimators');
+  }
+
+  updateShownAnimators (chosenProperty) {
+    $world.setStatusMessage(chosenProperty);
+  }
+
+  buildAnimatedPropertyAnimators () {
+    const props = this.sequence.getAnimationsForMorph(this.targetMorph).map(animation => animation.property);
+    props.forEach(propToAnimate => {
+      const propertyType = this.propertiesToDisplay[propToAnimate];
+      this.buildPropertyAnimator(propToAnimate, propertyType);
     });
   }
 
-  buildPropertyControl (property, propertyType) {
-    this.propertyControls[property] = new PropertyControl({
+  buildPropertyAnimator (property, propertyType) {
+    this.propertyAnimators[property] = new PropertyControl({
       property: property,
       propertyType: propertyType,
       animationsInspector: this,
       fontColor: this.fontColor
     });
 
-    this.ui.propertyPane.addMorph(this.propertyControls[property]);
-  }
-
-  updatePropertyInInspector (property) {
-    this._updatingInspector = true;
-    this.propertyControls[property].updateValue();
-    this._updatingInspector = false;
-
-    const updatingSpec = { property: property, value: this.targetMorph[property] };
-    this.highlightUnsavedChanges(updatingSpec);
-  }
-
-  updateInInspector (spec) {
-    if (!spec) {
-      return;
-    }
-    const { property, propertyType } = spec;
-    this.updatePropertyInInspector(property);
+    this.ui.propertyPane.addMorph(this.propertyAnimators[property]);
   }
 
   disbandConnections () {
     if (this.targetMorph) {
       disconnect(this.targetMorph, 'name', this.inspector.ui.headline, 'textString');
       this.displayedProperties.forEach(inspectedProperty => {
-        this.propertyControls[inspectedProperty].disbandConnection(this);
-        this.propertyControls[inspectedProperty].remove();
+        this.propertyAnimators[inspectedProperty].disbandConnection(this);
+        this.propertyAnimators[inspectedProperty].remove();
       });
     }
     disconnect(this.editor, 'onScrollChange', this, 'resetHighlightingForAllUnsavedChanges');
@@ -154,15 +163,15 @@ export class AnimationsInspector extends QinoqMorph {
   createConnections () {
     connect(this.targetMorph, 'name', this.inspector.ui.headline, 'textString', { converter: '() => {return `Inspecting ${targetMorph.toString()}`}', varMapping: { targetMorph: this.targetMorph } });
     this.displayedProperties.forEach(inspectedProperty => {
-      this.propertyControls[inspectedProperty].createConnection();
+      this.propertyAnimators[inspectedProperty].createConnection();
     });
     connect(this.editor, 'onScrollChange', this, 'resetHighlightingForAllUnsavedChanges');
   }
 
   resetHighlightingForProperty (changedProperty) {
     this._unsavedChanges = this._unsavedChanges.filter(property => { return property != changedProperty; });
-    if (this.propertyControls[changedProperty].highlight) {
-      this.propertyControls[changedProperty].highlight.abandon();
+    if (this.propertyAnimators[changedProperty].highlight) {
+      this.propertyAnimators[changedProperty].highlight.abandon();
     }
   }
 
@@ -179,15 +188,15 @@ export class AnimationsInspector extends QinoqMorph {
     const animationOnProperty = this.sequence.getAnimationForMorphProperty(this.targetMorph, changedProperty);
 
     if (animationOnProperty && !this.checkForPropertyEquality(animationOnProperty.getValueForProgress(this.sequence.progress), changedValue)) {
-      this.propertyControls[changedProperty].highlight = new Label({
+      this.propertyAnimators[changedProperty].highlight = new Label({
         name: 'warning label',
-        position: pt(this.propertyControls[changedProperty].ui.keyframeButton.topRight.x + 5, 5),
+        position: pt(this.propertyAnimators[changedProperty].ui.keyframeButton.topRight.x + 5, 5),
         fontColor: COLOR_SCHEME.ERROR,
         halosEnabled: false,
         tooltip: 'Unsaved changes will be removed when scrolling \ninstead add a keyframe to persist them'
       });
-      Icon.setIcon(this.propertyControls[changedProperty].highlight, 'exclamation-triangle'),
-      this.propertyControls[changedProperty].addMorph(this.propertyControls[changedProperty].highlight);
+      Icon.setIcon(this.propertyAnimators[changedProperty].highlight, 'exclamation-triangle'),
+      this.propertyAnimators[changedProperty].addMorph(this.propertyAnimators[changedProperty].highlight);
     }
   }
 
@@ -200,8 +209,9 @@ export class AnimationsInspector extends QinoqMorph {
     }
   }
 
+  // used for copied morphs
   updateRespectiveAnimations () {
-    this.displayedProperties.forEach(property => this.propertyControls[property].ui.keyframeButton.updateAnimation());
+    this.displayedProperties.forEach(property => this.propertyAnimators[property].ui.keyframeButton.updateAnimation());
   }
 
   updateKeyframeButtonStyle (animation) {
