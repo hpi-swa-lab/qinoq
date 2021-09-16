@@ -482,7 +482,7 @@ class InteractiveScrollHolder extends Morph {
   onHoverIn (event) {
     if (!this.passThroughMorph && this.topbar) {
       if (this.topbar.editMode != 'Halo' && this.topbar.editMode != 'Hand') {
-        this.topbar.setEditMode('Hand');
+        this.topbar.setEditMode('Halo');
         error('Draw in sequence view!');
       }
     }
@@ -607,7 +607,7 @@ class InteractiveScrollHolder extends Morph {
       if (newMorph) {
         this.newMorph = newMorph;
         // resetting this on mouse up will break the creation of morphs with a single click
-        this.topbar.setEditMode('Hand');
+        this.topbar.setEditMode('Halo');
       }
     }
   }
