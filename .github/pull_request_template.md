@@ -143,8 +143,6 @@ Closes [fill in your issues here]
 
 - [ ] there is one tab for animations and one for styling
   - [ ] with no morph selected, the styling buttons are disabled
-- [ ] the tree leaves can be selected to inspect with the target selector
-- [ ] in the sequence view, a morph that is not part of the currently open sequence cannot be selected with the target picker
 - [ ] when selecting a morph in the sequence via halo, that morph is shown in the inspector
   - [ ] the styling buttons in the styling tab work as expected
 - [ ] when setting two keyframes for different position values at different scroll positions, an animation is created and can be viewed

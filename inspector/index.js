@@ -5,7 +5,6 @@ import { disconnect, connect } from 'lively.bindings';
 import { Sequence } from '../interactive.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 import { resource } from 'lively.resources';
-import { TargetPicker } from './target-picker.js';
 import { CONSTANTS } from './constants.js';
 import { StyleInspector } from './style-inspector.js';
 import { AnimationsInspector } from './animations-inspector.js';
@@ -74,17 +73,12 @@ export class InteractiveMorphInspector extends QinoqMorph {
     return this.ui.styleInspector;
   }
 
-  buildTargetPicker () {
-    this.ui.targetPicker = new TargetPicker({ inspector: this });
-  }
 
   async build () {
-    this.buildTargetPicker();
 
     this.ui.headlinePane = new QinoqMorph({ name: 'headline pane', fill: COLOR_SCHEME.TRANSPARENT });
     this.ui.headline = new Label({ name: 'headline', textString: 'No morph selected', fontWeight: 'bold' });
     this.ui.headlinePane.layout = new HorizontalLayout({ spacing: 5, align: 'center' });
-    this.ui.headlinePane.addMorph(this.ui.targetPicker);
     this.ui.headlinePane.addMorph(this.ui.headline);
 
     this.addMorph(this.ui.headlinePane);
