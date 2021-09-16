@@ -991,6 +991,10 @@ export class InteractivesEditor extends QinoqMorph {
       if (newName) this.interactive.name = newName;
     });
   }
+
+  isInSequenceView () {
+    return !!this.currentSequence;
+  }
 }
 
 class InteractiveHolder extends QinoqMorph {
@@ -1148,6 +1152,10 @@ class InteractiveHolder extends QinoqMorph {
          !(this.interactive.bounds().height - scrollBarWidth > this.height)) {
       this.clipMode = 'hidden';
     }
+  }
+
+  get isInteractiveHolder () {
+    return true;
   }
 }
 
