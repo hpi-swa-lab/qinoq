@@ -39,7 +39,8 @@ const CONSTANTS = {
   MENU_BAR_WIDGET_WIDTH: 100,
   MENU_BAR_WIDGET_HEIGHT: 25,
   FONT_SIZE_TEXT: 18,
-  FONT_SIZE_HEADINGS: 20
+  FONT_SIZE_HEADINGS: 20,
+  HALO_ITEMS: ['menu', 'drag', 'close', 'copy', 'rotate']
 };
 CONSTANTS.SIDEBAR_WIDTH = (CONSTANTS.EDITOR_WIDTH - CONSTANTS.INTERACTIVE_HOLDER_WIDTH) / 2;
 CONSTANTS.TIMELINE_HEIGHT = CONSTANTS.EDITOR_HEIGHT - CONSTANTS.SUBWINDOW_HEIGHT - CONSTANTS.MENU_BAR_HEIGHT;
@@ -942,6 +943,8 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   onHoverIn () {
+    const bar = $world.get('lively top bar');
+    if (bar) bar.activeHaloItems = CONSTANTS.HALO_ITEMS;
     this._altClickDefinesThatStorage = config.altClickDefinesThat;
     // this key in the morphic config is set to false, when clicking on a morph while Alt is pressed,
     // this does not bind `that` to the clicked morph
@@ -950,6 +953,8 @@ export class InteractivesEditor extends QinoqMorph {
   }
 
   onHoverOut () {
+    const bar = $world.get('lively top bar');
+    if (bar) bar.activeHaloItems = ['*'];
     config.altClickDefinesThat = this._altClickDefinesThatStorage;
   }
 
