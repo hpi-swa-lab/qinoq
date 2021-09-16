@@ -162,16 +162,7 @@ export class AnimationsInspector extends QinoqMorph {
   buildQuickPropertyAnimator (property) {
     const animator = this.buildPropertyAnimator(property);
     if (!animator) return;
-    // TODO: extract into annotateAnimator()
-    animator.highlight = new Label({
-      name: 'quick access label',
-      position: pt(animator.ui.keyframeButton.topRight.x + 5, 5),
-      fontColor: COLOR_SCHEME.PRIMARY,
-      halosEnabled: false,
-      tooltip: 'Quickly animate the currently changed properties!'
-    });
-    Icon.setIcon(animator.highlight, 'bolt'),
-    animator.addMorph(animator.highlight);
+    animator.annotate('quick access label', COLOR_SCHEME.PRIMARY, 'Quickly animate the currently changed properties!', 'bolt');
   }
 
   disbandConnections () {
@@ -224,15 +215,11 @@ export class AnimationsInspector extends QinoqMorph {
     const animationOnProperty = this.sequence.getAnimationForMorphProperty(this.targetMorph, changedProperty);
 
     if (animationOnProperty && !this.checkForPropertyEquality(animationOnProperty.getValueForProgress(this.sequence.progress), changedValue)) {
-      this.propertyAnimators[changedProperty].highlight = new Label({
-        name: 'warning label',
-        position: pt(this.propertyAnimators[changedProperty].ui.keyframeButton.topRight.x + 5, 5),
-        fontColor: COLOR_SCHEME.ERROR,
-        halosEnabled: false,
-        tooltip: 'Unsaved changes will be removed when scrolling \ninstead add a keyframe to persist them'
-      });
-      Icon.setIcon(this.propertyAnimators[changedProperty].highlight, 'exclamation-triangle'),
-      this.propertyAnimators[changedProperty].addMorph(this.propertyAnimators[changedProperty].highlight);
+      this.propertyAnimators[changedProperty].annotate(
+        'warning label',
+        COLOR_SCHEME.ERROR,
+        'Unsaved changes will be removed when scrolling \ninstead add a keyframe to persist them',
+        'exclamation-triangle');
     }
   }
 
@@ -307,6 +294,18 @@ class PropertyAnimator extends QinoqMorph {
       sequence: this.animationsInspector.sequence,
       _editor: this.animationsInspector.editor
     }));
+  }
+
+  annotate (name, color, tooltip, icon) {
+    this.highlight = new Label({
+      name: name,
+      position: pt(this.ui.keyframeButton.topRight.x + 5, 5),
+      fontColor: color,
+      halosEnabled: false,
+      tooltip: tooltip
+    });
+    Icon.setIcon(this.highlight, icon),
+    this.addMorph(this.highlight);
   }
 
   updateButtonStyle () {
