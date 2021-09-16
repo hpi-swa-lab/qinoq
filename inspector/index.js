@@ -28,7 +28,6 @@ export class InteractiveMorphInspector extends QinoqMorph {
         }
       },
       targetMorph: {
-        after: ['propertyControls'],
         set (morph) {
           if (this._deserializing) {
             this.setProperty('targetMorph', morph);
@@ -73,9 +72,7 @@ export class InteractiveMorphInspector extends QinoqMorph {
     return this.ui.styleInspector;
   }
 
-
   async build () {
-
     this.ui.headlinePane = new QinoqMorph({ name: 'headline pane', fill: COLOR_SCHEME.TRANSPARENT });
     this.ui.headline = new Label({ name: 'headline', textString: 'No morph selected', fontWeight: 'bold' });
     this.ui.headlinePane.layout = new HorizontalLayout({ spacing: 5, align: 'center' });
