@@ -43,6 +43,9 @@ export class Interactive extends DeserializationAwareMorph {
           signal(this, 'onLengthChange', _length);
         }
       },
+      showHalosForContent: {
+        defaultValue: true
+      },
       scrollPosition: {
         type: 'Number',
         isFloat: false,
