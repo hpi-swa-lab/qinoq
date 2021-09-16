@@ -96,12 +96,13 @@ export class AnimationsInspector extends QinoqMorph {
     if (!this.inspector.targetMorph) {
       return;
     }
+    this.propertyAnimators = {};
     this.ui.propertyPane.submorphs.forEach(morph => morph.withAllSubmorphsDo(submorph => submorph.remove()));
   }
 
   build () {
     this.ui.propertyPane = new QinoqMorph({ name: 'property pane' });
-    this.ui.propertyPane.layout = new VerticalLayout({ spacing: 2 });
+    this.ui.propertyPane.layout = new VerticalLayout({ spacing: 10 });
 
     this.addMorph(this.ui.propertyPane);
     this.layout = new VerticalLayout({
@@ -127,30 +128,57 @@ export class AnimationsInspector extends QinoqMorph {
   }
 
   updateShownAnimators (chosenProperty) {
-    $world.setStatusMessage(chosenProperty);
+    const animatedProps = this.sequence.getAnimationsForMorph(this.targetMorph).map(animation => animation.property);
+    Object.keys(this.propertyAnimators).forEach(property => {
+      animatedProps.includes(property)
+        ? undefined
+        : () => {
+            this.propertyAnimators[property].remove();
+            delete this.propertyAnimators[property];
+          };
+    });
+    this.buildPropertyAnimator(chosenProperty);
   }
 
   buildAnimatedPropertyAnimators () {
     const props = this.sequence.getAnimationsForMorph(this.targetMorph).map(animation => animation.property);
     props.forEach(propToAnimate => {
-      const propertyType = this.propertiesToDisplay[propToAnimate];
-      this.buildPropertyAnimator(propToAnimate, propertyType);
+      this.buildPropertyAnimator(propToAnimate);
     });
   }
 
-  buildPropertyAnimator (property, propertyType) {
-    this.propertyAnimators[property] = new PropertyControl({
+  buildPropertyAnimator (property) {
+    if (this.propertyAnimators[property]) return null;
+
+    this.propertyAnimators[property] = new PropertyAnimator({
       property: property,
-      propertyType: propertyType,
       animationsInspector: this,
       fontColor: this.fontColor
     });
 
-    this.ui.propertyPane.addMorph(this.propertyAnimators[property]);
+    return this.ui.propertyPane.addMorph(this.propertyAnimators[property]);
+  }
+
+  buildQuickPropertyAnimator (property) {
+    const animator = this.buildPropertyAnimator(property);
+    if (!animator) return;
+    // TODO: extract into annotateAnimator()
+    animator.highlight = new Label({
+      name: 'quick access label',
+      position: pt(animator.ui.keyframeButton.topRight.x + 5, 5),
+      fontColor: COLOR_SCHEME.PRIMARY,
+      halosEnabled: false,
+      tooltip: 'Quickly animate the currently changed properties!'
+    });
+    Icon.setIcon(animator.highlight, 'bolt'),
+    animator.addMorph(animator.highlight);
   }
 
   disbandConnections () {
     if (this.targetMorph) {
+      Object.keys(this.propertiesToDisplay).forEach(property => {
+        disconnect(this.targetMorph, property, this, 'onTargetMorphChange');
+      });
       disconnect(this.targetMorph, 'name', this.inspector.ui.headline, 'textString');
       this.displayedProperties.forEach(inspectedProperty => {
         this.propertyAnimators[inspectedProperty].disbandConnection(this);
@@ -161,11 +189,19 @@ export class AnimationsInspector extends QinoqMorph {
   }
 
   createConnections () {
+    Object.keys(this.propertiesToDisplay).forEach(property => {
+      connect(this.targetMorph, property, this, 'onTargetMorphChange', { converter: '() => {return property}', varMapping: { property: property } });
+    });
     connect(this.targetMorph, 'name', this.inspector.ui.headline, 'textString', { converter: '() => {return `Inspecting ${targetMorph.toString()}`}', varMapping: { targetMorph: this.targetMorph } });
     this.displayedProperties.forEach(inspectedProperty => {
       this.propertyAnimators[inspectedProperty].createConnection();
     });
     connect(this.editor, 'onScrollChange', this, 'resetHighlightingForAllUnsavedChanges');
+  }
+
+  onTargetMorphChange (changedProperty) {
+    // property is not animated yet, give quick access to animator
+    this.buildQuickPropertyAnimator(changedProperty);
   }
 
   resetHighlightingForProperty (changedProperty) {
@@ -222,7 +258,7 @@ export class AnimationsInspector extends QinoqMorph {
   }
 }
 
-class PropertyControl extends QinoqMorph {
+class PropertyAnimator extends QinoqMorph {
   static get properties () {
     return {
       fontColor: {
@@ -234,7 +270,6 @@ class PropertyControl extends QinoqMorph {
       },
       targetMorph: {},
       property: {},
-      propertyType: {},
       animationsInspector: {
         set (inspector) {
           this.setProperty('animationsInspector', inspector);
@@ -243,7 +278,7 @@ class PropertyControl extends QinoqMorph {
         }
       },
       ui: {
-        after: ['property', 'propertyType', 'animationsInspector'],
+        after: ['property', 'animationsInspector'],
         initialize () {
           if (!this._deserializing) {
             this.ui = {};
@@ -269,7 +304,6 @@ class PropertyControl extends QinoqMorph {
       position: pt(CONSTANTS.KEYFRAME_BUTTON_X, CONSTANTS.WIDGET_Y),
       animationsInspector: this.animationsInspector,
       property: this.property,
-      propertyType: this.propertyType,
       sequence: this.animationsInspector.sequence,
       _editor: this.animationsInspector.editor
     }));
