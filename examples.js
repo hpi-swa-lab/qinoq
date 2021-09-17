@@ -148,10 +148,10 @@ class CrownMorph extends Polygon {
   }
 
   onMouseDown () {
-    this.fill = this.fill.darker();
+    this.fill = Color.rgbHex('1c5c2b');
   }
 
   onMouseUp () {
-    this.fill = this.fill.lighter();
+    this.fill = Color.rgbHex('74a57f');
   }
 }
