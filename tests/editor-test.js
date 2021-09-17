@@ -186,6 +186,7 @@ describe('Editor', () => {
         targetMorph: timelineLayer
       };
       timelineLayer.onMouseDown(clickEvent);
+      editor.getSubmorphNamed('property dropdown').selectedValue = 'extent';
       await editor.getSubmorphNamed('aKeyframeButton').onMouseUp();
       expect(layerInfo.menuItems().some(menuItem => menuItem[0] == '➕ Expand view')).to.be.true;
       editor.getTabFor(nightBackgroundTimelineSequence.sequence).close();
