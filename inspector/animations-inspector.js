@@ -46,12 +46,12 @@ export class AnimationsInspector extends QinoqMorph {
     return this.inspector.sequence;
   }
 
-  get displayedProperties () {
+  get displayedAnimators () {
     // serialized objects might contain a _rev key that is not removed after deserialization
     return Object.keys(this.propertyAnimators).filter(property => property !== '_rev');
   }
 
-  get propertiesToDisplay () {
+  get animatableProperties () {
     const defaultPropertiesAndTypesInMorph = Object.entries(animatedPropertiesAndTypes())
       .filter(propertyAndType => propertyAndType[0] in this.targetMorph &&
            !this.propertyNotAnimatableForTargetMorph(propertyAndType[0]));
@@ -86,9 +86,6 @@ export class AnimationsInspector extends QinoqMorph {
     this.clearView();
     this.buildAnimationsDropDown();
     this.buildAnimatedPropertyAnimators();
-    this.displayedProperties.forEach(property => {
-      this.propertyAnimators[property].updateButtonStyle();
-    });
     this.createConnections();
   }
 
@@ -121,7 +118,7 @@ export class AnimationsInspector extends QinoqMorph {
     });
     dropdown.dropDownLabel.fontSize = 14;
     dropdown.getSubmorphNamed('currentValue').fontSize = 14;
-    dropdown.values = Object.keys(this.propertiesToDisplay);
+    dropdown.values = Object.keys(this.animatableProperties);
     dropdown.selectedValue = 'position';
     this.ui.propertyPane.addMorph(dropdown);
     connect(dropdown, 'selectedValue', this, 'updateShownAnimators');
@@ -166,11 +163,11 @@ export class AnimationsInspector extends QinoqMorph {
 
   disbandConnections () {
     if (this.targetMorph) {
-      Object.keys(this.propertiesToDisplay).forEach(property => {
+      Object.keys(this.animatableProperties).forEach(property => {
         disconnect(this.targetMorph, property, this, 'onTargetMorphChange');
       });
       disconnect(this.targetMorph, 'name', this.inspector.ui.headline, 'textString');
-      this.displayedProperties.forEach(inspectedProperty => {
+      this.displayedAnimators.forEach(inspectedProperty => {
         this.propertyAnimators[inspectedProperty].disbandConnection(this);
         this.propertyAnimators[inspectedProperty].remove();
       });
@@ -179,11 +176,11 @@ export class AnimationsInspector extends QinoqMorph {
   }
 
   createConnections () {
-    Object.keys(this.propertiesToDisplay).forEach(property => {
+    Object.keys(this.animatableProperties).forEach(property => {
       connect(this.targetMorph, property, this, 'onTargetMorphChange', { converter: '() => {return property}', varMapping: { property: property } });
     });
     connect(this.targetMorph, 'name', this.inspector.ui.headline, 'textString', { converter: '() => {return `Inspecting ${targetMorph.toString()}`}', varMapping: { targetMorph: this.targetMorph } });
-    this.displayedProperties.forEach(inspectedProperty => {
+    this.displayedAnimators.forEach(inspectedProperty => {
       this.propertyAnimators[inspectedProperty].createConnection();
     });
     connect(this.editor, 'onScrollChange', this, 'resetHighlightingForAllUnsavedChanges');
@@ -233,7 +230,7 @@ export class AnimationsInspector extends QinoqMorph {
 
   // used for copied morphs
   updateRespectiveAnimations () {
-    this.displayedProperties.forEach(property => this.propertyAnimators[property].ui.keyframeButton.updateAnimation());
+    this.displayedAnimators.forEach(property => this.propertyAnimators[property].ui.keyframeButton.updateAnimation());
   }
 
   updateKeyframeButtonStyle (animation) {
