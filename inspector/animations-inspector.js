@@ -34,7 +34,7 @@ export class AnimationsInspector extends QinoqMorph {
         }
       },
       clipMode: {
-        defaultValue: 'auto'
+        defaultValue: 'hidden'
       },
       _unsavedChanges: {
         defaultValue: []
@@ -93,15 +93,26 @@ export class AnimationsInspector extends QinoqMorph {
     if (!this.inspector.targetMorph) {
       return;
     }
+
+    const dropdown = this.get('property dropdown');
+    if (dropdown) dropdown.remove();
+
     this.propertyAnimators = {};
-    this.ui.propertyPane.submorphs.forEach(morph => morph.withAllSubmorphsDo(submorph => submorph.remove()));
+    this.ui.animatorPane.submorphs.forEach(morph => morph.withAllSubmorphsDo(submorph => submorph.remove()));
   }
 
   build () {
-    this.ui.propertyPane = new QinoqMorph({ name: 'property pane' });
-    this.ui.propertyPane.layout = new VerticalLayout({ spacing: 10 });
+    this.ui.animatorPane = new QinoqMorph({
+      name: 'property pane',
+      clipMode: 'auto',
+      extent: pt(225, 200)
+    });
+    this.ui.animatorPane.layout = new VerticalLayout({
+      spacing: 10,
+      autoResize: false
+    });
 
-    this.addMorph(this.ui.propertyPane);
+    this.addMorph(this.ui.animatorPane);
     this.layout = new VerticalLayout({
       autoResize: false,
       spacing: 5
@@ -110,6 +121,7 @@ export class AnimationsInspector extends QinoqMorph {
 
   buildAnimationsDropDown () {
     const dropdown = new DropDownSelector({
+      name: 'property dropdown',
       fontColor: this.fontColor,
       borderColor: COLOR_SCHEME.PRIMARY,
       borderStyle: 'solid',
@@ -120,7 +132,7 @@ export class AnimationsInspector extends QinoqMorph {
     dropdown.getSubmorphNamed('currentValue').fontSize = 14;
     dropdown.values = Object.keys(this.animatableProperties);
     dropdown.selectedValue = 'position';
-    this.ui.propertyPane.addMorph(dropdown);
+    this.addMorphBack(dropdown);
     connect(dropdown, 'selectedValue', this, 'updateShownAnimators');
   }
 
@@ -152,7 +164,7 @@ export class AnimationsInspector extends QinoqMorph {
       animationsInspector: this
     });
 
-    return this.ui.propertyPane.addMorph(this.propertyAnimators[property]);
+    return this.ui.animatorPane.addMorph(this.propertyAnimators[property]);
   }
 
   buildQuickPropertyAnimator (property) {
