@@ -129,6 +129,15 @@ class CloudMorph extends Image {
 }
 
 class CrownMorph extends Polygon {
+  static get properties () {
+    return {
+      test: {
+        animateAs: 'number'
+
+      }
+    };
+  }
+
   constructor (props) {
     // freezing breaks this class and will while deserialization not give any props which the class polygon can't take
     // it will while deserialization set the vertices to the property values so those are
