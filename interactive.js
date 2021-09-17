@@ -551,8 +551,8 @@ class InteractiveScrollHolder extends Morph {
 
     // handle halo mode on our own when the scrollOverlay is target of the topbar (i.e., with editor in sequence view)
     // the handling of the topbar never finds the actual morphs in the interactive, but oly the scrollholder
-    if (this.topbar.editMode == 'Halo' && this.owner.owner.isInSequenceView) {
-      if (Sequence.getSequenceOfMorph(this.currentMouseTarget) == this.owner.owner.currentSequence) {
+    if (this.topbar.editMode == 'Halo' && this.editor && this.editor.isInSequenceView) {
+      if (Sequence.getSequenceOfMorph(this.currentMouseTarget) == this.editor.currentSequence) {
         this.topbar.showHaloPreviewFor(this.currentMouseTarget);
       }
     }
@@ -637,6 +637,10 @@ class InteractiveScrollHolder extends Morph {
     if (this.owner != this.interactive.owner) {
       this.interactive.owner.addMorph(this);
     }
+  }
+
+  get editor () {
+    return this.owner.owner;
   }
 }
 
