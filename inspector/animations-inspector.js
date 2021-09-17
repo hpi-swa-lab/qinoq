@@ -1,5 +1,5 @@
 import { QinoqMorph } from '../qinoq-morph.js';
-import { animatedPropertiesAndTypes, notAnimatableOnLabelMorphWithIcon, notAnimatableOnTextMorph } from '../properties.js';
+import { animatedPropertiesAndTypes, getColorForProperty, notAnimatableOnLabelMorphWithIcon, notAnimatableOnTextMorph } from '../properties.js';
 import { VerticalLayout, Icon, ShadowObject, Label } from 'lively.morphic';
 import { pt } from 'lively.graphics';
 import { CONSTANTS } from './constants.js';
@@ -152,8 +152,7 @@ export class AnimationsInspector extends QinoqMorph {
 
     this.propertyAnimators[property] = new PropertyAnimator({
       property: property,
-      animationsInspector: this,
-      fontColor: this.fontColor
+      animationsInspector: this
     });
 
     return this.ui.propertyPane.addMorph(this.propertyAnimators[property]);
@@ -248,13 +247,6 @@ export class AnimationsInspector extends QinoqMorph {
 class PropertyAnimator extends QinoqMorph {
   static get properties () {
     return {
-      fontColor: {
-        after: ['ui'],
-        set (color) {
-          this.setProperty('fontColor', color);
-          if (!this._deserializing) this.ui.label.fontColor = color;
-        }
-      },
       targetMorph: {},
       property: {},
       animationsInspector: {
@@ -282,7 +274,7 @@ class PropertyAnimator extends QinoqMorph {
       name: `${this.property} label`,
       textString: this.property,
       position: pt(CONSTANTS.LABEL_X, 0),
-      fontColor: this.fontColor
+      fontColor: getColorForProperty(this.property)
     }));
   }
 
