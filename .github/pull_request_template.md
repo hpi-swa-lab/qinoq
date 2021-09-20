@@ -19,7 +19,7 @@ Closes [fill in your issues here]
 
 - [ ] can be opened in the world
 - [ ] is scrollable
-- [ ] mouseDown on the leaves makes them darker, the cursor changes to a pointer
+- [ ] mouseDown on the leaves makes them darker (when in hand mode), the cursor changes to a pointer
 - [ ] mouseUp on the leaves makes them lighter again
 - [ ] hovering over the leaves shows a tooltip after a while, which goes away when moving away
 - [ ] hovering over the clouds blurs them
