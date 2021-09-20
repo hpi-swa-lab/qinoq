@@ -4,6 +4,7 @@ import { QinoqMorph } from '../qinoq-morph.js';
 import { QinoqButton } from '../components/qinoq-button.js';
 import { TIMELINE_CONSTANTS } from './constants.js';
 import { rect } from 'lively.graphics';
+import { HALO_ITEMS } from '../editor.js';
 
 export class TimelineLayerInfo extends QinoqMorph {
   static get properties () {
@@ -246,7 +247,12 @@ export class SequenceTimelineLayerInfo extends TimelineLayerInfo {
     }]);
     menuOptions.push(['✏️ Rename morph', async () => await this.promptMorphName()]);
     menuOptions.push(['🗑️ Remove morph', async () => await this.abandonMorph()]);
-    menuOptions.push(['⏹️ Show halo for morph', () => $world.showHaloFor(this.morph)]);
+    menuOptions.push(['⏹️ Show halo for morph', () => {
+      const topbar = $world.get('lively top bar');
+      topbar.activeHaloItems = HALO_ITEMS;
+      $world.get('lively top bar').showHaloFor(this.morph);
+      topbar.activeHaloItems = ['*'];
+    }]);
     if (this.timelineLayer.isOverviewLayer) {
       menuOptions.push(['👥 Copy Morph', () => this.editor.copyMorph(this.morph)]);
       menuOptions.push(['✂️ Cut Morph', () => this.editor.cutMorph(this.morph)]);
