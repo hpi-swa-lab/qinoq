@@ -8,6 +8,7 @@ import { LottieMorph } from '../interactive-morphs/lottie-morph.js';
 import { Morph } from 'lively.morphic';
 import { promise } from 'lively.lang';
 import { connect } from 'lively.bindings';
+import { delay } from 'lively.lang/promise.js';
 
 let editor, interactive;
 function closeEditor () {
@@ -260,7 +261,7 @@ describe('Editor', () => {
         testSequence.submorphs = [morph1, morph2, morph3, morph4];
         interactive.addSequence(testSequence);
         editor.initializeSequenceView(testSequence);
-        await new Promise(r => setTimeout(r, 10));
+        await delay(10);
       });
 
       function getLayerForMorph (morph) {

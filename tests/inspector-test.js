@@ -6,6 +6,7 @@ import { COLOR_SCHEME } from '../colors.js';
 import { SocialMediaButton, PRESETS } from '../components/social-media-button.js';
 import { TEST_PRESETS } from './utils/social-media-button-test-utils.js';
 import { Color } from 'lively.graphics';
+import { delay } from 'lively.lang/promise.js';
 
 class InspectorTestMorph extends Morph {
   static get properties () {
@@ -33,7 +34,7 @@ describe('Inspector', () => {
     interactive = await exampleInteractive();
     editor.interactive = interactive;
 
-    await new Promise(r => setTimeout(r, 10));
+    await delay(10);
     morph = new InspectorTestMorph();
     inspector = editor.ui.inspector;
     interactive.sequences[0].addMorph(morph);

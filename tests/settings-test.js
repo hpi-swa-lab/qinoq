@@ -3,6 +3,7 @@ import { expect } from 'mocha-es6';
 import { Settings } from '../editor.js';
 import { InteractivesEditor, exampleInteractive } from 'qinoq';
 import { DEFAULT_SCROLLOVERLAY_OPACITY } from '../interactive.js';
+import { delay } from 'lively.lang/promise.js';
 
 describe('Settings', () => {
   it('parses fractions and numbers in correct formats', () => {
@@ -38,11 +39,11 @@ describe('Settings', () => {
 
     it('can be used to rename the interactive', async () => {
       editor.ui.settings.get('renameButton').onMouseUp();
-      await new Promise(resolve => setTimeout(resolve, 5));
+      await delay(5);
       const prompt = $world.get('aTextPrompt');
       prompt.get('input').textString = 'newName';
       prompt.get('ok button').trigger();
-      await new Promise(resolve => setTimeout(resolve, 5));
+      await delay(5);
       expect(editor.interactive.name).to.equal('newName');
     });
 
