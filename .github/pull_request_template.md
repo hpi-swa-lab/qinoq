@@ -20,7 +20,7 @@ Closes [fill in your issues here]
 - [ ] can be opened in the world
 - [ ] is scrollable
 - [ ] mouseDown on the leaves makes them darker, the cursor changes to a pointer
-- [ ] mouseUp on the leaves makes them lighter again (it is expected that the color is not green anymore)
+- [ ] mouseUp on the leaves makes them lighter again
 - [ ] hovering over the leaves shows a tooltip after a while, which goes away when moving away
 - [ ] hovering over the clouds blurs them
 - [ ] moving the mouse away from the clouds removes the blur  
@@ -95,7 +95,7 @@ Closes [fill in your issues here]
 
 #### Sequence View
 
-- [ ] there are three OverviewLayers (one per Morph in the sky sequence)
+- [ ] there are two OverviewLayers (one per Morph in the sky sequence)
 - [ ] they hold two to three keyframelines each
   - [ ] when changing the zoom, the keyframelines update accordingly
 - [ ] clicking on the triangle expands those into two new layers with keyframes
@@ -103,7 +103,7 @@ Closes [fill in your issues here]
   - [ ] right-clicking on the last keyframe of the sun's position animation, an option to select easing is shown
   - [ ] when clicked, a list of easings appears
   - [ ] when outBack is selected as the easing, the sun moves a little back at the end of the animation
-- [ ] when expanding all three morphs the cursor is still visible over all layers
+- [ ] when expanding all two morphs the cursor is still visible over all layers
 - [ ] creating a new keyframe (with the inspector) will update the layers accordingly
 - [ ] clicking on a layer will select the corresponding morph in the inspector
 - [ ] clicking on the first tab brings you back to the global timeline
