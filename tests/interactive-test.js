@@ -6,6 +6,7 @@ import { NumberAnimation } from '../index.js';
 import { Keyframe } from '../index.js';
 import { Morph, Text } from 'lively.morphic';
 import { serialize, deserialize } from 'lively.serializer2';
+import { delay } from 'lively.lang/promise.js';
 
 describe('Interactive', () => {
   let interactive;
@@ -237,7 +238,7 @@ describe('Interactive', () => {
     it('resizes morphs', async () => {
       const initialMorphHeight = morph.height;
       interactive.height = interactive.height * 3;
-      await new Promise(r => setTimeout(r, 5)); // Application of layout takes some time
+      await delay(5); // Application of layout takes some time
       expect(morph.height).to.be.equal(initialMorphHeight * 3);
     });
 

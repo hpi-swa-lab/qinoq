@@ -23,6 +23,7 @@ import { LabeledCheckBox, DropDownSelector } from 'lively.components/widgets.js'
 import { NumberAnimation, Keyframe } from './animations.js';
 import { Layer, Sequence, Interactive } from './interactive.js';
 import { LottieMorph } from './interactive-morphs/lottie-morph.js';
+import { delay } from 'lively.lang/promise.js';
 
 export const HALO_ITEMS = ['menu', 'drag', 'close', 'copy', 'rotate', 'name'];
 
@@ -911,7 +912,7 @@ export class InteractivesEditor extends QinoqMorph {
       this.internalScrollChangeWithGUIUpdate(this.currentSequence.getAbsolutePositionFor(keyframe));
 
       // Needed for scrolling to the correct position when opening existing tab
-      await new Promise(r => setTimeout(r, 30));
+      await delay(30);
 
       this.getTimelineFor(tab).scrollToKeyframe(keyframe, animation);
       return;

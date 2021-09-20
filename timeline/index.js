@@ -14,6 +14,7 @@ import { Sequence } from '../interactive.js';
 import { EasingSelection } from '../components/easing-selection.js';
 import { QinoqMorph } from '../qinoq-morph.js';
 import { error } from '../utilities/messages.js';
+import { delay } from 'lively.lang/promise.js';
 
 export class Timeline extends QinoqMorph {
   static get properties () {
@@ -870,7 +871,7 @@ export class SequenceTimeline extends Timeline {
     this.scrollToTimelineKeyframe(timelineKeyframe);
 
     // If this line is removed, the scroll does not happen (Race issue)
-    await new Promise(r => setTimeout(r, 30));
+    await delay(30);
 
     timelineKeyframe.show();
   }
