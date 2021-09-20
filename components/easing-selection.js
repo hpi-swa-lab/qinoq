@@ -373,7 +373,7 @@ export class EasingListItem extends Morph {
         this.fill = COLOR_SCHEME.SURFACE_VARIANT;
         break;
       case 'selected':
-        this.fill = COLOR_SCHEME.PRIMARY_LIGHTER;
+        this.fill = COLOR_SCHEME.SURFACE_VARIANT;
         break;
     }
   }
