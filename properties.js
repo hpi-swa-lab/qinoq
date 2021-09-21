@@ -76,6 +76,10 @@ export function animatedPropertiesAndTypes () {
   return propertiesAndTypes;
 }
 
+export function typeForProperty (property) {
+  return animatedProperties[property].type;
+}
+
 export function getColorForProperty (property) {
   if (animatedProperties[property] && animatedProperties[property].color) return animatedProperties[property].color;
 

@@ -3,7 +3,7 @@ import { pt } from 'lively.graphics';
 import { COLOR_SCHEME } from '../colors.js';
 import { connect, disconnect } from 'lively.bindings';
 import { Keyframe } from '../animations.js';
-import { getColorForProperty } from '../properties.js';
+import { getColorForProperty, typeForProperty } from '../properties.js';
 
 export class KeyframeButton extends QinoqMorph {
   static get properties () {
@@ -67,7 +67,6 @@ export class KeyframeButton extends QinoqMorph {
           this.tooltip = `Create a keyframe for the ${property} property`;
         }
       },
-      propertyType: {},
       styleSet: {
         defaultValue: 'default',
         set (styleSet) {
@@ -98,7 +97,7 @@ export class KeyframeButton extends QinoqMorph {
 
   async addOrOverwriteKeyframe (relativePosition = this.sequence.progress) {
     const newKeyframe = new Keyframe(relativePosition, this.currentValue);
-    this.animation = await this.sequence.addKeyframeForMorph(newKeyframe, this.target, this.property, this.propertyType, true);
+    this.animation = await this.sequence.addKeyframeForMorph(newKeyframe, this.target, this.property, typeForProperty(this.property), true);
     const timeline = this.editor.getTimelineForSequence(this.sequence);
     if (timeline) timeline.updateAnimationLayer(this.animation);
     this.animationsInspector.resetHighlightingForProperty(this.property);
