@@ -36,6 +36,7 @@ export class AnimationsInspector extends QinoqMorph {
       clipMode: {
         defaultValue: 'hidden'
       },
+      // array of all properties for which currently a highight (warning or quick access) exists
       _unsavedChanges: {
         defaultValue: []
       }
@@ -170,7 +171,12 @@ export class AnimationsInspector extends QinoqMorph {
   buildQuickPropertyAnimator (property) {
     const animator = this.buildPropertyAnimator(property);
     if (!animator) return;
-    animator.annotate('quick access label', COLOR_SCHEME.PRIMARY, 'Quickly animate the currently changed properties!', 'bolt');
+    this._unsavedChanges.push(property);
+    animator.annotate(
+      'quick access label',
+      COLOR_SCHEME.PRIMARY,
+      'Quickly animate the currently changed properties!',
+      'bolt');
   }
 
   disbandConnections () {
@@ -205,7 +211,7 @@ export class AnimationsInspector extends QinoqMorph {
 
   resetHighlightingForProperty (changedProperty) {
     this._unsavedChanges = this._unsavedChanges.filter(property => { return property != changedProperty; });
-    if (this.propertyAnimators[changedProperty].highlight) {
+    if (this.propertyAnimators[changedProperty] && this.propertyAnimators[changedProperty].highlight) {
       this.propertyAnimators[changedProperty].highlight.abandon();
     }
   }
