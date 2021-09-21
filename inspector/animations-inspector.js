@@ -105,8 +105,7 @@ export class AnimationsInspector extends QinoqMorph {
   build () {
     this.ui.animatorPane = new QinoqMorph({
       name: 'property pane',
-      clipMode: 'auto',
-      extent: pt(225, 200)
+      clipMode: 'auto'
     });
     this.ui.animatorPane.layout = new VerticalLayout({
       spacing: 10,
@@ -114,6 +113,10 @@ export class AnimationsInspector extends QinoqMorph {
     });
 
     this.addMorph(this.ui.animatorPane);
+    // magic values determiend by trial-and-error until the layout looked good
+    // the layout of the editor should be overhauled, then this can be solved in a cleaner way
+    connect(this.ui.animatorPane.owner, 'extent', this.ui.animatorPane, 'extent', { converter: '(extent) => pt(extent.x - 7, extent.y - 38)', varMapping: { pt: pt } });
+
     this.layout = new VerticalLayout({
       autoResize: false,
       spacing: 5
