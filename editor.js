@@ -473,6 +473,7 @@ export class InteractivesEditor extends QinoqMorph {
     const { sequence, animations, morphs } = this.clipboard.content;
     const sequenceProps = { ...sequence._morphicState, submorphs: [], animations: [], start, layer };
     const newSequence = new Sequence(sequenceProps);
+    newSequence.name = `copy of ${newSequence.name}`;
     morphs.forEach(morph => {
       // morph.copy also copies connections
       // this is undesirable for us which is why we copy the morph without connections
@@ -481,6 +482,7 @@ export class InteractivesEditor extends QinoqMorph {
       const connections = morph.attributeConnections;
       morph.attributeConnections = [];
       const copiedMorph = morph.copy();
+      copiedMorph.name = 'copy of ' + copiedMorph.name;
       morph.attributeConnections = connections;
       newSequence.addMorph(copiedMorph);
       const animationsTargetingMorph = animations.filter(animation => animation.target == morph);
@@ -490,7 +492,6 @@ export class InteractivesEditor extends QinoqMorph {
         newSequence.addAnimation(copiedAnimation);
       });
     });
-    newSequence.name = `copy of ${newSequence.name}`;
     this.interactive.addSequence(newSequence);
     const timelineSequence = this.ui.globalTimeline.createTimelineSequence(newSequence);
   }
@@ -971,6 +972,7 @@ export class InteractivesEditor extends QinoqMorph {
     morph.attributeConnections = [];
 
     const copiedMorph = morph.copy();
+    copiedMorph.name = 'copy of ' + copiedMorph.name;
     morph.attributeConnections = connections;
     // it is important that the animations are setup before the copiedMorph is added to the Interactive
     // this way it is ensured that the automatic progress animations on lottie morphs work as expected

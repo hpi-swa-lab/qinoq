@@ -126,6 +126,7 @@ class Animation {
     copiedAnimation.name = 'copy of ' + this.name;
     const copiedKeyframes = this.keyframes.map(keyframe => keyframe.copy());
     copiedAnimation.addKeyframes(copiedKeyframes, true);
+    copiedAnimation._sequence = null;
     return copiedAnimation;
   }
 
