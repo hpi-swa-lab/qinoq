@@ -519,13 +519,14 @@ class InteractiveScrollHolder extends Morph {
   }
 
   onMouseDown (event) {
+    // select morphs in halo mode without triggering their implementation of onMouseDown
+    if (this.topbar.editMode == 'Halo') return;
     super.onMouseDown(event);
     this.currentMouseTarget = this.getUnderlyingMorph(event.hand.globalPosition);
 
     // allows to select text in text morphs by dragging in sequence view
     if (!this.passThroughMorph || this.topbar.editMode == 'Halo' || this.topbar.editMode == 'Hand') this.updateEventDispatcherState();
-    // select morphs in halo mode without triggering their implementation of onMouseDown
-    if (this.topbar.editMode != 'Halo') this.currentMouseTarget.onMouseDown(event);
+    this.currentMouseTarget.onMouseDown(event);
   }
 
   onDoubleMouseDown (event) {

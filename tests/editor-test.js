@@ -38,7 +38,7 @@ describe('Editor', () => {
     return editor.withAllSubmorphsSelect(morph => morph.isTimelineSequence);
   }
 
-  it('interactive removes connections from interactive when target gets removed', async () => {
+  it('containing an interactive removes connections from interactive when target gets removed', async () => {
     const newMorph = new Morph();
     const dayBackgroundTimelineSequence = timelineSequences().find(timelineSequence => timelineSequence.sequence.name == 'day background');
     await dayBackgroundTimelineSequence.openSequenceView();
@@ -71,6 +71,16 @@ describe('Editor', () => {
       expect(timeline._lastSelectedTimelineSequence).to.not.be.ok;
       nightBackgroundTimelineSequence.onMouseDown(event);
       expect(timeline._lastSelectedTimelineSequence).to.be.deep.equal(nightBackgroundTimelineSequence);
+    });
+
+    it('switches to halo mode when entering the interactive with morph-creation tool', () => {
+      const topbar = $world.get('lively top bar');
+      topbar.setEditMode('Shape');
+      editor.interactive.scrollOverlay.onHoverIn();
+      expect(topbar.editMode).to.equal('Halo');
+      const warning = $world.get('messageMorph');
+      expect(warning).to.be.truthy;
+      expect(warning.message).to.equal('Draw in sequence view!');
     });
 
     it('removes sequence resizers when sequences are too small', () => {
@@ -454,6 +464,36 @@ describe('Editor', () => {
       editor = await new InteractivesEditor().initialize();
       interactive = await exampleInteractive();
       editor.interactive = interactive;
+    });
+
+    it('prevents onMouseDown from being triggered for Morphs in an Interactive when in Halo mode', () => {
+      $world.get('lively top bar').setEditMode('Halo');
+      // will either correctly early return
+      // or throw an error since we do not provide the event necessary for the following code
+      interactive.scrollOverlay.onMouseDown();
+    });
+
+    it('shows a reduced halo as the default when clicked', () => {
+      // to set the custom halos
+      editor.onHoverIn();
+      const target = interactive.sequences[0].submorphs[0];
+      $world.get('lively top bar').showHaloFor(target);
+      const halos = $world.submorphs.filter(m => m.isHalo);
+      expect(halos.length).to.equal(1);
+      const expected = ['menu', 'drag', 'close', 'copy', 'rotate', 'name'];
+      expect(halos[0].activeItems).to.equal(expected);
+      halos[0].abandon();
+    });
+
+    it('shows the default halo when clicked with Strg+Click', () => {
+      const target = interactive.sequences[0].submorphs[0];
+      // for click and ctrl+click the execution flow to display the halo is different
+      $world.showHaloFor(target);
+      const halos = $world.submorphs.filter(m => m.isHalo);
+      expect(halos.length).to.equal(1);
+      const expected = ['*'];
+      expect(halos[0].activeItems).to.equal(expected);
+      halos[0].abandon();
     });
 
     it('resizes interactive without aspect ratio to fit interactive holder exactly', () => {
