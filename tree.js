@@ -259,7 +259,8 @@ export class InteractiveGraph extends QinoqMorph {
       graph: this,
       fill: COLOR_SCHEME.TRANSPARENT,
       target: item,
-      _editor: this.editor
+      _editor: this.editor,
+      tooltip: item.name
     });
     container.refresh();
     return container;

@@ -50,6 +50,7 @@ export class TimelineLayerInfo extends QinoqMorph {
 
   updateLabel () {
     this.ui.label.textString = this.name;
+    this.tooltip = this.name;
   }
 }
 
