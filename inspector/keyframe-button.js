@@ -93,6 +93,7 @@ export class KeyframeButton extends QinoqMorph {
     if (event.domEvt && event.domEvt.button == 2) return;
     this.mode = 'activated';
     await this.addOrOverwriteKeyframe();
+    this.owner.createConnection();
   }
 
   async addOrOverwriteKeyframe (relativePosition = this.sequence.progress) {
