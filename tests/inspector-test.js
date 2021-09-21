@@ -49,24 +49,28 @@ describe('Inspector', () => {
   }
 
   describe('in the animations tab mode', () => {
-    let animationsInspector;
+    let animationsInspector, dropdown;
 
     beforeEach(() => {
       animationsInspector = inspector.animationsInspector;
       inspector.targetMorph = morph;
+      dropdown = animationsInspector.get('property dropdown');
     });
 
     it('can animate a predefined property', () => {
-      expect('opacity' in animationsInspector.propertiesToDisplay).to.be.ok;
+      expect(dropdown.values).to.include('opacity');
+      dropdown.selectedValue = 'opacity';
+      expect(animationsInspector.get('opacity label').owner).to.be.truthy;
     });
 
     it('can animate a property defined as animateAs', () => {
-      expect('testProp' in animationsInspector.propertiesToDisplay).to.be.ok;
-      expect(animationsInspector.propertiesToDisplay.testProp).to.equal('number');
+      expect(dropdown.values).to.include('testProp');
+      dropdown.selectedValue = 'testProp';
+      expect(animationsInspector.get('testProp label').owner).to.be.truthy;
     });
 
     it('can not animate a new property not defined as animateAs', () => {
-      expect('testProp2' in animationsInspector.propertiesToDisplay).to.not.be.ok;
+      expect(dropdown.values).to.not.include('testProp2');
     });
 
     it('targets a morph in the interactive when a halo is shown', async () => {
@@ -112,7 +116,7 @@ describe('Inspector', () => {
       // sets the scrollPosition to the beginning of the day background
       await dayBackgroundTimelineSequence.openSequenceView();
       inspector.targetMorph = dayBackgroundTimelineSequence.sequence.submorphs[0];
-      const keyFramebuttonForFill = animationsInspector.propertyControls.fill.ui.keyframeButton;
+      const keyFramebuttonForFill = animationsInspector.propertyAnimators.fill.ui.keyframeButton;
       expect(keyFramebuttonForFill.fill).to.not.be.deep.equal(COLOR_SCHEME.KEYFRAME_FILL);
     });
 
@@ -125,7 +129,7 @@ describe('Inspector', () => {
       await dayBackgroundTimelineSequence.openSequenceView();
       inspector.targetMorph = dayBackgroundSequence.submorphs[0];
       editor.internalScrollChangeWithGUIUpdate(333);
-      const keyFramebuttonForFill = animationsInspector.propertyControls.fill.ui.keyframeButton;
+      const keyFramebuttonForFill = animationsInspector.propertyAnimators.fill.ui.keyframeButton;
       expect(keyFramebuttonForFill.fill).to.not.be.deep.equal(COLOR_SCHEME.KEYFRAME_FILL);
     });
 
@@ -138,10 +142,8 @@ describe('Inspector', () => {
 
       dayBackgroundSequence.submorphs[0].fill = Color.black;
 
-      const fillWarning = animationsInspector.propertyControls.opacity.submorphs[1].name;
-      expect(animationsInspector.propertyControls.opacity.submorphs.length).to.equal(2);
-      expect(animationsInspector.propertyControls.fill.submorphs.length).to.equal(3);
-      expect(animationsInspector.propertyControls.fill.submorphs[2].name).to.equal('warning label');
+      expect(animationsInspector.propertyAnimators.fill.submorphs.length).to.equal(3);
+      expect(animationsInspector.propertyAnimators.fill.submorphs[2].name).to.equal('warning label');
     });
 
     describe('can not animate', () => {
@@ -160,11 +162,11 @@ describe('Inspector', () => {
         });
 
         it('textString attribute', () => {
-          expect(animationsInspector.displayedProperties).to.not.contain('textString');
+          expect(dropdown.values).to.not.contain('textString');
         });
 
         it('fontSize attribute', () => {
-          expect(animationsInspector.displayedProperties).to.not.contain('fontSize');
+          expect(dropdown.values).to.not.contain('fontSize');
         });
       });
 
@@ -184,7 +186,7 @@ describe('Inspector', () => {
         });
 
         it('textString attribute', () => {
-          expect(animationsInspector.displayedProperties).to.not.contain('textString');
+          expect(dropdown.values).to.not.contain('textString');
         });
       });
     });
