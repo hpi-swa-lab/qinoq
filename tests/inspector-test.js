@@ -146,6 +146,18 @@ describe('Inspector', () => {
       expect(animationsInspector.propertyAnimators.fill.submorphs[2].name).to.equal('warning label');
     });
 
+    it('shows the animator and a symbol when a property has been changed but has not been animated yet', async () => {
+      const dayBackgroundTimelineSequence = getDayBackgroundTimelineSequence();
+      const dayBackgroundSequence = dayBackgroundTimelineSequence.sequence;
+
+      await dayBackgroundTimelineSequence.openSequenceView();
+      inspector.targetMorph = dayBackgroundSequence.submorphs[0];
+      inspector.targetMorph.scale = 0.5;
+
+      expect(animationsInspector.propertyAnimators.scale.submorphs.length).to.equal(3);
+      expect(animationsInspector.propertyAnimators.scale.submorphs[2].name).to.equal('quick access label');
+    });
+
     describe('can not animate', () => {
       describe('on text morphs', () => {
         let text;
