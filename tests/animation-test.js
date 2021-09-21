@@ -54,6 +54,10 @@ describe('Animation object', () => {
   it('can be copied with a new, unique name', () => {
     expect(animation.copy().name).to.not.equal(animation.name);
   });
+
+  it('resets sequence upon copy', () => {
+    expect(animation.copy().sequence).to.not.equal(animation.name);
+  });
 });
 
 describe('Typewriter animation', () => {
