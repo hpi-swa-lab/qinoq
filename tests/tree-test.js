@@ -137,7 +137,7 @@ describe('Interactive graph', () => {
     const copiedSkySequence = interactive.sequences[2];
     await editor.initializeSequenceView(copiedSkySequence);
 
-    const overviewLayer = editor.displayedTimeline.overviewLayers.find(overviewLayer => overviewLayer.morph.name === 'sun');
+    const overviewLayer = editor.displayedTimeline.overviewLayers.find(overviewLayer => overviewLayer.morph.name === 'copy of sun');
     if (!overviewLayer.isExpanded) overviewLayer.isExpanded = true;
     const timelineKeyframe = editor.displayedTimeline.getTimelineKeyframe(copiedSkySequence.animations[0].keyframes[0]);
     timelineKeyframe.delete();
