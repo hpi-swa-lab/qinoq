@@ -496,19 +496,20 @@ describe('Editor', () => {
       halos[0].abandon();
     });
 
-    it('resizes interactive without aspect ratio to fit interactive holder exactly', () => {
+    it('scales interactive to fit interactive holder height', () => {
       interactive.fixedAspectRatio = null;
       interactive.extent = pt(500, 500);
       const interactiveHolderExtent = pt(editor.ui.interactiveHolder.extent.x, editor.ui.interactiveHolder.extent.y);
+      const expectedScale = interactiveHolderExtent.y / interactive.extent.y;
       editor.interactive = interactive;
-      expect(interactive.extent).to.be.equal(interactiveHolderExtent);
+      expect(interactive.scale).to.be.equal(expectedScale);
     });
 
-    it('resizes interactive with fixed aspect ratio to same height as interactive holder', () => {
-      interactive.fixedAspectRatio = 16 / 9;
-      const interactiveHolderHeight = editor.ui.interactiveHolder.extent.y;
-      editor.interactive = interactive;
-      expect(interactive.height).to.be.equal(interactiveHolderHeight);
+    it('does not change the interactive extent when resizing the editor window', () => {
+      const expectedExtent = interactive.extent;
+      editor.owner.extent = pt(900, 900);
+      editor.owner.relayoutWindowControls();
+      expect(interactive.extent).to.deep.equal(expectedExtent);
     });
 
     it('allows to zoom in the interactive and shows scrollbars', async () => {

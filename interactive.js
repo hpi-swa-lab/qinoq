@@ -118,7 +118,7 @@ export class Interactive extends DeserializationAwareMorph {
   }
 
   fitBounds (extent) {
-    this.extent = extent;
+    this.scale = extent.y / this.extent.y;
   }
 
   interactiveZoomed () {

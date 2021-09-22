@@ -259,7 +259,7 @@ export class InteractivesEditor extends QinoqMorph {
 
     connect(this.interactive, 'remove', this, 'reset');
     connect(this.interactive, '_length', this.ui.menuBar.ui.scrollPositionInput, 'max').update(this.interactive.length);
-    connect(this.ui.interactiveHolder, 'extent', this.interactive, 'extent');
+    connect(this.ui.interactiveHolder, 'extent', this.interactive, 'scale', { converter: '(extent) => this.scale = extent.y / target.extent.y' });
     connect(this.interactive, 'interactiveZoomed', this, 'onInteractiveZoomed');
 
     connect(this.interactive.scrollOverlay, 'newMorph', this, 'addMorphToInteractive');
@@ -331,7 +331,7 @@ export class InteractivesEditor extends QinoqMorph {
     disconnect(this.interactive, 'name', this.ui.globalTimeline, 'name');
     disconnect(this.interactive, 'remove', this, 'reset');
 
-    disconnect(this.ui.interactiveHolder, 'extent', this.interactive, 'extent');
+    disconnect(this.ui.interactiveHolder, 'extent', this.interactive, 'scale');
     disconnect(this.interactive, 'interactiveZoomed', this, 'onInteractiveZoomed');
 
     disconnect(this.interactive, 'name', this.ui.globalTab, 'caption');
@@ -1078,13 +1078,14 @@ class InteractiveHolder extends QinoqMorph {
     });
 
     this.addMorph(interactive);
-    interactive.fitBounds(this.extent);
+    //
     interactive.position = pt(0, 0);
     // trigger correct bounds on scrollable content of interactive
     interactive.updateInteractiveLength();
 
     // this should not be necessary, but setting this via defaultValue does not suffice
     this.clipMode = 'hidden';
+    interactive.fitBounds(this.extent);
   }
 
   showEmptyInteractiveHolderPlaceholder () {
