@@ -1,7 +1,7 @@
 import { QinoqMorph } from './qinoq-morph.js';
 import { COLOR_SCHEME } from './colors.js';
 import { rect, pt } from 'lively.graphics';
-import { connect } from 'lively.bindings';
+import { connect, disconnect } from 'lively.bindings';
 import { filter, find, prewalk } from 'lively.lang/tree.js';
 import { morph, VerticalLayout } from 'lively.morphic';
 import { InteractiveTree, InteractiveTreeData } from './components/foreign/interactive-tree.js';
@@ -41,7 +41,8 @@ export class InteractiveGraph extends QinoqMorph {
   build () {
     this.removeConnections();
     this.layout = new VerticalLayout({
-      resizeSubmorphs: true
+      resizeSubmorphs: true,
+      autoResize: false
     });
     this.buildSearchField();
     this.buildTree();
@@ -73,6 +74,7 @@ export class InteractiveGraph extends QinoqMorph {
       nonSelectionFontColor: COLOR_SCHEME.ON_SURFACE,
       halosEnabled: this.editor.debug
     });
+    connect(this, 'extent', this.tree, 'height', { converter: '(extent) => extent.y - SEARCH_FIELD_HEIGHT', varMapping: { SEARCH_FIELD_HEIGHT: CONSTANTS.SEARCH_FIELD_HEIGHT } });
 
     this.addMorph(this.tree);
     this.searchField.readOnly = false;
@@ -81,6 +83,7 @@ export class InteractiveGraph extends QinoqMorph {
   removeTree () {
     if (this.tree) {
       this.tree.remove();
+      disconnect(this, 'extent', this.tree, 'height');
       this.tree = null;
     }
 
