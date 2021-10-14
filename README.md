@@ -28,14 +28,14 @@ Use the `javascript workspace` to execute the following commands. You can open o
 
 ```js
 /* import necessary modules into workspace */
-import { InteractivesEditor, Interactive } from "qinoq";
+import { InteractivesEditor, exampleInteractive, Interactive } from "qinoq";
 
 /* open an Interactives Editor in a window within the world */
 const editor = await new InteractivesEditor().initialize();
 
 /* create an interactive */
-const interactive = Interactive.example();  // creates an example interactive
-                                            // Use "new Interactive()" to create an empty Interactive
+const interactive = await exampleInteractive();  // creates an example interactive
+                                                 // Use "new Interactive()" to create an empty Interactive
 interactive.openInWorld();  // optional: opens interactive as morph in the world
 
 /* load interactive into editor */
