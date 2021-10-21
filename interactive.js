@@ -94,6 +94,11 @@ export class Interactive extends DeserializationAwareMorph {
         type: 'Number',
         defaultValue: 1
       },
+      linkMap: {
+        initialize () {
+          this.linkMap = new Map();
+        }
+      },
       _scrollOverlay: {
         after: ['extent'],
         initialize () {
@@ -373,6 +378,14 @@ export class Interactive extends DeserializationAwareMorph {
   setScrollBarVisibility (visible) {
     this.scrollOverlay.opacity = visible ? 1 : DEFAULT_SCROLLOVERLAY_OPACITY;
   }
+
+  triggerClickAction (target) {
+    console.log('trigger click action');
+    if (this.linkMap.has(target)) {
+      console.log('Link map entry found');
+      window.open(this.linkMap.get(target), '_blank').focus();
+    }
+  }
 }
 
 export class Scrollytelling extends Interactive {}
@@ -520,7 +533,7 @@ class InteractiveScrollHolder extends Morph {
 
   onMouseDown (event) {
     // select morphs in halo mode without triggering their implementation of onMouseDown
-    if (this.topbar.editMode == 'Halo') return;
+    if (this.topbar && this.topbar.editMode == 'Halo') return;
     super.onMouseDown(event);
     this.currentMouseTarget = this.getUnderlyingMorph(event.hand.globalPosition);
 
@@ -552,7 +565,7 @@ class InteractiveScrollHolder extends Morph {
 
     // handle halo mode on our own when the scrollOverlay is target of the topbar (i.e., with editor in sequence view)
     // the handling of the topbar never finds the actual morphs in the interactive, but oly the scrollholder
-    if (this.topbar.editMode == 'Halo' && this.editor && this.editor.isInSequenceView) {
+    if (this.topbar && this.topbar.editMode == 'Halo' && this.editor && this.editor.isInSequenceView) {
       if (Sequence.getSequenceOfMorph(this.currentMouseTarget) == this.editor.currentSequence) {
         this.topbar.showHaloPreviewFor(this.currentMouseTarget);
       }
@@ -577,7 +590,11 @@ class InteractiveScrollHolder extends Morph {
 
   onMouseUp (event) {
     // select morphs in halo mode without triggering their implementation of onMouseUp
-    if (this.topbar.editMode != 'Halo') this.getUnderlyingMorph(event.hand.globalPosition).onMouseUp(event);
+    if (!(this.topbar && this.topbar.editMode == 'Halo')) {
+      let target = this.getUnderlyingMorph(event.hand.globalPosition);
+      this.interactive.triggerClickAction(target);
+      target.onMouseUp(event);
+    }
   }
 
   get tooltipViewer () {
