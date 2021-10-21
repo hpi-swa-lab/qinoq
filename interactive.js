@@ -380,9 +380,7 @@ export class Interactive extends DeserializationAwareMorph {
   }
 
   triggerClickAction (target) {
-    console.log('trigger click action');
     if (this.linkMap.has(target)) {
-      console.log('Link map entry found');
       window.open(this.linkMap.get(target), '_blank').focus();
     }
   }
