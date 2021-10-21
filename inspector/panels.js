@@ -316,3 +316,21 @@ export class ShareSettingsPanel extends KeyValuePanel {
     disconnect(this.ui.presetDropDown, 'selectedValue', this, 'onPresetChange');
   }
 }
+
+export class LinkPanel extends KeyValuePanel {
+  initialize (target) {
+    const value = this.interactive && this.interactive.linkMap.get(target);
+    this.buildTextField('URL', value);
+  }
+
+  changeTokenValue (change) {
+    let newLink = change.value;
+    if (!this.interactive) return;
+    this.interactive.linkMap.set(this.targetMorph, newLink);
+  }
+
+  onTargetMorphChange (newTargetMorph) {
+    this.clear();
+    this.initialize(newTargetMorph);
+  }
+}

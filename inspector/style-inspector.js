@@ -1,6 +1,6 @@
 import { QinoqMorph } from '../qinoq-morph.js';
 import { VerticalLayout } from 'lively.morphic';
-import { AlignmentPanel, ShareSettingsPanel } from './panels.js';
+import { AlignmentPanel, LinkPanel, ShareSettingsPanel } from './panels.js';
 
 export class StyleInspector extends QinoqMorph {
   static get properties () {
@@ -57,6 +57,12 @@ export class StyleInspector extends QinoqMorph {
       inspector: this.inspector,
       _editor: this.editor,
       title: 'Share Settings'
+    }));
+
+    this.ui.panels.link = this.addMorph(new LinkPanel({
+      inspector: this.inspector,
+      _editor: this.editor,
+      title: 'Link to external page'
     }));
 
     this.initialize();
