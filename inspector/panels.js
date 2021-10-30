@@ -326,7 +326,13 @@ export class LinkPanel extends KeyValuePanel {
   changeTokenValue (change) {
     let newLink = change.value;
     if (!this.interactive) return;
-    this.interactive.linkMap.set(this.targetMorph, newLink);
+    if (newLink) {
+      this.interactive.linkMap.set(this.targetMorph, newLink);
+      this.targetMorph.nativeCursor = 'pointer';
+    } else {
+      this.interactive.linkMap.delete(this.targetMorph);
+      this.targetMorph.nativeCursor = 'default';
+    }
   }
 
   onTargetMorphChange (newTargetMorph) {
