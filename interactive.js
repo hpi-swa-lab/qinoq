@@ -381,7 +381,7 @@ export class Interactive extends DeserializationAwareMorph {
 
   triggerClickAction (target) {
     if (this.linkMap.has(target)) {
-      window.open(this.linkMap.get(target), '_blank').focus();
+      window.open(this.linkMap.get(target), '_blank', 'noreferrer=yes,noopener=yes').focus();
     }
   }
 }
